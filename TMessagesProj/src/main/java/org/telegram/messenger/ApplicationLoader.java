@@ -365,7 +365,7 @@ public class ApplicationLoader extends Application {
     }
 
     public static void startPushService() {
-        if (ExternalGcm.checkPlayServices() && (SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && isNotificationListenerEnabled())) {
+        if (ExternalGcm.checkPlayServices() || (SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR2 && isNotificationListenerEnabled())) {
             return;
         }
         SharedPreferences preferences = MessagesController.getGlobalNotificationsSettings();
