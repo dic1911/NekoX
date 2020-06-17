@@ -8,13 +8,6 @@
 
 package org.telegram.messenger;
 
-import java.io.File;
-import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
-
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -23,6 +16,7 @@ import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
 import android.graphics.Rect;
+import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.text.Spannable;
@@ -34,7 +28,12 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import org.telegram.ui.ActionBar.Theme;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Locale;
 
 import tw.nekomimi.nekogram.NekoConfig;
 
@@ -265,6 +264,8 @@ public class Emoji {
             return rect;
         }
 
+        private static Typeface blobCompat;
+
         @Override
         public void draw(Canvas canvas) {
             Rect b;
@@ -272,23 +273,35 @@ public class Emoji {
                 b = getDrawRect();
             } else {
                 b = getBounds();
+            }
+
+            if (!NekoConfig.useSystemEmoji) {
+
+                if (blobCompat == null) {
+
+                    blobCompat = Typeface.createFromAsset(ApplicationLoader.applicationContext.getAssets(), "fonts/blob_compat.ttf");
+
                 }
-            if (NekoConfig.useSystemEmoji) {
-                String emoji = fixEmoji(EmojiData.data[info.page][info.emojiIndex]);
-                textPaint.setTextSize(b.height() * 0.8f);
-                canvas.drawText(emoji,  0, emoji.length(), b.left, b.bottom - b.height() * 0.225f, textPaint);
-                return;
-            }
-            if (emojiBmp[info.page][info.page2] == null) {
-                loadEmoji(info.page, info.page2);
-                canvas.drawRect(getBounds(), placeholderPaint);
-                return;
+
+                textPaint.setTypeface(blobCompat);
+
             }
 
+            String emoji = fixEmoji(EmojiData.data[info.page][info.emojiIndex]);
+            textPaint.setTextSize(b.height() * 0.8f);
+            canvas.drawText(emoji, 0, emoji.length(), b.left, b.bottom - b.height() * 0.225f, textPaint);
 
-            //if (!canvas.quickReject(b.left, b.top, b.right, b.bottom, Canvas.EdgeType.AA)) {
-            canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
-            //}
+//
+//            if (emojiBmp[info.page][info.page2] == null) {
+//                loadEmoji(info.page, info.page2);
+//                canvas.drawRect(getBounds(), placeholderPaint);
+//                return;
+//            }
+//
+//
+//            //if (!canvas.quickReject(b.left, b.top, b.right, b.bottom, Canvas.EdgeType.AA)) {
+//            canvas.drawBitmap(emojiBmp[info.page][info.page2], null, b, paint);
+//            //}
         }
 
         @Override
@@ -464,13 +477,13 @@ public class Emoji {
                     if (emojiOnly != null) {
                         emojiOnly[0]++;
                     }
-                        CharSequence code = emojiCode.subSequence(0, emojiCode.length());
-                        drawable = Emoji.getEmojiDrawable(code);
-                        if (drawable != null) {
-                            span = new EmojiSpan(drawable, DynamicDrawableSpan.ALIGN_BOTTOM, size, fontMetrics);
-                            s.setSpan(span, startIndex, startIndex + startLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-                            emojiCount++;
-                        }
+                    CharSequence code = emojiCode.subSequence(0, emojiCode.length());
+                    drawable = Emoji.getEmojiDrawable(code);
+                    if (drawable != null) {
+                        span = new EmojiSpan(drawable, DynamicDrawableSpan.ALIGN_BOTTOM, size, fontMetrics);
+                        s.setSpan(span, startIndex, startIndex + startLength, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
+                        emojiCount++;
+                    }
                     startLength = 0;
                     startIndex = -1;
                     emojiCode.setLength(0);
