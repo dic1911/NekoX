@@ -8,8 +8,8 @@
     <string name="CustomApiInput">Ввести вручную</string>
     <string name="CheckUpdate">Проверить обновления</string>
     <string name="SwitchVersion">Сменить версию</string>
-    <string name="NoUpdate">Обновление не найдено</string>
-    <string name="UpdateAvailable">Доступно новое обновление</string>
+    <string name="NoUpdate">Обновлений нет</string>
+    <string name="UpdateAvailable">Доступно обновление</string>
     <string name="UpdateUpdate">Обновить</string>
     <string name="UpdateLater">Позже</string>
     <string name="DownloadFailed">Ошибка загрузки</string>
@@ -153,7 +153,7 @@
     <string name="DeleteAllServerConfirm">Вы уверены, что хотите **удалить все серверы**?</string>
     <string name="DeleteUnavailableServerConfirm">Вы уверены, что хотите ** удалить недоступные**?</string>
     <string name="MinApi21Required">Требуется Android 5 (API21).</string>
-    <string name="MiniVersionAlert">К сожалению, mini-версия не поддерживает этот тип прокси. Изменить версию можно в настройках.</string>
+    <string name="MiniVersionAlert">К сожалению, mini-версия не поддерживает этот тип прокси. Cменить версию можно в настройках.</string>
     <string name="ImportProxyFromClipboard">Импорт из буфера</string>
     <string name="BrokenLink">Неверная ссылка</string>
     <string name="ShareQRCode">QR-код</string>
