@@ -270,7 +270,7 @@ public class SharedConfig {
         public void setRemarks(String remarks) {
             this.remarks = remarks;
             if (StrUtil.isBlank(remarks)) {
-                remarks = null;
+                this.remarks = null;
             }
         }
 
@@ -308,11 +308,19 @@ public class SharedConfig {
 
             if (lnk == null) throw new IllegalArgumentException(url);
 
-            return new ProxyInfo(lnk.getQueryParameter("server"),
+            ProxyInfo info = new ProxyInfo(lnk.getQueryParameter("server"),
                     Utilities.parseInt(lnk.getQueryParameter("port")),
                     lnk.getQueryParameter("user"),
                     lnk.getQueryParameter("pass"),
                     lnk.getQueryParameter("secret"));
+
+            if (StrUtil.isNotBlank(lnk.getFragment())) {
+
+                info.setRemarks(lnk.getFragment());
+
+            }
+
+            return info;
 
         }
 

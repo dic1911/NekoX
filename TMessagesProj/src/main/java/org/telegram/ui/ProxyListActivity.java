@@ -581,7 +581,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
 
         ActionBarMenuItem addItem = menu.addItem(menu_add, R.drawable.add);
 
-        addItem.addSubItem(menu_add_import_from_clipboard, LocaleController.getString("ImportProxyFromClipboard", R.string.ImportProxyFromClipboard)).setOnClickListener((v) -> ProxyUtil.importFromClipboard(context));
+        addItem.addSubItem(menu_add_import_from_clipboard, LocaleController.getString("ImportProxyFromClipboard", R.string.ImportProxyFromClipboard)).setOnClickListener((v) -> ProxyUtil.importFromClipboard());
         addItem.addSubItem(menu_add_scan_qr, LocaleController.getString("ScanQRCode", R.string.ScanQRCode)).setOnClickListener((v) -> {
 
             if (Build.VERSION.SDK_INT >= 23) {
@@ -867,7 +867,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
 
             } else if (i == 6) {
 
-                ProxyUtil.importFromClipboard(getParentActivity());
+                ProxyUtil.importFromClipboard();
 
             } else {
 

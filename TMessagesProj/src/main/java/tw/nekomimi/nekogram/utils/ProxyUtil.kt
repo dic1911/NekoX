@@ -98,20 +98,53 @@ object ProxyUtil {
     }
 
     @JvmStatic
-    fun importFromClipboard(ctx: Context) {
+    fun importFromClipboard() {
 
-        val clip = ctx.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+        var text = (ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip?.getItemAt(0)?.text?.toString()
 
-        val proxies = clip
-                .primaryClip
-                ?.getItemAt(0)
-                ?.text
-                ?.let { parseProxies(it.toString()) }
-                ?.mapNotNull { runCatching { SharedConfig.parseProxyInfo(it) }.getOrNull() }
+        if (text != null) {
+
+            runCatching {
+
+                text = String(Base64.decode(text, Base64.NO_PADDING))
+
+            }
+
+        }
+
+        val proxies = mutableListOf<SharedConfig.ProxyInfo>()
+
+        var error = false
+
+        text?.split('\n')?.map { it.split(" ") }?.forEach {
+
+            it.forEach { line ->
+
+                if (line.startsWith("tg://proxy") ||
+                    line.startsWith("tg://socks") ||
+                    line.startsWith("https://t.me/proxy") ||
+                    line.startsWith("https://t.me/socks") ||
+                    line.startsWith(VMESS_PROTOCOL) ||
+                    line.startsWith(VMESS1_PROTOCOL) ||
+                    line.startsWith(SS_PROTOCOL) ||
+                    line.startsWith(SSR_PROTOCOL) /*||
+                    line.startsWith(RB_PROTOCOL)*/) {
+
+                    runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
+
+                        AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
+
+                    }
+
+                }
+
+            }
+
+        }
 
         if (proxies.isNullOrEmpty()) {
 
-            AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink))
+            if (!error) AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink))
 
             return
 
@@ -131,7 +164,8 @@ object ProxyUtil {
 
     }
 
-    fun import(ctx: Context, link: String) {
+    @JvmStatic
+    fun importProxy(ctx: Context, link: String): Boolean {
 
         runCatching {
 
@@ -166,6 +200,8 @@ object ProxyUtil {
 
             }
 
+            return true
+
         }.onFailure {
 
             FileLog.w("$it")
@@ -173,6 +209,8 @@ object ProxyUtil {
             AlertUtil.showToast("${LocaleController.getString("BrokenLink", R.string.BrokenLink)}: ${it.message}")
 
         }
+
+        return false
 
     }
 

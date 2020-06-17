@@ -144,6 +144,7 @@ import tw.nekomimi.nekogram.NekoXConfig;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
+import tw.nekomimi.nekogram.utils.ProxyUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
 import static com.v2ray.ang.V2RayConfig.SSR_PROTOCOL;
@@ -2708,92 +2709,22 @@ public class AndroidUtilities {
         if (intent == null) {
             return false;
         }
-        try {
-            if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
-                return false;
-            }
-            Uri data = intent.getData();
-            if (data != null) {
-                String user = null;
-                String password = null;
-                String port = null;
-                String address = null;
-                String secret = null;
-                String scheme = data.getScheme();
-                String remarks = null;
-                if (scheme != null) {
-                    if ((scheme.equals("http") || scheme.equals("https"))) {
-                        String host = data.getHost().toLowerCase();
-                        if (host.equals("telegram.me") || host.equals("t.me") || host.equals("telegram.dog")) {
-                            String path = data.getPath();
-                            if (path != null) {
-                                if (path.startsWith("/socks") || path.startsWith("/proxy")) {
-                                    address = data.getQueryParameter("server");
-                                    port = data.getQueryParameter("port");
-                                    user = data.getQueryParameter("user");
-                                    password = data.getQueryParameter("pass");
-                                    secret = data.getQueryParameter("secret");
-                                    remarks = data.getFragment();
-                                }
-                            }
-                        }
-                    } else if (scheme.equals("tg")) {
-                        String url = data.toString();
-                        if (url.startsWith("tg:proxy") || url.startsWith("tg://proxy") || url.startsWith("tg:socks") || url.startsWith("tg://socks")) {
-                            url = url.replace("tg:proxy", "tg://telegram.org").replace("tg://proxy", "tg://telegram.org").replace("tg://socks", "tg://telegram.org").replace("tg:socks", "tg://telegram.org");
-                            data = Uri.parse(url);
-                            address = data.getQueryParameter("server");
-                            port = data.getQueryParameter("port");
-                            user = data.getQueryParameter("user");
-                            password = data.getQueryParameter("pass");
-                            secret = data.getQueryParameter("secret");
-                        }
-                    } else if (scheme.equals("vmess") || scheme.equals("vmess1")) {
-                        try {
-                            showVmessAlert(activity, new SharedConfig.VmessProxy(data.toString()));
-                        } catch (Exception ex) {
-                            AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": " + ex.getMessage());
-                        }
-                        return true;
-                    } else if (scheme.equals("ss")) {
-                        try {
-                            showShadowsocksAlert(activity, new SharedConfig.ShadowsocksProxy(data.toString()));
-                        } catch (Exception ex) {
-                            AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": " + ex.getMessage());
-                        }
-                        return true;
-                    } else if (scheme.equals("ssr")) {
-                        try {
-                            showShadowsocksRAlert(activity, new SharedConfig.ShadowsocksRProxy(data.toString()));
-                        } catch (Exception ex) {
-                            AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": " + ex.getMessage());
-                        }
-                        return true;
-                    } else if (scheme.equals("rb")) {
-                        try {
-                            showRelayBatonAlert(activity, new SharedConfig.RelayBatonProxy(data.toString()));
-                        } catch (Exception ex) {
-                            AlertUtil.showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": " + ex.getMessage());
-                        }
-                        return true;
-                    }
-                }
-                if (!TextUtils.isEmpty(address) && !TextUtils.isEmpty(port)) {
-                    if (user == null) {
-                        user = "";
-                    }
-                    if (password == null) {
-                        password = "";
-                    }
-                    if (secret == null) {
-                        secret = "";
-                    }
-                    showProxyAlert(activity, address, port, user, password, secret, remarks);
-                    return true;
-                }
-            }
-        } catch (Exception ignore) {
-
+        if ((intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) != 0) {
+            return false;
+        }
+        Uri data = intent.getData();
+        if (data == null) return false;
+        String link = data.toString();
+        if (link.startsWith("tg://proxy") ||
+                link.startsWith("tg://socks") ||
+                link.startsWith("https://t.me/proxy") ||
+                link.startsWith("https://t.me/socks") ||
+                link.startsWith(VMESS_PROTOCOL) ||
+                link.startsWith(VMESS1_PROTOCOL) ||
+                link.startsWith(SS_PROTOCOL) ||
+                link.startsWith(SSR_PROTOCOL) /*||
+                data.startsWith(RB_PROTOCOL)*/) {
+            return ProxyUtil.importProxy(activity, link);
         }
         return false;
     }
@@ -2813,7 +2744,7 @@ public class AndroidUtilities {
         return true;
     }
 
-    public static void showProxyAlert(Context activity, final String address, final String port, final String user, final String password, final String secret,final String remarks) {
+    public static void showProxyAlert(Context activity, final String address, final String port, final String user, final String password, final String secret, final String remarks) {
         BottomSheet.Builder builder = new BottomSheet.Builder(activity);
         final Runnable dismissRunnable = builder.getDismissRunnable();
 
@@ -2908,6 +2839,8 @@ public class AndroidUtilities {
                 info = new SharedConfig.ProxyInfo(address, p, "", "", secret);
 
             }
+
+            info.setRemarks(remarks);
 
             SharedConfig.addProxy(info);
 
