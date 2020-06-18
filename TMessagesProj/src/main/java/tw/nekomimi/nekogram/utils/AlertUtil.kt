@@ -7,6 +7,7 @@ import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ActionBar.AlertDialog
 import org.telegram.ui.Components.EditTextBoldCursor
 import org.telegram.ui.Components.NumberPicker
@@ -19,6 +20,9 @@ object AlertUtil {
 
     @JvmStatic
     fun showToast(e: Throwable) = showToast(e.message ?: e.javaClass.simpleName)
+
+    @JvmStatic
+    fun showToast(e: TLRPC.TL_error) = showToast("${e.code}: ${e.text}")
 
     @JvmStatic
     fun showToast(text: String) = UIUtil.runOnUIThread(Runnable {

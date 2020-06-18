@@ -43,6 +43,12 @@ public class HeaderCell extends LinearLayout {
     }
 
     public HeaderCell(Context context, String textColorKey, int padding, int topMargin, boolean text2) {
+
+        this(context, textColorKey, padding, topMargin, text2, false);
+
+    }
+
+    public HeaderCell(Context context, String textColorKey, int padding, int topMargin, boolean text2,boolean bigTitle) {
         super(context);
 
         setOrientation(LinearLayout.VERTICAL);
@@ -50,7 +56,9 @@ public class HeaderCell extends LinearLayout {
 
         textView = new TextView(getContext());
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 15);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        if (bigTitle) {
+            textView.setTypeface(AndroidUtilities.getTypeface("fonts/mw_bold.ttf"));
+        }
         textView.setEllipsize(TextUtils.TruncateAt.END);
         textView.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
         textView.setMinHeight(AndroidUtilities.dp(height - topMargin));

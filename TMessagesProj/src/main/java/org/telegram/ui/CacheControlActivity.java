@@ -68,6 +68,8 @@ import org.telegram.ui.Components.UndoView;
 import java.io.File;
 import java.util.ArrayList;
 
+import kotlin.Unit;
+import tw.nekomimi.nekogram.BottomBuilder;
 import tw.nekomimi.nekogram.transtale.TranslateDb;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
@@ -544,13 +546,11 @@ public class CacheControlActivity extends BaseFragment {
     }
 
     private void clearDatabase() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-        builder.setTitle(LocaleController.getString("LocalDatabaseClearTextTitle", R.string.LocalDatabaseClearTextTitle));
-        builder.setMessage(LocaleController.getString("LocalDatabaseClearText", R.string.LocalDatabaseClearText));
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-        builder.setPositiveButton(LocaleController.getString("CacheClear", R.string.CacheClear), (dialogInterface, i) -> {
+        BottomBuilder builder = new BottomBuilder(getParentActivity());
+        builder.addTitle(LocaleController.getString("LocalDatabaseClearTextTitle", R.string.LocalDatabaseClearTextTitle), LocaleController.getString("LocalDatabaseClearText", R.string.LocalDatabaseClearText));
+        builder.addItem(LocaleController.getString("CacheClear", R.string.CacheClear),R.drawable.baseline_delete_sweep_24, true, (i) -> {
             if (getParentActivity() == null) {
-                return;
+                return Unit.INSTANCE;
             }
             final AlertDialog progressDialog = new AlertDialog(getParentActivity(), 3);
             progressDialog.setCanCacnel(false);
@@ -650,13 +650,10 @@ public class CacheControlActivity extends BaseFragment {
                     });
                 }
             });
+            return Unit.INSTANCE;
         });
-        AlertDialog alertDialog = builder.create();
-        showDialog(alertDialog);
-        TextView button = (TextView) alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
-        if (button != null) {
-            button.setTextColor(Theme.getColor(Theme.key_dialogTextRed2));
-        }
+        builder.addCancelItem();
+        builder.show();
     }
 
     @Override

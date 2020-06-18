@@ -66,7 +66,7 @@ class BottomBuilder(val ctx: Context) {
     }
 
     @JvmOverloads
-    fun addTitle(title: CharSequence, bigTitle: Boolean = true): HeaderCell {
+    fun addTitle(title: CharSequence, bigTitle: Boolean = false): HeaderCell {
 
         return addTitle(title, bigTitle, null)
 
@@ -80,7 +80,7 @@ class BottomBuilder(val ctx: Context) {
 
     fun addTitle(title: CharSequence, bigTitle: Boolean, subTitle: CharSequence?): HeaderCell {
 
-        val headerCell = if (bigTitle) HeaderCell(ctx, Theme.key_dialogTextBlue2, 21, 15, subTitle != null) else HeaderCell(ctx)
+        val headerCell = HeaderCell(ctx)
 
         headerCell.setText(if (title is String) AndroidUtilities.replaceTags(title) else title)
 

@@ -56,6 +56,9 @@ import org.telegram.ui.Components.URLSpanNoUnderline;
 
 import java.util.ArrayList;
 
+import kotlin.Unit;
+import tw.nekomimi.nekogram.BottomBuilder;
+
 @TargetApi(23)
 public class ActionIntroActivity extends BaseFragment implements LocationController.LocationFetchCallback {
 
@@ -544,11 +547,13 @@ public class ActionIntroActivity extends BaseFragment implements LocationControl
                     break;
                 }
                 case ACTION_TYPE_CHANGE_PHONE_NUMBER: {
-                    AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                    builder.setTitle(LocaleController.getString("PhoneNumberChangeTitle", R.string.PhoneNumberChangeTitle));
-                    builder.setMessage(LocaleController.getString("PhoneNumberAlert", R.string.PhoneNumberAlert));
-                    builder.setPositiveButton(LocaleController.getString("Change", R.string.Change), (dialogInterface, i) -> presentFragment(new ChangePhoneActivity(), true));
-                    builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    BottomBuilder builder = new BottomBuilder(getParentActivity());
+                    builder.addTitle(LocaleController.getString("PhoneNumberAlert", R.string.PhoneNumberAlert));
+                    builder.addItem(LocaleController.getString("Change", R.string.Change), (i) -> {
+                        presentFragment(new ChangePhoneActivity(), true);
+                        return Unit.INSTANCE;
+                    });
+                    builder.addCancelItem();
                     showDialog(builder.create());
                     break;
                 }

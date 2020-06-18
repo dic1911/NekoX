@@ -36,6 +36,7 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.checkerframework.common.subtyping.qual.Bottom;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.ChatObject;
@@ -71,6 +72,9 @@ import org.telegram.ui.Components.RadialProgressView;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 
 import java.util.ArrayList;
+
+import kotlin.Unit;
+import tw.nekomimi.nekogram.BottomBuilder;
 
 public class ChannelCreateActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, ImageUpdater.ImageUpdaterDelegate {
 
@@ -953,15 +957,13 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                     AdminedChannelCell adminedChannelCell = new AdminedChannelCell(getParentActivity(), view -> {
                         AdminedChannelCell cell = (AdminedChannelCell) view.getParent();
                         final TLRPC.Chat channel = cell.getCurrentChannel();
-                        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                        builder.setTitle(LocaleController.getString("NekoX", R.string.NekoX));
+                        BottomBuilder builder = new BottomBuilder(getParentActivity());
                         if (channel.megagroup) {
-                            builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("RevokeLinkAlert", R.string.RevokeLinkAlert, MessagesController.getInstance(currentAccount).linkPrefix + "/" + channel.username, channel.title)));
+                            builder.addTitle(AndroidUtilities.replaceTags(LocaleController.formatString("RevokeLinkAlert", R.string.RevokeLinkAlert, MessagesController.getInstance(currentAccount).linkPrefix + "/" + channel.username, channel.title)));
                         } else {
-                            builder.setMessage(AndroidUtilities.replaceTags(LocaleController.formatString("RevokeLinkAlertChannel", R.string.RevokeLinkAlertChannel, MessagesController.getInstance(currentAccount).linkPrefix  + "/" + channel.username, channel.title)));
+                            builder.addTitle(AndroidUtilities.replaceTags(LocaleController.formatString("RevokeLinkAlertChannel", R.string.RevokeLinkAlertChannel, MessagesController.getInstance(currentAccount).linkPrefix  + "/" + channel.username, channel.title)));
                         }
-                        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
-                        builder.setPositiveButton(LocaleController.getString("RevokeButton", R.string.RevokeButton), (dialogInterface, i) -> {
+                        builder.addItem(LocaleController.getString("RevokeButton", R.string.RevokeButton),R.drawable.baseline_delete_forever_24, (i) -> {
                             TLRPC.TL_channels_updateUsername req1 = new TLRPC.TL_channels_updateUsername();
                             req1.channel = MessagesController.getInputChannel(channel);
                             req1.username = "";
@@ -976,7 +978,9 @@ public class ChannelCreateActivity extends BaseFragment implements NotificationC
                                     });
                                 }
                             }, ConnectionsManager.RequestFlagInvokeAfter);
+                            return Unit.INSTANCE;
                         });
+                        builder.addCancelItem();
                         showDialog(builder.create());
                     });
                     adminedChannelCell.setChannel(res.chats.get(a), a == res.chats.size() - 1);

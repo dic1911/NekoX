@@ -58,6 +58,7 @@ import java.util.concurrent.CountDownLatch;
 import tw.nekomimi.nekogram.ExternalGcm;
 import tw.nekomimi.nekogram.InternalFilters;
 import tw.nekomimi.nekogram.NekoConfig;
+import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.ThreadUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
@@ -12622,14 +12623,7 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     private static void showCantOpenAlert(BaseFragment fragment, String reason) {
-        if (fragment == null || fragment.getParentActivity() == null) {
-            return;
-        }
-        AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getParentActivity());
-        builder.setTitle(LocaleController.getString("NekoX", R.string.NekoX));
-        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
-        builder.setMessage(reason);
-        fragment.showDialog(builder.create());
+        AlertUtil.showToast(reason);
     }
 
     public boolean checkCanOpenChat(Bundle bundle, BaseFragment fragment) {

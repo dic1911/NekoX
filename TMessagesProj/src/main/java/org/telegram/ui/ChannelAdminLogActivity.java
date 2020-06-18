@@ -118,6 +118,7 @@ import java.util.HashMap;
 
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
+import tw.nekomimi.nekogram.utils.AlertUtil;
 
 public class ChannelAdminLogActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -1323,11 +1324,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                                 selectedObject = null;
                                 return;
                             }
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                            builder.setTitle(LocaleController.getString("NekoX", R.string.NekoX));
-                            builder.setMessage(LocaleController.getString("IncorrectTheme", R.string.IncorrectTheme));
-                            builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
-                            showDialog(builder.create());
+                            AlertUtil.showToast(LocaleController.getString("IncorrectTheme", R.string.IncorrectTheme));
                         }
                     } else {
                         if (LocaleController.getInstance().applyLanguageFile(locFile, currentAccount)) {
@@ -1337,11 +1334,7 @@ public class ChannelAdminLogActivity extends BaseFragment implements Notificatio
                                 selectedObject = null;
                                 return;
                             }
-                            AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                            builder.setTitle(LocaleController.getString("NekoX", R.string.NekoX));
-                            builder.setMessage(LocaleController.getString("IncorrectLocalization", R.string.IncorrectLocalization));
-                            builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
-                            showDialog(builder.create());
+                            AlertUtil.showToast(LocaleController.getString("IncorrectLocalization", R.string.IncorrectLocalization));
                         }
                     }
                 }

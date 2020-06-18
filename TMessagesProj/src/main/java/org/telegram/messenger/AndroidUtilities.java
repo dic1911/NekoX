@@ -139,6 +139,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import cn.hutool.core.util.StrUtil;
+import kotlin.Unit;
+import tw.nekomimi.nekogram.BottomBuilder;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
 import tw.nekomimi.nekogram.utils.AlertUtil;
@@ -2495,18 +2497,18 @@ public class AndroidUtilities {
                         }
                     }
                     if (Build.VERSION.SDK_INT >= 24) {
-                        intent.setDataAndType(FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", f), realMimeType != null ? realMimeType : "text/plain");
+                        intent.setDataAndType(FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", f), realMimeType != null ? realMimeType : "*/*");
                     } else {
-                        intent.setDataAndType(Uri.fromFile(f), realMimeType != null ? realMimeType : "text/plain");
+                        intent.setDataAndType(Uri.fromFile(f), realMimeType != null ? realMimeType : "*/*");
                     }
                     if (realMimeType != null) {
                         try {
                             activity.startActivityForResult(intent, 500);
                         } catch (Exception e) {
                             if (Build.VERSION.SDK_INT >= 24) {
-                                intent.setDataAndType(FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", f), "text/plain");
+                                intent.setDataAndType(FileProvider.getUriForFile(activity, BuildConfig.APPLICATION_ID + ".provider", f), "*/*");
                             } else {
-                                intent.setDataAndType(Uri.fromFile(f), "text/plain");
+                                intent.setDataAndType(Uri.fromFile(f), "*/*");
                             }
                             activity.startActivityForResult(intent, 500);
                         }
@@ -2559,17 +2561,17 @@ public class AndroidUtilities {
                 }
             }
             if (Build.VERSION.SDK_INT >= 26 && realMimeType != null && realMimeType.equals("application/vnd.android.package-archive") && !ApplicationLoader.applicationContext.getPackageManager().canRequestPackageInstalls()) {
-                AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-                builder.setTitle(LocaleController.getString("NekoX", R.string.NekoX));
-                builder.setMessage(LocaleController.getString("ApkRestricted", R.string.ApkRestricted));
-                builder.setPositiveButton(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), (dialogInterface, i) -> {
+                BottomBuilder builder = new BottomBuilder(activity);
+                builder.addTitle(LocaleController.getString("ApkRestricted", R.string.ApkRestricted));
+                builder.addItem(LocaleController.getString("PermissionOpenSettings", R.string.PermissionOpenSettings), R.drawable.baseline_settings_24,(i) -> {
                     try {
                         activity.startActivity(new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + activity.getPackageName())));
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
+                    return Unit.INSTANCE;
                 });
-                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                builder.addCancelItem();
                 builder.show();
                 return true;
             }
