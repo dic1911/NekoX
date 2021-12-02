@@ -21,10 +21,18 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AlertDialog;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
+import java.util.Stack;
+import java.util.function.IntFunction;
+import java.util.stream.Collectors;
 
+import cn.hutool.core.lang.Tuple;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 
 public class MessageHelper extends BaseController {
@@ -348,4 +356,92 @@ public class MessageHelper extends BaseController {
         return ret;
     }
 
+    private static final ArrayList<Class<? extends TLRPC.MessageEntity>> interestedMarkdown = new ArrayList<Class<? extends TLRPC.MessageEntity>>() {{
+        add(TLRPC.TL_messageEntityBold.class);
+        add(TLRPC.TL_messageEntityItalic.class);
+        add(TLRPC.TL_messageEntityPre.class);
+        add(TLRPC.TL_messageEntityStrike.class);
+        add(TLRPC.TL_messageEntityTextUrl.class);
+        add(TLRPC.TL_messageEntityCode.class);
+    }};
+
+    private static final HashMap<Integer, String> markdownPrefixes = new HashMap<Integer, String>() {{
+        put(0, "**");
+        put(1, "__");
+        put(2, "```");
+        put(3, "~~");
+        put(4, "[");
+        put(5, "`");
+    }};
+
+    private static final HashMap<Integer, String> markdownSuffixes = new HashMap<Integer, String>() {{
+        put(0, "**");
+        put(1, "__");
+        put(2, "```");
+        put(3, "~~");
+        put(4, "](");
+        put(5, "`");
+    }};
+
+    public String dumpMarkdown(MessageObject messageObject) {
+        TLRPC.Message message = messageObject.messageOwner;
+        StringBuilder sb = new StringBuilder();
+        LinkedList<MessageEntity> entities = message.entities.stream()
+                .filter(t -> interestedMarkdown.contains(t.getClass()))
+                .sorted(Comparator.comparingInt((TLRPC.MessageEntity o) -> o.offset).thenComparingInt(o -> o.length))
+                .map(MessageEntity::new)
+                .collect(Collectors.toCollection(LinkedList::new));
+        if (entities.size() == 0)
+            return message.message;
+        FileLog.e("entities: " + entities.size());
+        int length = message.message.length();
+
+        for (int i = 0; i < length; i++) {
+            for (Iterator<MessageEntity> itt = entities.iterator(); itt.hasNext(); ) {
+                MessageEntity entity = itt.next();
+                if (entity.offset == i) {
+                    sb.append(entity.getPrefix());
+                }
+            }
+            for (Iterator<MessageEntity> itt = entities.descendingIterator(); itt.hasNext(); ) {
+                MessageEntity entity = itt.next();
+                if (entity.offset + entity.length == i) {
+                    sb.append(entity.getSuffix());
+                    itt.remove();
+                }
+            }
+            sb.append(message.message.charAt(i));
+        }
+        for (MessageEntity entity : entities) {
+            if (entity.offset + entity.length == length)
+                sb.append(entity.getSuffix());
+        }
+        return sb.toString();
+    }
+
+    private static class MessageEntity {
+        int type;
+        int offset;
+        int length;
+        String url;
+
+        int real_length = 0;
+
+        MessageEntity(TLRPC.MessageEntity e) {
+            type = interestedMarkdown.indexOf(e.getClass());
+            offset = e.offset;
+            length = e.length;
+            url = e.url;
+        }
+
+        String getPrefix() {
+            return markdownPrefixes.get(type);
+        }
+
+        String getSuffix() {
+            String r = markdownSuffixes.get(type);
+            if (type == 4) r += url + ")";
+            return r;
+        }
+    }
 }

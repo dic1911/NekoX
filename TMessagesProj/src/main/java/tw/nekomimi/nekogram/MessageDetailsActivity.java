@@ -91,6 +91,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
     private int buttonsRow;
     private int emptyRow;
     private int exportRow;
+    private int copyMarkdownRow;
     private int endRow;
 
     private UndoView copyTooltip;
@@ -279,6 +280,9 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         idRow = rowCount++;
         scheduledRow = messageObject.scheduled ? rowCount++ : -1;
         messageRow = TextUtils.isEmpty(messageObject.messageText) ? -1 : rowCount++;
+        if (messageObject.messageOwner.entities.size() > 0)
+            copyMarkdownRow = rowCount++;
+        else copyMarkdownRow = -1;
         captionRow = TextUtils.isEmpty(messageObject.caption) ? -1 : rowCount++;
         groupRow = fromChat != null && !fromChat.broadcast ? rowCount++ : -1;
         channelRow = fromChat != null && fromChat.broadcast ? rowCount++ : -1;
@@ -479,14 +483,16 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                         textCell.setTextAndValue("Scheduled", "Yes", divider);
                     } else if (position == buttonsRow) {
                         textCell.setTextAndValue("Buttons", gson.toJson(messageObject.messageOwner.reply_markup), divider);
+                    } else if (position == copyMarkdownRow) {
+                        textCell.setTextAndValue("Markdown", getMessageHelper().dumpMarkdown(messageObject), false);
                     }
                     break;
                 }
                 case 3: {
                     TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
+                    textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
                     if (position == exportRow) {
                         textCell.setText(LocaleController.getString("ExportAsJson", R.string.ExportAsJson), false);
-                        textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
                     }
                     break;
                 }
