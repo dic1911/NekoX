@@ -438,6 +438,7 @@ jobs:
         run: |
           export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
           export DEBUG_BUILD=true
+          export NATIVE_TARGET=universal
           ./gradlew TMessagesProj:assembleMiniRelease
       - name: Send Build
         run: |
