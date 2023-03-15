@@ -56,10 +56,6 @@ data class ShadowsocksRBean(
         TODO("Not yet implemented")
     }
 
-    override fun getAddress(): String {
-        return this.host
-    }
-
     companion object {
 
         val methods = arrayOf(

@@ -48,6 +48,5 @@ object ProxyConfig {
         abstract fun parseFromBoxConf(json: JSONObject)
         abstract fun generateBoxConf(): JSONObject
         abstract fun generateLink(): String
-        abstract fun getAddress(): String
     }
 }

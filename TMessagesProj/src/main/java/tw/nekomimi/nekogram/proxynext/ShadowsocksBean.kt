@@ -120,8 +120,4 @@ data class ShadowsocksBean(
     override fun generateLink(): String {
         TODO("Not yet implemented")
     }
-
-    override fun getAddress(): String {
-        return this.host
-    }
 }
