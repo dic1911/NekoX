@@ -24,8 +24,6 @@ import android.webkit.WebView;
 import androidx.annotation.Nullable;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
-import com.v2ray.ang.V2RayConfig;
-import com.v2ray.ang.dto.AngConfig;
 import com.v2ray.ang.util.Utils;
 
 import org.apache.commons.lang3.StringUtils;
@@ -51,10 +49,6 @@ import java.net.Proxy;
 import java.util.Arrays;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
-import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -67,21 +61,20 @@ import cn.hutool.core.util.StrUtil;
 import okhttp3.HttpUrl;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.proxy.ProxyManager;
-import tw.nekomimi.nekogram.proxy.ShadowsocksLoader;
-import tw.nekomimi.nekogram.proxy.ShadowsocksRLoader;
-import tw.nekomimi.nekogram.proxy.VmessLoader;
 import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
+import tw.nekomimi.nekogram.proxynext.ProxyConfig;
+import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
+import tw.nekomimi.nekogram.proxynext.ShadowsocksRBean;
+import tw.nekomimi.nekogram.proxynext.SingProxyManager;
+import tw.nekomimi.nekogram.proxynext.TrojanBean;
+import tw.nekomimi.nekogram.proxynext.VMessBean;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
-import static com.v2ray.ang.V2RayConfig.SSR_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.SS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WSS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WS_PROTOCOL;
 import java.util.List;
 import java.util.Locale;
 
@@ -342,7 +335,7 @@ public class SharedConfig {
             } else if (available && info.available) {
                 return (int) (ping - info.ping);
             } else {
-                return hashCode() + "".compareTo(info.hashCode() + "");
+                return hashCode() - info.hashCode();
             }
 
         }
@@ -377,71 +370,42 @@ public class SharedConfig {
         }
 
         public String getAddress() {
-
             return address + ":" + port;
-
         }
 
         public String getType() {
-
             if (!StrUtil.isBlank(secret)) {
-
                 return "MTProto";
-
             } else {
-
                 return "Socks5";
-
             }
-
         }
 
         public String getTitle() {
-
             StringBuilder builder = new StringBuilder();
-
             builder.append("[ ");
-
             if (subId != 0L) {
-
                 try {
-
                     builder.append(SubManager.getSubList().find(ObjectFilters.eq("id", subId)).firstOrDefault().displayName());
-
                 } catch (Exception e) {
-
                     builder.append("Unknown");
-
                 }
-
             } else {
-
                 builder.append(getType());
-
             }
-
             builder.append(" ] ");
-
             if (StrUtil.isBlank(getRemarks())) {
-
                 builder.append(getAddress());
-
             } else {
-
                 builder.append(getRemarks());
-
             }
-
             return builder.toString();
-
         }
 
         private String remarks;
 
         public String getRemarks() {
-
             return remarks;
-
         }
 
         public void setRemarks(String remarks) {
@@ -452,59 +416,39 @@ public class SharedConfig {
         }
 
         public String toUrl() {
-
             HttpUrl.Builder builder = HttpUrl.parse(StrUtil.isBlank(secret) ?
                     "https://t.me/socks" : "https://t.me/proxy").newBuilder()
                     .addQueryParameter("server", address)
                     .addQueryParameter("port", port + "");
 
             if (!StrUtil.isBlank(secret)) {
-
                 builder.addQueryParameter("secret", secret);
-
             } else {
-
                 builder.addQueryParameter("user", username)
                         .addQueryParameter("pass", password);
-
             }
-
             if (!StrUtil.isBlank(remarks)) {
-
                 builder.fragment(Utils.INSTANCE.urlEncode(remarks));
-
             }
-
             return builder.toString();
-
         }
 
         public static ProxyInfo fromUrl(String url) {
-
             Uri lnk = Uri.parse(url);
-
             if (lnk == null) throw new IllegalArgumentException(url);
-
             ProxyInfo info = new ProxyInfo(lnk.getQueryParameter("server"),
                     Utilities.parseInt(lnk.getQueryParameter("port")),
                     lnk.getQueryParameter("user"),
                     lnk.getQueryParameter("pass"),
                     lnk.getQueryParameter("secret"));
-
             if (StrUtil.isNotBlank(lnk.getFragment())) {
-
                 info.setRemarks(lnk.getFragment());
-
             }
-
             return info;
-
         }
 
         public JSONObject toJsonInternal() throws JSONException {
-
             JSONObject obj = new JSONObject();
-
             if (!StrUtil.isBlank(remarks)) {
                 obj.put("remarks", remarks);
             }
@@ -529,17 +473,12 @@ public class SharedConfig {
             }
 
             return obj;
-
         }
 
         public static ProxyInfo fromJson(JSONObject obj) {
-
             ProxyInfo info;
-
             switch (obj.optString("type", "null")) {
-
                 case "socks5": {
-
                     info = new ProxyInfo();
 
                     info.group = obj.optInt("group", 0);
@@ -547,84 +486,54 @@ public class SharedConfig {
                     info.port = obj.optInt("port", 443);
                     info.username = obj.optString("username", "");
                     info.password = obj.optString("password", "");
-
                     info.remarks = obj.optString("remarks");
-
                     if (StrUtil.isBlank(info.remarks)) info.remarks = null;
-
                     info.group = obj.optInt("group", 0);
-
                     break;
-
                 }
 
                 case "mtproto": {
-
                     info = new ProxyInfo();
-
                     info.address = obj.optString("address", "");
                     info.port = obj.optInt("port", 443);
                     info.secret = obj.optString("secret", "");
-
                     info.remarks = obj.optString("remarks");
-
                     if (StrUtil.isBlank(info.remarks)) info.remarks = null;
-
                     info.group = obj.optInt("group", 0);
-
                     break;
-
                 }
 
                 case "vmess": {
-
                     info = new VmessProxy(obj.optString("link"));
-
                     break;
-
                 }
 
                 case "shadowsocks": {
-
                     info = new ShadowsocksProxy(obj.optString("link"));
-
                     break;
-
                 }
 
                 case "shadowsocksr": {
-
                     info = new ShadowsocksRProxy(obj.optString("link"));
-
                     break;
-
                 }
 
                 case "ws": {
-
                     info = new WsProxy(obj.optString("link"));
-
                     break;
-
                 }
 
                 default: {
-
                     throw new IllegalStateException("invalid proxy type " + obj.optString("type", "null"));
-
                 }
-
             }
 
             return info;
-
         }
 
         @Override
         public int hashCode() {
-
             return (address + port + username + password + secret).hashCode();
-
         }
 
         @Override
@@ -636,12 +545,10 @@ public class SharedConfig {
     public abstract static class ExternalSocks5Proxy extends ProxyInfo {
 
         public ExternalSocks5Proxy() {
-
             address = "127.0.0.1";
             username = "";
             password = "";
             secret = "";
-
         }
 
         public abstract boolean isStarted();
@@ -670,386 +577,75 @@ public class SharedConfig {
 
     }
 
-    public static class VmessProxy extends ExternalSocks5Proxy {
+    public static class BoxSocks5Proxy extends ExternalSocks5Proxy {
+        private final SingProxyManager proxyManager;
+        private final ProxyConfig.BoxProxy proxy;
 
-        public AngConfig.VmessBean bean;
-        public VmessLoader loader;
-
-        {
-
-            if (BuildVars.isMini) {
-
-                throw new RuntimeException(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert));
-
-            }
-
-        }
-
-        public VmessProxy(String vmessLink) {
-
-            this(VmessLoader.parseVmessLink(vmessLink));
-
-        }
-
-        public VmessProxy(AngConfig.VmessBean bean) {
-
-            this.bean = bean;
-
-        }
-
-        @Override
-        public String getAddress() {
-            return bean.getAddress() + ":" + bean.getPort();
+        public BoxSocks5Proxy(SingProxyManager proxyManager, ProxyConfig.BoxProxy proxy) {
+            super();
+            this.proxyManager = proxyManager;
+            this.proxy = proxy;
+            this.port = this.proxyManager.allocatePort(this.proxy);
         }
 
         @Override
         public boolean isStarted() {
-
-            return loader != null;
-
+            return this.proxyManager.isStarted();
         }
 
         @Override
         public void start() {
-
-            if (loader != null) return;
-
-            VmessLoader loader = new VmessLoader();
-
-            try {
-
-                loader.initConfig(bean);
-
-                port = loader.start();
-
-                this.loader = loader;
-
-                if (SharedConfig.proxyEnabled && SharedConfig.currentProxy == this) {
-
-                    ConnectionsManager.setProxySettings(true, address, port, username, password, secret);
-
-                }
-
-            } catch (Exception e) {
-
-                FileLog.e(e);
-
-                AlertUtil.showToast(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-
-            }
-
+            this.proxyManager.start();
         }
 
         @Override
         public void stop() {
+        }
 
-            if (loader != null) {
-
-                VmessLoader loader = this.loader;
-
-                loader.stop();
-
-                this.loader = null;
-
-            }
-
+        @Override
+        public String getAddress() {
+            return this.proxy.getAddress();
         }
 
         @Override
         public String toUrl() {
-            return bean.toString();
+            return this.proxy.generateLink();
         }
 
         @Override
         public String getRemarks() {
-            return bean.getRemarks();
+            return this.proxy.getRemarks();
         }
 
         @Override
         public void setRemarks(String remarks) {
-            bean.setRemarks(remarks);
+            // TODO: set Proxy Remarks
+            this.proxyManager.setProxyRemarks(this.proxy, remarks);
         }
 
         @Override
         public String getType() {
-
-            if (bean.getConfigType() == V2RayConfig.EConfigType.Trojan) {
-
+            if (this.proxy instanceof ShadowsocksBean) {
+                return "SS";
+            } else if (this.proxy instanceof ShadowsocksRBean) {
+                return "SSR";
+            } else if (this.proxy instanceof VMessBean) {
+                return "VMess";
+            } else if (this.proxy instanceof TrojanBean) {
                 return "Trojan";
-
-            } else {
-
-                return "Vmess";
-
             }
-
+            return "Unknown";
         }
 
         @Override
         public JSONObject toJsonInternal() throws JSONException {
-
-            JSONObject obj = new JSONObject();
-            obj.put("type", "vmess");
-            obj.put("link", toUrl());
-            return obj;
-
+            return this.proxy.generateBoxConf();
         }
 
         @Override
         public int hashCode() {
-            return (bean.getAddress() + bean.getPort() + bean.getId() + bean.getNetwork() + bean.getPath()).hashCode();
+            return this.proxy.hashCode();
         }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            return super.equals(obj) || (obj instanceof VmessProxy && bean.equals(((VmessProxy) obj).bean));
-        }
-
-    }
-
-    public static class ShadowsocksProxy extends ExternalSocks5Proxy {
-
-        public ShadowsocksLoader.Bean bean;
-        public ShadowsocksLoader loader;
-
-        public ShadowsocksProxy(String ssLink) {
-
-            this(ShadowsocksLoader.Bean.Companion.parse(ssLink));
-
-        }
-
-        public ShadowsocksProxy(ShadowsocksLoader.Bean bean) {
-
-            this.bean = bean;
-
-            if (BuildVars.isMini) {
-
-                throw new RuntimeException(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert));
-
-            }
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                throw new RuntimeException(LocaleController.getString("MinApi21Required", R.string.MinApi21Required));
-
-            }
-
-        }
-
-        @Override
-        public String getAddress() {
-            return bean.getHost() + ":" + bean.getRemotePort();
-        }
-
-        @Override
-        public boolean isStarted() {
-
-            return loader != null;
-
-        }
-
-        @Override
-        public void start() {
-
-            if (loader != null) return;
-
-            port = ProxyManager.mkPort();
-            ShadowsocksLoader loader = new ShadowsocksLoader();
-            loader.initConfig(bean, port);
-
-            loader.start();
-
-            this.loader = loader;
-
-            if (SharedConfig.proxyEnabled && SharedConfig.currentProxy == this) {
-
-                ConnectionsManager.setProxySettings(true, address, port, username, password, secret);
-
-            }
-
-        }
-
-        @Override
-        public void stop() {
-
-            if (loader != null) {
-
-                FileLog.d(getTitle() + " stopped");
-
-                ShadowsocksLoader loader = this.loader;
-
-                loader.stop();
-
-                this.loader = null;
-
-            }
-
-        }
-
-        @Override
-        public String toUrl() {
-            return bean.toString();
-        }
-
-
-        @Override
-        public String getRemarks() {
-            return bean.getRemarks();
-        }
-
-        @Override
-        public void setRemarks(String remarks) {
-            bean.setRemarks(remarks);
-        }
-
-        @Override
-        public String getType() {
-            return "SS";
-        }
-
-        @Override
-        public JSONObject toJsonInternal() throws JSONException {
-
-            JSONObject obj = new JSONObject();
-            obj.put("type", "shadowsocks");
-            obj.put("link", toUrl());
-            return obj;
-
-        }
-
-        @Override
-        public int hashCode() {
-
-            return (bean.getHost() + bean.getRemotePort() + bean.getMethod()).hashCode();
-
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            return super.equals(obj) || (obj instanceof ShadowsocksProxy && bean.equals(((ShadowsocksProxy) obj).bean));
-        }
-
-    }
-
-    public static class ShadowsocksRProxy extends ExternalSocks5Proxy {
-
-        public ShadowsocksRLoader.Bean bean;
-        public ShadowsocksRLoader loader;
-
-        public ShadowsocksRProxy(String ssLink) {
-
-            this(ShadowsocksRLoader.Bean.Companion.parse(ssLink));
-
-        }
-
-        public ShadowsocksRProxy(ShadowsocksRLoader.Bean bean) {
-
-            this.bean = bean;
-
-            if (BuildVars.isMini) {
-
-                throw new RuntimeException(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert));
-
-            }
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                throw new RuntimeException(LocaleController.getString("MinApi21Required", R.string.MinApi21Required));
-
-            }
-
-        }
-
-        @Override
-        public String getAddress() {
-            return bean.getHost() + ":" + bean.getRemotePort();
-        }
-
-        @Override
-        public boolean isStarted() {
-
-            return loader != null;
-
-        }
-
-        @Override
-        public void start() {
-
-            if (loader != null) return;
-
-            port = ProxyManager.mkPort();
-            ShadowsocksRLoader loader = new ShadowsocksRLoader();
-            loader.initConfig(bean, port);
-
-            loader.start();
-
-            this.loader = loader;
-
-            if (SharedConfig.proxyEnabled && SharedConfig.currentProxy == this) {
-
-                ConnectionsManager.setProxySettings(true, address, port, username, password, secret);
-
-            }
-
-        }
-
-        @Override
-        public void stop() {
-
-            if (loader != null) {
-
-                ShadowsocksRLoader loader = this.loader;
-
-                this.loader = null;
-
-                loader.stop();
-
-            }
-
-        }
-
-        @Override
-        public String toUrl() {
-            return bean.toString();
-        }
-
-        @Override
-        public String getRemarks() {
-            return bean.getRemarks();
-        }
-
-        @Override
-        public void setRemarks(String remarks) {
-            bean.setRemarks(remarks);
-        }
-
-        @Override
-        public String getType() {
-            return "SSR";
-        }
-
-        @Override
-        public JSONObject toJsonInternal() throws JSONException {
-
-            JSONObject obj = new JSONObject();
-            obj.put("type", "shadowsocksr");
-            obj.put("link", toUrl());
-            return obj;
-
-        }
-
-        @Override
-        public int hashCode() {
-
-            return (bean.getHost() + bean.getRemotePort() + bean.getMethod() + bean.getProtocol() + bean.getProtocol_param() + bean.getObfs() + bean.getObfs_param()).hashCode();
-
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            return super.equals(obj) || (obj instanceof ShadowsocksRProxy && bean.equals(((ShadowsocksRProxy) obj).bean));
-        }
-
     }
 
     public static class WsProxy extends ExternalSocks5Proxy {
@@ -1145,18 +741,12 @@ public class SharedConfig {
     public static LinkedList<ProxyInfo> proxyList = new LinkedList<>();
 
     public static LinkedList<ProxyInfo> getProxyList() {
-
         while (true) {
-
             try {
-
                 return new LinkedList<>(proxyList);
-
             } catch (Exception ignored) {
             }
-
         }
-
     }
 
     private static boolean proxyListLoaded;
@@ -2099,7 +1689,13 @@ public class SharedConfig {
                     ((ExternalSocks5Proxy) proxyInfo).stop();
                 }
             }
+            if (SingProxyManager.INSTANCE.isStarted())
+                SingProxyManager.INSTANCE.stop();
+            if (SingProxyManager.TEST_INSTANCE.isStarted())
+                SingProxyManager.TEST_INSTANCE.stop();
         }
+
+        if (currentProxy instanceof ExternalSocks5Proxy) ((ExternalSocks5Proxy) currentProxy).stop();
 
         proxyListLoaded = true;
         proxyList.clear();
@@ -2112,7 +1708,7 @@ public class SharedConfig {
 
             for (String proxy : subInfo.proxies) {
                 try {
-                    ProxyInfo info = parseProxyInfo(proxy);
+                    ProxyInfo info = parseProxyInfo(SingProxyManager.INSTANCE, proxy);
                     info.subId = subInfo.id;
                     if (info.hashCode() == current) {
                         currentProxy = info;
@@ -2176,45 +1772,22 @@ public class SharedConfig {
         proxyEnabled = proxyEnabledValue;
     }
 
-    public static ProxyInfo parseProxyInfo(String url) throws InvalidProxyException {
-        if (url.startsWith(V2RayConfig.VMESS_PROTOCOL) || url.startsWith(V2RayConfig.VMESS1_PROTOCOL) || url.startsWith(V2RayConfig.TROJAN_PROTOCOL)) {
-            try {
-                return new VmessProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
+    public static ProxyInfo parseProxyInfo(SingProxyManager singManager, String url) throws InvalidProxyException {
+        for (String supported_protocol : ProxyConfig.INSTANCE.getSUPPORTED_PROTOCOLS()) {
+            if (url.startsWith(supported_protocol)) {
+                try {
+                    var boxConfig = ProxyConfig.parseSingBoxConfig(url);
+                    if (boxConfig == null) continue;
+                    return new BoxSocks5Proxy(singManager, boxConfig);
+                } catch (Exception ex) {
+                    FileLog.e(ex);
+                }
             }
-        } else if (url.startsWith(SS_PROTOCOL)) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                throw new InvalidProxyException("shadowsocks requires min api 21");
-            }
-            try {
-                return new ShadowsocksProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        } else if (url.startsWith(SSR_PROTOCOL)) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                throw new InvalidProxyException("shadowsocksR requires min api 21");
-            }
-            try {
-                return new ShadowsocksRProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        } else if (url.startsWith(WS_PROTOCOL) || url.startsWith(WSS_PROTOCOL)) {
-            try {
-                return new WsProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        }/* else if (url.startsWith(RB_PROTOCOL)) {
-            try {
-                return new RelayBatonProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        } */
+        }
+        return parseProxyInfo(url);
+    }
 
+    public static ProxyInfo parseProxyInfo(String url) throws InvalidProxyException {
         if (url.startsWith("tg:proxy") ||
                 url.startsWith("tg://proxy") ||
                 url.startsWith("tg:socks") ||
@@ -2236,9 +1809,7 @@ public class SharedConfig {
         }
 
         public InvalidProxyException(Throwable cause) {
-
             super(cause);
-
         }
 
     }

@@ -26,9 +26,11 @@ import android.graphics.PorterDuffColorFilter;
 import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.Build;
+import android.os.Process;
 import android.os.SystemClock;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -48,6 +50,7 @@ import com.v2ray.ang.V2RayConfig;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.ItemTouchHelper;
@@ -80,6 +83,7 @@ import org.telegram.ui.ActionBar.ThemeDescription;
 import org.telegram.ui.Cells.HeaderCell;
 import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCheckCell;
+import org.telegram.ui.Cells.TextInfoCell;
 import org.telegram.ui.Cells.TextInfoPrivacyCell;
 import org.telegram.ui.Cells.TextSettingsCell;
 import org.telegram.ui.Components.CheckBox2;
@@ -90,8 +94,10 @@ import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SlideChooseView;
 import org.telegram.ui.Components.URLSpanNoUnderline;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -110,7 +116,10 @@ import java.util.regex.Pattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
+import kotlin.io.LineReader;
 import okhttp3.HttpUrl;
+import tw.nekomimi.nekogram.proxy.GuardedProcessPool;
+import tw.nekomimi.nekogram.proxy.SingLoader;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.proxy.ShadowsocksRSettingsActivity;
 import tw.nekomimi.nekogram.proxy.ShadowsocksSettingsActivity;
@@ -145,6 +154,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
     private int rowCount;
     private int useProxyRow;
     private int enablePublicProxyRow;
+    private int nekoXSingPluginRow;
     private int useProxyShadowRow;
     private int connectionsHeaderRow;
     private int proxyStartRow;
@@ -779,21 +789,13 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         addItem.addSubItem(menu_add_input_socks, LocaleController.getString("AddProxySocks5", R.string.AddProxySocks5)).setOnClickListener((v) -> presentFragment(new ProxySettingsActivity(0)));
         addItem.addSubItem(menu_add_input_telegram, LocaleController.getString("AddProxyTelegram", R.string.AddProxyTelegram)).setOnClickListener((v) -> presentFragment(new ProxySettingsActivity(1)));
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            addItem.addSubItem(menu_add_input_ws, LocaleController.getString("AddProxyWs", R.string.AddProxyWs)).setOnClickListener((v) -> presentFragment(new WsSettingsActivity()));
-        }
+        addItem.addSubItem(menu_add_input_ws, LocaleController.getString("AddProxyWs", R.string.AddProxyWs)).setOnClickListener((v) -> presentFragment(new WsSettingsActivity()));
 
-        if (!BuildVars.isMini) {
+        addItem.addSubItem(menu_add_input_vmess, LocaleController.getString("AddProxyVmess", R.string.AddProxyVmess)).setOnClickListener((v) -> presentFragment(new VmessSettingsActivity()));
+        addItem.addSubItem(menu_add_input_vmess, LocaleController.getString("AddProxyVmess", R.string.AddProxyTrojan)).setOnClickListener((v) -> presentFragment(new TrojanSettingsActivity()));
+        addItem.addSubItem(menu_add_input_ss, LocaleController.getString("AddProxySS", R.string.AddProxySS)).setOnClickListener((v) -> presentFragment(new ShadowsocksSettingsActivity()));
+        addItem.addSubItem(menu_add_input_ssr, LocaleController.getString("AddProxySSR", R.string.AddProxySSR)).setOnClickListener((v) -> presentFragment(new ShadowsocksRSettingsActivity()));
 
-            addItem.addSubItem(menu_add_input_vmess, LocaleController.getString("AddProxyVmess", R.string.AddProxyVmess)).setOnClickListener((v) -> presentFragment(new VmessSettingsActivity()));
-            addItem.addSubItem(menu_add_input_vmess, LocaleController.getString("AddProxyVmess", R.string.AddProxyTrojan)).setOnClickListener((v) -> presentFragment(new TrojanSettingsActivity()));
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                addItem.addSubItem(menu_add_input_ss, LocaleController.getString("AddProxySS", R.string.AddProxySS)).setOnClickListener((v) -> presentFragment(new ShadowsocksSettingsActivity()));
-                addItem.addSubItem(menu_add_input_ssr, LocaleController.getString("AddProxySSR", R.string.AddProxySSR)).setOnClickListener((v) -> presentFragment(new ShadowsocksRSettingsActivity()));
-            }
-            // addItem.addSubItem(menu_add_input_rb, LocaleController.getString("AddProxyRB", R.string.AddProxyRB)).setOnClickListener((v) -> presentFragment(new RelayBatonSettingsActivity()));
-
-        }
 
         menu.addItem(menu_sub, R.drawable.msg_list);
 
@@ -1000,10 +1002,10 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                 LocaleController.getString("AddProxySocks5", R.string.AddProxySocks5),
                 LocaleController.getString("AddProxyTelegram", R.string.AddProxyTelegram),
                 LocaleController.getString("AddProxyWs", R.string.AddProxyWs),
-                BuildVars.isMini ? null : LocaleController.getString("AddProxyVmess", R.string.AddProxyVmess),
-                BuildVars.isMini ? null : LocaleController.getString("AddProxyTrojan", R.string.AddProxyTrojan),
-                BuildVars.isMini || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? null : LocaleController.getString("AddProxySS", R.string.AddProxySS),
-                BuildVars.isMini || Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP ? null : LocaleController.getString("AddProxySSR", R.string.AddProxySSR),
+                LocaleController.getString("AddProxyVmess", R.string.AddProxyVmess),
+                LocaleController.getString("AddProxyTrojan", R.string.AddProxyTrojan),
+                LocaleController.getString("AddProxySS", R.string.AddProxySS),
+                LocaleController.getString("AddProxySSR", R.string.AddProxySSR),
                 LocaleController.getString("ImportProxyFromClipboard", R.string.ImportProxyFromClipboard),
                 LocaleController.getString("ScanQRCode", R.string.ScanQRCode)
 
@@ -1115,6 +1117,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         }
 
         enablePublicProxyRow = rowCount++;
+        nekoXSingPluginRow = rowCount++;
         if (!proxyList.isEmpty()) {
             proxyStartRow = rowCount;
             rowCount += proxyList.size();
@@ -1571,6 +1574,33 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                 } else if (position == rotationRow) {
                     checkCell.setChecked(SharedConfig.proxyRotationEnabled);
                 }
+            } else if (holder.getItemViewType() == 1) {
+                if (position == nekoXSingPluginRow) {
+                    TextSettingsCell textSettingsCell = (TextSettingsCell) holder.itemView;
+                    String value = LocaleController.getString("NekoXSingPluginNotFound", R.string.NekoXSingPluginNotFound);
+                    if (SingLoader.INSTANCE.checkSingLoaderExist(mContext)) {
+                        value = LocaleController.getString("NekoXSingPluginPresents", R.string.NekoXSingPluginPresents);
+                        String path = SingLoader.INSTANCE.getSingAbsolutePath(mContext);
+                        new Thread(() -> {
+                            try {
+                                assert path != null;
+                                var pb = new ProcessBuilder(path, "version");
+                                var buffered = new BufferedInputStream(pb.start().getInputStream());
+                                String version = LineReader.INSTANCE.readLine(buffered, Charset.defaultCharset());
+                                String versionValue = version.split("version")[1];
+                                AndroidUtilities.runOnUIThread(() -> textSettingsCell.setTextAndValue(LocaleController.getString("NekoXSingPlugin", R.string.NekoXSingPlugin), versionValue, true, true));
+                            } catch (Throwable e) {
+                                FileLog.e(e);
+                            }
+                        }).start();
+
+                    }
+                    Log.e("SingPlugin", value);
+                    textSettingsCell.setTextAndValue(LocaleController.getString("NekoXSingPlugin", R.string.NekoXSingPlugin), value, true);
+                    if (SingLoader.INSTANCE.checkSingLoaderExist(mContext)) {
+                        Log.e("SingPlugin", SingLoader.INSTANCE.getSingAbsolutePath(mContext));
+                    }
+                }
             } else {
                 super.onBindViewHolder(holder, position, payloads);
             }
@@ -1597,7 +1627,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         @Override
         public boolean isEnabled(RecyclerView.ViewHolder holder) {
             int position = holder.getAdapterPosition();
-            return position == useProxyRow || position == rotationRow || position == callsRow || position == enablePublicProxyRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow;
+            return position == useProxyRow || position == rotationRow || position == callsRow || position == enablePublicProxyRow || position == deleteAllRow || position >= proxyStartRow && position < proxyEndRow || position == nekoXSingPluginRow;
         }
 
         @Override
@@ -1679,6 +1709,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                 return VIEW_TYPE_HEADER;
             } else if (position == rotationTimeoutRow) {
                 return VIEW_TYPE_SLIDE_CHOOSER;
+            } else if (position == nekoXSingPluginRow) {
+                return 1;
             } else if (position >= proxyStartRow && position < proxyEndRow) {
                 return VIEW_TYPE_PROXY_DETAIL;
             } else {

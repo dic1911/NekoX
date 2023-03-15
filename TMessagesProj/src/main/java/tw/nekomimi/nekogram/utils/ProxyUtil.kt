@@ -3,6 +3,7 @@
 package tw.nekomimi.nekogram.utils
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.ClipboardManager
@@ -54,26 +55,7 @@ import kotlin.collections.HashMap
 
 
 object ProxyUtil {
-
-    @JvmStatic
-    fun isVPNEnabled(): Boolean {
-
-        val networkList = mutableListOf<String>()
-
-        runCatching {
-
-            Collections.list(NetworkInterface.getNetworkInterfaces()).forEach {
-
-                if (it.isUp) networkList.add(it.name)
-
-            }
-
-        }
-
-        return networkList.contains("tun0")
-
-    }
-
+    @SuppressLint("NewApi")
     @JvmStatic
     @JvmOverloads
     fun parseProxies(text: String, tryDecode: Boolean = true): MutableList<String> {
@@ -87,28 +69,23 @@ object ProxyUtil {
 
         val proxies = mutableListOf<String>()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            try {
-                // sip008
-                val ssArray = JSONArray(text)
-                for (index in 0 until ssArray.length()) {
-                    proxies.add(ShadowsocksLoader.Bean.parseJson(ssArray.getJSONObject(index)).toString())
-                }
-                return proxies
-            } catch (ignored: JSONException) {
+        try {
+            // sip008
+            val ssArray = JSONArray(text)
+            for (index in 0 until ssArray.length()) {
+                proxies.add(ShadowsocksLoader.Bean.parseJson(ssArray.getJSONObject(index)).toString())
             }
+            return proxies
+        } catch (ignored: JSONException) {
+        }
 
-            if (text.contains("proxies:")) {
+        if (text.contains("proxies:")) {
+            // clash
 
-                if (BuildVars.isMini) {
-                    error(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert))
-                }
-
-                // clash
-
-                for (proxy in (Yaml().loadAs(text, Map::class.java)["proxies"] as List<Map<String, Any?>>)) {
-                    val type = proxy["type"] as String
-                    when (type) {
+            val yamlProxies = Yaml().loadAs(text, Map::class.java)["proxies"] as List<Map<String, Any?>>
+            for (proxy in yamlProxies) {
+                runCatching {
+                    when (proxy["type"] as String) {
                         "ss" -> {
                             var pluginStr = ""
                             if (proxy.contains("plugin")) {
@@ -118,15 +95,16 @@ object ProxyUtil {
                                 pluginStr = opts.toString(false)
                             }
                             proxies.add(
-                                ShadowsocksLoader.Bean(
-                                    proxy["server"] as String,
-                                    proxy["port"] as Int,
-                                    proxy["password"] as String,
-                                    proxy["cipher"] as String,
-                                    pluginStr,
-                                    proxy["name"] as String
-                            ).toString())
+                                    ShadowsocksLoader.Bean(
+                                            proxy["server"] as String,
+                                            proxy["port"] as Int,
+                                            proxy["password"] as String,
+                                            proxy["cipher"] as String,
+                                            pluginStr,
+                                            proxy["name"] as String
+                                    ).toString())
                         }
+
                         "vmess" -> {
                             val opts = AngConfig.VmessBean()
                             for (opt in proxy) {
@@ -147,6 +125,7 @@ object ProxyUtil {
                                             "path" -> opts.path = h2Opt.value as String
                                         }
                                     }
+
                                     "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
                                         when (httpOpt.key) {
                                             "path" -> opts.path = (httpOpt.value as List<String>).first()
@@ -156,6 +135,7 @@ object ProxyUtil {
                             }
                             proxies.add(opts.toString())
                         }
+
                         "trojan" -> {
                             val opts = AngConfig.VmessBean()
                             opts.configType = V2RayConfig.EConfigType.Trojan
@@ -170,6 +150,7 @@ object ProxyUtil {
                             }
                             proxies.add(opts.toString())
                         }
+
                         "ssr" -> {
                             val opts = ShadowsocksRLoader.Bean()
                             for (opt in proxy) {
@@ -187,10 +168,12 @@ object ProxyUtil {
                             }
                             proxies.add(opts.toString())
                         }
+
+                        else -> {}
                     }
                 }
-                return proxies
             }
+            return proxies
         }
 
         text.split('\n').map { it.split(" ") }.forEach {
@@ -207,36 +190,23 @@ object ProxyUtil {
                         line.startsWith(SSR_PROTOCOL) ||
                         line.startsWith(WS_PROTOCOL) ||
                         line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL) /*||
-                    line.startsWith(RB_PROTOCOL)*/) {
-
+                        line.startsWith(TROJAN_PROTOCOL)) {
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line).toUrl()) }
-
                 }
-
             }
-
         }
-
         if (proxies.isEmpty()) error("no proxy link found")
-
         return proxies
-
     }
 
     @JvmStatic
     fun importFromClipboard(ctx: Activity) {
-
-        var text = (ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip?.getItemAt(0)?.text?.toString()
-
+        val text = (ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager).primaryClip?.getItemAt(0)?.text?.toString()
         val proxies = mutableListOf<SharedConfig.ProxyInfo>()
-
         var error = false
 
-        text?.trim()?.split('\n')?.map { it.split(" ") }?.forEach {
-
-            it.forEach { line ->
-
+        text?.trim()?.split('\n')?.map { it.split(" ") }?.forEach { lists ->
+            lists.forEach { line ->
                 if (line.startsWith("tg://proxy") ||
                         line.startsWith("tg://socks") ||
                         line.startsWith("https://t.me/proxy") ||
@@ -247,31 +217,19 @@ object ProxyUtil {
                         line.startsWith(SSR_PROTOCOL) ||
                         line.startsWith(WS_PROTOCOL) ||
                         line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL) /*||
-                    line.startsWith(RB_PROTOCOL)*/) {
-
+                        line.startsWith(TROJAN_PROTOCOL)) {
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
-
                         error = true
-
                         showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
-
                     }
-
                 }
-
             }
-
         }
 
         runCatching {
-
-            if (proxies.isNullOrEmpty() && !error) {
-
+            if (proxies.isEmpty() && !error) {
                 String(Base64.decode(text, Base64.NO_PADDING)).trim().split('\n').map { it.split(" ") }.forEach { str ->
-
                     str.forEach { line ->
-
                         if (line.startsWith("tg://proxy") ||
                                 line.startsWith("tg://socks") ||
                                 line.startsWith("https://t.me/proxy") ||
@@ -282,52 +240,31 @@ object ProxyUtil {
                                 line.startsWith(SSR_PROTOCOL) ||
                                 line.startsWith(WS_PROTOCOL) ||
                                 line.startsWith(WSS_PROTOCOL) ||
-                                line.startsWith(TROJAN_PROTOCOL) /*||
-
-                    line.startsWith(RB_PROTOCOL)*/) {
-
+                                line.startsWith(TROJAN_PROTOCOL)) {
                             runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
-
                                 error = true
-
                                 showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
-
                             }
-
                         }
-
                     }
-
                 }
-
             }
-
         }
 
-        if (proxies.isNullOrEmpty()) {
-
+        if (proxies.isEmpty()) {
             if (!error) showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink))
-
             return
-
         } else if (!error) {
-
             AlertUtil.showSimpleAlert(ctx, LocaleController.getString("ImportedProxies", R.string.ImportedProxies) + "\n\n" + proxies.joinToString("\n") { it.title })
-
         }
 
         proxies.forEach {
-
             SharedConfig.addProxy(it)
-
         }
 
         UIUtil.runOnUIThread {
-
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged)
-
         }
-
     }
 
     @JvmStatic
@@ -679,6 +616,7 @@ object ProxyUtil {
                     AndroidUtilities.addToClipboard(text)
                     showToast(LocaleController.getString("LinkCopied", R.string.LinkCopied))
                 }
+
                 else -> showQrDialog(ctx, text)
             }
         }

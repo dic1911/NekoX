@@ -248,10 +248,6 @@ data class VMessBean(var uuid: String = "123456",
         return ProxyConfig.VMESS_PROTOCOL + Base64.encode(Gson().toJson(qr))
     }
 
-    override fun getAddress(): String {
-        return this.address;
-    }
-
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false

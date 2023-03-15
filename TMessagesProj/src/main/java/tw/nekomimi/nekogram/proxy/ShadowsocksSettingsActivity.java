@@ -56,6 +56,8 @@ import java.util.ArrayList;
 
 import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
+import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
+import tw.nekomimi.nekogram.proxynext.VMessBean;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.ui.PopupBuilder;
 import tw.nekomimi.nekogram.utils.AlertUtil;
@@ -79,8 +81,8 @@ public class ShadowsocksSettingsActivity extends BaseFragment {
 
     private TextInfoPrivacyCell bottomCell;
 
-    private SharedConfig.ShadowsocksProxy currentProxyInfo;
-    private ShadowsocksLoader.Bean currentBean;
+    private SharedConfig.BoxSocks5Proxy currentProxyInfo;
+    private ShadowsocksBean currentBean;
     private PluginConfiguration plugin;
 
     private boolean ignoreOnTextChange;
@@ -140,14 +142,14 @@ public class ShadowsocksSettingsActivity extends BaseFragment {
 
     public ShadowsocksSettingsActivity() {
         super();
-        currentBean = new ShadowsocksLoader.Bean();
+        currentBean = new ShadowsocksBean();
         plugin = new PluginConfiguration("");
     }
 
-    public ShadowsocksSettingsActivity(SharedConfig.ShadowsocksProxy proxyInfo) {
+    public ShadowsocksSettingsActivity(SharedConfig.BoxSocks5Proxy proxyInfo) {
         super();
         currentProxyInfo = proxyInfo;
-        currentBean = proxyInfo.bean;
+        currentBean = ((ShadowsocksBean) proxyInfo.getBoxProxy());
         plugin = new PluginConfiguration(currentBean.getPlugin());
     }
 
