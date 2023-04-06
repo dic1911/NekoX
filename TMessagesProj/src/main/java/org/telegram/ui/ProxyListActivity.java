@@ -116,10 +116,8 @@ import java.util.regex.Pattern;
 import cn.hutool.core.thread.ThreadUtil;
 import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
-import kotlin.io.LineReader;
 import okhttp3.HttpUrl;
 import tw.nekomimi.nekogram.proxy.GuardedProcessPool;
-import tw.nekomimi.nekogram.proxy.SingLoader;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.proxy.ShadowsocksRSettingsActivity;
 import tw.nekomimi.nekogram.proxy.ShadowsocksSettingsActivity;
@@ -225,26 +223,26 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
             checkImageView.setContentDescription(LocaleController.getString("Edit", R.string.Edit));
             addView(checkImageView, LayoutHelper.createFrame(48, 48, (LocaleController.isRTL ? Gravity.LEFT : Gravity.RIGHT) | Gravity.TOP, 8, 8, 8, 0));
             checkImageView.setOnClickListener(v -> {
-                SharedConfig.ProxyInfo info = currentInfo;
-                if (info instanceof SharedConfig.VmessProxy) {
-                    if (((SharedConfig.VmessProxy) info).bean.getConfigType() == V2RayConfig.EConfigType.Trojan) {
-                        presentFragment(new TrojanSettingsActivity((SharedConfig.VmessProxy) info));
-                    } else {
-                        presentFragment(new VmessSettingsActivity((SharedConfig.VmessProxy) info));
-                    }
-                } else if (info instanceof SharedConfig.ShadowsocksProxy) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        presentFragment(new ShadowsocksSettingsActivity((SharedConfig.ShadowsocksProxy) info));
-                    }
-                } else if (info instanceof SharedConfig.ShadowsocksRProxy) {
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                        presentFragment(new ShadowsocksRSettingsActivity((SharedConfig.ShadowsocksRProxy) info));
-                    }
-                } else if (info instanceof SharedConfig.WsProxy) {
-                    presentFragment(new WsSettingsActivity((SharedConfig.WsProxy) info));
-                } else {
-                    presentFragment(new ProxySettingsActivity(info));
-                }
+//                SharedConfig.ProxyInfo info = currentInfo;
+//                if (info instanceof SharedConfig.VmessProxy) {
+//                    if (((SharedConfig.VmessProxy) info).bean.getConfigType() == V2RayConfig.EConfigType.Trojan) {
+//                        presentFragment(new TrojanSettingsActivity((SharedConfig.VmessProxy) info));
+//                    } else {
+//                        presentFragment(new VmessSettingsActivity((SharedConfig.VmessProxy) info));
+//                    }
+//                } else if (info instanceof SharedConfig.ShadowsocksProxy) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        presentFragment(new ShadowsocksSettingsActivity((SharedConfig.ShadowsocksProxy) info));
+//                    }
+//                } else if (info instanceof SharedConfig.ShadowsocksRProxy) {
+//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                        presentFragment(new ShadowsocksRSettingsActivity((SharedConfig.ShadowsocksRProxy) info));
+//                    }
+//                } else if (info instanceof SharedConfig.WsProxy) {
+//                    presentFragment(new WsSettingsActivity((SharedConfig.WsProxy) info));
+//                } else {
+//                    presentFragment(new ProxySettingsActivity(info));
+//                }
             });
 
             checkBox = new CheckBox2(context, 21);
