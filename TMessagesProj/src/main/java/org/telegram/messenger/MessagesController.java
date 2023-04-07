@@ -7289,7 +7289,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 TLRPC.TL_help_promoData res = (TLRPC.TL_help_promoData) response;
 
                 SharedConfig.ProxyInfo proxy = SharedConfig.currentProxy;
-                if (res.proxy && (NekoConfig.hideProxySponsorChannel.Bool() || (proxy != null && !proxy.getProxyType()))) {
+                if (res.proxy && (NekoConfig.hideProxySponsorChannel.Bool() || (proxy != null && proxy.getProxyType() != SharedConfig.PROXY_TYPE_ORIGINAL))) {
                     nextPromoInfoCheckTime = getConnectionsManager().getCurrentTime() + 60 * 60;
                     noDialog = true;
                 } else {

@@ -26,9 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.v2ray.ang.V2RayConfig;
-import com.v2ray.ang.dto.AngConfig;
-
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -49,6 +46,8 @@ import java.util.ArrayList;
 
 import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
+import tw.nekomimi.nekogram.proxynext.SingProxyManager;
+import tw.nekomimi.nekogram.proxynext.VMessBean;
 import tw.nekomimi.nekogram.ui.PopupBuilder;
 
 public class VmessSettingsActivity extends BaseFragment {
@@ -74,8 +73,8 @@ public class VmessSettingsActivity extends BaseFragment {
     private TextInfoPrivacyCell bottomCell;
     private ActionBarMenuItem doneItem;
 
-    private SharedConfig.VmessProxy currentProxyInfo;
-    private AngConfig.VmessBean currentBean;
+    private SharedConfig.SingProxyInfo currentProxyInfo;
+    private VMessBean currentBean;
 
     private boolean ignoreOnTextChange;
 
@@ -138,14 +137,13 @@ public class VmessSettingsActivity extends BaseFragment {
 
     public VmessSettingsActivity() {
         super();
-        currentBean = new AngConfig.VmessBean();
-        currentBean.setConfigType(V2RayConfig.EConfigType.Vmess);
+        currentBean = new VMessBean();
     }
 
-    public VmessSettingsActivity(SharedConfig.VmessProxy proxyInfo) {
+    public VmessSettingsActivity(SharedConfig.SingProxyInfo proxyInfo) {
         super();
         currentProxyInfo = proxyInfo;
-        currentBean = proxyInfo.bean;
+        currentBean = (VMessBean) proxyInfo.getProxyBean();
     }
 
 
@@ -170,45 +168,28 @@ public class VmessSettingsActivity extends BaseFragment {
                 if (id == -1) {
                     finishFragment();
                 } else if (id == done_button) {
-
                     if (getParentActivity() == null) {
                         return;
                     }
-
                     if (StrUtil.isBlank(ipField.getText())) {
-
                         ipField.requestFocus();
                         AndroidUtilities.showKeyboard(ipField);
-
                         return;
-
                     }
-
                     if (StrUtil.isBlank(portField.getText())) {
-
                         portField.requestFocus();
                         AndroidUtilities.showKeyboard(portField);
-
                         return;
-
                     }
-
                     if (StrUtil.isBlank(userIdField.getText())) {
-
                         userIdField.requestFocus();
                         AndroidUtilities.showKeyboard(userIdField);
-
                         return;
-
                     }
-
                     if (StrUtil.isBlank(alterIdField.getText())) {
-
                         alterIdField.requestFocus();
                         AndroidUtilities.showKeyboard(alterIdField);
-
                         return;
-
                     }
 
                     currentBean.setAddress(ipField.getText().toString());
@@ -224,7 +205,7 @@ public class VmessSettingsActivity extends BaseFragment {
                     currentBean.setRemarks(remarksField.getText().toString());
 
                     if (currentProxyInfo == null) {
-                        currentProxyInfo = new SharedConfig.VmessProxy(currentBean);
+                        currentProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(currentBean);
                         SharedConfig.addProxy(currentProxyInfo);
                         SharedConfig.setCurrentProxy(currentProxyInfo);
                     } else {
@@ -236,7 +217,6 @@ public class VmessSettingsActivity extends BaseFragment {
                     }
 
                     finishFragment();
-
                 }
             }
         });

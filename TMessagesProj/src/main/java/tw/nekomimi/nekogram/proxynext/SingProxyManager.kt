@@ -7,6 +7,7 @@ import android.content.pm.ResolveInfo
 import android.net.Uri
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.SharedConfig
 import tw.nekomimi.nekogram.proxy.GuardedProcessPool
 import tw.nekomimi.nekogram.proxy.ProxyManager
 import java.io.File
@@ -18,14 +19,14 @@ class SingProxyManager {
         val testInstance = SingProxyManager()
     }
 
-    val proxies = mutableListOf<SingProxyInfo>()
+    val proxies = mutableListOf<SharedConfig.SingProxyInfo>()
     private val allocatedPorts = mutableSetOf<Int>()
 
     val isSingExist: Boolean by lazy {
         resolveProviders(ApplicationLoader.applicationContext).size == 1
     }
 
-    private val singPath: String? by lazy {
+    val singPath: String? by lazy {
         val providers = resolveProviders(ApplicationLoader.applicationContext)
         val provider = providers.single().providerInfo
         provider?.metaData?.getString("nekox.messenger.sing.executable_path")
@@ -73,16 +74,16 @@ class SingProxyManager {
 
     }
 
-    fun registerProxy(proxyBing: ProxyConfig.SingProxyBean): SingProxyInfo {
+    fun registerProxy(proxyBing: ProxyConfig.SingProxyBean): SharedConfig.SingProxyInfo {
         var port = ProxyManager.mkPort()
         while (allocatedPorts.contains(port)) port = ProxyManager.mkPort()
         allocatedPorts.add(port)
-        val proxy = SingProxyInfo(port, proxyBing)
+        val proxy = SharedConfig.SingProxyInfo(port, proxyBing)
         proxies.add(proxy)
         return proxy;
     }
 
-    fun unregister(info: SingProxyInfo) {
+    fun unregister(info: SharedConfig.SingProxyInfo) {
         val reload = proxies.remove(info)
         if (proxies.size == 0)
             stop()

@@ -30,18 +30,12 @@ import com.google.zxing.qrcode.QRCodeReader
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.v2ray.ang.V2RayConfig
-import com.v2ray.ang.V2RayConfig.SSR_PROTOCOL
-import com.v2ray.ang.V2RayConfig.SS_PROTOCOL
-import com.v2ray.ang.V2RayConfig.TROJAN_PROTOCOL
-import com.v2ray.ang.V2RayConfig.VMESS1_PROTOCOL
-import com.v2ray.ang.V2RayConfig.VMESS_PROTOCOL
-import com.v2ray.ang.V2RayConfig.WSS_PROTOCOL
-import com.v2ray.ang.V2RayConfig.WS_PROTOCOL
 import com.v2ray.ang.dto.AngConfig
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONArray
 import org.json.JSONException
 import org.telegram.messenger.*
+import org.telegram.messenger.SharedConfig.WsProxy
 import org.telegram.messenger.browser.Browser
 import org.yaml.snakeyaml.Yaml
 import tw.nekomimi.nekogram.ui.BottomBuilder
@@ -189,13 +183,13 @@ object ProxyUtil {
                         line.startsWith("tg://socks") ||
                         line.startsWith("https://t.me/proxy") ||
                         line.startsWith("https://t.me/socks") ||
-                        line.startsWith(VMESS_PROTOCOL) ||
-                        line.startsWith(VMESS1_PROTOCOL) ||
-                        line.startsWith(SS_PROTOCOL) ||
-                        line.startsWith(SSR_PROTOCOL) ||
-                        line.startsWith(WS_PROTOCOL) ||
-                        line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL)) {
+                        line.startsWith(ProxyConfig.VMESS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.VMESS1_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.SS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.SSR_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.WS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.WSS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line).link) }
                 }
             }
@@ -216,13 +210,13 @@ object ProxyUtil {
                         line.startsWith("tg://socks") ||
                         line.startsWith("https://t.me/proxy") ||
                         line.startsWith("https://t.me/socks") ||
-                        line.startsWith(VMESS_PROTOCOL) ||
-                        line.startsWith(VMESS1_PROTOCOL) ||
-                        line.startsWith(SS_PROTOCOL) ||
-                        line.startsWith(SSR_PROTOCOL) ||
-                        line.startsWith(WS_PROTOCOL) ||
-                        line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL)) {
+                        line.startsWith(ProxyConfig.VMESS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.VMESS1_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.SS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.SSR_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.WS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.WSS_PROTOCOL) ||
+                        line.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
                         error = true
                         showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
@@ -239,13 +233,13 @@ object ProxyUtil {
                                 line.startsWith("tg://socks") ||
                                 line.startsWith("https://t.me/proxy") ||
                                 line.startsWith("https://t.me/socks") ||
-                                line.startsWith(VMESS_PROTOCOL) ||
-                                line.startsWith(VMESS1_PROTOCOL) ||
-                                line.startsWith(SS_PROTOCOL) ||
-                                line.startsWith(SSR_PROTOCOL) ||
-                                line.startsWith(WS_PROTOCOL) ||
-                                line.startsWith(WSS_PROTOCOL) ||
-                                line.startsWith(TROJAN_PROTOCOL)) {
+                                line.startsWith(ProxyConfig.VMESS_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.VMESS1_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.SS_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.SSR_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.WS_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.WSS_PROTOCOL) ||
+                                line.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
                             runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
                                 error = true
                                 showToast(LocaleController.getString("BrokenLink", R.string.BrokenLink) + ": ${it.message ?: it.javaClass.simpleName}")
@@ -275,15 +269,15 @@ object ProxyUtil {
     @JvmStatic
     fun importProxy(ctx: Context, link: String): Boolean {
         runCatching {
-            if (link.startsWith(VMESS_PROTOCOL) || link.startsWith(VMESS1_PROTOCOL)) {
+            if (link.startsWith(ProxyConfig.VMESS_PROTOCOL) || link.startsWith(ProxyConfig.VMESS1_PROTOCOL)) {
                 AndroidUtilities.showVmessAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as VMessBean?)
-            } else if (link.startsWith(TROJAN_PROTOCOL)) {
+            } else if (link.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
                 AndroidUtilities.showTrojanAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as TrojanBean?)
-            } else if (link.startsWith(SS_PROTOCOL)) {
+            } else if (link.startsWith(ProxyConfig.SS_PROTOCOL)) {
                 AndroidUtilities.showShadowsocksAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksBean?)
-            } else if (link.startsWith(SSR_PROTOCOL)) {
+            } else if (link.startsWith(ProxyConfig.SSR_PROTOCOL)) {
                 AndroidUtilities.showShadowsocksRAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksRBean?)
-            } else if (link.startsWith(WS_PROTOCOL) || link.startsWith(WSS_PROTOCOL)) {
+            } else if (link.startsWith(ProxyConfig.WS_PROTOCOL) || link.startsWith(ProxyConfig.WSS_PROTOCOL)) {
                 AndroidUtilities.showWsAlert(ctx, SharedConfig.WsProxy(link))
             } else {
                 val url = link.replace("tg://", "https://t.me/").toHttpUrlOrNull()!!
@@ -307,63 +301,6 @@ object ProxyUtil {
         }
 
         return false
-
-    }
-
-    @JvmStatic
-    fun importInBackground(link: String): SharedConfig.ProxyInfo {
-
-        val info = runCatching {
-
-            if (link.startsWith(VMESS_PROTOCOL) || link.startsWith(VMESS1_PROTOCOL)) {
-
-                SharedConfig.VmessProxy(link)
-
-            } else if (link.startsWith(SS_PROTOCOL)) {
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                    error(LocaleController.getString("MinApi21Required", R.string.MinApi21Required))
-
-                }
-
-                SharedConfig.ShadowsocksProxy(link)
-
-            } else if (link.startsWith(SSR_PROTOCOL)) {
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                    error(LocaleController.getString("MinApi21Required", R.string.MinApi21Required))
-
-                }
-
-                SharedConfig.ShadowsocksRProxy(link)
-
-            } else if (link.startsWith(WS_PROTOCOL) || link.startsWith(WSS_PROTOCOL)) {
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                    error(LocaleController.getString("MinApi21Required", R.string.MinApi21Required))
-
-                }
-
-                SharedConfig.WsProxy(link)
-
-            } else {
-
-                SharedConfig.ProxyInfo.fromUrl(link)
-
-            }
-
-        }.getOrThrow()
-
-        if (!(SharedConfig.addProxy(info) === info)) {
-
-            error("already exists")
-
-        }
-
-        return info
 
     }
 

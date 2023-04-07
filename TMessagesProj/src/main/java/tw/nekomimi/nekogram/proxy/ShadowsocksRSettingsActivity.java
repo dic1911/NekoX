@@ -45,6 +45,8 @@ import java.util.ArrayList;
 
 import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
+import tw.nekomimi.nekogram.proxynext.ShadowsocksRBean;
+import tw.nekomimi.nekogram.proxynext.SingProxyManager;
 import tw.nekomimi.nekogram.ui.PopupBuilder;
 
 public class ShadowsocksRSettingsActivity extends BaseFragment {
@@ -70,8 +72,8 @@ public class ShadowsocksRSettingsActivity extends BaseFragment {
 
     private TextInfoPrivacyCell bottomCell;
 
-    private SharedConfig.ShadowsocksRProxy currentProxyInfo;
-    private ShadowsocksRLoader.Bean currentBean;
+    private SharedConfig.SingProxyInfo currentProxyInfo;
+    private ShadowsocksRBean currentBean;
 
     private boolean ignoreOnTextChange;
 
@@ -130,13 +132,13 @@ public class ShadowsocksRSettingsActivity extends BaseFragment {
 
     public ShadowsocksRSettingsActivity() {
         super();
-        currentBean = new ShadowsocksRLoader.Bean();
+        currentBean = new ShadowsocksRBean();
     }
 
-    public ShadowsocksRSettingsActivity(SharedConfig.ShadowsocksRProxy proxyInfo) {
+    public ShadowsocksRSettingsActivity(SharedConfig.SingProxyInfo proxyInfo) {
         super();
         currentProxyInfo = proxyInfo;
-        currentBean = proxyInfo.bean;
+        currentBean = (ShadowsocksRBean) proxyInfo.getProxyBean();
     }
 
 
@@ -194,7 +196,7 @@ public class ShadowsocksRSettingsActivity extends BaseFragment {
                     }
 
                     currentBean.setHost(ipField.getText().toString());
-                    currentBean.setRemotePort(Utilities.parseInt(portField.getText().toString()));
+                    currentBean.setPort(Utilities.parseInt(portField.getText().toString()));
                     currentBean.setPassword(passwordField.getText().toString());
                     currentBean.setMethod(methodField.getValueTextView().getText().toString());
                     currentBean.setProtocol(protocolField.getValueTextView().getText().toString());
@@ -204,7 +206,7 @@ public class ShadowsocksRSettingsActivity extends BaseFragment {
                     currentBean.setRemarks(remarksField.getText().toString());
 
                     if (currentProxyInfo == null) {
-                        currentProxyInfo = new SharedConfig.ShadowsocksRProxy(currentBean);
+                        currentProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(currentBean);
                         SharedConfig.addProxy(currentProxyInfo);
                         SharedConfig.setCurrentProxy(currentProxyInfo);
                     } else {
@@ -265,7 +267,7 @@ public class ShadowsocksRSettingsActivity extends BaseFragment {
                     portField = cursor;
                     cursor.setInputType(InputType.TYPE_CLASS_NUMBER);
                     cursor.setHintText(LocaleController.getString("UseProxyPort", R.string.UseProxyPort));
-                    cursor.setText("" + currentBean.getRemotePort());
+                    cursor.setText("" + currentBean.getPort());
                     break;
                 case 2:
                     passwordField = cursor;

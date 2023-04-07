@@ -84,8 +84,6 @@ import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.v2ray.ang.V2RayConfig;
-
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
@@ -205,6 +203,7 @@ import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
 import kotlin.text.StringsKt;
 import tw.nekomimi.nekogram.InternalUpdater;
+import tw.nekomimi.nekogram.proxynext.ProxyConfig;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
@@ -346,11 +345,11 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     if (uri != null) {
                         String url = uri.toString().toLowerCase();
                         isProxy = url.startsWith("tg:proxy") || url.startsWith("tg://proxy") || url.startsWith("tg:socks") || url.startsWith("tg://socks") ||
-                                url.startsWith(V2RayConfig.VMESS_PROTOCOL) ||
-                                url.startsWith(V2RayConfig.VMESS1_PROTOCOL) ||
-                                url.startsWith(V2RayConfig.SS_PROTOCOL) ||
-                                url.startsWith(V2RayConfig.SSR_PROTOCOL) ||
-                                url.startsWith(V2RayConfig.TROJAN_PROTOCOL);
+                                url.startsWith(ProxyConfig.VMESS_PROTOCOL) ||
+                                url.startsWith(ProxyConfig.VMESS1_PROTOCOL) ||
+                                url.startsWith(ProxyConfig.SS_PROTOCOL) ||
+                                url.startsWith(ProxyConfig.SSR_PROTOCOL) ||
+                                url.startsWith(ProxyConfig.TROJAN_PROTOCOL);
                     }
                 }
             }

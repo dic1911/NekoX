@@ -193,7 +193,6 @@ import java.util.regex.Pattern;
 import cn.hutool.core.util.StrUtil;
 import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
 import tw.nekomimi.nekogram.proxynext.ShadowsocksRBean;
-import tw.nekomimi.nekogram.proxynext.SingProxyInfo;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
 import tw.nekomimi.nekogram.proxynext.TrojanBean;
 import tw.nekomimi.nekogram.proxynext.VMessBean;
@@ -205,13 +204,13 @@ import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
-import static com.v2ray.ang.V2RayConfig.SSR_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.SS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.TROJAN_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.VMESS1_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.VMESS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WSS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.SSR_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.SS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.TROJAN_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.VMESS1_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.VMESS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.WSS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.WS_PROTOCOL;
 
 public class AndroidUtilities {
     public final static int LIGHT_STATUS_BAR_OVERLAY = 0x0f000000, DARK_STATUS_BAR_OVERLAY = 0x33000000;
@@ -3833,7 +3832,7 @@ public class AndroidUtilities {
         builder.setCustomView(linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
-        SingProxyInfo info = proxyManager.registerProxy(bean);
+        SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
         for (int a = 0; a < 8; a++) {
             String text = null;
             String detail = null;
@@ -3891,14 +3890,8 @@ public class AndroidUtilities {
                         cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                     }
                 };
-                UIUtil.runOnIoDispatcher(() -> {
-                    try {
-                        info.ensureStarted();
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        AlertUtil.showToast(e);
-                    }
+                info.ensureStarted(() -> {
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                 });
             }
         }
@@ -3952,7 +3945,7 @@ public class AndroidUtilities {
         builder.setCustomView(linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
-        SingProxyInfo info = proxyManager.registerProxy(bean);
+        SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
         for (int a = 0; a < 4; a++) {
             String text = null;
             String detail = null;
@@ -3994,14 +3987,8 @@ public class AndroidUtilities {
                         cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                     }
                 };
-                UIUtil.runOnIoDispatcher(() -> {
-                    try {
-                        info.ensureStarted();
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        AlertUtil.showToast(e);
-                    }
+                info.ensureStarted(() -> {
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                 });
             }
         }
@@ -4048,7 +4035,7 @@ public class AndroidUtilities {
             builder.setCustomView(linearLayout);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
             final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
-            SingProxyInfo info = proxyManager.registerProxy(bean);
+            SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
             for (int a = 0; a < 5; a++) {
                 String text = null;
                 String detail = null;
@@ -4095,15 +4082,8 @@ public class AndroidUtilities {
                             cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                         }
                     };
-
-                    UIUtil.runOnIoDispatcher(() -> {
-                        try {
-                            info.ensureStarted();
-                            ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                        } catch (Exception e) {
-                            FileLog.e(e);
-                            AlertUtil.showToast(e);
-                        }
+                    info.ensureStarted(() -> {
+                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                     });
                 }
             }
@@ -4152,7 +4132,7 @@ public class AndroidUtilities {
         builder.setCustomView(linearLayout);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
-        SingProxyInfo info = proxyManager.registerProxy(bean);
+        SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
         for (int a = 0; a < 7; a++) {
             String text = null;
             String detail = null;
@@ -4211,14 +4191,8 @@ public class AndroidUtilities {
                         cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                     }
                 };
-                UIUtil.runOnIoDispatcher(() -> {
-                    try {
-                        info.ensureStarted();
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        AlertUtil.showToast(e);
-                    }
+                info.ensureStarted(() -> {
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                 });
             }
         }
@@ -4306,17 +4280,8 @@ public class AndroidUtilities {
                     }
 
                 };
-
-                UIUtil.runOnIoDispatcher(() -> {
-
-                    try {
-                        info.ensureStarted();
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        AlertUtil.showToast(e);
-                    }
-
+                info.ensureStarted(() -> {
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                 });
 
             }

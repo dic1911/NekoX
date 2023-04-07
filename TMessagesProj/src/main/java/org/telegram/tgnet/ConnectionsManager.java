@@ -10,7 +10,6 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.SparseArray;
 
-import com.v2ray.ang.util.Utils;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
@@ -57,7 +56,7 @@ import javax.net.ssl.SSLException;
 
 import cn.hutool.core.util.StrUtil;
 import tw.nekomimi.nekogram.NekoConfig;
-import tw.nekomimi.nekogram.parts.ProxySwitcher;
+import tw.nekomimi.nekogram.proxynext.Utils;
 import tw.nekomimi.nekogram.utils.DnsFactory;
 
 public class ConnectionsManager extends BaseController {
@@ -466,20 +465,7 @@ SharedPreferences mainPreferences;
         }
 
         native_init(currentAccount, version, layer, apiId, deviceModel, systemVersion, appVersion, langCode, systemLangCode, configPath, logPath, regId, cFingerprint, installer, packageId, timezoneOffset, userId, enablePushConnection, ApplicationLoader.isNetworkOnline(), ApplicationLoader.getCurrentNetworkType(), SharedConfig.measureDevicePerformanceClass());
-
-        Utilities.stageQueue.postRunnable(() -> {
-
-            SharedConfig.loadProxyList();
-
-            if (SharedConfig.proxyEnabled && SharedConfig.currentProxy != null) {
-                if (SharedConfig.currentProxy instanceof SharedConfig.ExternalSocks5Proxy) {
-                    ((SharedConfig.ExternalSocks5Proxy) SharedConfig.currentProxy).start();
-                }
-                native_setProxySettings(currentAccount, SharedConfig.currentProxy.address, SharedConfig.currentProxy.port, SharedConfig.currentProxy.username, SharedConfig.currentProxy.password, SharedConfig.currentProxy.secret);
-            }
-            checkConnection();
-
-        });
+        checkConnection();
     }
 
     public static void setLangCode(String langCode) {
@@ -628,7 +614,6 @@ SharedPreferences mainPreferences;
         try {
             AndroidUtilities.runOnUIThread(() -> {
                 getInstance(currentAccount).connectionState = state;
-                ProxySwitcher.didReceivedNotification(state);
                 AccountInstance.getInstance(currentAccount).getNotificationCenter().postNotificationName(NotificationCenter.didUpdateConnectionState);
             });
         } catch (Exception e) {

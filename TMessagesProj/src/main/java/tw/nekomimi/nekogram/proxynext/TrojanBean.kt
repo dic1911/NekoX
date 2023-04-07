@@ -6,8 +6,8 @@ import org.json.JSONObject
 data class TrojanBean(var address: String = "",
                       var port: Int = 0,
                       var id: String = "",
-                      var requestHost: String = "",
-                      var remarks: String = "") : ProxyConfig.SingProxyBean() {
+                      var requestHost: String = "")
+    : ProxyConfig.SingProxyBean() {
 
     override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {
         val parsed = link.replace(ProxyConfig.TROJAN_PROTOCOL, "https://")
