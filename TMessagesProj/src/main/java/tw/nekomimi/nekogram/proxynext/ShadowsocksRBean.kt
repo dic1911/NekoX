@@ -1,7 +1,6 @@
 package tw.nekomimi.nekogram.proxynext
 
 import cn.hutool.core.codec.Base64
-import com.google.gson.JsonObject
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.json.JSONObject
 import tw.nekomimi.nekogram.proxynext.Utils.parseInt
@@ -16,9 +15,9 @@ data class ShadowsocksRBean(
         var obfs: String = "plain",
         var obfs_param: String = "",
         var remarks: String = "shadowsocksr"
-) : ProxyConfig.BoxProxy() {
+) : ProxyConfig.SingProxyBean() {
 
-    override fun parseFromLink(link: String) {
+    override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {
         val params = Base64.decodeStr(link.substringAfter(ProxyConfig.SSR_PROTOCOL)).split(":")
 
         host = params[0]
@@ -42,10 +41,11 @@ data class ShadowsocksRBean(
                 this.remarks = Base64.decodeStr(remarks)
             }
         }
+        return this
     }
 
-    override fun parseFromBoxConf(json: JSONObject) {
-        TODO("Not yet implemented")
+    override fun parseFromBoxConf(json: JSONObject): ProxyConfig.SingProxyBean {
+        return this
     }
 
     override fun generateBoxConf(): JSONObject {

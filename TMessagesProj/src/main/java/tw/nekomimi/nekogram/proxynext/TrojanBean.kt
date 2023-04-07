@@ -1,6 +1,5 @@
 package tw.nekomimi.nekogram.proxynext
 
-import com.google.gson.JsonObject
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
 import org.json.JSONObject
 
@@ -8,10 +7,9 @@ data class TrojanBean(var address: String = "",
                       var port: Int = 0,
                       var id: String = "",
                       var requestHost: String = "",
-                      var remarks: String = "") : ProxyConfig.BoxProxy() {
+                      var remarks: String = "") : ProxyConfig.SingProxyBean() {
 
-    override fun parseFromLink(link: String) {
-
+    override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {
         val parsed = link.replace(ProxyConfig.TROJAN_PROTOCOL, "https://")
                 .toHttpUrlOrNull()
                 ?: error("invalid trojan link $link")
@@ -27,10 +25,11 @@ data class TrojanBean(var address: String = "",
 
         requestHost = parsed.queryParameter("sni") ?: requestHost
         remarks = parsed.fragment ?: ""
+        return this
     }
 
-    override fun parseFromBoxConf(json: JSONObject) {
-        TODO("Not yet implemented")
+    override fun parseFromBoxConf(json: JSONObject): ProxyConfig.SingProxyBean {
+        return this
     }
 
     override fun generateBoxConf(): JSONObject {
