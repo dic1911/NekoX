@@ -284,4 +284,7 @@
     <string name="doubleTapDisable">Disable</string>
     <string name="disableReactionsWhenSelecting">Hide reactions while selecting</string>
     <string name="UnsupportedProxy">Unsupported Proxy</string>
+    <string name="NekoXSingPluginNotFound">Not Found</string>
+    <string name="NekoXSingPluginPresents">Found</string>
+    <string name="NekoXSingPlugin">sing-box</string>
 </resources>

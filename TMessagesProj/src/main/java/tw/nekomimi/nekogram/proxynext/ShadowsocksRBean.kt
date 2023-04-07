@@ -13,8 +13,7 @@ data class ShadowsocksRBean(
         var protocol: String = "origin",
         var protocol_param: String = "",
         var obfs: String = "plain",
-        var obfs_param: String = "",
-        var remarks: String = "shadowsocksr"
+        var obfs_param: String = ""
 ) : ProxyConfig.SingProxyBean() {
 
     override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {

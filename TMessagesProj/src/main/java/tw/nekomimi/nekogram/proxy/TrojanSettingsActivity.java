@@ -26,9 +26,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import com.v2ray.ang.V2RayConfig;
-import com.v2ray.ang.dto.AngConfig;
-
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.R;
@@ -46,6 +43,8 @@ import org.telegram.ui.Components.LayoutHelper;
 import java.util.ArrayList;
 
 import cn.hutool.core.util.StrUtil;
+import tw.nekomimi.nekogram.proxynext.SingProxyManager;
+import tw.nekomimi.nekogram.proxynext.TrojanBean;
 
 public class TrojanSettingsActivity extends BaseFragment {
 
@@ -64,8 +63,8 @@ public class TrojanSettingsActivity extends BaseFragment {
     private TextInfoPrivacyCell bottomCell;
     private ActionBarMenuItem doneItem;
 
-    private SharedConfig.VmessProxy currentProxyInfo;
-    private AngConfig.VmessBean currentBean;
+    private SharedConfig.SingProxyInfo currentProxyInfo;
+    private TrojanBean currentBean;
 
     private boolean ignoreOnTextChange;
 
@@ -124,14 +123,13 @@ public class TrojanSettingsActivity extends BaseFragment {
 
     public TrojanSettingsActivity() {
         super();
-        currentBean = new AngConfig.VmessBean();
-        currentBean.setConfigType(V2RayConfig.EConfigType.Trojan);
+        currentBean = new TrojanBean();
     }
 
-    public TrojanSettingsActivity(SharedConfig.VmessProxy proxyInfo) {
+    public TrojanSettingsActivity(SharedConfig.SingProxyInfo proxyInfo) {
         super();
         currentProxyInfo = proxyInfo;
-        currentBean = proxyInfo.bean;
+        currentBean = (TrojanBean) proxyInfo.getProxyBean();
     }
 
 
@@ -196,7 +194,7 @@ public class TrojanSettingsActivity extends BaseFragment {
                     currentBean.setRemarks(remarksField.getText().toString());
 
                     if (currentProxyInfo == null) {
-                        currentProxyInfo = new SharedConfig.VmessProxy(currentBean);
+                        currentProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(currentBean);
                         SharedConfig.addProxy(currentProxyInfo);
                         SharedConfig.setCurrentProxy(currentProxyInfo);
                     } else {

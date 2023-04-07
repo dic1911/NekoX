@@ -24,6 +24,7 @@ import android.webkit.WebView;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
 import org.apache.commons.lang3.StringUtils;
+import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -61,7 +62,6 @@ import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
 import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxynext.ProxyConfig;
-import tw.nekomimi.nekogram.proxynext.SingProxyInfo;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
@@ -314,7 +314,7 @@ public class SharedConfig {
         public String username;
         public String password;
         public String secret;
-        public String remarks = "";
+        private String remarks = "";
         public long subId = -1;
         public int group = 0;
 
@@ -370,6 +370,29 @@ public class SharedConfig {
             this.remarks = remarks;
         }
 
+        public String getTitle() {
+            StringBuilder builder = new StringBuilder();
+            builder.append("[ ");
+            if (subId != 0L) {
+                try {
+                    builder.append(SubManager.getSubList().find(ObjectFilters.eq("id", subId)).firstOrDefault().displayName());
+                } catch (Exception e) {
+                    builder.append("Unknown");
+                }
+            } else {
+                if (StrUtil.isBlank(secret))
+                    builder.append("Socks5");
+                else builder.append("MTProto");
+            }
+            builder.append(" ] ");
+            if (StrUtil.isBlank(this.getRemarks())) {
+                builder.append(address).append(":").append(port);
+            } else {
+                builder.append(this.getRemarks());
+            }
+            return builder.toString();
+        }
+
         /**
          * is this proxy managed by NekoX
          */
@@ -377,7 +400,8 @@ public class SharedConfig {
             return PROXY_TYPE_ORIGINAL;
         }
 
-        public void ensureStarted() {
+        public void ensureStarted(Runnable runnable) {
+            runnable.run();
         }
 
         public void stop() {
@@ -417,13 +441,21 @@ public class SharedConfig {
         }
 
         @Override
-        public void ensureStarted() {
-            if (loader != null) return;
-            synchronized (this) {
-                loader = new WsLoader();
-                loader.init(bean, port);
-                loader.start();
+        public void ensureStarted(Runnable runnable) {
+            if (loader != null) {
+                runnable.run();
+                return;
             }
+            UIUtil.runOnIoDispatcher(() -> {
+                synchronized (this) {
+                    if (loader == null) {
+                        loader = new WsLoader();
+                        loader.init(bean, port);
+                        loader.start();
+                    }
+                }
+                runnable.run();
+            });
         }
 
         @Override
@@ -444,30 +476,111 @@ public class SharedConfig {
             return Utilities.MD5(getLink());
         }
 
+        @Override
+        public String getRemarks() {
+            return bean.getRemarks();
+        }
+
+        @Override
+        public void setRemarks(String remarks) {
+            bean.setRemarks(remarks);
+        }
+    }
+
+    public static class SingProxyInfo extends ProxyInfo {
+        public final ProxyConfig.SingProxyBean singProxyBean;
+
+        public SingProxyInfo(int internalPort, ProxyConfig.SingProxyBean bean) {
+            super("127.0.0.1", internalPort, "", "", "");
+            this.singProxyBean = bean;
+        }
+
+        public ProxyConfig.SingProxyBean getProxyBean() {
+            return singProxyBean;
+        }
+
+        @Override
+        public String getHash() {
+            return singProxyBean.getHash();
+        }
+
+        @Override
+        public String getLink() {
+            return singProxyBean.generateLink();
+        }
+
+        @Override
+        public void setRemarks(String remarks) {
+            super.setRemarks(remarks);
+            this.singProxyBean.setRemarks(remarks);
+        }
+
+        @Override
+        public int getProxyType() {
+            return PROXY_TYPE_SING;
+        }
+
+        @Override
+        public void ensureStarted(Runnable runnable) {
+            runnable.run();
+        }
+
+        @Override
+        public void stop() {
+            super.stop();
+        }
     }
 
     public static void setCurrentProxy(ProxyInfo info) {
         SharedConfig.currentProxy = info;
         SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
-        switch (info.getProxyType()) {
-            case PROXY_TYPE_ORIGINAL: {
-                editor.putString("proxy_ip", info.address);
-                editor.putString("proxy_pass", info.password);
-                editor.putString("proxy_user", info.username);
-                editor.putInt("proxy_port", info.port);
-                editor.putString("proxy_secret", info.secret);
-                if (!info.secret.isEmpty()) {
-                    editor.putBoolean("proxy_enabled_calls", false);
-                }
-                editor.apply();
-                break;
-            }
-            case PROXY_TYPE_WSRELAY:
-            case PROXY_TYPE_SING: {
-                editor.putString("neko_current_proxy_hash", info.getHash());
+        if (info == null) {
+            editor.putString("neko_current_proxy_hash", "");
+            editor.putString("proxy_ip", "");
+            editor.putString("proxy_pass", "");
+            editor.putString("proxy_user", "");
+            editor.putInt("proxy_port", 0);
+            editor.putString("proxy_secret", "");
+            editor.apply();
+            setProxyEnable(false);
+            return;
+        }
+        if (info.getProxyType() == PROXY_TYPE_ORIGINAL) {
+            editor.putString("neko_current_proxy_hash", "");
+            editor.putString("proxy_ip", info.address);
+            editor.putString("proxy_pass", info.password);
+            editor.putString("proxy_user", info.username);
+            editor.putInt("proxy_port", info.port);
+            editor.putString("proxy_secret", info.secret);
+            if (!info.secret.isEmpty()) {
                 editor.putBoolean("proxy_enabled_calls", false);
-                editor.apply();
-                break;
+            }
+            editor.apply();
+        } else {
+            editor.putString("proxy_ip", "");
+            editor.putString("proxy_pass", "");
+            editor.putString("proxy_user", "");
+            editor.putInt("proxy_port", 0);
+            editor.putString("proxy_secret", "");
+
+            editor.putString("neko_current_proxy_hash", info.getHash());
+            editor.putBoolean("proxy_enabled_calls", false);
+            editor.apply();
+        }
+    }
+
+    public static void setProxyEnable(boolean enable) {
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        preferences.edit().putBoolean("proxy_enabled", enable).apply();
+        if (!enable) {
+            ConnectionsManager.setProxySettings(false, "", 0, "", "", "");
+            UIUtil.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged));
+        } else {
+            if (currentProxy != null) {
+                currentProxy.ensureStarted(() -> {
+                    ConnectionsManager.setProxySettings(true, currentProxy.address, currentProxy.port, currentProxy.username, currentProxy.password, currentProxy.secret);
+                    UIUtil.runOnUIThread(() -> NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged));
+                });
             }
         }
     }
@@ -1334,7 +1447,7 @@ public class SharedConfig {
                         obj.optString("password", ""),
                         "");
                 info.group = obj.optInt("group", 0);
-                info.remarks = obj.optString("remarks");
+                info.setRemarks(obj.optString("remarks"));
                 break;
             }
             case "mtproto": {
@@ -1345,7 +1458,7 @@ public class SharedConfig {
                         "",
                         obj.optString("secret", "")
                 );
-                info.remarks = obj.optString("remarks");
+                info.setRemarks(obj.optString("remarks"));
                 info.group = obj.optInt("group", 0);
                 break;
             }
@@ -1391,11 +1504,21 @@ public class SharedConfig {
         FileLog.e("old proxy list migrate done");
     }
 
+    public static void reloadProxyList() {
+        proxyListLoaded = false;
+        loadProxyList();
+
+        if (isProxyEnabled() && currentProxy == null) {
+            setProxyEnable(false);
+        }
+
+    }
+
     public static void loadProxyList() {
         if (proxyListLoaded) {
             return;
         }
-        SingProxyManager.mainInstance.stop();
+        SingProxyManager.Companion.getMainInstance().stop();
         if (!proxyList.isEmpty()) {
             for (ProxyInfo proxyInfo : proxyList) {
                 if (proxyInfo instanceof WsProxy) {
@@ -1471,8 +1594,6 @@ public class SharedConfig {
             proxyList.add(0, info);
         }
         // NekoX parts
-        String nekoCurrentProxyHash = preferences.getString("neko_current_proxy_hash", "");
-        boolean hasFoundCurrentProxy = currentProxy != null;
 
         // Load proxies from subscribe
         for (SubInfo subInfo : SubManager.getSubList().find()) {
@@ -1482,9 +1603,6 @@ public class SharedConfig {
                     ProxyInfo info = parseProxyInfo(proxy);
                     if (info == null) continue;
                     info.subId = subInfo.id;
-                    if (nekoCurrentProxyHash.equals(info.getHash())) {
-                        currentProxy = info;
-                    }
                     proxyList.add(info);
                 } catch (Exception e) {
                     FileLog.d("load sub proxy failed: " + e);
@@ -1524,6 +1642,19 @@ public class SharedConfig {
         } catch (JSONException e) {
             FileLog.e(e);
         }
+        if (currentProxy == null) {
+            // try to set currentProxy specified by
+            String nekoCurrentProxyHash = preferences.getString("neko_current_proxy_hash", "");
+            if (!StringUtils.isEmpty(nekoCurrentProxyHash)) {
+                proxyList.stream()
+                        .filter(proxyInfo -> proxyInfo.getHash().equals(nekoCurrentProxyHash))
+                        .findFirst()
+                        .ifPresentOrElse(
+                                proxyInfo -> currentProxy = proxyInfo,
+                                () -> preferences.edit().putString("neko_current_proxy_hash", "").apply()
+                        );
+            }
+        }
     }
 
     public static void saveProxyList() {
@@ -1558,7 +1689,7 @@ public class SharedConfig {
             serializedData.writeInt64(info.availableCheckTime);
         }
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
-        preferences.edit().putString("proxy_list", Base64.encodeToString(serializedData.toByteArray(), Base64.NO_WRAP)).commit();
+        preferences.edit().putString("proxy_list", Base64.encodeToString(serializedData.toByteArray(), Base64.NO_WRAP)).apply();
         serializedData.cleanup();
 
         File proxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "nekox/proxy_list_V2.json");

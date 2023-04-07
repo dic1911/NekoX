@@ -11,11 +11,9 @@ data class ShadowsocksBean(
         var port: Int = 443,
         var password: String = "",
         var method: String = "aes-256-cfb",
-        var plugin: String = "",
-        var remarks: String = "",
-        val pluginOptions: MutableMap<String, String> = HashMap()
+        var plugin: String = ""
 ) : ProxyConfig.SingProxyBean() {
-
+    private val pluginOptions: MutableMap<String, String> = HashMap()
     companion object {
         val methods = arrayOf(
                 "none",

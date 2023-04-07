@@ -6,6 +6,7 @@ import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.SharedConfig
 import org.telegram.messenger.Utilities
 import java.lang.Exception
 
@@ -63,6 +64,7 @@ object ProxyConfig {
     val SUPPORTED_PROTOCOLS = listOf(VMESS_PROTOCOL, VMESS1_PROTOCOL, SS_PROTOCOL, SSR_PROTOCOL, TROJAN_PROTOCOL)
 
     abstract class SingProxyBean {
+        var remarks = ""
         abstract fun parseFromLink(link: String): SingProxyBean
         abstract fun parseFromBoxConf(json: JSONObject): SingProxyBean
         abstract fun generateBoxConf(): JSONObject
@@ -73,9 +75,9 @@ object ProxyConfig {
             return Utilities.MD5(json)
         }
 
-        fun generateDummyProxyInfo(): SingProxyInfo {
+        fun generateDummyProxyInfo(): SharedConfig.SingProxyInfo {
             val port = 11451;
-            return SingProxyInfo(port, this)
+            return SharedConfig.SingProxyInfo(port, this)
         }
     }
 }
