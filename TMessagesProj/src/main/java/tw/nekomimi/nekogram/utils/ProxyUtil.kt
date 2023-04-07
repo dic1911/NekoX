@@ -47,6 +47,11 @@ import org.yaml.snakeyaml.Yaml
 import tw.nekomimi.nekogram.ui.BottomBuilder
 import tw.nekomimi.nekogram.proxy.ShadowsocksLoader
 import tw.nekomimi.nekogram.proxy.ShadowsocksRLoader
+import tw.nekomimi.nekogram.proxynext.ProxyConfig
+import tw.nekomimi.nekogram.proxynext.ShadowsocksBean
+import tw.nekomimi.nekogram.proxynext.ShadowsocksRBean
+import tw.nekomimi.nekogram.proxynext.TrojanBean
+import tw.nekomimi.nekogram.proxynext.VMessBean
 import tw.nekomimi.nekogram.utils.AlertUtil.showToast
 import java.io.File
 import java.net.NetworkInterface
@@ -191,7 +196,7 @@ object ProxyUtil {
                         line.startsWith(WS_PROTOCOL) ||
                         line.startsWith(WSS_PROTOCOL) ||
                         line.startsWith(TROJAN_PROTOCOL)) {
-                    runCatching { proxies.add(SharedConfig.parseProxyInfo(line).toUrl()) }
+                    runCatching { proxies.add(SharedConfig.parseProxyInfo(line).link) }
                 }
             }
         }
@@ -269,33 +274,19 @@ object ProxyUtil {
 
     @JvmStatic
     fun importProxy(ctx: Context, link: String): Boolean {
-
         runCatching {
-
             if (link.startsWith(VMESS_PROTOCOL) || link.startsWith(VMESS1_PROTOCOL)) {
-
-                AndroidUtilities.showVmessAlert(ctx, SharedConfig.VmessProxy(link))
-
+                AndroidUtilities.showVmessAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as VMessBean?)
             } else if (link.startsWith(TROJAN_PROTOCOL)) {
-
-                AndroidUtilities.showTrojanAlert(ctx, SharedConfig.VmessProxy(link))
-
+                AndroidUtilities.showTrojanAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as TrojanBean?)
             } else if (link.startsWith(SS_PROTOCOL)) {
-
-                AndroidUtilities.showShadowsocksAlert(ctx, SharedConfig.ShadowsocksProxy(link))
-
+                AndroidUtilities.showShadowsocksAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksBean?)
             } else if (link.startsWith(SSR_PROTOCOL)) {
-
-                AndroidUtilities.showShadowsocksRAlert(ctx, SharedConfig.ShadowsocksRProxy(link))
-
+                AndroidUtilities.showShadowsocksRAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksRBean?)
             } else if (link.startsWith(WS_PROTOCOL) || link.startsWith(WSS_PROTOCOL)) {
-
                 AndroidUtilities.showWsAlert(ctx, SharedConfig.WsProxy(link))
-
             } else {
-
                 val url = link.replace("tg://", "https://t.me/").toHttpUrlOrNull()!!
-
                 AndroidUtilities.showProxyAlert(ctx,
                         url.queryParameter("server") ?: return false,
                         url.queryParameter("port") ?: return false,
@@ -303,24 +294,14 @@ object ProxyUtil {
                         url.queryParameter("pass"),
                         url.queryParameter("secret"),
                         url.fragment)
-
-
             }
-
             return true
-
         }.onFailure {
-
             FileLog.e(it)
-
             if (BuildVars.LOGS_ENABLED) {
-
                 AlertUtil.showSimpleAlert(ctx, it)
-
             } else {
-
                 showToast("${LocaleController.getString("BrokenLink", R.string.BrokenLink)}: ${it.message}")
-
             }
 
         }
@@ -389,7 +370,7 @@ object ProxyUtil {
     @JvmStatic
     fun shareProxy(ctx: Activity, info: SharedConfig.ProxyInfo, type: Int) {
 
-        val url = info.toUrl();
+        val url = info.link;
 
         if (type == 1) {
 

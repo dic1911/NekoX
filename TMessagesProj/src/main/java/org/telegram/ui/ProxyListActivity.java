@@ -460,6 +460,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
     public boolean onFragmentCreate() {
         super.onFragmentCreate();
 
+        SharedConfig.loadProxyList();
         currentConnectionState = ConnectionsManager.getInstance(currentAccount).getConnectionState();
 
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.proxyChangedByRotation);
@@ -826,25 +827,56 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         listView.setOnItemClickListener((view, position) -> {
             if (position == useProxyRow) {
                 if (SharedConfig.currentProxy == null) {
-                    if (!SharedConfig.proxyList.isEmpty()) {
-                        SharedConfig.setCurrentProxy(SharedConfig.proxyList.get(0));
+                    if (!proxyList.isEmpty()) {
+                        SharedConfig.currentProxy = proxyList.get(0);
+
+                        if (!useProxySettings) {
+                            SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+                            SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
+                            editor.putString("proxy_ip", SharedConfig.currentProxy.address);
+                            editor.putString("proxy_pass", SharedConfig.currentProxy.password);
+                            editor.putString("proxy_user", SharedConfig.currentProxy.username);
+                            editor.putInt("proxy_port", SharedConfig.currentProxy.port);
+                            editor.putString("proxy_secret", SharedConfig.currentProxy.secret);
+                            editor.commit();
+                        }
                     } else {
                         addProxy();
                         return;
                     }
                 }
-
                 useProxySettings = !useProxySettings;
                 updateRows(true);
 
+                SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+
                 TextCheckCell textCheckCell = (TextCheckCell) view;
                 textCheckCell.setChecked(useProxySettings);
+                if (!useProxySettings) {
+                    RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForAdapterPosition(callsRow);
+                    if (holder != null) {
+                        textCheckCell = (TextCheckCell) holder.itemView;
+                        textCheckCell.setChecked(false);
+                    }
+                    useProxyForCalls = false;
+                }
 
+                SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
+                editor.putBoolean("proxy_enabled", useProxySettings);
+                editor.commit();
+
+                ConnectionsManager.setProxySettings(useProxySettings, SharedConfig.currentProxy.address, SharedConfig.currentProxy.port, SharedConfig.currentProxy.username, SharedConfig.currentProxy.password, SharedConfig.currentProxy.secret);
                 NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
-                SharedConfig.setProxyEnable(useProxySettings);
+                NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
                 NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
 
-                updateRows(true);
+                for (int a = proxyStartRow; a < proxyEndRow; a++) {
+                    RecyclerListView.Holder holder = (RecyclerListView.Holder) listView.findViewHolderForAdapterPosition(a);
+                    if (holder != null) {
+                        TextDetailProxyCell cell = (TextDetailProxyCell) holder.itemView;
+                        cell.updateStatus();
+                    }
+                }
             } else if (position == enablePublicProxyRow) {
                 final boolean enabled = NekoConfig.enablePublicProxy.toggleConfigBool();
                 TextCheckCell cell = (TextCheckCell) view;

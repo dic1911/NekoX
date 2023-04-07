@@ -5,25 +5,20 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.content.pm.ResolveInfo
 import android.net.Uri
-import android.os.Build
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
 import tw.nekomimi.nekogram.proxy.GuardedProcessPool
 import tw.nekomimi.nekogram.proxy.ProxyManager
-import tw.nekomimi.nekogram.utils.ProxyUtil
 import java.io.File
 
-class SingProxyManager private constructor() {
+class SingProxyManager {
 
     companion object {
-        @JvmField
-        val INSTANCE = SingProxyManager()
-
-        @JvmField
-        val TEST_INSTANCE = SingProxyManager()
+        val mainInstance = SingProxyManager()
+        val testInstance = SingProxyManager()
     }
 
-    val proxies = mutableListOf<ProxyConfig.BoxProxy>()
+    val proxies = mutableListOf<SingProxyInfo>()
     private val allocatedPorts = mutableSetOf<Int>()
 
     val isSingExist: Boolean by lazy {
@@ -74,25 +69,32 @@ class SingProxyManager private constructor() {
         ).filter { it.providerInfo.exported }
     }
 
-    fun setProxyRemarks(proxy: ProxyConfig.BoxProxy, remarks: String) {
+    fun setProxyRemarks(proxy: ProxyConfig.SingProxyBean, remarks: String) {
 
     }
 
-    fun allocatePort(proxy: ProxyConfig.BoxProxy): Int {
+    fun registerProxy(proxyBing: ProxyConfig.SingProxyBean): SingProxyInfo {
         var port = ProxyManager.mkPort()
         while (allocatedPorts.contains(port)) port = ProxyManager.mkPort()
         allocatedPorts.add(port)
-        proxy.socks5Port = port
-        return port
+        val proxy = SingProxyInfo(port, proxyBing)
+        proxies.add(proxy)
+        return proxy;
     }
 
-    fun addProxy(boxProxy: ProxyConfig.BoxProxy) {
-        this.proxies.add(boxProxy)
+    fun unregister(info: SingProxyInfo) {
+        val reload = proxies.remove(info)
+        if (proxies.size == 0)
+            stop()
+        else
+            TODO()
     }
 
     fun clearProxies() {
         check(!isStarted)
         this.proxies.clear()
     }
+
+
 
 }

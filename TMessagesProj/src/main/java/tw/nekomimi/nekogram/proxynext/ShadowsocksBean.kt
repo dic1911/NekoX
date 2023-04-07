@@ -1,8 +1,6 @@
 package tw.nekomimi.nekogram.proxynext
 
 import android.annotation.SuppressLint
-import android.os.Build
-import androidx.annotation.RequiresApi
 import cn.hutool.core.codec.Base64
 import com.github.shadowsocks.plugin.PluginConfiguration
 import okhttp3.HttpUrl.Companion.toHttpUrlOrNull
@@ -16,7 +14,7 @@ data class ShadowsocksBean(
         var plugin: String = "",
         var remarks: String = "",
         val pluginOptions: MutableMap<String, String> = HashMap()
-) : ProxyConfig.BoxProxy() {
+) : ProxyConfig.SingProxyBean() {
 
     companion object {
         val methods = arrayOf(
@@ -45,7 +43,7 @@ data class ShadowsocksBean(
     }
 
     @SuppressLint("NewApi")
-    override fun parseFromLink(link: String) {
+    override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {
         if (link.contains("@")) {
             // ss-android style
             val link = link.replace(ProxyConfig.SS_PROTOCOL, "https://").toHttpUrlOrNull()
@@ -107,10 +105,11 @@ data class ShadowsocksBean(
                 }
             }
         }
+        return this
     }
 
-    override fun parseFromBoxConf(json: JSONObject) {
-        TODO("Not yet implemented")
+    override fun parseFromBoxConf(json: JSONObject): ProxyConfig.SingProxyBean {
+        return this
     }
 
     override fun generateBoxConf(): JSONObject {

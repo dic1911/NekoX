@@ -2,7 +2,6 @@ package tw.nekomimi.nekogram.proxynext
 
 import cn.hutool.core.codec.Base64
 import com.google.gson.Gson
-import com.google.gson.JsonObject
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import org.json.JSONObject
 import tw.nekomimi.nekogram.proxynext.Utils.parseInt
@@ -37,9 +36,9 @@ data class VMessBean(var uuid: String = "123456",
                      var path: String = "",
                      var streamSecurity: String = "",
                      var configVersion: Int = 2,
-                     var testResult: String = "") : ProxyConfig.BoxProxy() {
+                     var testResult: String = "") : ProxyConfig.SingProxyBean() {
 
-    override fun parseFromLink(link: String) {
+    override fun parseFromLink(link: String): ProxyConfig.SingProxyBean {
         check(link.startsWith("vmess://") || link.startsWith("vmess1://"))
         try {
             if (link.isBlank()) error("empty link")
@@ -89,6 +88,7 @@ data class VMessBean(var uuid: String = "123456",
         } catch (e: Exception) {
             throw IllegalArgumentException(e)
         }
+        return this
     }
 
     private fun resolveSimpleVmess1(link: String) {
@@ -223,8 +223,8 @@ data class VMessBean(var uuid: String = "123456",
         }
     }
 
-    override fun parseFromBoxConf(json: JSONObject) {
-        TODO("Not yet implemented")
+    override fun parseFromBoxConf(json: JSONObject): ProxyConfig.SingProxyBean {
+        return this
     }
 
     override fun generateBoxConf(): JSONObject {

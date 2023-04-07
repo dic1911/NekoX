@@ -6,22 +6,43 @@ import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
 import org.telegram.messenger.LocaleController
 import org.telegram.messenger.R
+import org.telegram.messenger.Utilities
 import java.lang.Exception
 
 object ProxyConfig {
     @JvmStatic
-    fun parseSingBoxConfig(url: String): BoxProxy? {
+    fun parseSingBoxConfig(url: String): SingProxyBean? {
         try {
             if (url.startsWith(VMESS_PROTOCOL) || url.startsWith(VMESS1_PROTOCOL)) {
-                return VMessBean().also { it.parseFromLink(url) }
+                return VMessBean().parseFromLink(url)
             } else if (url.startsWith(SS_PROTOCOL)) {
-                return ShadowsocksBean().also { it.parseFromLink(url) }
+                return ShadowsocksBean().parseFromLink(url)
             } else if (url.startsWith(SSR_PROTOCOL)) {
-                return ShadowsocksRBean().also { it.parseFromLink(url) }
+                return ShadowsocksRBean().parseFromLink(url)
             } else if (url.startsWith(TROJAN_PROTOCOL)) {
-                return TrojanBean().also { it.parseFromLink(url) }
+                return TrojanBean().parseFromLink(url)
             }
             return null
+        } catch (ex: Exception) {
+            FileLog.e(ex);
+            Toast.makeText(ApplicationLoader.applicationContext,
+                    LocaleController.getString("UnsupportedProxy", R.string.UnsupportedProxy),
+                    Toast.LENGTH_LONG).show()
+            return null
+        }
+    }
+
+    @JvmStatic
+    fun parseSingBoxConfig(outbound: JSONObject): SingProxyBean? {
+        try {
+            val boxConfig = when (outbound.opt("type")) {
+                "shadowsocks" -> ShadowsocksBean().parseFromBoxConf(outbound)
+                "shadowsocksr" -> ShadowsocksRBean().parseFromBoxConf(outbound)
+                "vmess" -> VMessBean().parseFromBoxConf(outbound)
+                "trojan" -> TrojanBean().parseFromBoxConf(outbound)
+                else -> null
+            }
+            return boxConfig
         } catch (ex: Exception) {
             FileLog.e(ex);
             Toast.makeText(ApplicationLoader.applicationContext,
@@ -41,12 +62,20 @@ object ProxyConfig {
 
     val SUPPORTED_PROTOCOLS = listOf(VMESS_PROTOCOL, VMESS1_PROTOCOL, SS_PROTOCOL, SSR_PROTOCOL, TROJAN_PROTOCOL)
 
-    abstract class BoxProxy {
-        var socks5Port: Int = 1080
-
-        abstract fun parseFromLink(link: String)
-        abstract fun parseFromBoxConf(json: JSONObject)
+    abstract class SingProxyBean {
+        abstract fun parseFromLink(link: String): SingProxyBean
+        abstract fun parseFromBoxConf(json: JSONObject): SingProxyBean
         abstract fun generateBoxConf(): JSONObject
         abstract fun generateLink(): String
+
+        fun getHash(): String {
+            val json = generateBoxConf().toString()
+            return Utilities.MD5(json)
+        }
+
+        fun generateDummyProxyInfo(): SingProxyInfo {
+            val port = 11451;
+            return SingProxyInfo(port, this)
+        }
     }
 }

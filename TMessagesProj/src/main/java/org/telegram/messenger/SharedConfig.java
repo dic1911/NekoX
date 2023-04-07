@@ -13,23 +13,20 @@ import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.content.pm.PackageInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.WebView;
 
-import androidx.annotation.Nullable;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
-import com.v2ray.ang.util.Utils;
-
 import org.apache.commons.lang3.StringUtils;
-import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.json.JSONArray;
 import org.json.JSONException;
+
 import androidx.annotation.IntDef;
 
 import org.json.JSONObject;
@@ -39,7 +36,6 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.SwipeGestureSettingsView;
-import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.LaunchActivity;
 
 import java.io.File;
@@ -55,24 +51,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
 import cn.hutool.core.util.StrUtil;
-import okhttp3.HttpUrl;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.proxy.ProxyManager;
-import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
+import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxynext.ProxyConfig;
-import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
-import tw.nekomimi.nekogram.proxynext.ShadowsocksRBean;
+import tw.nekomimi.nekogram.proxynext.SingProxyInfo;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
-import tw.nekomimi.nekogram.proxynext.TrojanBean;
-import tw.nekomimi.nekogram.proxynext.VMessBean;
-import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
@@ -134,7 +124,8 @@ public class SharedConfig {
             PASSCODE_TYPE_PIN,
             PASSCODE_TYPE_PASSWORD
     })
-    public @interface PasscodeType {}
+    public @interface PasscodeType {
+    }
 
     public final static int SAVE_TO_GALLERY_FLAG_PEER = 1;
     public final static int SAVE_TO_GALLERY_FLAG_GROUP = 2;
@@ -196,7 +187,7 @@ public class SharedConfig {
     private static final Object sync = new Object();
     private static final Object localIdSync = new Object();
 
-//    public static int saveToGalleryFlags;
+    //    public static int saveToGalleryFlags;
     public static int mapPreviewType = 2;
     public static boolean chatBubbles = Build.VERSION.SDK_INT >= 30;
     public static boolean raiseToSpeak = false;
@@ -311,6 +302,11 @@ public class SharedConfig {
         loadConfig();
     }
 
+    public static final int PROXY_TYPE_NON_EXIST = -1;
+    public static final int PROXY_TYPE_ORIGINAL = 0;
+    public static final int PROXY_TYPE_WSRELAY = 1;
+    public static final int PROXY_TYPE_SING = 2;
+
     public static class ProxyInfo {
 
         public String address;
@@ -318,6 +314,9 @@ public class SharedConfig {
         public String username;
         public String password;
         public String secret;
+        public String remarks = "";
+        public long subId = -1;
+        public int group = 0;
 
         public long proxyCheckPingId;
         public long ping;
@@ -358,14 +357,136 @@ public class SharedConfig {
                 if (!TextUtils.isEmpty(secret)) {
                     url.append("&secret=").append(URLEncoder.encode(secret, "UTF-8"));
                 }
-            } catch (UnsupportedEncodingException ignored) {}
+            } catch (UnsupportedEncodingException ignored) {
+            }
             return url.toString();
+        }
+
+        public String getRemarks() {
+            return this.remarks;
+        }
+
+        public void setRemarks(String remarks) {
+            this.remarks = remarks;
+        }
+
+        /**
+         * is this proxy managed by NekoX
+         */
+        public int getProxyType() {
+            return PROXY_TYPE_ORIGINAL;
+        }
+
+        public void ensureStarted() {
+        }
+
+        public void stop() {
+        }
+
+        public String getHash() {
+            return "";
+        }
+    }
+
+    public static class WsProxy extends ProxyInfo {
+
+        public WsLoader.Bean bean;
+        public WsLoader loader;
+
+        public WsProxy(String url) {
+            this(WsLoader.Companion.parse(url));
+        }
+
+        public WsProxy(WsLoader.Bean bean) {
+            super("127.0.0.1", ProxyManager.mkPort(), "", "", "");
+            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+                throw new RuntimeException(LocaleController.getString("MinApi21Required", R.string.MinApi21Required));
+            }
+
+            this.bean = bean;
+        }
+
+        @Override
+        public String getLink() {
+            return bean.toString();
+        }
+
+        @Override
+        public int getProxyType() {
+            return PROXY_TYPE_WSRELAY;
+        }
+
+        @Override
+        public void ensureStarted() {
+            if (loader != null) return;
+            synchronized (this) {
+                loader = new WsLoader();
+                loader.init(bean, port);
+                loader.start();
+            }
+        }
+
+        @Override
+        public void stop() {
+            if (loader == null) return;
+            UIUtil.runOnIoDispatcher(() -> {
+                synchronized (this) {
+                    if (loader == null)
+                        return;
+                    loader.stop();
+                    loader = null;
+                }
+            });
+        }
+
+        @Override
+        public String getHash() {
+            return Utilities.MD5(getLink());
+        }
+
+    }
+
+    public static void setCurrentProxy(ProxyInfo info) {
+        SharedConfig.currentProxy = info;
+        SharedPreferences.Editor editor = MessagesController.getGlobalMainSettings().edit();
+        switch (info.getProxyType()) {
+            case PROXY_TYPE_ORIGINAL: {
+                editor.putString("proxy_ip", info.address);
+                editor.putString("proxy_pass", info.password);
+                editor.putString("proxy_user", info.username);
+                editor.putInt("proxy_port", info.port);
+                editor.putString("proxy_secret", info.secret);
+                if (!info.secret.isEmpty()) {
+                    editor.putBoolean("proxy_enabled_calls", false);
+                }
+                editor.apply();
+                break;
+            }
+            case PROXY_TYPE_WSRELAY:
+            case PROXY_TYPE_SING: {
+                editor.putString("neko_current_proxy_hash", info.getHash());
+                editor.putBoolean("proxy_enabled_calls", false);
+                editor.apply();
+                break;
+            }
         }
     }
 
     public static ArrayList<ProxyInfo> proxyList = new ArrayList<>();
     private static boolean proxyListLoaded;
     public static ProxyInfo currentProxy;
+
+    public static Proxy getActiveSocks5Proxy() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
+            return null;
+        // https://stackoverflow.com/questions/36205896/how-to-use-httpurlconnection-over-socks-proxy-on-android
+        // Android did not support socks proxy natively(using HURL) on devices previous than Marshmallow
+        // Hutool use HttpURLConnection too
+        if (currentProxy.getProxyType() == PROXY_TYPE_SING
+                || (currentProxy.getProxyType() == PROXY_TYPE_ORIGINAL && currentProxy.secret.equals("") && currentProxy.username.equals("")))
+            return new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(currentProxy.address, currentProxy.port));
+        return null;
+    }
 
     public static void saveConfig() {
         synchronized (sync) {
@@ -1178,7 +1299,7 @@ public class SharedConfig {
     }
 
     public static void setInappCamera(boolean inappCamera) {
-       SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         SharedPreferences.Editor editor = preferences.edit();
         editor.putBoolean("inappCamera", inappCamera);
         editor.commit();
@@ -1201,10 +1322,90 @@ public class SharedConfig {
         LocaleController.resetImperialSystemType();
     }
 
+    @Deprecated
+    public static ProxyInfo parseFromOldJsonFormat(JSONObject obj) {
+        ProxyInfo info;
+        switch (obj.optString("type", "null")) {
+            case "socks5": {
+                info = new ProxyInfo(
+                        obj.optString("address", ""),
+                        obj.optInt("port", 443),
+                        obj.optString("username", ""),
+                        obj.optString("password", ""),
+                        "");
+                info.group = obj.optInt("group", 0);
+                info.remarks = obj.optString("remarks");
+                break;
+            }
+            case "mtproto": {
+                info = new ProxyInfo(
+                        obj.optString("address", ""),
+                        obj.optInt("port", 443),
+                        "",
+                        "",
+                        obj.optString("secret", "")
+                );
+                info.remarks = obj.optString("remarks");
+                info.group = obj.optInt("group", 0);
+                break;
+            }
+            case "vmess":
+            case "shadowsocks":
+            case "shadowsocksr": {
+                var config = ProxyConfig.parseSingBoxConfig(obj.optString("link"));
+                if (config == null) return null;
+                info = new SingProxyInfo(11451, config);
+                break;
+            }
+            case "ws": {
+                info = new WsProxy(obj.optString("link"));
+                break;
+            }
+            default: {
+                return null;
+            }
+        }
+        return info;
+    }
+
+    private static void tryToMigrateProxy() {
+        File oldProxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir().getParentFile(), "nekox/proxy_list.json");
+        boolean error = false;
+        if (!oldProxyListFile.isFile()) return;
+        try {
+            JSONArray proxyArray = new JSONArray(FileUtil.readUtf8String(oldProxyListFile));
+            for (int a = 0; a < proxyArray.length(); a++) {
+                JSONObject proxyObj = proxyArray.getJSONObject(a);
+                ProxyInfo info = parseFromOldJsonFormat(proxyObj);
+                if (info == null) continue;
+                proxyList.add(info);
+            }
+        } catch (Exception ex) {
+            FileLog.d("invalid proxy list json format" + ex);
+        }
+        oldProxyListFile.delete();
+        // trigger a saveProxyList to save them in the new format
+        saveProxyList();
+        // clear the list and reload it.
+        proxyList.clear();
+        FileLog.e("old proxy list migrate done");
+    }
+
     public static void loadProxyList() {
         if (proxyListLoaded) {
             return;
         }
+        SingProxyManager.mainInstance.stop();
+        if (!proxyList.isEmpty()) {
+            for (ProxyInfo proxyInfo : proxyList) {
+                if (proxyInfo instanceof WsProxy) {
+                    proxyInfo.stop();
+                }
+            }
+        }
+
+        tryToMigrateProxy();
+
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
         String proxyAddress = preferences.getString("proxy_ip", "");
         String proxyUsername = preferences.getString("proxy_user", "");
@@ -1269,10 +1470,66 @@ public class SharedConfig {
             ProxyInfo info = currentProxy = new ProxyInfo(proxyAddress, proxyPort, proxyUsername, proxyPassword, proxySecret);
             proxyList.add(0, info);
         }
+        // NekoX parts
+        String nekoCurrentProxyHash = preferences.getString("neko_current_proxy_hash", "");
+        boolean hasFoundCurrentProxy = currentProxy != null;
+
+        // Load proxies from subscribe
+        for (SubInfo subInfo : SubManager.getSubList().find()) {
+            if (!subInfo.enable) continue;
+            for (String proxy : subInfo.proxies) {
+                try {
+                    ProxyInfo info = parseProxyInfo(proxy);
+                    if (info == null) continue;
+                    info.subId = subInfo.id;
+                    if (nekoCurrentProxyHash.equals(info.getHash())) {
+                        currentProxy = info;
+                    }
+                    proxyList.add(info);
+                } catch (Exception e) {
+                    FileLog.d("load sub proxy failed: " + e);
+                }
+            }
+        }
+
+        File proxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "nekox/proxy_list_V2.json");
+        try {
+            JSONObject root = new JSONObject(FileUtil.readUtf8String(proxyListFile));
+            JSONArray wsrelay = root.getJSONArray("wsrelay");
+            JSONArray sing = root.getJSONArray("sing");
+            JSONArray order = root.getJSONArray("order");
+            // Load WsRelay
+            for (int i = 0; i < wsrelay.length(); i++) {
+                String link = wsrelay.getString(i);
+                proxyList.add(new WsProxy(link));
+            }
+            // Load sing proxies
+            for (int i = 0; i < sing.length(); i++) {
+                JSONObject outboundObj = sing.getJSONObject(i);
+                var singConfig = ProxyConfig.parseSingBoxConfig(outboundObj);
+                if (singConfig == null) continue;
+                var singProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(singConfig);
+                proxyList.add(singProxyInfo);
+            }
+            // Reorder
+            var newList = new ArrayList<ProxyInfo>();
+            for (int i = 0; i < order.length(); i++) {
+                var hash = order.getString(i);
+                proxyList.stream()
+                        .filter(proxyInfo -> proxyInfo.getHash().equals(hash))
+                        .findFirst()
+                        .ifPresent(newList::add);
+            }
+            proxyList = newList;
+        } catch (JSONException e) {
+            FileLog.e(e);
+        }
     }
 
     public static void saveProxyList() {
-        List<ProxyInfo> infoToSerialize = new ArrayList<>(proxyList);
+        // Save original proxies
+        var originalProxies = proxyList.stream().filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_ORIGINAL).collect(Collectors.toList());
+        List<ProxyInfo> infoToSerialize = new ArrayList<>(originalProxies);
         Collections.sort(infoToSerialize, (o1, o2) -> {
             long bias1 = SharedConfig.currentProxy == o1 ? -200000 : 0;
             if (!o1.available) {
@@ -1303,9 +1560,66 @@ public class SharedConfig {
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
         preferences.edit().putString("proxy_list", Base64.encodeToString(serializedData.toByteArray(), Base64.NO_WRAP)).commit();
         serializedData.cleanup();
+
+        File proxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "nekox/proxy_list_V2.json");
+        JSONObject root = new JSONObject();
+        try {
+            // Save WSRelay
+            JSONArray wsrelay = new JSONArray();
+            proxyList.stream()
+                    .filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_WSRELAY)
+                    .forEach(proxyInfo -> wsrelay.put(proxyInfo.getLink()));
+            root.put("wsrelay", wsrelay);
+
+            // Save SingProxy
+            JSONArray sing = new JSONArray();
+            proxyList.stream()
+                    .filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_SING)
+                    .forEach(proxyInfo -> sing.put(((SingProxyInfo) proxyInfo).getProxyBean().generateBoxConf()));
+            root.put("sing", sing);
+
+            // Save the order
+            JSONArray order = new JSONArray();
+            proxyList.stream().forEachOrdered(proxyInfo -> order.put(proxyInfo.getHash()));
+            root.put("order", order);
+        } catch (JSONException ex) {
+            FileLog.e(ex);
+        }
+        FileUtil.writeUtf8String(root.toString(), proxyListFile);
+    }
+
+    public static ProxyInfo parseProxyInfo(String url) {
+        if (url.startsWith("tg:proxy") ||
+                url.startsWith("tg://proxy") ||
+                url.startsWith("tg:socks") ||
+                url.startsWith("tg://socks") ||
+                url.startsWith("https://t.me/proxy") ||
+                url.startsWith("https://t.me/socks")) {
+            Uri lnk = Uri.parse(url);
+            if (lnk == null) return null;
+            ProxyInfo info = new ProxyInfo(lnk.getQueryParameter("server"),
+                    Utilities.parseInt(lnk.getQueryParameter("port")),
+                    lnk.getQueryParameter("user"),
+                    lnk.getQueryParameter("pass"),
+                    lnk.getQueryParameter("secret"));
+            if (StrUtil.isNotBlank(lnk.getFragment())) {
+                info.setRemarks(lnk.getFragment());
+            }
+            return info;
+        }
+
+        try {
+            var boxConfig = ProxyConfig.parseSingBoxConfig(url);
+            if (boxConfig == null) return null;
+            return SingProxyManager.Companion.getMainInstance().registerProxy(boxConfig);
+        } catch (Exception ex) {
+            FileLog.e(ex);
+        }
+        return null;
     }
 
     public static ProxyInfo addProxy(ProxyInfo proxyInfo) {
+        if (proxyInfo.getProxyType() != PROXY_TYPE_ORIGINAL) return null;
         loadProxyList();
         int count = proxyList.size();
         for (int a = 0; a < count; a++) {
@@ -1318,6 +1632,22 @@ public class SharedConfig {
         saveProxyList();
         return proxyInfo;
     }
+
+    public static ProxyInfo addProxy(ProxyConfig.SingProxyBean singBean) {
+        loadProxyList();
+        var info = SingProxyManager.Companion.getMainInstance().registerProxy(singBean);
+        proxyList.add(0, info);
+        saveProxyList();
+        return info;
+    }
+
+    public static ProxyInfo addProxy(WsProxy wsProxy) {
+        loadProxyList();
+        proxyList.add(0, wsProxy);
+        saveProxyList();
+        return wsProxy;
+    }
+
 
     public static boolean isProxyEnabled() {
         return MessagesController.getGlobalMainSettings().getBoolean("proxy_enabled", false) && currentProxy != null;
@@ -1423,7 +1753,8 @@ public class SharedConfig {
             PERFORMANCE_CLASS_AVERAGE,
             PERFORMANCE_CLASS_HIGH
     })
-    public @interface PerformanceClass {}
+    public @interface PerformanceClass {
+    }
 
     @PerformanceClass
     public static int getDevicePerformanceClass() {
@@ -1480,7 +1811,8 @@ public class SharedConfig {
                     freqResolved++;
                 }
                 reader.close();
-            } catch (Throwable ignore) {}
+            } catch (Throwable ignore) {
+            }
         }
         int maxCpuFreq = freqResolved == 0 ? -1 : (int) Math.ceil(totalCpuFreq / (float) freqResolved);
 
@@ -1489,24 +1821,25 @@ public class SharedConfig {
             ActivityManager.MemoryInfo memoryInfo = new ActivityManager.MemoryInfo();
             ((ActivityManager) ApplicationLoader.applicationContext.getSystemService(Context.ACTIVITY_SERVICE)).getMemoryInfo(memoryInfo);
             ram = memoryInfo.totalMem;
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {
+        }
 
         int performanceClass;
         if (
-            androidVersion < 21 ||
-            cpuCount <= 2 ||
-            memoryClass <= 100 ||
-            cpuCount <= 4 && maxCpuFreq != -1 && maxCpuFreq <= 1250 ||
-            cpuCount <= 4 && maxCpuFreq <= 1600 && memoryClass <= 128 && androidVersion <= 21 ||
-            cpuCount <= 4 && maxCpuFreq <= 1300 && memoryClass <= 128 && androidVersion <= 24 ||
-            ram != -1 && ram < 2L * 1024L * 1024L * 1024L
+                androidVersion < 21 ||
+                        cpuCount <= 2 ||
+                        memoryClass <= 100 ||
+                        cpuCount <= 4 && maxCpuFreq != -1 && maxCpuFreq <= 1250 ||
+                        cpuCount <= 4 && maxCpuFreq <= 1600 && memoryClass <= 128 && androidVersion <= 21 ||
+                        cpuCount <= 4 && maxCpuFreq <= 1300 && memoryClass <= 128 && androidVersion <= 24 ||
+                        ram != -1 && ram < 2L * 1024L * 1024L * 1024L
         ) {
             performanceClass = PERFORMANCE_CLASS_LOW;
         } else if (
-            cpuCount < 8 ||
-            memoryClass <= 160 ||
-            maxCpuFreq != -1 && maxCpuFreq <= 2055 ||
-            maxCpuFreq == -1 && cpuCount == 8 && androidVersion <= 23
+                cpuCount < 8 ||
+                        memoryClass <= 160 ||
+                        maxCpuFreq != -1 && maxCpuFreq <= 2055 ||
+                        maxCpuFreq == -1 && cpuCount == 8 && androidVersion <= 23
         ) {
             performanceClass = PERFORMANCE_CLASS_AVERAGE;
         } else {
@@ -1521,10 +1854,14 @@ public class SharedConfig {
 
     public static String performanceClassName(int perfClass) {
         switch (perfClass) {
-            case PERFORMANCE_CLASS_HIGH: return "HIGH";
-            case PERFORMANCE_CLASS_AVERAGE: return "AVERAGE";
-            case PERFORMANCE_CLASS_LOW: return "LOW";
-            default: return "UNKNOWN";
+            case PERFORMANCE_CLASS_HIGH:
+                return "HIGH";
+            case PERFORMANCE_CLASS_AVERAGE:
+                return "AVERAGE";
+            case PERFORMANCE_CLASS_LOW:
+                return "LOW";
+            default:
+                return "UNKNOWN";
         }
     }
 
@@ -1634,7 +1971,8 @@ public class SharedConfig {
                         freqResolved++;
                     }
                     reader.close();
-                } catch (Throwable ignore) {}
+                } catch (Throwable ignore) {
+                }
             }
             int maxCpuFreq = freqResolved == 0 ? -1 : (int) Math.ceil(totalCpuFreq / (float) freqResolved);
 
