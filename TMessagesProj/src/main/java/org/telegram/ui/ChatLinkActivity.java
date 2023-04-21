@@ -465,7 +465,7 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     showDialog(dialog);
                     TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
                     if (button != null) {
-                        button.setTextColor(Theme.getColor(Theme.key_dialogTextRed));
+                        button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
                     }
                 }
             }
@@ -986,14 +986,14 @@ public class ChatLinkActivity extends BaseFragment implements NotificationCenter
                     ManageChatTextCell actionCell = (ManageChatTextCell) holder.itemView;
                     if (isChannel) {
                         if (info.linked_chat_id != 0) {
-                            actionCell.setColors(Theme.key_windowBackgroundWhiteRedText5, Theme.key_windowBackgroundWhiteRedText5);
+                            actionCell.setColors(Theme.key_text_RedRegular, Theme.key_text_RedRegular);
                             actionCell.setText(LocaleController.getString("DiscussionUnlinkGroup", R.string.DiscussionUnlinkGroup), null, R.drawable.baseline_remove_circle_24, false);
                         } else {
                             actionCell.setColors(Theme.key_windowBackgroundWhiteBlueIcon, Theme.key_windowBackgroundWhiteBlueButton);
                             actionCell.setText(LocaleController.getString("DiscussionCreateGroup", R.string.DiscussionCreateGroup), null, R.drawable.baseline_group_24, true);
                         }
                     } else {
-                        actionCell.setColors(Theme.key_windowBackgroundWhiteRedText5, Theme.key_windowBackgroundWhiteRedText5);
+                        actionCell.setColors(Theme.key_text_RedRegular, Theme.key_text_RedRegular);
                         actionCell.setText(LocaleController.getString("DiscussionUnlinkChannel", R.string.DiscussionUnlinkChannel), null, R.drawable.baseline_remove_circle_24, false);
                     }
                     break;

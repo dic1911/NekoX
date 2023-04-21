@@ -45,13 +45,17 @@ import androidx.annotation.Keep;
 import androidx.core.graphics.ColorUtils;
 import androidx.core.math.MathUtils;
 
+import com.google.android.exoplayer2.util.Log;
+
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.ImageLoader;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
 import org.telegram.ui.Components.BackButtonMenu;
 import org.telegram.ui.Components.Bulletin;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -357,6 +361,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     private ArrayList<ThemeDescription> presentingFragmentDescriptions;
     private ArrayList<ThemeDescription.ThemeDescriptionDelegate> themeAnimatorDelegate = new ArrayList<>();
     private AnimatorSet themeAnimatorSet;
+    int animationIndex = -1;
     private float themeAnimationValue;
     private boolean animateThemeAfterAnimation;
     private Theme.ThemeInfo animateSetThemeAfterAnimation;
@@ -1191,6 +1196,9 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         if (fragment == null || checkTransitionAnimation() || delegate != null && check && !delegate.needPresentFragment(this, params) || !fragment.onFragmentCreate()) {
             return false;
         }
+        if (BuildVars.LOGS_ENABLED) {
+            FileLog.d("present fragment " + fragment.getClass().getSimpleName());
+        }
         if (inPreviewMode && transitionAnimationPreviewMode) {
             if (delayedOpenAnimationRunnable != null) {
                 AndroidUtilities.cancelRunOnUIThread(delayedOpenAnimationRunnable);
@@ -1855,6 +1863,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 }
             }
         }
+        currentFragment.onFragmentClosed();
     }
 
     @Override
@@ -2135,6 +2144,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                     return;
                 }
                 Theme.setAnimatingColor(true);
+                setThemeAnimationValue(0f);
                 if (settings.beforeAnimationRunnable != null) {
                     settings.beforeAnimationRunnable.run();
                 }
@@ -2142,10 +2152,13 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                 if (animationProgressListener != null) {
                     animationProgressListener.setProgress(0);
                 }
+                int currentAccount = UserConfig.selectedAccount;
+                animationIndex = NotificationCenter.getInstance(currentAccount).setAnimationInProgress(animationIndex, null);
                 themeAnimatorSet = new AnimatorSet();
                 themeAnimatorSet.addListener(new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
+                        NotificationCenter.getInstance(currentAccount).onAnimationFinish(animationIndex);
                         if (animation.equals(themeAnimatorSet)) {
                             themeAnimatorDescriptions.clear();
                             animateStartColors.clear();

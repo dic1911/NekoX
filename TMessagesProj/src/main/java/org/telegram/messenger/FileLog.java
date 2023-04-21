@@ -189,7 +189,7 @@ public class FileLog {
                     }
                     return false;
                 }
-            }).create();
+            }).registerTypeAdapterFactory(RuntimeClassNameTypeAdapterFactory.of(TLObject.class, "type_")).create();
         }
     }
 

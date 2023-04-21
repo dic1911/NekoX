@@ -501,17 +501,17 @@ public class VoIPHelper {
         alertView.addView(problemsWrap, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, -8, 0, -8, 0));
         problemsWrap.setVisibility(View.GONE);
 
-        final EditTextBoldCursor commentBox = new EditTextBoldCursor(context);
-        commentBox.setHint(LocaleController.getString("VoipFeedbackCommentHint", R.string.VoipFeedbackCommentHint));
-        commentBox.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
-        commentBox.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
-        commentBox.setHintTextColor(Theme.getColor(Theme.key_dialogTextHint));
-        commentBox.setBackground(null);
-		commentBox.setLineColors(Theme.getColor(Theme.key_dialogInputField), Theme.getColor(Theme.key_dialogInputFieldActivated), Theme.getColor(Theme.key_dialogTextRed));
-        commentBox.setPadding(0, AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4));
-        commentBox.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
-        commentBox.setVisibility(View.GONE);
-        alertView.addView(commentBox, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 8, 8, 8, 0));
+		final EditTextBoldCursor commentBox = new EditTextBoldCursor(context);
+		commentBox.setHint(LocaleController.getString("VoipFeedbackCommentHint", R.string.VoipFeedbackCommentHint));
+		commentBox.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_TEXT_FLAG_CAP_SENTENCES | InputType.TYPE_TEXT_FLAG_MULTI_LINE);
+		commentBox.setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
+		commentBox.setHintTextColor(Theme.getColor(Theme.key_dialogTextHint));
+		commentBox.setBackground(null);
+		commentBox.setLineColors(Theme.getColor(Theme.key_dialogInputField), Theme.getColor(Theme.key_dialogInputFieldActivated), Theme.getColor(Theme.key_text_RedBold));
+		commentBox.setPadding(0, AndroidUtilities.dp(4), 0, AndroidUtilities.dp(4));
+		commentBox.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 18);
+		commentBox.setVisibility(View.GONE);
+		alertView.addView(commentBox, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, 8, 8, 8, 0));
 
         final boolean[] includeLogs = {true};
         final CheckBoxCell checkbox = new CheckBoxCell(context, 1);

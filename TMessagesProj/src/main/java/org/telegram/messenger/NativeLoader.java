@@ -19,13 +19,13 @@ import tw.nekomimi.nekogram.utils.FileUtil;
 
 public class NativeLoader {
 
-    private final static int LIB_VERSION = 44;
+    private final static int LIB_VERSION = 45;
     private final static String LIB_NAME = "tmessages." + LIB_VERSION;
     private final static String LIB_SO_NAME = "lib" + LIB_NAME + ".so";
     private final static String LOCALE_LIB_SO_NAME = "lib" + LIB_NAME + "loc.so";
-    private String crashPath = "";
 
     private static volatile boolean nativeLoaded = false;
+    public static StringBuilder log = new StringBuilder();
 
     private static File getNativeLibraryDir(Context context) {
         File f = null;
@@ -52,14 +52,64 @@ public class NativeLoader {
         }
 
         try {
-            System.loadLibrary(LIB_NAME);
-            nativeLoaded = true;
-            if (BuildVars.LOGS_ENABLED) {
-                FileLog.d("loaded normal lib");
+            try {
+                System.loadLibrary(LIB_NAME);
+                nativeLoaded = true;
+                if (BuildVars.LOGS_ENABLED) {
+                    FileLog.d("loaded normal lib");
+                }
+                return;
+            } catch (Error e) {
+                FileLog.e(e);
+                log.append("129: ").append(e).append("\n");
             }
-            return;
-        } catch (Error e) {
-            FileLog.e(e);
+
+            String folder = getAbiFolder();
+
+            /*File destFile = getNativeLibraryDir(context);
+            if (destFile != null) {
+                destFile = new File(destFile, LIB_SO_NAME);
+                if (destFile.exists()) {
+                    try {
+                        System.loadLibrary(LIB_NAME);
+                        nativeLoaded = true;
+                        return;
+                    } catch (Error e) {
+                        FileLog.e(e);
+                    }
+                }
+            }*/
+
+            File destDir = new File(context.getFilesDir(), "lib");
+            destDir.mkdirs();
+
+            File destLocalFile = new File(destDir, LOCALE_LIB_SO_NAME);
+            if (destLocalFile.exists()) {
+                try {
+                    if (BuildVars.LOGS_ENABLED) {
+                        FileLog.d("Load local lib");
+                    }
+                    System.load(destLocalFile.getAbsolutePath());
+                    nativeLoaded = true;
+                    return;
+                } catch (Error e) {
+                    log.append(e).append("\n");
+                    FileLog.e(e);
+                }
+                destLocalFile.delete();
+            }
+
+            if (BuildVars.LOGS_ENABLED) {
+                FileLog.e("Library not found, arch = " + folder);
+                log.append("Library not found, arch = " + folder).append("\n");
+            }
+
+            if (loadFromZip(context, destDir, destLocalFile, folder)) {
+                return;
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+            log.append("177: ").append(e).append("\n");
         }
 
         try {
@@ -68,6 +118,7 @@ public class NativeLoader {
             nativeLoaded = true;
         } catch (Error e) {
             FileLog.e(e);
+            log.append("185: ").append(e).append("\n");
         }
     }
 
