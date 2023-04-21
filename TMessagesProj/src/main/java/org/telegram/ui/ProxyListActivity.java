@@ -296,7 +296,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                     colorKey = Theme.key_windowBackgroundWhiteGreenText;
                 } else {
                     valueTextView.setText(LocaleController.getString("Unavailable", R.string.Unavailable));
-                    colorKey = Theme.key_windowBackgroundWhiteRedText4;
+                    colorKey = Theme.key_text_RedRegular;
                 }
             }
             color = Theme.getColor(colorKey);
@@ -758,6 +758,36 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                     TextCheckCell textCheckCell = (TextCheckCell) holder.itemView;
                     textCheckCell.setChecked(true);
                 }
+                ConnectionsManager.setProxySettings(useProxySettings, SharedConfig.currentProxy.address, SharedConfig.currentProxy.port, SharedConfig.currentProxy.username, SharedConfig.currentProxy.password, SharedConfig.currentProxy.secret);
+            } else if (position == proxyAddRow) {
+                presentFragment(new ProxySettingsActivity(-1));
+            } else if (position == deleteAllRow) {
+                AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                builder.setMessage(LocaleController.getString(R.string.DeleteAllProxiesConfirm));
+                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                builder.setTitle(LocaleController.getString(R.string.DeleteProxyTitle));
+                builder.setPositiveButton(LocaleController.getString(R.string.Delete), (dialog, which) -> {
+                    for (SharedConfig.ProxyInfo info : proxyList) {
+                        SharedConfig.deleteProxy(info);
+                    }
+                    useProxyForCalls = false;
+                    useProxySettings = false;
+                    NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+                    NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+                    updateRows(true);
+                    if (listAdapter != null) {
+                        listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+                        listAdapter.notifyItemChanged(callsRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+                        listAdapter.clearSelected();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                showDialog(dialog);
+                TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                if (button != null) {
+                    button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                }
             }
         });
         listView.setOnItemLongClickListener((view, position) -> {
@@ -823,10 +853,84 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
             return false;
         });
 
-        if (alert != null) {
-            AlertUtil.showSimpleAlert(context, alert);
-            alert = null;
-        }
+        ActionBarMenu actionMode = actionBar.createActionMode();
+        selectedCountTextView = new NumberTextView(actionMode.getContext());
+        selectedCountTextView.setTextSize(18);
+        selectedCountTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        selectedCountTextView.setTextColor(Theme.getColor(Theme.key_actionBarActionModeDefaultIcon));
+        actionMode.addView(selectedCountTextView, LayoutHelper.createLinear(0, LayoutHelper.MATCH_PARENT, 1.0f, 72, 0, 0, 0));
+        selectedCountTextView.setOnTouchListener((v, event) -> true);
+
+        shareMenuItem = actionMode.addItemWithWidth(MENU_SHARE, R.drawable.msg_share, AndroidUtilities.dp(54));
+        deleteMenuItem = actionMode.addItemWithWidth(MENU_DELETE, R.drawable.msg_delete, AndroidUtilities.dp(54));
+
+        actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
+            @Override
+            public void onItemClick(int id) {
+                switch (id) {
+                    case -1:
+                        if (selectedItems.isEmpty()) {
+                            finishFragment();
+                        } else {
+                            listAdapter.clearSelected();
+                        }
+                        break;
+                    case MENU_DELETE:
+                        AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
+                        builder.setMessage(LocaleController.getString(selectedItems.size() > 1 ? R.string.DeleteProxyMultiConfirm : R.string.DeleteProxyConfirm));
+                        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                        builder.setTitle(LocaleController.getString(R.string.DeleteProxyTitle));
+                        builder.setPositiveButton(LocaleController.getString(R.string.Delete), (dialog, which) -> {
+                            for (SharedConfig.ProxyInfo info : selectedItems) {
+                                SharedConfig.deleteProxy(info);
+                            }
+                            if (SharedConfig.currentProxy == null) {
+                                useProxyForCalls = false;
+                                useProxySettings = false;
+                            }
+                            NotificationCenter.getGlobalInstance().removeObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+                            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
+                            NotificationCenter.getGlobalInstance().addObserver(ProxyListActivity.this, NotificationCenter.proxySettingsChanged);
+                            updateRows(true);
+                            if (listAdapter != null) {
+                                if (SharedConfig.currentProxy == null) {
+                                    listAdapter.notifyItemChanged(useProxyRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+                                    listAdapter.notifyItemChanged(callsRow, ListAdapter.PAYLOAD_CHECKED_CHANGED);
+                                }
+                                listAdapter.clearSelected();
+                            }
+                        });
+                        AlertDialog dialog = builder.create();
+                        showDialog(dialog);
+                        TextView button = (TextView) dialog.getButton(DialogInterface.BUTTON_POSITIVE);
+                        if (button != null) {
+                            button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
+                        }
+                        break;
+                    case MENU_SHARE:
+                        StringBuilder links = new StringBuilder();
+                        for (SharedConfig.ProxyInfo info : selectedItems) {
+                            if (links.length() > 0) {
+                                links.append("\n\n");
+                            }
+                            links.append(info.getLink());
+                        }
+
+                        Intent shareIntent = new Intent(Intent.ACTION_SEND);
+                        shareIntent.setType("text/plain");
+                        shareIntent.putExtra(Intent.EXTRA_TEXT, links.toString());
+                        Intent chooserIntent = Intent.createChooser(shareIntent, LocaleController.getString(selectedItems.size() > 1 ? R.string.ShareLinks : R.string.ShareLink));
+                        chooserIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                        context.startActivity(chooserIntent);
+
+                        if (listAdapter != null) {
+                            listAdapter.clearSelected();
+                        }
+                        break;
+                }
+            }
+        });
+
         return fragmentView;
     }
 
@@ -1294,7 +1398,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                     if (position == proxyAddRow) {
                         textCell.setText(LocaleController.getString("AddProxy", R.string.AddProxy), deleteAllRow != -1);
                     } else if (position == deleteAllRow) {
-                        textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText4));
+                        textCell.setTextColor(Theme.getColor(Theme.key_text_RedRegular));
                         textCell.setText(LocaleController.getString(R.string.DeleteAllProxies), false);
                     }
                     break;
@@ -1550,7 +1654,7 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG | ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueText6));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG | ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText2));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG | ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteGreenText));
-        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG | ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_windowBackgroundWhiteRedText4));
+        themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_TEXTCOLOR | ThemeDescription.FLAG_CHECKTAG | ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"valueTextView"}, null, null, null, Theme.key_text_RedRegular));
         themeDescriptions.add(new ThemeDescription(listView, ThemeDescription.FLAG_IMAGECOLOR, new Class[]{TextDetailProxyCell.class}, new String[]{"checkImageView"}, null, null, null, Theme.key_windowBackgroundWhiteGrayText3));
 
         themeDescriptions.add(new ThemeDescription(listView, 0, new Class[]{HeaderCell.class}, new String[]{"textView"}, null, null, null, Theme.key_windowBackgroundWhiteBlueHeader));

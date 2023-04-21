@@ -617,12 +617,17 @@ public class SimpleTextView extends View implements Drawable.Callback {
             return false;
         }
         text = value;
-        if (!(text == null && value == null || text != null && text.equals(value))) {
-            scrollingOffset = 0;
-        }
         currentScrollDelay = SCROLL_DELAY_MS;
         recreateLayoutMaybe();
         return true;
+    }
+
+    public void resetScrolling() {
+        scrollingOffset = 0;
+    }
+
+    public void copyScrolling(SimpleTextView textView) {
+        scrollingOffset = textView.scrollingOffset;
     }
 
     public void setDrawablePadding(int value) {
@@ -833,7 +838,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
         }
 
         if (layout != null) {
-            if (rightDrawableOutside || ellipsizeByGradient) {
+            if (rightDrawableOutside || ellipsizeByGradient || paddingRight > 0) {
                 canvas.save();
                 canvas.clipRect(0, 0, getMaxTextWidth() - paddingRight - AndroidUtilities.dp(rightDrawable != null && !(rightDrawable instanceof AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable) && rightDrawableOutside ? 2 : 0), getMeasuredHeight());
             }
@@ -911,7 +916,7 @@ public class SimpleTextView extends View implements Drawable.Callback {
             }
             updateScrollAnimation();
             Emoji.emojiDrawingUseAlpha = true;
-            if (rightDrawableOutside) {
+            if (rightDrawableOutside || ellipsizeByGradient || paddingRight > 0) {
                 canvas.restore();
             }
         }

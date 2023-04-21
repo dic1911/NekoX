@@ -135,6 +135,7 @@ import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.ChatBackgroundDrawable;
 import org.telegram.ui.Components.AlertsCreator;
 import org.telegram.ui.Components.BackgroundGradientDrawable;
 import org.telegram.ui.Components.Bulletin;
@@ -227,6 +228,7 @@ public class AndroidUtilities {
     public static float density = 1;
     public static Point displaySize = new Point();
     public static float screenRefreshRate = 60;
+    public static float screenRefreshTime = 1000 / screenRefreshRate;
     public static int roundMessageSize;
     public static int roundPlayingMessageSize;
     public static int roundMessageInset;
@@ -855,6 +857,10 @@ public class AndroidUtilities {
     }
 
     public static int[] calcDrawableColor(Drawable drawable) {
+        if (drawable instanceof ChatBackgroundDrawable) {
+            ChatBackgroundDrawable chatBackgroundDrawable = (ChatBackgroundDrawable) drawable;
+            return calcDrawableColor(chatBackgroundDrawable.getDrawable());
+        }
         int bitmapColor = 0xff000000;
         int[] result = new int[4];
         try {
@@ -2023,6 +2029,7 @@ public class AndroidUtilities {
                     display.getMetrics(displayMetrics);
                     display.getSize(displaySize);
                     screenRefreshRate = display.getRefreshRate();
+                    screenRefreshTime = 1000 / screenRefreshRate;
                 }
             }
             if (configuration.screenWidthDp != Configuration.SCREEN_WIDTH_DP_UNDEFINED) {
@@ -3749,7 +3756,7 @@ public class AndroidUtilities {
                     ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(address, Integer.parseInt(port), user, password, secret, time -> AndroidUtilities.runOnUIThread(() -> {
                         if (time == -1) {
                             cell.getTextView().setText(LocaleController.getString(R.string.Unavailable));
-                            cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText4));
+                            cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
                         } else {
                             cell.getTextView().setText(LocaleController.getString(R.string.Available) + ", " + LocaleController.formatString(R.string.Ping, time));
                             cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteGreenText));
@@ -3757,7 +3764,7 @@ public class AndroidUtilities {
                     }));
                 } catch (NumberFormatException ignored) {
                     cell.getTextView().setText(LocaleController.getString(R.string.Unavailable));
-                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText4));
+                    cell.getTextView().setTextColor(Theme.getColor(Theme.key_text_RedRegular));
                 }
             }
         }
@@ -4534,6 +4541,9 @@ public class AndroidUtilities {
     }
 
     public static void setNavigationBarColor(Window window, int color, boolean animated, IntColorCallback onUpdate) {
+        if (window == null) {
+            return;
+        }
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             if (navigationBarColorAnimators != null) {
                 ValueAnimator animator = navigationBarColorAnimators.get(window);
@@ -4703,10 +4713,14 @@ public class AndroidUtilities {
     }
 
     public static void updateViewVisibilityAnimated(View view, boolean show) {
-        updateViewVisibilityAnimated(view, show, 1f, true);
+        updateViewVisibilityAnimated(view, show, 1f, true, true);
     }
 
     public static void updateViewVisibilityAnimated(View view, boolean show, float scaleFactor, boolean animated) {
+        updateViewVisibilityAnimated(view, show, scaleFactor, true, animated);
+    }
+
+    public static void updateViewVisibilityAnimated(View view, boolean show, float scaleFactor, boolean goneOnHide, boolean animated) {
         if (view == null) {
             return;
         }
@@ -4716,7 +4730,7 @@ public class AndroidUtilities {
 
         if (!animated) {
             view.animate().setListener(null).cancel();
-            view.setVisibility(show ? View.VISIBLE : View.GONE);
+            view.setVisibility(show ? View.VISIBLE : (goneOnHide ? View.GONE : View.INVISIBLE));
             view.setTag(show ? 1 : null);
             view.setAlpha(1f);
             view.setScaleX(1f);
@@ -4733,7 +4747,7 @@ public class AndroidUtilities {
             view.setTag(1);
         } else if (!show && view.getTag() != null) {
             view.animate().setListener(null).cancel();
-            view.animate().alpha(0).scaleY(scaleFactor).scaleX(scaleFactor).setListener(new HideViewAfterAnimation(view)).setDuration(150).start();
+            view.animate().alpha(0).scaleY(scaleFactor).scaleX(scaleFactor).setListener(new HideViewAfterAnimation(view, goneOnHide)).setDuration(150).start();
             view.setTag(null);
         }
     }
@@ -5184,5 +5198,17 @@ public class AndroidUtilities {
             }
         }
         return null;
+    }
+
+    public static boolean isActivityRunning(Activity activity) {
+        if (activity == null) {
+            return false;
+        }
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+            return !activity.isDestroyed() && !activity.isFinishing();
+        } else {
+            return !activity.isFinishing();
+        }
     }
 }

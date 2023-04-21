@@ -5,6 +5,7 @@
 	path = TMessagesProj/jni/ffmpeg
 	url = https://github.com/FFmpeg/FFmpeg
 	ignore = dirty
+	branch = n4.4.3
 [submodule "TMessagesProj/jni/boringssl"]
 	path = TMessagesProj/jni/boringssl
 	url = https://github.com/google/boringssl
