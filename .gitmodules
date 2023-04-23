@@ -9,7 +9,7 @@
 [submodule "TMessagesProj/jni/boringssl"]
 	path = TMessagesProj/jni/boringssl
 	url = https://github.com/google/boringssl
-	ignore = dirty
+	ignore = all
 [submodule "TMessagesProj/jni/libvpx"]
 	path = TMessagesProj/jni/libvpx
 	url = https://github.com/webmproject/libvpx

@@ -145,7 +145,7 @@ function build {
 				CPU=i686
 				OPTIMIZE_CFLAGS="-O3 -march=i686 -mtune=intel -msse3 -mfpmath=sse -m32 -fPIC"
 				TARGET="x86-android-gcc"
-				PREFIX=./build/x86
+				PREFIX=./build/$ARCH
 				CPU_DETECT="--enable-runtime-cpu-detect"
 				build_one
 			;;
@@ -184,7 +184,7 @@ function build {
 }
 
 if (( $# == 0 )); then
-	build  x86 x86_64 arm arm64
+	build x86_64 x86 arm arm64
 else
 	build $@
 fi
