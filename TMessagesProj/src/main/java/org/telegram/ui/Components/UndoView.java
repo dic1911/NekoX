@@ -1421,7 +1421,7 @@ public class UndoView extends FrameLayout {
             if (photoEntry.thumbPath != null) {
                 avatarImageView.setImage(photoEntry.thumbPath, null, Theme.chat_attachEmptyDrawable);
             } else if (photoEntry.path != null) {
-                avatarImageView.setOrientation(photoEntry.orientation, true);
+                avatarImageView.setOrientation(photoEntry.orientation, photoEntry.invert, true);
                 if (photoEntry.isVideo) {
                     avatarImageView.setImage("vthumb://" + photoEntry.imageId + ":" + photoEntry.path, null, Theme.chat_attachEmptyDrawable);
                 } else {
@@ -1689,8 +1689,7 @@ public class UndoView extends FrameLayout {
         return backgroundDrawable;
     }
 
-    private int getThemedColor(String key) {
-        Integer color = resourcesProvider != null ? resourcesProvider.getColor(key) : null;
-        return color != null ? color : Theme.getColor(key);
+    private int getThemedColor(int key) {
+        return Theme.getColor(key, resourcesProvider);
     }
 }

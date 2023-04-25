@@ -234,8 +234,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
     private int customDate;
     private CharSequence customText;
 
-    private String overrideBackground;
-    private String overrideText;
+    private int overrideBackground = -1;
+    private int overrideText = -1;
     private Paint overrideBackgroundPaint;
     private TextPaint overrideTextPaint;
     private int overrideColor;
@@ -397,7 +397,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         }
     }
 
-    public void setOverrideColor(String background, String text) {
+    public void setOverrideColor(int background, int text) {
         overrideBackground = background;
         overrideText = text;
     }
@@ -916,11 +916,6 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         paint.linkColor = paint.getColor();
         textLayout = new StaticLayout(text, paint, maxWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
 
-        spoilersPool.addAll(spoilers);
-        spoilers.clear();
-        if (text instanceof Spannable) {
-            SpoilerEffect.addSpoilers(this, textLayout, (Spannable) text, spoilersPool, spoilers);
-        }
         animatedEmojiStack = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, canDrawInParent && (delegate != null && !delegate.canDrawOutboundsContent()), animatedEmojiStack, textLayout);
 
         textHeight = 0;
@@ -947,6 +942,12 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         textX = (width - textWidth) / 2;
         textY = AndroidUtilities.dp(7);
         textXLeft = (width - textLayout.getWidth()) / 2;
+
+        spoilersPool.addAll(spoilers);
+        spoilers.clear();
+        if (text instanceof Spannable) {
+            SpoilerEffect.addSpoilers(this, textLayout, textX, textX + textWidth, (Spannable) text, spoilersPool, spoilers);
+        }
     }
 
 
@@ -1216,7 +1217,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
                     radialProgress.setProgress(imageUpdater.getCurrentImageProgress(), true);
                     radialProgress.setCircleRadius((int) (imageReceiver.getImageWidth() * 0.5f) + 1);
                     radialProgress.setMaxIconSize(AndroidUtilities.dp(24));
-                    radialProgress.setColors(Theme.key_chat_mediaLoaderPhoto, Theme.key_chat_mediaLoaderPhotoSelected, Theme.key_chat_mediaLoaderPhotoIcon, Theme.key_chat_mediaLoaderPhotoIconSelected);
+                    radialProgress.setColorKeys(Theme.key_chat_mediaLoaderPhoto, Theme.key_chat_mediaLoaderPhotoSelected, Theme.key_chat_mediaLoaderPhotoIcon, Theme.key_chat_mediaLoaderPhotoIconSelected);
                     if (imageUpdater.getCurrentImageProgress() == 1f) {
                         radialProgress.setIcon(MediaActionDrawable.ICON_NONE, true, true);
                     } else {
@@ -1229,7 +1230,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
                 radialProgress.setProgress(progress, true);
                 radialProgress.setCircleRadius(AndroidUtilities.dp(26));
                 radialProgress.setMaxIconSize(AndroidUtilities.dp(24));
-                radialProgress.setColors(Theme.key_chat_mediaLoaderPhoto, Theme.key_chat_mediaLoaderPhotoSelected, Theme.key_chat_mediaLoaderPhotoIcon, Theme.key_chat_mediaLoaderPhotoIconSelected);
+                radialProgress.setColorKeys(Theme.key_chat_mediaLoaderPhoto, Theme.key_chat_mediaLoaderPhotoSelected, Theme.key_chat_mediaLoaderPhotoIcon, Theme.key_chat_mediaLoaderPhotoIconSelected);
                 if (progress == 1f) {
                     radialProgress.setIcon(MediaActionDrawable.ICON_NONE, true, true);
                 } else {
@@ -1425,7 +1426,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         }
         Paint backgroundPaint = getThemedPaint(Theme.key_paint_chatActionBackground);
         textPaint = (TextPaint) getThemedPaint(Theme.key_paint_chatActionText);
-        if (overrideBackground != null) {
+        if (overrideBackground >= 0) {
             int color = getThemedColor(overrideBackground);
             if (overrideBackgroundPaint == null) {
                 overrideBackgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -1702,9 +1703,8 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
         invalidate();
     }
 
-    private int getThemedColor(String key) {
-        Integer color = themeDelegate != null ? themeDelegate.getColor(key) : null;
-        return color != null ? color : Theme.getColor(key);
+    private int getThemedColor(int key) {
+        return Theme.getColor(key, themeDelegate);
     }
 
     private Paint getThemedPaint(String paintKey) {
