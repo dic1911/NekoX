@@ -376,6 +376,9 @@ public abstract class BaseFragment {
     @CallSuper
     public void onResume() {
         isPaused = false;
+        if (actionBar != null) {
+            actionBar.onResume();
+        }
     }
 
     @CallSuper
@@ -835,7 +838,7 @@ public abstract class BaseFragment {
         return actionBarLayout;
     }
 
-    public int getThemedColor(String key) {
+    public int getThemedColor(int key) {
         return Theme.getColor(key, getResourceProvider());
     }
 
@@ -901,7 +904,7 @@ public abstract class BaseFragment {
         }
         Theme.ResourcesProvider resourcesProvider = getResourceProvider();
         int color;
-        String key = Theme.key_actionBarDefault;
+        int key = Theme.key_actionBarDefault;
         if (actionBar != null && actionBar.isActionModeShowed()) {
             key = Theme.key_actionBarActionModeDefault;
         }

@@ -1074,10 +1074,9 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     private DialogFilter sortingDialogFilter;
-
-    private Comparator<TLRPC.Dialog> dialogDateComparator = (dialog1, dialog2) -> {
-        int pinnedNum1 = sortingDialogFilter.pinnedDialogs.get(dialog1.id, Integer.MIN_VALUE);
-        int pinnedNum2 = sortingDialogFilter.pinnedDialogs.get(dialog2.id, Integer.MIN_VALUE);
+    private final Comparator<TLRPC.Dialog> dialogDateComparator = (dialog1, dialog2) -> {
+        int pinnedNum1 = sortingDialogFilter == null ? Integer.MIN_VALUE : sortingDialogFilter.pinnedDialogs.get(dialog1.id, Integer.MIN_VALUE);
+        int pinnedNum2 = sortingDialogFilter == null ? Integer.MIN_VALUE : sortingDialogFilter.pinnedDialogs.get(dialog2.id, Integer.MIN_VALUE);
         if (dialog1 instanceof TLRPC.TL_dialogFolder && !(dialog2 instanceof TLRPC.TL_dialogFolder)) {
             return -1;
         } else if (!(dialog1 instanceof TLRPC.TL_dialogFolder) && dialog2 instanceof TLRPC.TL_dialogFolder) {
@@ -1105,6 +1104,13 @@ public class MessagesController extends BaseController implements NotificationCe
         }
         return 0;
     };
+
+    public void sortDialogsList(ArrayList<TLRPC.Dialog> dialogs) {
+        if (dialogs == null) {
+            return;
+        }
+        Collections.sort(dialogs, dialogComparator);
+    }
 
     private Comparator<TLRPC.Dialog> dialogComparator = (dialog1, dialog2) -> {
         if (dialog1 instanceof TLRPC.TL_dialogFolder && !(dialog2 instanceof TLRPC.TL_dialogFolder)) {
@@ -1712,7 +1718,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     new_dialogMessage.put(dialogId, arrayList);
                 }
             }
-            getFileLoader().checkMediaExistance(newMessages);
+            //getFileLoader().checkMediaExistance(newMessages);
 
             for (int a = 0; a < pinnedDialogs.dialogs.size(); a++) {
                 TLRPC.Dialog d = pinnedDialogs.dialogs.get(a);
@@ -9566,7 +9572,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 arrayList.add(messageObject);
                 new_dialogMessage.put(did, arrayList);
             }
-            getFileLoader().checkMediaExistance(newMessages);
+           // getFileLoader().checkMediaExistance(newMessages);
 
             if (!fromCache && !migrate && dialogsLoadOffset[UserConfig.i_dialogsLoadOffsetId] != -1 && loadType == 0) {
                 int totalDialogsLoadCount = getUserConfig().getTotalDialogsCount(folderId);
@@ -13087,7 +13093,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     arrayList.add(messageObject);
                     new_dialogMessage.put(did, arrayList);
                 }
-                getFileLoader().checkMediaExistance(newMessages);
+                //getFileLoader().checkMediaExistance(newMessages);
                 boolean firstIsFolder = !newPinnedDialogs.isEmpty() && newPinnedDialogs.get(0) instanceof TLRPC.TL_dialogFolder;
                 for (int a = 0, N = newPinnedDialogs.size(); a < N; a++) {
                     TLRPC.Dialog d = newPinnedDialogs.get(a);
@@ -17206,7 +17212,7 @@ public class MessagesController extends BaseController implements NotificationCe
         } catch (Exception e) {}
     }
 
-    private boolean canAddToForward(TLRPC.Dialog d) {
+    public boolean canAddToForward(TLRPC.Dialog d) {
         if (d == null) {
             return false;
         }
@@ -17219,7 +17225,6 @@ public class MessagesController extends BaseController implements NotificationCe
             if (chat != null && chat.megagroup) {
                 canAddToForward = !chat.gigagroup || ChatObject.hasAdminRights(chat);
             } else {
-                dialogsChannelsOnly.add(d);
                 canAddToForward = ChatObject.hasAdminRights(chat) && ChatObject.canPost(chat);
             }
         }

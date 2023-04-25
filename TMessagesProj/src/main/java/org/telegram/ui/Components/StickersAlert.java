@@ -123,9 +123,9 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     }
 
     public interface StickersAlertCustomButtonDelegate {
-        String getCustomButtonTextColorKey();
-        String getCustomButtonRippleColorKey();
-        String getCustomButtonColorKey();
+        int getCustomButtonTextColorKey();
+        int getCustomButtonRippleColorKey();
+        int getCustomButtonColorKey();
         String getCustomButtonText();
         boolean onCustomButtonPressed();
     }
@@ -180,7 +180,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
     private boolean clearsInputField;
 
     private boolean showTooltipWhenToggle = true;
-    private String buttonTextColorKey;
+    private int buttonTextColorKey;
 
     private ContentPreviewViewer.ContentPreviewViewerDelegate previewDelegate = new ContentPreviewViewer.ContentPreviewViewerDelegate() {
         @Override
@@ -1129,7 +1129,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
                     premiumButtonView.setVisibility(View.VISIBLE);
                     pickerBottomLayout.setBackground(null);
 
-                    setButton(null, null, null);
+                    setButton(null, null, -1);
                     premiumButtonView.setButton(LocaleController.getString("UnlockPremiumEmoji", R.string.UnlockPremiumEmoji), e -> {
                         if (parentFragment != null) {
                             new PremiumFeatureBottomSheet(parentFragment, PremiumPreviewFragment.PREMIUM_FEATURE_ANIMATED_EMOJI, false).show();
@@ -1678,12 +1678,12 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
         }
     }
 
-    private void setButton(View.OnClickListener onClickListener, String title, String colorKey) {
-        setButton(onClickListener, title, colorKey, null, null);
+    private void setButton(View.OnClickListener onClickListener, String title, int colorKey) {
+        setButton(onClickListener, title, colorKey, -1, -1);
     }
 
-    private void setButton(View.OnClickListener onClickListener, String title, String colorKey, String backgroundColorKey, String backgroundSelectorColorKey) {
-        if (colorKey != null) {
+    private void setButton(View.OnClickListener onClickListener, String title, int colorKey, int backgroundColorKey, int backgroundSelectorColorKey) {
+        if (colorKey >= 0) {
             pickerBottomLayout.setTextColor(getThemedColor(buttonTextColorKey = colorKey));
         }
         pickerBottomLayout.setText(title);
@@ -1693,7 +1693,7 @@ public class StickersAlert extends BottomSheet implements NotificationCenter.Not
         ViewGroup.MarginLayoutParams shadowParams = (ViewGroup.MarginLayoutParams) shadow[1].getLayoutParams();
         ViewGroup.MarginLayoutParams gridParams = (ViewGroup.MarginLayoutParams) gridView.getLayoutParams();
         ViewGroup.MarginLayoutParams emptyParams = (ViewGroup.MarginLayoutParams) emptyView.getLayoutParams();
-        if (backgroundColorKey != null && backgroundSelectorColorKey != null) {
+        if (backgroundColorKey >= 0 && backgroundSelectorColorKey >= 0) {
             pickerBottomLayout.setBackground(Theme.createSimpleSelectorRoundRectDrawable(AndroidUtilities.dp(6), getThemedColor(backgroundColorKey), getThemedColor(backgroundSelectorColorKey)));
             pickerBottomFrameLayout.setBackgroundColor(getThemedColor(Theme.key_dialogBackground));
             params.leftMargin = params.topMargin = params.rightMargin = params.bottomMargin = AndroidUtilities.dp(8);
