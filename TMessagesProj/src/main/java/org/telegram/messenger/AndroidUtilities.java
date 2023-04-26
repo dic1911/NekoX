@@ -4023,7 +4023,7 @@ public class AndroidUtilities {
                     @Override
                     public void run(long time) {
                         int c = count.getAndIncrement();
-                        String colorKey;
+                        int colorKey;
                         if (time != -1) {
                             info.stop();
                             cell.setTextAndValue(LocaleController.getString("Available", R.string.Available), LocaleController.formatString("Ping", R.string.Ping, time), true);
