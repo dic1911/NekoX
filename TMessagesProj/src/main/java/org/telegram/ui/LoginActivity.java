@@ -150,6 +150,7 @@ import org.telegram.ui.Components.LinkPath;
 import org.telegram.ui.Components.LoadingDrawable;
 import org.telegram.ui.Components.LoginOrView;
 import org.telegram.ui.Components.OutlineTextContainerView;
+import org.telegram.ui.Components.ProxyDrawable;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.RadialProgressView;
@@ -316,6 +317,9 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
     private ImageView backButtonView;
     private RadialProgressView radialProgressView;
 
+    private ImageView proxyButtonView;
+    private ProxyDrawable proxyDrawable;
+
     // Open animation stuff
     private LinearLayout keyboardLinearLayout;
     private FrameLayout slideViewsContainer;
@@ -480,6 +484,15 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         }
 
         SharedConfig.loginingAccount = -1;
+        getNotificationCenter().removeObserver(this, NotificationCenter.didUpdateConnectionState);
+    }
+
+    @Override
+    public boolean onFragmentCreate() {
+        getNotificationCenter().addObserver(this, NotificationCenter.didUpdateConnectionState);
+        SharedConfig.loginingAccount = currentAccount;
+        ApplicationLoader.loadAccount(currentAccount);
+        return super.onFragmentCreate();
     }
 
     @Override
@@ -519,6 +532,9 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
                 int statusBarHeight = AndroidUtilities.isTablet() ? 0 : AndroidUtilities.statusBarHeight;
                 marginLayoutParams = (MarginLayoutParams) backButtonView.getLayoutParams();
+                marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
+
+                marginLayoutParams = (MarginLayoutParams) proxyButtonView.getLayoutParams();
                 marginLayoutParams.topMargin = AndroidUtilities.dp(16) + statusBarHeight;
 
                 marginLayoutParams = (MarginLayoutParams) radialProgressView.getLayoutParams();
@@ -732,6 +748,13 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         padding = AndroidUtilities.dp(4);
         menu.setPadding(padding, padding, padding, padding);
         sizeNotifierFrameLayout.addView(menu, LayoutHelper.createFrame(32, 32, Gravity.RIGHT | Gravity.TOP, 0, 16, 16, 0));
+        proxyButtonView = new ImageView(context);
+        proxyButtonView.setImageDrawable(proxyDrawable = new ProxyDrawable(context));
+        proxyButtonView.setOnClickListener(v -> presentFragment(new ProxyListActivity()));
+        proxyButtonView.setAlpha(0f);
+        proxyButtonView.setVisibility(View.GONE);
+        sizeNotifierFrameLayout.addView(proxyButtonView, LayoutHelper.createFrame(32, 32, Gravity.RIGHT | Gravity.TOP, 16, 16, 16, 16));
+        updateProxyButton(false, true);
 
         radialProgressView = new RadialProgressView(context);
         radialProgressView.setSize(AndroidUtilities.dp(20));
@@ -7931,6 +7954,10 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         backButtonView.setColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
         backButtonView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
 
+        proxyDrawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.SRC_IN));
+        proxyDrawable.setColorKey(Theme.key_windowBackgroundWhiteBlackText);
+        proxyButtonView.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
+
         radialProgressView.setProgressColor(Theme.getColor(Theme.key_chats_actionBackground));
 
         floatingButtonIcon.setColor(Theme.getColor(Theme.key_chats_actionIcon));
@@ -8266,18 +8293,70 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
 
     // NekoX Changes
 
-    @Override
-    public void didReceivedNotification(int id, int account, Object... args) {
-        if (id == NotificationCenter.updateLoginToken) {
-            regenerateLoginToken(false);
+    private int currentConnectionState;
+
+    private void updateProxyButton(boolean animated, boolean force) {
+        if (proxyDrawable == null) {
+            return;
+        }
+        int state = getConnectionsManager().getConnectionState();
+        if (currentConnectionState == state && !force) {
+            return;
+        }
+        currentConnectionState = state;
+        SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
+        String proxyAddress = preferences.getString("proxy_ip", "");
+        final boolean proxyEnabled = preferences.getBoolean("proxy_enabled", false);
+        final boolean connected = currentConnectionState == ConnectionsManager.ConnectionStateConnected || currentConnectionState == ConnectionsManager.ConnectionStateUpdating;
+        final boolean connecting = currentConnectionState == ConnectionsManager.ConnectionStateConnecting || currentConnectionState == ConnectionsManager.ConnectionStateWaitingForNetwork || currentConnectionState == ConnectionsManager.ConnectionStateConnectingToProxy;
+        final boolean show = (proxyEnabled && !TextUtils.isEmpty(proxyAddress)) || getMessagesController().blockedCountry && !SharedConfig.proxyList.isEmpty() || connecting;
+        if (show) {
+            showProxyButtonDelayed();
+        } else {
+            showProxyButton(show, animated);
+        }
+        if (show) {
+            proxyDrawable.setConnected(true, connected, animated);
         }
     }
 
-    @Override
-    public boolean onFragmentCreate() {
-        SharedConfig.loginingAccount = currentAccount;
-        ApplicationLoader.loadAccount(currentAccount);
-        return true;
+    private boolean proxyButtonVisible;
+    private Runnable showProxyButtonDelayed;
+    private void showProxyButtonDelayed() {
+        if (proxyButtonVisible) {
+            return;
+        }
+        if (showProxyButtonDelayed != null) {
+            AndroidUtilities.cancelRunOnUIThread(showProxyButtonDelayed);
+        }
+        proxyButtonVisible = true;
+        AndroidUtilities.runOnUIThread(showProxyButtonDelayed = () -> {
+            proxyButtonVisible = false;
+            showProxyButton(true, true);
+        }, 5000);
+    }
+
+    private void showProxyButton(boolean show, boolean animated) {
+        if (show == proxyButtonVisible) {
+            return;
+        }
+        if (showProxyButtonDelayed != null) {
+            AndroidUtilities.cancelRunOnUIThread(showProxyButtonDelayed);
+            showProxyButtonDelayed = null;
+        }
+        proxyButtonVisible = show;
+        proxyButtonView.clearAnimation();
+        if (animated) {
+            proxyButtonView.setVisibility(View.VISIBLE);
+            proxyButtonView.animate().alpha(show ? 1 : 0).withEndAction(() -> {
+                if (!show) {
+                    proxyButtonView.setVisibility(View.GONE);
+                }
+            }).start();
+        } else {
+            proxyButtonView.setVisibility(show ? View.VISIBLE : View.GONE);
+            proxyButtonView.setAlpha(show ? 1f : 0f);
+        }
     }
 
     private void fillNextCodeParamsSilent(Bundle params, TLRPC.TL_auth_sentCode res) {
@@ -8512,4 +8591,11 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         }
     }
 
+    public void didReceivedNotification(int id, int account, Object... args) {
+        if (id == NotificationCenter.didUpdateConnectionState) {
+            updateProxyButton(true, false);
+        } else if (id == NotificationCenter.updateLoginToken) {
+            regenerateLoginToken(false);
+        }
+    }
 }
