@@ -4,7 +4,7 @@ apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
 def verName = APP_VERSION_NAME + "-broken"
-def verCode = 733
+def verCode = 734
 
 if (System.getenv("DEBUG_BUILD") == "true") {
     verName += "-" + RuntimeUtil.execForStr("git log --pretty=format:'%h' -n 1").trim().replace('\'','')
