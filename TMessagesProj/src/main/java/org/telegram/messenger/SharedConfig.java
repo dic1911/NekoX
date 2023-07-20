@@ -15,6 +15,8 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
+import android.media.MediaCodecInfo;
+import android.media.MediaCodecList;
 import android.os.Build;
 import android.os.SystemClock;
 import android.text.TextUtils;
@@ -22,6 +24,7 @@ import android.util.Base64;
 import android.webkit.WebView;
 
 import androidx.annotation.IntDef;
+import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
 import org.apache.commons.lang3.StringUtils;
@@ -49,6 +52,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -116,6 +120,86 @@ public class SharedConfig {
         }
     }
 
+    static Boolean allowPreparingHevcPlayers;
+
+    public static boolean allowPreparingHevcPlayers() {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.M) {
+            return false;
+        }
+        if (allowPreparingHevcPlayers == null) {
+            int codecCount = MediaCodecList.getCodecCount();
+            int maxInstances = 0;
+            int capabilities = 0;
+
+            for (int i = 0; i < codecCount; i++) {
+                MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+                if (codecInfo.isEncoder()) {
+                    continue;
+                }
+
+                boolean found = false;
+                for (int k = 0; k < codecInfo.getSupportedTypes().length; k++) {
+                    if (codecInfo.getSupportedTypes()[k].contains("video/hevc")) {
+                        found = true;
+                        break;
+                    }
+                }
+                if (!found) {
+                    continue;
+                }
+                capabilities = codecInfo.getCapabilitiesForType("video/hevc").getMaxSupportedInstances();
+                if (capabilities > maxInstances) {
+                    maxInstances = capabilities;
+                }
+            }
+            allowPreparingHevcPlayers = maxInstances >= 8;
+        }
+        return allowPreparingHevcPlayers;
+    }
+
+    public static void toggleSurfaceInStories() {
+        useSurfaceInStories = !useSurfaceInStories;
+        ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE)
+                .edit()
+                .putBoolean("useSurfaceInStories", useSurfaceInStories)
+                .apply();
+    }
+
+    private static String goodHevcEncoder;
+    private static HashSet<String> hevcEncoderWhitelist = new HashSet<>();
+    static {
+        hevcEncoderWhitelist.add("c2.exynos.hevc.encoder");
+        hevcEncoderWhitelist.add("OMX.Exynos.HEVC.Encoder".toLowerCase());
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.Q)
+    public static String findGoodHevcEncoder() {
+        if (goodHevcEncoder == null) {
+            int codecCount = MediaCodecList.getCodecCount();
+            for (int i = 0; i < codecCount; i++) {
+                MediaCodecInfo codecInfo = MediaCodecList.getCodecInfoAt(i);
+                if (!codecInfo.isEncoder()) {
+                    continue;
+                }
+
+                for (int k = 0; k < codecInfo.getSupportedTypes().length; k++) {
+                    if (codecInfo.getSupportedTypes()[k].contains("video/hevc") && codecInfo.isHardwareAccelerated() && isWhitelisted(codecInfo)) {
+                        return goodHevcEncoder = codecInfo.getName();
+                    }
+                }
+            }
+            goodHevcEncoder = "";
+        }
+        return TextUtils.isEmpty(goodHevcEncoder) ? null : goodHevcEncoder;
+    }
+
+    private static boolean isWhitelisted(MediaCodecInfo codecInfo) {
+        if (BuildVars.DEBUG_PRIVATE_VERSION) {
+            return true;
+        }
+        return hevcEncoderWhitelist.contains(codecInfo.getName().toLowerCase());
+    }
+
     @Retention(RetentionPolicy.SOURCE)
     @IntDef({
             PASSCODE_TYPE_PIN,
@@ -173,6 +257,7 @@ public class SharedConfig {
     public static boolean forceDisableTabletMode;
     public static boolean updateStickersOrderOnSend = true;
     public static boolean bigCameraForRound;
+    public static boolean useSurfaceInStories;
     private static int lastLocalId = -210000;
 
     public static String storageCacheDir;
@@ -243,6 +328,7 @@ public class SharedConfig {
 
     public static int distanceSystemType;
     public static int mediaColumnsCount = 3;
+    public static int storiesColumnsCount = 3;
     public static int fastScrollHintCount = 3;
     public static boolean dontAskManageStorage;
 
@@ -820,6 +906,7 @@ public class SharedConfig {
                 preferences.edit().putBoolean("activeAccountsLoaded", true).apply();
             }
             mediaColumnsCount = preferences.getInt("mediaColumnsCount", 3);
+            storiesColumnsCount = preferences.getInt("storiesColumnsCount", 3);
             fastScrollHintCount = preferences.getInt("fastScrollHintCount", 3);
             dontAskManageStorage = preferences.getBoolean("dontAskManageStorage", false);
             hasEmailLogin = preferences.getBoolean("hasEmailLogin", false);
@@ -827,6 +914,7 @@ public class SharedConfig {
             updateStickersOrderOnSend = preferences.getBoolean("updateStickersOrderOnSend", true);
             dayNightWallpaperSwitchHint = preferences.getInt("dayNightWallpaperSwitchHint", 0);
             bigCameraForRound = preferences.getBoolean("bigCameraForRound", false);
+            useSurfaceInStories = preferences.getBoolean("useSurfaceInStories", Build.VERSION.SDK_INT >= 30);
 
             preferences = ApplicationLoader.applicationContext.getSharedPreferences("Notifications", Activity.MODE_PRIVATE);
             showNotificationsForAllAccounts = preferences.getBoolean("AllAccounts", true);
@@ -1968,6 +2056,13 @@ public class SharedConfig {
         if (mediaColumnsCount != count) {
             mediaColumnsCount = count;
             ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putInt("mediaColumnsCount", mediaColumnsCount).apply();
+        }
+    }
+
+    public static void setStoriesColumnsCount(int count) {
+        if (storiesColumnsCount != count) {
+            storiesColumnsCount = count;
+            ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE).edit().putInt("storiesColumnsCount", storiesColumnsCount).apply();
         }
     }
 

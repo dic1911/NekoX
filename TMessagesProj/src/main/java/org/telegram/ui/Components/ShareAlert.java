@@ -187,6 +187,11 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
     private ArrayList<DialogsSearchAdapter.RecentSearchObject> recentSearchObjects = new ArrayList<>();
     private LongSparseArray<DialogsSearchAdapter.RecentSearchObject> recentSearchObjectsById = new LongSparseArray<>();
     private final Theme.ResourcesProvider resourcesProvider;
+    TLRPC.StoryItem storyItem;
+
+    public void setStoryToShare(TLRPC.StoryItem storyItem) {
+        this.storyItem = storyItem;
+    }
 
     public interface ShareAlertDelegate {
         default void didShare() {
@@ -1976,7 +1981,7 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
                     replyTopMsg.isTopicMainMessage = true;
                 }
                 if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
-                    SendMessagesHelper.getInstance(currentAccount).sendMessage(text[0] == null ? null : text[0].toString(), key, replyTopMsg, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false);
+                    SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, replyTopMsg, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false));
                 }
                 if (!NekoConfig.sendCommentAfterForward.Bool()) {
                     // send fwd message second.
@@ -2010,19 +2015,39 @@ public class ShareAlert extends BottomSheet implements NotificationCenter.Notifi
             } else {
                 num = 0;
             }
-            if (sendingText[num] != null) {
+            if (storyItem != null) {
+                for (int a = 0; a < selectedDialogs.size(); a++) {
+                    long key = selectedDialogs.keyAt(a);
+                    TLRPC.TL_forumTopic topic = selectedDialogTopics.get(selectedDialogs.get(key));
+                    MessageObject replyTopMsg = topic != null ? new MessageObject(currentAccount, topic.topicStartMessage, false, false) : null;
+
+                    SendMessagesHelper.SendMessageParams params;
+                    if (storyItem == null) {
+                        if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
+                            params = SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, null, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false);
+                        } else {
+                            params = SendMessagesHelper.SendMessageParams.of(sendingText[num], key, null, replyTopMsg, null, true, null, null, null, withSound, 0, null, false);
+                        }
+                    } else {
+                        params = SendMessagesHelper.SendMessageParams.of(null, key, null, replyTopMsg, null, true, null, null, null, withSound, 0, null, false);
+                        params.caption = frameLayout2.getTag() != null && commentTextView.length()  > 0 && text[0] != null ? text[0].toString() : null;
+                        params.sendingStory = storyItem;
+                    }
+                    SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+                }
+            } else if (sendingText[num] != null) {
                 for (int a = 0; a < selectedDialogs.size(); a++) {
                     long key = selectedDialogs.keyAt(a);
                     TLRPC.TL_forumTopic topic = selectedDialogTopics.get(selectedDialogs.get(key));
                     MessageObject replyTopMsg = topic != null ? new MessageObject(currentAccount, topic.topicStartMessage, false, false) : null;
                     if (NekoConfig.sendCommentAfterForward.Bool()) {
-                        SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingText[num], key, null, null, null, true, null, null, null, true, 0, null, false);
+                        SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(sendingText[num], key, null, replyTopMsg, null, true, null, null, null, withSound, 0, null, false));
                     }
                     if (frameLayout2.getTag() != null && commentTextView.length() > 0) {
-                        SendMessagesHelper.getInstance(currentAccount).sendMessage(text[0] == null ? null : text[0].toString(), key, null, replyTopMsg, null, true, entities, null, null, true, 0, null, false);
+                        SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(text[0] == null ? null : text[0].toString(), key, null, replyTopMsg, null, true, entities, null, null, withSound, 0, null, false));
                     }
                     if (!NekoConfig.sendCommentAfterForward.Bool()) {
-                        SendMessagesHelper.getInstance(currentAccount).sendMessage(sendingText[num], key, null, replyTopMsg, null, true, null, null, null, true, 0, null, false);
+                        SendMessagesHelper.getInstance(currentAccount).sendMessage(SendMessagesHelper.SendMessageParams.of(sendingText[num], key, null, replyTopMsg, null, true, null, null, null, withSound, 0, null, false));
                     }
                 }
                 onSend(selectedDialogs, 1, selectedDialogTopics.get(selectedDialogs.valueAt(0)));

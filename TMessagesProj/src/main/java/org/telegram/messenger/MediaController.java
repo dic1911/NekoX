@@ -72,6 +72,7 @@ import com.google.android.exoplayer2.ui.AspectRatioFrameLayout;
 import org.telegram.messenger.audioinfo.AudioInfo;
 import org.telegram.messenger.video.MediaCodecVideoConvertor;
 import org.telegram.messenger.voip.VoIPService;
+import org.telegram.tgnet.AbstractSerializedData;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
@@ -220,6 +221,67 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         public org.telegram.ui.Components.Point blurExcludePoint;
         public float blurExcludeBlurSize;
         public float blurAngle;
+
+        public void serializeToStream(AbstractSerializedData stream) {
+            stream.writeFloat(enhanceValue);
+            stream.writeFloat(softenSkinValue);
+            stream.writeFloat(exposureValue);
+            stream.writeFloat(contrastValue);
+            stream.writeFloat(warmthValue);
+            stream.writeFloat(saturationValue);
+            stream.writeFloat(fadeValue);
+            stream.writeInt32(tintShadowsColor);
+            stream.writeInt32(tintHighlightsColor);
+            stream.writeFloat(highlightsValue);
+            stream.writeFloat(shadowsValue);
+            stream.writeFloat(vignetteValue);
+            stream.writeFloat(grainValue);
+            stream.writeInt32(blurType);
+            stream.writeFloat(sharpenValue);
+            curvesToolValue.serializeToStream(stream);
+            stream.writeFloat(blurExcludeSize);
+            if (blurExcludePoint == null) {
+                stream.writeInt32(0x56730bcc);
+            } else {
+                stream.writeInt32(0xDEADBEEF);
+                stream.writeFloat(blurExcludePoint.x);
+                stream.writeFloat(blurExcludePoint.y);
+            }
+            stream.writeFloat(blurExcludeBlurSize);
+            stream.writeFloat(blurAngle);
+        }
+
+        public void readParams(AbstractSerializedData stream, boolean exception) {
+            enhanceValue = stream.readFloat(exception);
+            softenSkinValue = stream.readFloat(exception);
+            exposureValue = stream.readFloat(exception);
+            contrastValue = stream.readFloat(exception);
+            warmthValue = stream.readFloat(exception);
+            saturationValue = stream.readFloat(exception);
+            fadeValue = stream.readFloat(exception);
+            tintShadowsColor = stream.readInt32(exception);
+            tintHighlightsColor = stream.readInt32(exception);
+            highlightsValue = stream.readFloat(exception);
+            shadowsValue = stream.readFloat(exception);
+            vignetteValue = stream.readFloat(exception);
+            grainValue = stream.readFloat(exception);
+            blurType = stream.readInt32(exception);
+            sharpenValue = stream.readFloat(exception);
+            curvesToolValue.readParams(stream, exception);
+            blurExcludeSize = stream.readFloat(exception);
+            int magic = stream.readInt32(exception);
+            if (magic == 0x56730bcc) {
+                blurExcludePoint = null;
+            } else {
+                if (blurExcludePoint == null) {
+                    blurExcludePoint = new org.telegram.ui.Components.Point();
+                }
+                blurExcludePoint.x = stream.readFloat(exception);
+                blurExcludePoint.y = stream.readFloat(exception);
+            }
+            blurExcludeBlurSize = stream.readFloat(exception);
+            blurAngle = stream.readFloat(exception);
+        }
     }
 
     public static class CropState {
@@ -241,6 +303,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         public int height;
         public boolean freeform;
         public float lockedAspectRatio;
+
+        public Matrix useMatrix;
 
         public boolean initied;
 
@@ -268,7 +332,15 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             cloned.lockedAspectRatio = this.lockedAspectRatio;
 
             cloned.initied = this.initied;
+            cloned.useMatrix = this.useMatrix;
             return cloned;
+        }
+
+        public boolean isEmpty() {
+            return (matrix == null || matrix.isIdentity()) && (useMatrix == null || useMatrix.isIdentity()) && cropPw == 1 && cropPh == 1 &&
+                    cropScale == 1 && cropRotate == 0 && transformWidth == 0 && transformHeight == 0 &&
+                    transformRotation == 0 && !mirrored && stateScale == 0 && scale == 0 && width == 0 && height == 0 && !freeform && lockedAspectRatio == 0;
+
         }
     }
 
@@ -365,6 +437,8 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         public boolean isChatPreviewSpoilerRevealed;
         public boolean isAttachSpoilerRevealed;
         public TLRPC.VideoSize emojiMarkup;
+
+        public int gradientTopColor, gradientBottomColor;
 
         public PhotoEntry(int bucketId, int imageId, long dateTaken, String path, int orientationOrDuration, boolean isVideo, int width, int height, long size) {
             this.bucketId = bucketId;
@@ -534,11 +608,13 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         public MessageObject messageObject;
         public VideoEditedInfo videoEditedInfo;
         public int currentAccount;
+        public boolean foreground;
 
-        public VideoConvertMessage(MessageObject object, VideoEditedInfo info) {
+        public VideoConvertMessage(MessageObject object, VideoEditedInfo info, boolean foreground) {
             messageObject = object;
             currentAccount = messageObject.currentAccount;
             videoEditedInfo = info;
+            this.foreground = foreground;
         }
     }
 
@@ -560,6 +636,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
 
     public boolean isSilent = false;
     private boolean isPaused = false;
+    private boolean wasPlayingAudioBeforePause = false;
     private VideoPlayer audioPlayer = null;
     private VideoPlayer emojiSoundPlayer = null;
     private int emojiSoundPlayerNum = 0;
@@ -630,6 +707,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     private long recordDialogId;
     private MessageObject recordReplyingMsg;
     private MessageObject recordReplyingTopMsg;
+    private TLRPC.StoryItem recordReplyingStory;
     private short[] recordSamples = new short[1024];
     private long samplesCount;
 
@@ -1492,8 +1570,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             }
         } else if (id == NotificationCenter.playerDidStartPlaying) {
             VideoPlayer p = (VideoPlayer) args[0];
-            if (!MediaController.getInstance().isCurrentPlayer(p)) {
-                MediaController.getInstance().pauseMessage(MediaController.getInstance().getPlayingMessageObject());
+            if (!isCurrentPlayer(p)) {
+                MessageObject message = getPlayingMessageObject();
+                if(message != null && isPlayingMessage(message) && !isMessagePaused() && (message.isMusic() || message.isVoice())){
+                    wasPlayingAudioBeforePause = true;
+                }
+                pauseMessage(message);
             }
         }
     }
@@ -1518,7 +1600,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                     final int type = device.getType();
                     if ((
                         type == AudioDeviceInfo.TYPE_BLUETOOTH_A2DP ||
-//                        type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO ||
+                        type == AudioDeviceInfo.TYPE_BLUETOOTH_SCO ||
                         type == AudioDeviceInfo.TYPE_BLE_HEADSET ||
                         type == AudioDeviceInfo.TYPE_BLE_SPEAKER ||
                         type == AudioDeviceInfo.TYPE_WIRED_HEADPHONES ||
@@ -1529,7 +1611,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 }
                 return false;
             } else {
-                return NotificationsController.audioManager.isWiredHeadsetOn() || NotificationsController.audioManager.isBluetoothA2dpOn()/* || NotificationsController.audioManager.isBluetoothScoOn()*/;
+                return NotificationsController.audioManager.isWiredHeadsetOn() || NotificationsController.audioManager.isBluetoothA2dpOn() || NotificationsController.audioManager.isBluetoothScoOn();
             }
         } catch (Exception e) {
             FileLog.e(e);
@@ -1704,7 +1786,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                     if (!raiseChat.playFirstUnreadVoiceMessage()) {
                         raiseToEarRecord = true;
                         useFrontSpeaker = false;
-                        startRecording(raiseChat.getCurrentAccount(), raiseChat.getDialogId(), null, raiseChat.getThreadMessage(), raiseChat.getClassGuid(), false);
+                        startRecording(raiseChat.getCurrentAccount(), raiseChat.getDialogId(), null, raiseChat.getThreadMessage(), null, raiseChat.getClassGuid(), false);
                     }
                     if (useFrontSpeaker) {
                         setUseFrontSpeaker(true);
@@ -1793,7 +1875,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
             return;
         }
         raiseToEarRecord = true;
-        startRecording(raiseChat.getCurrentAccount(), raiseChat.getDialogId(), null, raiseChat.getThreadMessage(), raiseChat.getClassGuid(), false);
+        startRecording(raiseChat.getCurrentAccount(), raiseChat.getDialogId(), null, raiseChat.getThreadMessage(), null, raiseChat.getClassGuid(), false);
         ignoreOnPause = true;
     }
 
@@ -2412,7 +2494,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         playMusicAgain = true;
         playMessage(currentPlayList.get(currentPlaylistNum));
     }
-
+    
     private boolean traversePlaylist(ArrayList<MessageObject> playlist, int direction) {
         boolean last = false;
         final int wasCurrentPlaylistNum = currentPlaylistNum;
@@ -2898,7 +2980,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                         if (emojiSoundPlayer != null) {
                             emojiSoundPlayer.releasePlayer(true);
                         }
-                        emojiSoundPlayer = new VideoPlayer(false);
+                        emojiSoundPlayer = new VideoPlayer(false, false);
                         emojiSoundPlayer.setDelegate(new VideoPlayer.VideoPlayerDelegate() {
                             @Override
                             public void onStateChanged(boolean playWhenReady, int playbackState) {
@@ -3471,7 +3553,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     public static boolean ignoreAccelerometerGestures() {
         return Build.MANUFACTURER.equalsIgnoreCase("samsung");
     }
-
+    
     public void updateSilent(boolean value) {
         isSilent = value;
         if (videoPlayer != null) {
@@ -3512,6 +3594,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
 
     public boolean isCurrentPlayer(VideoPlayer player) {
         return videoPlayer == player || audioPlayer == player;
+    }
+
+    public void tryResumePausedAudio() {
+        MessageObject message = getPlayingMessageObject();
+        if (message!= null && isMessagePaused() && wasPlayingAudioBeforePause && (message.isVoice() || message.isMusic())) {
+            playMessage(message);
+        }
+        wasPlayingAudioBeforePause = false;
     }
 
     public boolean pauseMessage(MessageObject messageObject) {
@@ -3623,9 +3713,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         return downloadingCurrentMessage;
     }
 
-    public void setReplyingMessage(MessageObject replyToMsg, MessageObject replyToTopMsg) {
+    public void setReplyingMessage(MessageObject replyToMsg, MessageObject replyToTopMsg, TLRPC.StoryItem storyItem) {
         recordReplyingMsg = replyToMsg;
         recordReplyingTopMsg = replyToTopMsg;
+        recordReplyingStory = storyItem;
     }
 
     public void requestAudioFocus(boolean request) {
@@ -3644,7 +3735,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         }
     }
 
-    public void startRecording(int currentAccount, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, int guid, boolean manual) {
+    public void startRecording(int currentAccount, long dialogId, MessageObject replyToMsg, MessageObject replyToTopMsg, TLRPC.StoryItem replyStory, int guid, boolean manual) {
         boolean paused = false;
         if (playingMessageObject != null && isPlayingMessage(playingMessageObject) && !isMessagePaused()) {
             paused = true;
@@ -3717,6 +3808,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 recordingCurrentAccount = currentAccount;
                 recordReplyingMsg = replyToMsg;
                 recordReplyingTopMsg = replyToTopMsg;
+                recordReplyingStory = replyStory;
                 fileBuffer.rewind();
 
                 audioRecorder.startRecording();
@@ -3824,7 +3916,9 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                     if (duration > 700) {
                         NotificationCenter.getInstance(recordingCurrentAccount).postNotificationName(NotificationCenter.beforeAudioDidSent, recordingGuid, send == 2 ? audioToSend : null, send == 2 ? recordingAudioFileToSend.getAbsolutePath() : null);
                         if (send == 1) {
-                            SendMessagesHelper.getInstance(recordingCurrentAccount).sendMessage(audioToSend, null, recordingAudioFileToSend.getAbsolutePath(), recordDialogId, recordReplyingMsg, recordReplyingTopMsg, null, null, null, null, notify, scheduleDate, 0, null, null, false);
+                            SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(audioToSend, null, recordingAudioFileToSend.getAbsolutePath(), recordDialogId, recordReplyingMsg, recordReplyingTopMsg, null, null, null, null, notify, scheduleDate, 0, null, null, false);
+                            params.replyToStoryItem = recordReplyingStory;
+                            SendMessagesHelper.getInstance(recordingCurrentAccount).sendMessage(params);
                         }
                         NotificationCenter.getInstance(recordingCurrentAccount).postNotificationName(NotificationCenter.audioDidSent, recordingGuid, send == 2 ? audioToSend : null, send == 2 ? recordingAudioFileToSend.getAbsolutePath() : null);
                     } else {
@@ -4152,7 +4246,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         saveFile(fullPath, context, type, name, mime, null);
     }
 
-    public static void saveFile(String fullPath, Context context, final int type, final String name, final String mime, final Runnable onSaved) {
+    public static void saveFile(String fullPath, Context context, final int type, final String name, final String mime, final Utilities.Callback<Uri> onSaved) {
+        saveFile(fullPath, context, type, name, mime, onSaved, true);
+    }
+
+    public static void saveFile(String fullPath, Context context, final int type, final String name, final String mime, final Utilities.Callback<Uri> onSaved, boolean showProgress) {
         if (fullPath == null || context == null) {
             return;
         }
@@ -4194,11 +4292,12 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
 
             new Thread(() -> {
                 try {
-
+                    Uri uri;
                     boolean result = true;
                     final String folderName = NekoConfig.customSavePath.String();
                     if (Build.VERSION.SDK_INT >= 29) {
-                        result = saveFileInternal(type, sourceFile, name);
+                        uri = saveFileInternal(type, sourceFile, null);
+                        result = uri != null;
                     } else {
                         File destFile;
                         if (type == 0) {
@@ -4280,9 +4379,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                                 AndroidUtilities.addMediaToGallery(destFile.getAbsoluteFile());
                             }
                         }
+                        uri = Uri.fromFile(destFile);
                     }
                     if (result && onSaved != null) {
-                        AndroidUtilities.runOnUIThread(onSaved);
+                        AndroidUtilities.runOnUIThread(() -> onSaved.run(uri));
                     }
                 } catch (Exception e) {
                     FileLog.e(e);
@@ -4301,8 +4401,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         }
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.Q)
-    private static boolean saveFileInternal(int type, File sourceFile, String filename) {
+    private static Uri saveFileInternal(int type, File sourceFile, String filename) {
         try {
             int selectedType = type;
             ContentValues contentValues = new ContentValues();
@@ -4365,10 +4464,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 AndroidUtilities.copyFile(fileInputStream, outputStream);
                 fileInputStream.close();
             }
-            return true;
+            return dstUri;
         } catch (Exception e) {
             FileLog.e(e);
-            return false;
+            return null;
         }
     }
 
@@ -4796,10 +4895,10 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     }
 
     public void scheduleVideoConvert(MessageObject messageObject) {
-        scheduleVideoConvert(messageObject, false);
+        scheduleVideoConvert(messageObject, false, true);
     }
 
-    public boolean scheduleVideoConvert(MessageObject messageObject, boolean isEmpty) {
+    public boolean scheduleVideoConvert(MessageObject messageObject, boolean isEmpty, boolean withForeground) {
         if (messageObject == null || messageObject.videoEditedInfo == null) {
             return false;
         }
@@ -4808,7 +4907,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         } else if (isEmpty) {
             new File(messageObject.messageOwner.attachPath).delete();
         }
-        videoConvertQueue.add(new VideoConvertMessage(messageObject, messageObject.videoEditedInfo));
+        videoConvertQueue.add(new VideoConvertMessage(messageObject, messageObject.videoEditedInfo, withForeground));
         if (videoConvertQueue.size() == 1) {
             startVideoConvertFromQueue();
         }
@@ -4839,30 +4938,32 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     private boolean startVideoConvertFromQueue() {
         if (!videoConvertQueue.isEmpty()) {
             VideoConvertMessage videoConvertMessage = videoConvertQueue.get(0);
-            MessageObject messageObject = videoConvertMessage.messageObject;
             VideoEditedInfo videoEditedInfo = videoConvertMessage.videoEditedInfo;
             synchronized (videoConvertSync) {
                 if (videoEditedInfo != null) {
                     videoEditedInfo.canceled = false;
                 }
             }
-            Intent intent = new Intent(ApplicationLoader.applicationContext, VideoEncodingService.class);
-            intent.putExtra("path", messageObject.messageOwner.attachPath);
-            intent.putExtra("currentAccount", messageObject.currentAccount);
-            if (messageObject.messageOwner.media.document != null) {
-                for (int a = 0; a < messageObject.messageOwner.media.document.attributes.size(); a++) {
-                    TLRPC.DocumentAttribute documentAttribute = messageObject.messageOwner.media.document.attributes.get(a);
-                    if (documentAttribute instanceof TLRPC.TL_documentAttributeAnimated) {
-                        intent.putExtra("gif", true);
-                        break;
+            if (videoConvertMessage.foreground) {
+                MessageObject messageObject = videoConvertMessage.messageObject;
+                Intent intent = new Intent(ApplicationLoader.applicationContext, VideoEncodingService.class);
+                intent.putExtra("path", messageObject.messageOwner.attachPath);
+                intent.putExtra("currentAccount", messageObject.currentAccount);
+                if (messageObject.messageOwner.media != null && messageObject.messageOwner.media.document != null) {
+                    for (int a = 0; a < messageObject.messageOwner.media.document.attributes.size(); a++) {
+                        TLRPC.DocumentAttribute documentAttribute = messageObject.messageOwner.media.document.attributes.get(a);
+                        if (documentAttribute instanceof TLRPC.TL_documentAttributeAnimated) {
+                            intent.putExtra("gif", true);
+                            break;
+                        }
                     }
                 }
-            }
-            if (messageObject.getId() != 0) {
-                try {
-                    ApplicationLoader.applicationContext.startService(intent);
-                } catch (Throwable e) {
-                    FileLog.e(e);
+                if (messageObject.getId() != 0) {
+                    try {
+                        ApplicationLoader.applicationContext.startService(intent);
+                    } catch (Throwable e) {
+                        FileLog.e(e);
+                    }
                 }
             }
             VideoConvertRunnable.runConversion(videoConvertMessage);
@@ -5048,7 +5149,7 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
         int framerate = info.framerate;
         int bitrate = info.bitrate;
         int originalBitrate = info.originalBitrate;
-        boolean isSecret = DialogObject.isEncryptedDialog(messageObject.getDialogId());
+        boolean isSecret = DialogObject.isEncryptedDialog(messageObject.getDialogId()) || info.forceFragmenting;
         final File cacheFile = new File(messageObject.messageOwner.attachPath);
         if (cacheFile.exists()) {
             cacheFile.delete();
@@ -5140,7 +5241,14 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
                 info.isPhoto,
                 info.cropState,
                 info.roundVideo,
-                callback);
+                callback,
+                info.gradientTopColor,
+                info.gradientBottomColor,
+                info.muted,
+                info.isStory,
+                info.hdrInfo,
+                info.parts
+        );
 
 
         boolean canceled = info.canceled;
@@ -5214,12 +5322,20 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     /**
      * Some encoders(e.g. OMX.Exynos) can forcibly raise bitrate during encoder initialization.
      */
-    public static int extractRealEncoderBitrate(int width, int height, int bitrate) {
+    public static int extractRealEncoderBitrate(int width, int height, int bitrate, boolean tryHevc) {
         String cacheKey = width + "" + height + "" + bitrate;
         Integer cachedBitrate = cachedEncoderBitrates.get(cacheKey);
         if (cachedBitrate != null) return cachedBitrate;
         try {
-            MediaCodec encoder = MediaCodec.createEncoderByType(MediaController.VIDEO_MIME_TYPE);
+            MediaCodec encoder = null;
+            if (tryHevc) {
+                try {
+                    encoder = MediaCodec.createEncoderByType("video/hevc");
+                } catch (Exception ignore) {}
+            }
+            if (encoder == null) {
+                encoder = MediaCodec.createEncoderByType(MediaController.VIDEO_MIME_TYPE);
+            }
             MediaFormat outputFormat = MediaFormat.createVideoFormat(MediaController.VIDEO_MIME_TYPE, width, height);
             outputFormat.setInteger(MediaFormat.KEY_COLOR_FORMAT, MediaCodecInfo.CodecCapabilities.COLOR_FormatSurface);
             outputFormat.setInteger("max-bitrate", bitrate);

@@ -453,7 +453,6 @@ public class TextCell extends FrameLayout {
             checkBox.setVisibility(VISIBLE);
             checkBox.setChecked(checked, false);
         }
-        needDivider = divider;
         setWillNotDraw(!needDivider);
     }
 
@@ -518,7 +517,11 @@ public class TextCell extends FrameLayout {
     @Override
     protected void onDraw(Canvas canvas) {
         if (needDivider) {
-            canvas.drawLine(0, getMeasuredHeight() - 1, getMeasuredWidth(), getMeasuredHeight() - 1, Theme.dividerPaint);
+            Paint paint = resourcesProvider != null ? resourcesProvider.getPaint(Theme.key_paint_divider) : null;
+            if (paint == null) {
+                paint = Theme.dividerPaint;
+            }
+            canvas.drawLine(LocaleController.isRTL ? 0 : AndroidUtilities.dp(imageView.getVisibility() == VISIBLE ? (inDialogs ? 72 : 68) : 20), getMeasuredHeight() - 1, getMeasuredWidth() - (LocaleController.isRTL ? AndroidUtilities.dp(imageView.getVisibility() == VISIBLE ? (inDialogs ? 72 : 68) : 20) : 0), getMeasuredHeight() - 1, paint);
         }
     }
 
