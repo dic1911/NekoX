@@ -744,7 +744,7 @@ public class PollCreateActivity extends BaseFragment {
                                 if (menu.findItem(android.R.id.copy) == null) {
                                     return;
                                 }
-                                parentFragment.fillActionModeMenu(menu);
+                                ChatActivity.fillActionModeMenu(menu, parentFragment.getCurrentEncryptedChat());
                             }
                         }
                     };

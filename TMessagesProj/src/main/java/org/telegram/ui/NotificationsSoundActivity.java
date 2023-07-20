@@ -151,6 +151,9 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
             } else if (currentType == NotificationsController.TYPE_CHANNEL) {
                 prefPath = "ChannelSoundPath";
                 prefDocId = "ChannelSoundDocId";
+            } else if (currentType == NotificationsController.TYPE_STORIES) {
+                prefPath = "StoriesSoundPath";
+                prefDocId = "StoriesSoundDocId";
             } else {
                 throw new RuntimeException("Unsupported type");
             }
@@ -292,6 +295,8 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
                 actionBar.setTitle(LocaleController.getString("NotificationsSoundGroup", R.string.NotificationsSoundGroup));
             } else if (currentType == NotificationsController.TYPE_CHANNEL) {
                 actionBar.setTitle(LocaleController.getString("NotificationsSoundChannels", R.string.NotificationsSoundChannels));
+            } else if (currentType == NotificationsController.TYPE_STORIES) {
+                actionBar.setTitle(LocaleController.getString("NotificationsSoundStories", R.string.NotificationsSoundStories));
             }
         } else {
             avatarContainer = new ChatAvatarContainer(context, null, false, resourcesProvider);
@@ -786,11 +791,6 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
     }
 
     @Override
-    public int getNavigationBarColor() {
-        return getThemedColor(Theme.key_windowBackgroundGray);
-    }
-
-    @Override
     public void didReceivedNotification(int id, int account, Object... args) {
         if (id == NotificationCenter.onUserRingtonesUpdated) {
             HashMap<Integer, Tone> currentTones = new HashMap<>();
@@ -884,6 +884,10 @@ public class NotificationsSoundActivity extends BaseFragment implements ChatAtta
                     prefName = "ChannelSound";
                     prefPath = "ChannelSoundPath";
                     prefDocId = "ChannelSoundDocId";
+                } else if (currentType == NotificationsController.TYPE_STORIES) {
+                    prefName = "StoriesSound";
+                    prefPath = "StoriesSoundPath";
+                    prefDocId = "StoriesSoundDocId";
                 } else {
                     throw new RuntimeException("Unsupported type");
                 }

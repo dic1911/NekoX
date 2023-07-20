@@ -114,7 +114,13 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     }
 
     public void invalidateBackground() {
-        backgroundView.invalidate();
+        if (backgroundView != null) {
+            backgroundView.invalidate();
+        }
+    }
+
+    public int getBottomPadding() {
+        return 0;
     }
 
 
@@ -131,8 +137,6 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         setWillNotDraw(false);
         parentLayout = layout;
         adjustPanLayoutHelper = createAdjustPanLayoutHelper();
-        addView(backgroundView = new BackgroundView(context), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        checkLayerType();
     }
 
     private class BackgroundView extends View {
@@ -316,6 +320,10 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         if (backgroundDrawable == bitmap) {
             return;
         }
+        if (backgroundView == null) {
+            addView(backgroundView = new BackgroundView(getContext()), 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            checkLayerType();
+        }
         if (bitmap instanceof MotionBackgroundDrawable) {
             MotionBackgroundDrawable motionBackgroundDrawable = (MotionBackgroundDrawable) bitmap;
             motionBackgroundDrawable.setParentView(backgroundView);
@@ -341,7 +349,9 @@ public class SizeNotifierFrameLayout extends FrameLayout {
                     translationX = offsetX;
                     translationY = offsetY;
                     bgAngle = angle;
-                    backgroundView.invalidate();
+                    if (backgroundView != null) {
+                        backgroundView.invalidate();
+                    }
                 });
                 if (getMeasuredWidth() != 0 && getMeasuredHeight() != 0) {
                     parallaxScale = parallaxEffect.getScale(getMeasuredWidth(), getMeasuredHeight());
@@ -431,14 +441,18 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     public void setBottomClip(int value) {
         if (value != bottomClip) {
             bottomClip = value;
-            backgroundView.invalidate();
+            if (backgroundView != null) {
+                backgroundView.invalidate();
+            }
         }
     }
 
     public void setBackgroundTranslation(int translation) {
         if (translation != backgroundTranslationY) {
             backgroundTranslationY = translation;
-            backgroundView.invalidate();
+            if (backgroundView != null) {
+                backgroundView.invalidate();
+            }
         }
     }
 
@@ -480,7 +494,9 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     public void setEmojiKeyboardHeight(int height) {
         if (emojiHeight != height) {
             emojiHeight = height;
-            backgroundView.invalidate();
+            if (backgroundView != null) {
+                backgroundView.invalidate();
+            }
         }
     }
 
@@ -488,12 +504,14 @@ public class SizeNotifierFrameLayout extends FrameLayout {
         if (emojiOffset != offset || animationInProgress != animInProgress) {
             emojiOffset = offset;
             animationInProgress = animInProgress;
-            backgroundView.invalidate();
+            if (backgroundView != null) {
+                backgroundView.invalidate();
+            }
         }
     }
 
     private void checkSnowflake(Canvas canvas) {
-        if (Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
+        if (backgroundView != null && Theme.canStartHolidayAnimation() && LiteMode.isEnabled(LiteMode.FLAG_CHAT_BACKGROUND)) {
             if (snowflakesEffect == null) {
                 snowflakesEffect = new SnowflakesEffect(1);
             }
@@ -512,7 +530,9 @@ public class SizeNotifierFrameLayout extends FrameLayout {
     public void setSkipBackgroundDrawing(boolean skipBackgroundDrawing) {
         if (this.skipBackgroundDrawing != skipBackgroundDrawing) {
             this.skipBackgroundDrawing = skipBackgroundDrawing;
-            backgroundView.invalidate();
+            if (backgroundView != null) {
+                backgroundView.invalidate();
+            }
         }
     }
 

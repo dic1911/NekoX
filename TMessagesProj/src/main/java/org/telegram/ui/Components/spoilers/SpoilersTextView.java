@@ -23,11 +23,12 @@ import tw.nekomimi.nekogram.NekoConfig;
 
 public class SpoilersTextView extends TextView {
     private SpoilersClickDetector clickDetector;
-    private List<SpoilerEffect> spoilers = new ArrayList<>();
+    protected List<SpoilerEffect> spoilers = new ArrayList<>();
     private Stack<SpoilerEffect> spoilersPool = new Stack<>();
     private boolean isSpoilersRevealed;
     private Path path = new Path();
     private Paint xRefPaint;
+    public boolean allowClickSpoilers = true;
 
     public SpoilersTextView(Context context) {
         this(context, true);
@@ -52,7 +53,7 @@ public class SpoilersTextView extends TextView {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (clickDetector.onTouchEvent(event))
+        if (allowClickSpoilers && clickDetector.onTouchEvent(event))
             return true;
         return super.dispatchTouchEvent(event);
     }

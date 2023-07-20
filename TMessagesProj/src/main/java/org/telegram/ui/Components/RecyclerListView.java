@@ -137,6 +137,7 @@ public class RecyclerListView extends RecyclerView {
     protected View selectorView;
     protected android.graphics.Rect selectorRect = new android.graphics.Rect();
     private boolean isChildViewEnabled;
+    private boolean translateSelector;
 
     private boolean selfOnLayout;
 
@@ -305,7 +306,7 @@ public class RecyclerListView extends RecyclerView {
 
         private ArrayList<Integer> hashes = new ArrayList<>();
 
-        private void cleanupCache() {
+        public void cleanupCache() {
             if (sectionCache == null) {
                 sectionCache = new SparseIntArray();
                 sectionPositionCache = new SparseIntArray();
@@ -420,17 +421,8 @@ public class RecyclerListView extends RecyclerView {
         }
 
         public void update(boolean diff) {
-            cleanupCache();
-
             ArrayList<Integer> oldHashes = new ArrayList<>(hashes);
-            hashes.clear();
-
-            for (int i = 0, N = internalGetSectionCount(); i < N; i++) {
-                int count = internalGetCountForSection(i);
-                for (int j = 0; j < count; ++j) {
-                    hashes.add(Objects.hash(i * -49612, getItem(i, j)));
-                }
-            }
+            updateHashes();
 
             if (diff) {
                 DiffUtil.calculateDiff(new DiffUtil.Callback() {
@@ -457,6 +449,23 @@ public class RecyclerListView extends RecyclerView {
             } else {
                 super.notifyDataSetChanged();
             }
+        }
+
+        public void updateHashes() {
+            cleanupCache();
+
+            hashes.clear();
+
+            for (int i = 0, N = internalGetSectionCount(); i < N; i++) {
+                int count = internalGetCountForSection(i);
+                for (int j = 0; j < count; ++j) {
+                    hashes.add(getHash(i, j));
+                }
+            }
+        }
+
+        public int getHash(int section, int position) {
+            return Objects.hash(section * -49612, getItem(section, position));
         }
 
         public abstract int getSectionCount();
@@ -524,6 +533,7 @@ public class RecyclerListView extends RecyclerView {
         Drawable fastScrollShadowDrawable;
         Drawable fastScrollBackgroundDrawable;
         boolean isRtl;
+        public int topOffset;
 
         Runnable hideFloatingDateRunnable = new Runnable() {
             @Override
@@ -548,9 +558,9 @@ public class RecyclerListView extends RecyclerView {
                 isRtl = false;
                 letterPaint.setTextSize(AndroidUtilities.dp(13));
                 letterPaint.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-                paint2.setColor(Theme.getColor(Theme.key_windowBackgroundWhite));
+                paint2.setColor(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider));
                 fastScrollBackgroundDrawable = ContextCompat.getDrawable(context, R.drawable.calendar_date).mutate();
-                fastScrollBackgroundDrawable.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhite), Color.WHITE, 0.1f), PorterDuff.Mode.MULTIPLY));
+                fastScrollBackgroundDrawable.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider), Color.WHITE, 0.1f), PorterDuff.Mode.MULTIPLY));
             }
             for (int a = 0; a < 8; a++) {
                 radii[a] = AndroidUtilities.dp(44);
@@ -565,14 +575,14 @@ public class RecyclerListView extends RecyclerView {
         }
 
         private void updateColors() {
-            inactiveColor = type == LETTER_TYPE ? Theme.getColor(Theme.key_fastScrollInactive) : ColorUtils.setAlphaComponent(Color.BLACK, (int) (255 * 0.4f));
-            activeColor = Theme.getColor(Theme.key_fastScrollActive);
+            inactiveColor = type == LETTER_TYPE ? Theme.getColor(Theme.key_fastScrollInactive, resourcesProvider) : ColorUtils.setAlphaComponent(Color.BLACK, (int) (255 * 0.4f));
+            activeColor = Theme.getColor(Theme.key_fastScrollActive, resourcesProvider);
             paint.setColor(inactiveColor);
 
             if (type == LETTER_TYPE) {
-                letterPaint.setColor(Theme.getColor(Theme.key_fastScrollText));
+                letterPaint.setColor(Theme.getColor(Theme.key_fastScrollText, resourcesProvider));
             } else {
-                letterPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                letterPaint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
             }
             invalidate();
         }
@@ -750,21 +760,21 @@ public class RecyclerListView extends RecyclerView {
 
         @Override
         protected void onDraw(Canvas canvas) {
-            int topPadding = usePadding ? getPaddingTop() : 0;
+            int topPadding = usePadding ? getPaddingTop() : topOffset;
             int y = topPadding + (int) Math.ceil((getMeasuredHeight() - topPadding - AndroidUtilities.dp(24 + 30)) * progress);
             rect.set(scrollX, AndroidUtilities.dp(12) + y, scrollX + AndroidUtilities.dp(5), AndroidUtilities.dp(12 + 30) + y);
             if (type == LETTER_TYPE) {
                 paint.setColor(ColorUtils.blendARGB(inactiveColor, activeColor, bubbleProgress));
                 canvas.drawRoundRect(rect, AndroidUtilities.dp(2), AndroidUtilities.dp(2), paint);
             } else {
-                paint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhite), Color.WHITE, 0.1f));
+                paint.setColor(ColorUtils.blendARGB(Theme.getColor(Theme.key_windowBackgroundWhite, resourcesProvider), Color.WHITE, 0.1f));
 
                 float cy = y + AndroidUtilities.dp(12 + 15);
                 fastScrollShadowDrawable.setBounds(getMeasuredWidth() - fastScrollShadowDrawable.getIntrinsicWidth(), (int) (cy - fastScrollShadowDrawable.getIntrinsicHeight() / 2), getMeasuredWidth(), (int) (cy + fastScrollShadowDrawable.getIntrinsicHeight() / 2));
                 fastScrollShadowDrawable.draw(canvas);
                 canvas.drawCircle(scrollX + AndroidUtilities.dp(8), y + AndroidUtilities.dp(12 + 15), AndroidUtilities.dp(24), paint);
 
-                paint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
+                paint.setColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText, resourcesProvider));
                 canvas.save();
                 canvas.translate(scrollX + AndroidUtilities.dp(4), y + AndroidUtilities.dp(12 + 15 + 2 + 5) + AndroidUtilities.dp(2) * bubbleProgress);
                 canvas.drawPath(arrowPath, paint);
@@ -1116,7 +1126,7 @@ public class RecyclerListView extends RecyclerView {
                 }
 
                 @Override
-                public boolean hasDoubleTap() {
+                public boolean hasDoubleTap(MotionEvent e) {
                     return onItemLongClickListenerExtended != null;
                 }
             });
@@ -1459,6 +1469,10 @@ public class RecyclerListView extends RecyclerView {
 
     private Paint backgroundPaint;
     protected void drawSectionBackground(Canvas canvas, int fromAdapterPosition, int toAdapterPosition, int color) {
+        if (toAdapterPosition < fromAdapterPosition) {
+            return;
+        }
+
         int top = Integer.MAX_VALUE;
         int bottom = Integer.MIN_VALUE;
 
@@ -1574,7 +1588,7 @@ public class RecyclerListView extends RecyclerView {
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
         if (fastScroll != null && fastScroll.getLayoutParams() != null) {
-            int topPadding = fastScroll.usePadding ? getPaddingTop() : 0;
+            int topPadding = fastScroll.usePadding ? getPaddingTop() : fastScroll.topOffset;
             int height = getMeasuredHeight() - topPadding - getPaddingBottom();
             fastScroll.getLayoutParams().height = height;
             fastScroll.measure(MeasureSpec.makeMeasureSpec(AndroidUtilities.dp(132), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(height, MeasureSpec.EXACTLY));
@@ -1587,7 +1601,7 @@ public class RecyclerListView extends RecyclerView {
         super.onLayout(changed, l, t, r, b);
         if (fastScroll != null) {
             selfOnLayout = true;
-            int topPadding = fastScroll.usePadding ? getPaddingTop() : 0;
+            int topPadding = fastScroll.usePadding ? getPaddingTop() : fastScroll.topOffset;
             t += topPadding;
             if (fastScroll.isRtl) {
                 fastScroll.layout(0, t, fastScroll.getMeasuredWidth(), t + fastScroll.getMeasuredHeight());
@@ -2278,7 +2292,7 @@ public class RecyclerListView extends RecyclerView {
             Theme.setMaskDrawableRad(selectorDrawable, position == 0 ? topBottomSelectorRadius : 0, position == getAdapter().getItemCount() - 2 ? topBottomSelectorRadius : 0);
         }
         selectorRect.set(sel.getLeft(), sel.getTop(), sel.getRight(), sel.getBottom() - bottomPadding);
-        selectorRect.offset((int) sel.getTranslationX(), (int) sel.getTranslationY());
+//        selectorRect.offset((int) sel.getTranslationX(), (int) sel.getTranslationY());
 
         final boolean enabled = sel.isEnabled();
         if (isChildViewEnabled != enabled) {
@@ -2503,6 +2517,10 @@ public class RecyclerListView extends RecyclerView {
         return selectorRect;
     }
 
+    public void setTranslateSelector(boolean value) {
+        translateSelector = value;
+    }
+
     @Override
     protected void dispatchDraw(Canvas canvas) {
         if (itemsEnterAnimator != null) {
@@ -2512,8 +2530,11 @@ public class RecyclerListView extends RecyclerView {
         if (drawSelection && drawSelectorBehind && !selectorRect.isEmpty()) {
             selectorDrawable.setBounds(selectorRect);
             canvas.save();
-            if (selectorTransformer != null) {
+            if (translateSelector && selectorTransformer != null) {
                 selectorTransformer.accept(canvas);
+            }
+            if (translateSelector && selectorView != null) {
+                canvas.translate(selectorView.getX() - selectorRect.left, selectorView.getY() - selectorRect.top);
             }
             selectorDrawable.draw(canvas);
             canvas.restore();
@@ -2522,8 +2543,11 @@ public class RecyclerListView extends RecyclerView {
         if (drawSelection && !drawSelectorBehind && !selectorRect.isEmpty()) {
             selectorDrawable.setBounds(selectorRect);
             canvas.save();
-            if (selectorTransformer != null) {
+            if (translateSelector && selectorTransformer != null) {
                 selectorTransformer.accept(canvas);
+            }
+            if (translateSelector && selectorView != null) {
+                canvas.translate(selectorView.getX() - selectorRect.left, selectorView.getY() - selectorRect.top);
             }
             selectorDrawable.draw(canvas);
             canvas.restore();

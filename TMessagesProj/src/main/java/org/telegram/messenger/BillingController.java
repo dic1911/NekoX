@@ -9,21 +9,20 @@ import android.net.Uri;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.util.Consumer;
+import androidx.core.util.Pair;
 
-import com.google.android.exoplayer2.util.Util;
 
 import org.json.JSONObject;
+import org.telegram.messenger.utils.BillingUtilities;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.PremiumPreviewFragment;
 
-import java.io.InputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Currency;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -34,8 +33,6 @@ public class BillingController {
     private String lastPremiumTransaction = "";
     private String lastPremiumToken = "";
     public static boolean billingClientEmpty;
-    private List<String> requestingTokens = new ArrayList<>();
-    private Map<String, Integer> currencyExpMap = new HashMap<>();
 
     public static BillingController getInstance() {
         if (instance == null) {
@@ -68,7 +65,6 @@ public class BillingController {
         if (cur != null) {
             NumberFormat numberFormat = NumberFormat.getCurrencyInstance();
             numberFormat.setCurrency(cur);
-
             return numberFormat.format(amount / Math.pow(10, exp));
         }
         return amount + " " + currency;
@@ -76,10 +72,6 @@ public class BillingController {
 
     public int getCurrencyExp(String currency) {
         return 0;
-    }
-
-    public boolean isReady() {
-        return false;
     }
 
     public void startConnection() {
@@ -94,15 +86,13 @@ public class BillingController {
     }
 
     private void parseCurrencies(JSONObject obj) {
-        Iterator<String> it = obj.keys();
-        while (it.hasNext()) {
-            String key = it.next();
-            JSONObject currency = obj.optJSONObject(key);
-            currencyExpMap.put(key, currency.optInt("exp"));
-        }
     }
 
     public boolean startManageSubscription(Context ctx, String productId) {
+        return false;
+    }
+
+    public boolean isReady() {
         return false;
     }
 }
