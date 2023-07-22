@@ -766,6 +766,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
                         parent.removeViewInLayout(lastFragment.actionBar);
                     }
                 }
+                lastFragment.detachStoryViewer();
             }
             layoutToIgnore = null;
         }
