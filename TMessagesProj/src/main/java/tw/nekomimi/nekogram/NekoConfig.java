@@ -191,6 +191,8 @@ public class NekoConfig {
     public static ConfigItem enhancedFileLoader = addConfig("enhancedFileLoader", configTypeBool, false);
     public static ConfigItem useOSMDroidMap = addConfig("useOSMDroidMap", configTypeBool, !BuildVars.isGServicesCompiled);
     public static ConfigItem mapDriftingFixForGoogleMaps = addConfig("mapDriftingFixForGoogleMaps", configTypeBool, true);
+    public static ConfigItem disableStories = addConfig("DisableStories", ConfigItem.configTypeBool, false);
+    public static ConfigItem disableSendReadStories = addConfig("DisableSendReadStories", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);

@@ -150,4 +150,6 @@
     <string name="useOSMDroidMap">使用 OSMDroid 地图</string>
     <string name="mapDriftingFixForGoogleMaps">修复 Google 地图在中国的漂移问题</string>
     <string name="useTelegramTranslateInChat">在聊天中使用 Telegram 翻译界面</string>
+    <string name="DisableStories">禁用动态功能</string>
+    <string name="DisableSendReadStories">偷偷看动态</string>
 </resources>
