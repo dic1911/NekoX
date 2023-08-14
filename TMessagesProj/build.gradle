@@ -105,7 +105,7 @@ android {
     defaultConfig {
         minSdkVersion 19
         //noinspection ExpiredTargetSdkVersion,OldTargetApi
-        targetSdkVersion 32
+        targetSdkVersion 33
 
         versionName verName
         versionCode verCode
