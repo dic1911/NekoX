@@ -12533,7 +12533,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 if (!newMessageObject.canDeleteMessage(parentChatActivity != null && parentChatActivity.isInScheduleMode(), null)) {
                     menuItem.hideSubItem(gallery_menu_delete);
                 }
-                allowShare = !noforwards;
+                allowShare = !noforwardsOverride;
             }
             if (totalImagesCount + totalImagesCountMerge != 0 && !needSearchImageInArr) {
                 if (opennedFromMedia) {
