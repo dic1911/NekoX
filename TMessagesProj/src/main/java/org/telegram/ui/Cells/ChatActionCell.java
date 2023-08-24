@@ -1394,7 +1394,7 @@ public class ChatActionCell extends BaseCell implements DownloadController.FileD
                 } else {
                     giftPremiumSubtitleLayout.draw(canvas);
                 }
-            } else {
+            } else if (giftPremiumSubtitleLayout != null) {
                 giftPremiumSubtitleLayout.draw(canvas);
             }
             canvas.restore();
