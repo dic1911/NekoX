@@ -179,6 +179,7 @@ public class ApplicationLoader extends Application {
             return;
         }
         applicationInited = true;
+        NativeLoader.initNativeLibs(ApplicationLoader.applicationContext);
 
         SharedConfig.loadConfig();
         LocaleController.getInstance();
@@ -261,22 +262,7 @@ public class ApplicationLoader extends Application {
                 SharedConfig.saveAccounts();
             }
         }
-
-        MessagesController.getInstance(account);
-        if ("".equals(SharedConfig.pushStringStatus)) {
-            SharedConfig.pushStringStatus = "__FIREBASE_GENERATING_SINCE_" + ConnectionsManager.getInstance(account).getCurrentTime() + "__";
-        } else {
-            ConnectionsManager.getInstance(account);
-        }
-        TLRPC.User user = UserConfig.getInstance(account).getCurrentUser();
-        if (user != null) {
-            MessagesController.getInstance(account).putUser(user, true);
-        }
-        Utilities.stageQueue.postRunnable(() -> {
-            SendMessagesHelper.getInstance(account).checkUnsentMessages();
-            ContactsController.getInstance(account).checkAppAccount();
-            DownloadController.getInstance(account);
-        });
+        BillingController.getInstance().startConnection();
     }
 
     public ApplicationLoader() {

@@ -124,8 +124,14 @@ public class LogoutActivity extends BaseFragment {
                         break;
                     }
                 }
-                if (freeAccount >= 0) {
+                if (!UserConfig.hasPremiumOnAccounts()) {
+                    freeAccount -= (UserConfig.MAX_ACCOUNT_COUNT - UserConfig.MAX_ACCOUNT_DEFAULT_COUNT);
+                }
+                if (freeAccount > 0) {
                     presentFragment(new LoginActivity(freeAccount));
+                } else if (!UserConfig.hasPremiumOnAccounts()) {
+                    LimitReachedBottomSheet limitReachedBottomSheet = new LimitReachedBottomSheet(this, getContext(), TYPE_ACCOUNTS, currentAccount, null);
+                    showDialog(limitReachedBottomSheet);
                 }
             } else if (position == passcodeRow) {
                 presentFragment(PasscodeActivity.determineOpenFragment());

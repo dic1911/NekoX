@@ -7830,7 +7830,7 @@ public boolean retriedToSend;
                                 accountInstance.getUserConfig().saveConfig(false);
                                 TLRPC.TL_documentAttributeVideo attributeVideo;
                                 if (isEncrypted) {
-                                    attributeVideo = new TLRPC.TL_documentAttributeVideo();
+                                    attributeVideo = new TLRPC.TL_documentAttributeVideo_layer159();
                                 } else {
                                     attributeVideo = new TLRPC.TL_documentAttributeVideo();
                                     attributeVideo.supports_streaming = true;
@@ -8503,7 +8503,7 @@ public boolean retriedToSend;
                         if (encryptedChat == null) {
                             return;
                         }
-                        attributeVideo = new TLRPC.TL_documentAttributeVideo();
+                        attributeVideo = new TLRPC.TL_documentAttributeVideo_layer159();
                     } else {
                         attributeVideo = new TLRPC.TL_documentAttributeVideo();
                         attributeVideo.supports_streaming = true;
