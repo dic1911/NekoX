@@ -88,7 +88,6 @@ public class ApplicationLoader extends Application {
     public static volatile long mainInterfacePausedStageQueueTime;
 
     private static PushListenerController.IPushListenerServiceProvider pushProvider;
-    private static IMapsProvider mapsProvider;
     private static ILocationServiceProvider locationServiceProvider;
 
     @Override
@@ -119,26 +118,6 @@ public class ApplicationLoader extends Application {
             }
         }
         return locationServiceProvider;
-    }
-
-    public static IMapsProvider getMapsProvider() {
-        if (mapsProvider == null) {
-            if (NekoConfig.useOSMDroidMap.Bool())
-                mapsProvider = new OSMDroidMapsProvider();
-            else {
-                if (BuildVars.isGServicesCompiled) {
-                    try {
-                        mapsProvider = (IMapsProvider) Class.forName("org.telegram.messenger.GoogleMapsProvider").newInstance();
-                    } catch (Exception e) {
-                        FileLog.e("Failed to load Google Maps Provider from gservices", e);
-                        mapsProvider = new OSMDroidMapsProvider();
-                    }
-                } else {
-                    mapsProvider = new OSMDroidMapsProvider();
-                }
-            }
-        }
-        return mapsProvider;
     }
 
     public static PushListenerController.IPushListenerServiceProvider getPushProvider() {
