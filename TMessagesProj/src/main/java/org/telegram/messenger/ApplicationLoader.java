@@ -58,6 +58,8 @@ import static android.os.Build.VERSION.SDK_INT;
 public class ApplicationLoader extends Application {
     private static PendingIntent pendingIntent;
 
+    public static ApplicationLoader applicationLoaderInstance;
+
     @SuppressLint("StaticFieldLeak")
     public static volatile Context applicationContext;
 
@@ -618,4 +620,11 @@ public class ApplicationLoader extends Application {
 
     }
 
+    public boolean checkApkInstallPermissions(final Context context) {
+        return false;
+    }
+
+    public boolean openApkInstall(Activity activity, TLRPC.Document document) {
+        return false;
+    }
 }

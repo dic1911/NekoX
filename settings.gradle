@@ -1,4 +1,8 @@
 include ':TMessagesProj'
+include ':TMessagesProj_App'
+include ':TMessagesProj_AppHuawei'
+include ':TMessagesProj_AppHockeyApp'
+include ':TMessagesProj_AppStandalone'
 include ':openpgp-api'
 include ':ss-rust'
 include ':ssr-libev'
