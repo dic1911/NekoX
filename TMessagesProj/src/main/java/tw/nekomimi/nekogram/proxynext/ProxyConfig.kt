@@ -37,10 +37,10 @@ object ProxyConfig {
     fun parseSingBoxConfig(outbound: JSONObject): SingProxyBean? {
         try {
             val boxConfig = when (outbound.opt("type")) {
-                "shadowsocks" -> ShadowsocksBean().parseFromBoxConf(outbound)
-                "shadowsocksr" -> ShadowsocksRBean().parseFromBoxConf(outbound)
-                "vmess" -> VMessBean().parseFromBoxConf(outbound)
-                "trojan" -> TrojanBean().parseFromBoxConf(outbound)
+                "shadowsocks" -> ShadowsocksBean().parseFromStorage(outbound)
+                "shadowsocksr" -> ShadowsocksRBean().parseFromStorage(outbound)
+                "vmess" -> VMessBean().parseFromStorage(outbound)
+                "trojan" -> TrojanBean().parseFromStorage(outbound)
                 else -> null
             }
             return boxConfig
@@ -66,12 +66,13 @@ object ProxyConfig {
     abstract class SingProxyBean {
         var remarks = ""
         abstract fun parseFromLink(link: String): SingProxyBean
-        abstract fun parseFromBoxConf(json: JSONObject): SingProxyBean
-        abstract fun generateBoxConf(): JSONObject
+        abstract fun parseFromStorage(json: JSONObject): SingProxyBean
+        abstract fun generateStorageJson(): String
+        abstract fun generateSingConfig() : JSONObject
         abstract fun generateLink(): String
 
         fun getHash(): String {
-            val json = generateBoxConf().toString()
+            val json = generateStorageJson().toString()
             return Utilities.MD5(json)
         }
 

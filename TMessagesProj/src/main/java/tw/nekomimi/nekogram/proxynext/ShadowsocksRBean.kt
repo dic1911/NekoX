@@ -43,11 +43,11 @@ data class ShadowsocksRBean(
         return this
     }
 
-    override fun parseFromBoxConf(json: JSONObject): ProxyConfig.SingProxyBean {
+    override fun parseFromStorage(json: JSONObject): ProxyConfig.SingProxyBean {
         return this
     }
 
-    override fun generateBoxConf(): JSONObject {
+    override fun generateStorageJson(): String {
         TODO("Not yet implemented")
     }
 

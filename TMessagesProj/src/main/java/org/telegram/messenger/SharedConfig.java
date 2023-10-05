@@ -522,7 +522,7 @@ public class SharedConfig {
 
         @Override
         public void ensureStarted(Runnable runnable) {
-            runnable.run();
+            UIUtil.runOnIoDispatcher(runnable);
         }
 
         @Override
@@ -1706,7 +1706,7 @@ public class SharedConfig {
             JSONArray sing = new JSONArray();
             proxyList.stream()
                     .filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_SING)
-                    .forEach(proxyInfo -> sing.put(((SingProxyInfo) proxyInfo).getProxyBean().generateBoxConf()));
+                    .forEach(proxyInfo -> sing.put(((SingProxyInfo) proxyInfo).getProxyBean().generateStorageJson()));
             root.put("sing", sing);
 
             // Save the order

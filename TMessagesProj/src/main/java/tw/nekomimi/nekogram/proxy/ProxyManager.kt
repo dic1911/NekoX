@@ -36,8 +36,6 @@ object ProxyManager {
 
             server.close()
 
-            Thread.sleep(1000L)
-
         }.onFailure {
 
             return false
