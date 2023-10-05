@@ -269,14 +269,17 @@ object ProxyUtil {
     @JvmStatic
     fun importProxy(ctx: Context, link: String): Boolean {
         runCatching {
-            if (link.startsWith(ProxyConfig.VMESS_PROTOCOL) || link.startsWith(ProxyConfig.VMESS1_PROTOCOL)) {
-                AndroidUtilities.showVmessAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as VMessBean?)
-            } else if (link.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
-                AndroidUtilities.showTrojanAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as TrojanBean?)
-            } else if (link.startsWith(ProxyConfig.SS_PROTOCOL)) {
-                AndroidUtilities.showShadowsocksAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksBean?)
-            } else if (link.startsWith(ProxyConfig.SSR_PROTOCOL)) {
-                AndroidUtilities.showShadowsocksRAlert(ctx, ProxyConfig.parseSingBoxConfig(link) as ShadowsocksRBean?)
+            if (link.startsWith(ProxyConfig.VMESS_PROTOCOL) ||
+                    link.startsWith(ProxyConfig.VMESS1_PROTOCOL) ||
+                    link.startsWith(ProxyConfig.SS_PROTOCOL) ||
+                    link.startsWith(ProxyConfig.SSR_PROTOCOL) ||
+                    link.startsWith(ProxyConfig.TROJAN_PROTOCOL)) {
+                when (val singConfig = ProxyConfig.parseSingBoxConfig(link)) {
+                    is VMessBean -> AndroidUtilities.showVmessAlert(ctx, singConfig)
+                    is TrojanBean -> AndroidUtilities.showTrojanAlert(ctx, singConfig)
+                    is ShadowsocksBean -> AndroidUtilities.showShadowsocksAlert(ctx, singConfig)
+                    is ShadowsocksRBean -> AndroidUtilities.showShadowsocksRAlert(ctx, singConfig)
+                }
             } else if (link.startsWith(ProxyConfig.WS_PROTOCOL) || link.startsWith(ProxyConfig.WSS_PROTOCOL)) {
                 AndroidUtilities.showWsAlert(ctx, SharedConfig.WsProxy(link))
             } else {

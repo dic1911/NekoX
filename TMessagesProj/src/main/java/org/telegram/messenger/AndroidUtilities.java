@@ -4034,8 +4034,11 @@ public class AndroidUtilities {
             LinearLayout linearLayout = new LinearLayout(activity);
             builder.setCustomView(linearLayout);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
+            long time2 = System.currentTimeMillis();
             final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
+            FileLog.e("use time " + (System.currentTimeMillis() - time2) + "ms");
             SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
+            FileLog.e("use time " + (System.currentTimeMillis() - time2) + "ms");
             for (int a = 0; a < 5; a++) {
                 String text = null;
                 String detail = null;
