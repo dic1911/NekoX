@@ -151,6 +151,8 @@ jobs:
         run: |
           export NATIVE_TARGET="${{ matrix.flavor }}"
           ./run libs native
+          mkdir -p ~/NekoXapks || true
+          cp -rfv TMessagesProj/build/outputs/apk ~/NekoXapks || true
   v2ray:
     name: Native Build (V2ray)
     runs-on: self-hosted
