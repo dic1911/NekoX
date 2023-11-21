@@ -86,12 +86,43 @@ jobs:
         run: |
           ./run init action boringssl
           ./run init libs boringssl
+  shadowsocks:
+    name: Native Build (Shadowsocks)
+    runs-on: self-hosted
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status ss-rust/src/main/rust/shadowsocks-rust > shadowsocks_status
+      - name: Shadowsocks Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/ss-rust-release.aar
+          key: ${{ hashFiles('shadowsocks_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Install Rust
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run init action shadowsocks
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs shadowsocks
   native:
     name: Native Build (Telegram)
     runs-on: self-hosted
     needs:
       - ffmpeg
       - boringssl
+      - shadowsocks
     strategy:
       matrix:
         flavor:
@@ -153,36 +184,6 @@ jobs:
           ./run libs native
           mkdir -p ~/NekoXapks || true
           cp -rfv TMessagesProj/build/outputs/apk ~/NekoXapks || true
-  shadowsocks:
-    name: Native Build (Shadowsocks)
-    runs-on: self-hosted
-    needs: check
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Fetch Status
-        run: git submodule status ss-rust/src/main/rust/shadowsocks-rust > shadowsocks_status
-      - name: Shadowsocks Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            TMessagesProj/libs/ss-rust-release.aar
-          key: ${{ hashFiles('shadowsocks_status') }}
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-      - name: Install NDK
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-      - name: Install Rust
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run init action shadowsocks
-      - name: Native Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs shadowsocks
   build:
     name: Gradle Build
     runs-on: self-hosted
