@@ -415,6 +415,7 @@ jobs:
 
   telegram-bot-api:
     name: Telegram Bot API
+    if: github.event.inputs.upload != 'y'
     runs-on: self-hosted
     steps:
       - name: Checkout
