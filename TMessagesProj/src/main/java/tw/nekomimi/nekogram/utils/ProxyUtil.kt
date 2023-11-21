@@ -29,11 +29,7 @@ import com.google.zxing.qrcode.QRCodeReader
 import com.google.zxing.qrcode.QRCodeWriter
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel
 import com.v2ray.ang.V2RayConfig
-import com.v2ray.ang.V2RayConfig.SSR_PROTOCOL
 import com.v2ray.ang.V2RayConfig.SS_PROTOCOL
-import com.v2ray.ang.V2RayConfig.TROJAN_PROTOCOL
-import com.v2ray.ang.V2RayConfig.VMESS1_PROTOCOL
-import com.v2ray.ang.V2RayConfig.VMESS_PROTOCOL
 import com.v2ray.ang.V2RayConfig.WSS_PROTOCOL
 import com.v2ray.ang.V2RayConfig.WS_PROTOCOL
 import com.v2ray.ang.dto.AngConfig
@@ -43,14 +39,12 @@ import org.json.JSONException
 import org.telegram.messenger.*
 import org.telegram.messenger.browser.Browser
 import org.yaml.snakeyaml.Yaml
-import tw.nekomimi.nekogram.ui.BottomBuilder
 import tw.nekomimi.nekogram.proxy.ShadowsocksLoader
-import tw.nekomimi.nekogram.proxy.ShadowsocksRLoader
+import tw.nekomimi.nekogram.ui.BottomBuilder
 import tw.nekomimi.nekogram.utils.AlertUtil.showToast
 import java.io.File
 import java.net.NetworkInterface
 import java.util.*
-import kotlin.collections.HashMap
 
 
 object ProxyUtil {
@@ -127,66 +121,6 @@ object ProxyUtil {
                                     proxy["name"] as String
                             ).toString())
                         }
-                        "vmess" -> {
-                            val opts = AngConfig.VmessBean()
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.address = opt.value as String
-                                    "port" -> opts.port = opt.value.toString().toInt()
-                                    "uuid" -> opts.id = opt.value as String
-                                    "alterId" -> opts.alterId = opt.value.toString().toInt()
-                                    "cipher" -> opts.security = opt.value as String
-                                    "network" -> opts.network = opt.value as String
-                                    "tls" -> opts.streamSecurity = if (opt.value?.toString() == "true") "tls" else opts.streamSecurity
-                                    "ws-path" -> opts.path = opt.value as String
-                                    "servername" -> opts.requestHost = opt.value as String
-                                    "h2-opts" -> for (h2Opt in (opt.value as Map<String, Any>)) {
-                                        when (h2Opt.key) {
-                                            "host" -> opts.requestHost = (h2Opt.value as List<String>).first()
-                                            "path" -> opts.path = h2Opt.value as String
-                                        }
-                                    }
-                                    "http-opts" -> for (httpOpt in (opt.value as Map<String, Any>)) {
-                                        when (httpOpt.key) {
-                                            "path" -> opts.path = (httpOpt.value as List<String>).first()
-                                        }
-                                    }
-                                }
-                            }
-                            proxies.add(opts.toString())
-                        }
-                        "trojan" -> {
-                            val opts = AngConfig.VmessBean()
-                            opts.configType = V2RayConfig.EConfigType.Trojan
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.address = opt.value as String
-                                    "port" -> opts.port = opt.value.toString().toInt()
-                                    "password" -> opts.id = opt.value as String
-                                    "sni" -> opts.requestHost = opt.value as String
-                                }
-                            }
-                            proxies.add(opts.toString())
-                        }
-                        "ssr" -> {
-                            val opts = ShadowsocksRLoader.Bean()
-                            for (opt in proxy) {
-                                when (opt.key) {
-                                    "name" -> opts.remarks = opt.value as String
-                                    "server" -> opts.host = opt.value as String
-                                    "port" -> opts.remotePort = opt.value.toString().toInt()
-                                    "cipher" -> opts.method = opt.value as String
-                                    "password" -> opts.password = opt.value as String
-                                    "obfs" -> opts.obfs = opt.value as String
-                                    "protocol" -> opts.protocol = opt.value as String
-                                    "obfs-param" -> opts.obfs_param = opt.value as String
-                                    "protocol-param" -> opts.protocol_param = opt.value as String
-                                }
-                            }
-                            proxies.add(opts.toString())
-                        }
                     }
                 }
                 return proxies
@@ -201,13 +135,9 @@ object ProxyUtil {
                         line.startsWith("tg://socks") ||
                         line.startsWith("https://t.me/proxy") ||
                         line.startsWith("https://t.me/socks") ||
-                        line.startsWith(VMESS_PROTOCOL) ||
-                        line.startsWith(VMESS1_PROTOCOL) ||
                         line.startsWith(SS_PROTOCOL) ||
-                        line.startsWith(SSR_PROTOCOL) ||
                         line.startsWith(WS_PROTOCOL) ||
-                        line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL) /*||
+                        line.startsWith(WSS_PROTOCOL) /*||
                     line.startsWith(RB_PROTOCOL)*/) {
 
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line).toUrl()) }
@@ -241,13 +171,9 @@ object ProxyUtil {
                         line.startsWith("tg://socks") ||
                         line.startsWith("https://t.me/proxy") ||
                         line.startsWith("https://t.me/socks") ||
-                        line.startsWith(VMESS_PROTOCOL) ||
-                        line.startsWith(VMESS1_PROTOCOL) ||
                         line.startsWith(SS_PROTOCOL) ||
-                        line.startsWith(SSR_PROTOCOL) ||
                         line.startsWith(WS_PROTOCOL) ||
-                        line.startsWith(WSS_PROTOCOL) ||
-                        line.startsWith(TROJAN_PROTOCOL) /*||
+                        line.startsWith(WSS_PROTOCOL) /*||
                     line.startsWith(RB_PROTOCOL)*/) {
 
                     runCatching { proxies.add(SharedConfig.parseProxyInfo(line)) }.onFailure {
@@ -276,13 +202,9 @@ object ProxyUtil {
                                 line.startsWith("tg://socks") ||
                                 line.startsWith("https://t.me/proxy") ||
                                 line.startsWith("https://t.me/socks") ||
-                                line.startsWith(VMESS_PROTOCOL) ||
-                                line.startsWith(VMESS1_PROTOCOL) ||
                                 line.startsWith(SS_PROTOCOL) ||
-                                line.startsWith(SSR_PROTOCOL) ||
                                 line.startsWith(WS_PROTOCOL) ||
-                                line.startsWith(WSS_PROTOCOL) ||
-                                line.startsWith(TROJAN_PROTOCOL) /*||
+                                line.startsWith(WSS_PROTOCOL) /*||
 
                     line.startsWith(RB_PROTOCOL)*/) {
 
@@ -335,21 +257,9 @@ object ProxyUtil {
 
         runCatching {
 
-            if (link.startsWith(VMESS_PROTOCOL) || link.startsWith(VMESS1_PROTOCOL)) {
-
-                AndroidUtilities.showVmessAlert(ctx, SharedConfig.VmessProxy(link))
-
-            } else if (link.startsWith(TROJAN_PROTOCOL)) {
-
-                AndroidUtilities.showTrojanAlert(ctx, SharedConfig.VmessProxy(link))
-
-            } else if (link.startsWith(SS_PROTOCOL)) {
+            if (link.startsWith(SS_PROTOCOL)) {
 
                 AndroidUtilities.showShadowsocksAlert(ctx, SharedConfig.ShadowsocksProxy(link))
-
-            } else if (link.startsWith(SSR_PROTOCOL)) {
-
-                AndroidUtilities.showShadowsocksRAlert(ctx, SharedConfig.ShadowsocksRProxy(link))
 
             } else if (link.startsWith(WS_PROTOCOL) || link.startsWith(WSS_PROTOCOL)) {
 
@@ -397,11 +307,7 @@ object ProxyUtil {
 
         val info = runCatching {
 
-            if (link.startsWith(VMESS_PROTOCOL) || link.startsWith(VMESS1_PROTOCOL)) {
-
-                SharedConfig.VmessProxy(link)
-
-            } else if (link.startsWith(SS_PROTOCOL)) {
+            if (link.startsWith(SS_PROTOCOL)) {
 
                 if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 
@@ -410,16 +316,6 @@ object ProxyUtil {
                 }
 
                 SharedConfig.ShadowsocksProxy(link)
-
-            } else if (link.startsWith(SSR_PROTOCOL)) {
-
-                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                    error(LocaleController.getString("MinApi21Required", R.string.MinApi21Required))
-
-                }
-
-                SharedConfig.ShadowsocksRProxy(link)
 
             } else if (link.startsWith(WS_PROTOCOL) || link.startsWith(WSS_PROTOCOL)) {
 
