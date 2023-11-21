@@ -120,7 +120,7 @@ jobs:
       - name: Checkout Library
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
-          git submodule update --init 'TMessagesProj/jni/*'
+          git submodule update --init 'TMessagesProj/jni/*' || true
       - name: FFmpeg Cache
         uses: actions/cache@v2
         if: steps.cache.outputs.cache-hit != 'true'
