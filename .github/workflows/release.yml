@@ -17,7 +17,7 @@ on:
 jobs:
   check:
     name: Check Access
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     steps:
       - name: "Check access"
         uses: "lannonbr/repo-permission-check-action@2.0.0"
@@ -27,7 +27,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
   ffmpeg:
     name: Native Build (FFmpeg)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: check
     steps:
       - name: Checkout
@@ -61,7 +61,7 @@ jobs:
           ./run init libs ffmpeg
   boringssl:
     name: Native Build (BoringSSL)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: check
     steps:
       - name: Checkout
@@ -91,7 +91,7 @@ jobs:
           ./run init libs boringssl
   native:
     name: Native Build (Telegram)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs:
       - ffmpeg
       - boringssl
@@ -157,7 +157,7 @@ jobs:
           ./run libs native
   v2ray:
     name: Native Build (V2ray)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: check
     steps:
       - name: Checkout
@@ -198,7 +198,7 @@ jobs:
         run: ./run libs v2ray
   shadowsocks:
     name: Native Build (Shadowsocks)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: check
     steps:
       - name: Checkout
@@ -229,7 +229,7 @@ jobs:
         run: ./run libs shadowsocks
   shadowsocksr:
     name: Native Build (ShadowsocksR)
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: check
     steps:
       - name: Checkout
@@ -257,7 +257,7 @@ jobs:
         run: ./run libs ssr
   build:
     name: Gradle Build
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs:
       - native
       - v2ray
@@ -350,7 +350,7 @@ jobs:
   publish:
     name: Publish Release
     if: github.event.inputs.publish != 'y'
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs: build
     steps:
       - name: Checkout
@@ -370,7 +370,7 @@ jobs:
   upload:
     name: Upload Release
     if: github.event.inputs.upload != 'y'
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     needs:
       - build
       - telegram-bot-api
@@ -415,7 +415,7 @@ jobs:
 
   telegram-bot-api:
     name: Telegram Bot API
-    runs-on: ubuntu-latest
+    runs-on: htkpc
     steps:
       - name: Checkout
         uses: actions/checkout@v2
