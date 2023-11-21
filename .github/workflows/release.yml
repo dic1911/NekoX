@@ -153,46 +153,6 @@ jobs:
           ./run libs native
           mkdir -p ~/NekoXapks || true
           cp -rfv TMessagesProj/build/outputs/apk ~/NekoXapks || true
-  v2ray:
-    name: Native Build (V2ray)
-    runs-on: self-hosted
-    needs: check
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Fetch Status
-        run: git submodule status v2ray > v2ray_status
-      - name: Install Gomobile
-        run: |
-            go install golang.org/x/mobile/cmd/gomobile@latest
-            go install golang.org/x/mobile/cmd/gobind@latest
-            gomobile init
-        env:
-          GOPROXY: https://proxy.golang.org,direct
-          GO111MODULE: "on"
-      - name: V2ray Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            TMessagesProj/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-      - name: Install NDK
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-      - name: Install Golang
-        uses: actions/setup-go@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-        with:
-          go-version: 1.16
-      - name: Native Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs v2ray
   shadowsocks:
     name: Native Build (Shadowsocks)
     runs-on: self-hosted
@@ -223,33 +183,6 @@ jobs:
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run libs shadowsocks
-  shadowsocksr:
-    name: Native Build (ShadowsocksR)
-    runs-on: self-hosted
-    needs: check
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Fetch Status
-        run: git submodule status 'ssr-libev/*' > shadowsocksr_status
-      - name: ShadowsocksR Cache
-        id: cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            TMessagesProj/libs/ssr-libev-release.aar
-          key: ${{ hashFiles('shadowsocksr_status') }}
-      - name: Setup Android SDK Tools
-        uses: android-actions/setup-android@v2
-        if: steps.cache.outputs.cache-hit != 'true'
-      - name: Install NDK
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: |
-          echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
-      - name: Native Build
-        if: steps.cache.outputs.cache-hit != 'true'
-        run: ./run libs ssr
   build:
     name: Gradle Build
     runs-on: self-hosted
@@ -299,25 +232,13 @@ jobs:
           path: |
             TMessagesProj/src/main/libs
           key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-x86_64
-      - name: V2ray Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            TMessagesProj/libs/libv2ray.aar
-          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
       - name: Shadowsocks Cache
         uses: actions/cache@v2
         with:
           path: |
             TMessagesProj/libs/ss-rust-release.aar
           key: ${{ hashFiles('shadowsocks_status') }}
-      - name: ShadowsocksR Cache
-        uses: actions/cache@v2
-        with:
-          path: |
-            TMessagesProj/libs/ssr-libev-release.aar
-          key: ${{ hashFiles('shadowsocksr_status') }}
-      - name: Fix Gradle Memoery
+      - name: Fix Gradle Memory
         run: |
           sed -i -e "s/16384/6144/g" gradle.properties
 #          echo "ndk.dir=${ANDROID_HOME}/ndk-bundle" > local.properties
@@ -334,7 +255,7 @@ jobs:
           APK=$(find TMessagesProj/build/outputs/apk -name '*arm64-v8a*.apk')
           APK=$(dirname $APK)
           mkdir -p ~/NekoXapks || true
-          cp -rfv $APK ~/NekoXapks || true
+          cp -rfv TMessagesProj/build/outputs/apk ~/NekoXapks || true
           echo "APK=$APK" >> $GITHUB_ENV
       - uses: actions/upload-artifact@v2
         with:
