@@ -8,60 +8,53 @@
 
 package org.telegram.messenger;
 
+import static com.v2ray.ang.V2RayConfig.SS_PROTOCOL;
+import static com.v2ray.ang.V2RayConfig.WSS_PROTOCOL;
+import static com.v2ray.ang.V2RayConfig.WS_PROTOCOL;
+
 import android.app.Activity;
 import android.app.ActivityManager;
 import android.app.Dialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
-import android.net.Uri;
 import android.content.pm.PackageInfo;
+import android.net.Uri;
 import android.os.Build;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.webkit.WebView;
 
+import androidx.annotation.IntDef;
 import androidx.annotation.Nullable;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
-import com.v2ray.ang.V2RayConfig;
-import com.v2ray.ang.dto.AngConfig;
 import com.v2ray.ang.util.Utils;
 
 import org.apache.commons.lang3.StringUtils;
 import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.json.JSONArray;
 import org.json.JSONException;
-import androidx.annotation.IntDef;
-
 import org.json.JSONObject;
 import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
-import org.telegram.ui.CacheControlActivity;
 import org.telegram.ui.Components.SwipeGestureSettingsView;
-import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.LaunchActivity;
 
 import java.io.File;
 import java.io.RandomAccessFile;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
 import java.net.InetSocketAddress;
 import java.net.Proxy;
 import java.util.Arrays;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.io.UnsupportedEncodingException;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.Locale;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.stream.Collectors;
 
@@ -70,22 +63,13 @@ import okhttp3.HttpUrl;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.proxy.ProxyManager;
 import tw.nekomimi.nekogram.proxy.ShadowsocksLoader;
-import tw.nekomimi.nekogram.proxy.ShadowsocksRLoader;
-import tw.nekomimi.nekogram.proxy.VmessLoader;
-import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
+import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
-
-import static com.v2ray.ang.V2RayConfig.SSR_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.SS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WSS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WS_PROTOCOL;
-import java.util.List;
-import java.util.Locale;
 
 public class SharedConfig {
     /**
@@ -578,25 +562,9 @@ public class SharedConfig {
 
                 }
 
-                case "vmess": {
-
-                    info = new VmessProxy(obj.optString("link"));
-
-                    break;
-
-                }
-
                 case "shadowsocks": {
 
                     info = new ShadowsocksProxy(obj.optString("link"));
-
-                    break;
-
-                }
-
-                case "shadowsocksr": {
-
-                    info = new ShadowsocksRProxy(obj.optString("link"));
 
                     break;
 
@@ -669,143 +637,6 @@ public class SharedConfig {
 
         @Override
         public abstract JSONObject toJsonInternal() throws JSONException;
-
-    }
-
-    public static class VmessProxy extends ExternalSocks5Proxy {
-
-        public AngConfig.VmessBean bean;
-        public VmessLoader loader;
-
-        {
-
-            if (BuildVars.isMini) {
-
-                throw new RuntimeException(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert));
-
-            }
-
-        }
-
-        public VmessProxy(String vmessLink) {
-
-            this(VmessLoader.parseVmessLink(vmessLink));
-
-        }
-
-        public VmessProxy(AngConfig.VmessBean bean) {
-
-            this.bean = bean;
-
-        }
-
-        @Override
-        public String getAddress() {
-            return bean.getAddress() + ":" + bean.getPort();
-        }
-
-        @Override
-        public boolean isStarted() {
-
-            return loader != null;
-
-        }
-
-        @Override
-        public void start() {
-
-            if (loader != null) return;
-
-            VmessLoader loader = new VmessLoader();
-
-            try {
-
-                loader.initConfig(bean);
-
-                port = loader.start();
-
-                this.loader = loader;
-
-                if (SharedConfig.proxyEnabled && SharedConfig.currentProxy == this) {
-
-                    ConnectionsManager.setProxySettings(true, address, port, username, password, secret);
-
-                }
-
-            } catch (Exception e) {
-
-                FileLog.e(e);
-
-                AlertUtil.showToast(e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage());
-
-            }
-
-        }
-
-        @Override
-        public void stop() {
-
-            if (loader != null) {
-
-                VmessLoader loader = this.loader;
-
-                loader.stop();
-
-                this.loader = null;
-
-            }
-
-        }
-
-        @Override
-        public String toUrl() {
-            return bean.toString();
-        }
-
-        @Override
-        public String getRemarks() {
-            return bean.getRemarks();
-        }
-
-        @Override
-        public void setRemarks(String remarks) {
-            bean.setRemarks(remarks);
-        }
-
-        @Override
-        public String getType() {
-
-            if (bean.getConfigType() == V2RayConfig.EConfigType.Trojan) {
-
-                return "Trojan";
-
-            } else {
-
-                return "Vmess";
-
-            }
-
-        }
-
-        @Override
-        public JSONObject toJsonInternal() throws JSONException {
-
-            JSONObject obj = new JSONObject();
-            obj.put("type", "vmess");
-            obj.put("link", toUrl());
-            return obj;
-
-        }
-
-        @Override
-        public int hashCode() {
-            return (bean.getAddress() + bean.getPort() + bean.getId() + bean.getNetwork() + bean.getPath()).hashCode();
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            return super.equals(obj) || (obj instanceof VmessProxy && bean.equals(((VmessProxy) obj).bean));
-        }
 
     }
 
@@ -929,127 +760,6 @@ public class SharedConfig {
         @Override
         public boolean equals(@Nullable Object obj) {
             return super.equals(obj) || (obj instanceof ShadowsocksProxy && bean.equals(((ShadowsocksProxy) obj).bean));
-        }
-
-    }
-
-    public static class ShadowsocksRProxy extends ExternalSocks5Proxy {
-
-        public ShadowsocksRLoader.Bean bean;
-        public ShadowsocksRLoader loader;
-
-        public ShadowsocksRProxy(String ssLink) {
-
-            this(ShadowsocksRLoader.Bean.Companion.parse(ssLink));
-
-        }
-
-        public ShadowsocksRProxy(ShadowsocksRLoader.Bean bean) {
-
-            this.bean = bean;
-
-            if (BuildVars.isMini) {
-
-                throw new RuntimeException(LocaleController.getString("MiniVersionAlert", R.string.MiniVersionAlert));
-
-            }
-
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-
-                throw new RuntimeException(LocaleController.getString("MinApi21Required", R.string.MinApi21Required));
-
-            }
-
-        }
-
-        @Override
-        public String getAddress() {
-            return bean.getHost() + ":" + bean.getRemotePort();
-        }
-
-        @Override
-        public boolean isStarted() {
-
-            return loader != null;
-
-        }
-
-        @Override
-        public void start() {
-
-            if (loader != null) return;
-
-            port = ProxyManager.mkPort();
-            ShadowsocksRLoader loader = new ShadowsocksRLoader();
-            loader.initConfig(bean, port);
-
-            loader.start();
-
-            this.loader = loader;
-
-            if (SharedConfig.proxyEnabled && SharedConfig.currentProxy == this) {
-
-                ConnectionsManager.setProxySettings(true, address, port, username, password, secret);
-
-            }
-
-        }
-
-        @Override
-        public void stop() {
-
-            if (loader != null) {
-
-                ShadowsocksRLoader loader = this.loader;
-
-                this.loader = null;
-
-                loader.stop();
-
-            }
-
-        }
-
-        @Override
-        public String toUrl() {
-            return bean.toString();
-        }
-
-        @Override
-        public String getRemarks() {
-            return bean.getRemarks();
-        }
-
-        @Override
-        public void setRemarks(String remarks) {
-            bean.setRemarks(remarks);
-        }
-
-        @Override
-        public String getType() {
-            return "SSR";
-        }
-
-        @Override
-        public JSONObject toJsonInternal() throws JSONException {
-
-            JSONObject obj = new JSONObject();
-            obj.put("type", "shadowsocksr");
-            obj.put("link", toUrl());
-            return obj;
-
-        }
-
-        @Override
-        public int hashCode() {
-
-            return (bean.getHost() + bean.getRemotePort() + bean.getMethod() + bean.getProtocol() + bean.getProtocol_param() + bean.getObfs() + bean.getObfs_param()).hashCode();
-
-        }
-
-        @Override
-        public boolean equals(@Nullable Object obj) {
-            return super.equals(obj) || (obj instanceof ShadowsocksRProxy && bean.equals(((ShadowsocksRProxy) obj).bean));
         }
 
     }
@@ -2179,27 +1889,12 @@ public class SharedConfig {
     }
 
     public static ProxyInfo parseProxyInfo(String url) throws InvalidProxyException {
-        if (url.startsWith(V2RayConfig.VMESS_PROTOCOL) || url.startsWith(V2RayConfig.VMESS1_PROTOCOL) || url.startsWith(V2RayConfig.TROJAN_PROTOCOL)) {
-            try {
-                return new VmessProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        } else if (url.startsWith(SS_PROTOCOL)) {
+        if (url.startsWith(SS_PROTOCOL)) {
             if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
                 throw new InvalidProxyException("shadowsocks requires min api 21");
             }
             try {
                 return new ShadowsocksProxy(url);
-            } catch (Exception ex) {
-                throw new InvalidProxyException(ex);
-            }
-        } else if (url.startsWith(SSR_PROTOCOL)) {
-            if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
-                throw new InvalidProxyException("shadowsocksR requires min api 21");
-            }
-            try {
-                return new ShadowsocksRProxy(url);
             } catch (Exception ex) {
                 throw new InvalidProxyException(ex);
             }
