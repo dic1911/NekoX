@@ -145,7 +145,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           cd TMessagesProj/jni
-          ./patch_boringssl.sh
+          ./patch_boringssl.sh || cd boringssl && git status | grep modified
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
