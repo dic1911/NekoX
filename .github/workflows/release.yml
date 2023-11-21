@@ -258,9 +258,6 @@ jobs:
     strategy:
       matrix:
         flavor:
-          - FullRelease
-          - FullReleaseNoGcm
-          - MiniRelease
           - MiniReleaseNoGcm
     steps:
       - name: Checkout
