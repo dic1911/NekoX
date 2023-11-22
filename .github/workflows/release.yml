@@ -51,7 +51,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -80,7 +80,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
       - name: Native Build
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -109,7 +109,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
       - name: Install Rust
         if: steps.cache.outputs.cache-hit != 'true'
         run: ./run init action shadowsocks
@@ -171,7 +171,7 @@ jobs:
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
       - name: Fix BoringSSL
         if: steps.cache.outputs.cache-hit != 'true'
         run: |
@@ -201,7 +201,7 @@ jobs:
       - name: Install NDK
         run: |
           echo "sdk.dir=${ANDROID_HOME}" > local.properties
-          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
       - name: Fetch Status
         run: |
           git submodule status TMessagesProj/jni/ffmpeg > ffmpeg_status
