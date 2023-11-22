@@ -708,7 +708,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
         menu.setSubMenuOpenSide(1);
         menu.setBackground(Theme.createSelectorDrawable(Theme.getColor(Theme.key_listSelector)));
 
-        menu.addSubItem(menu_proxy, R.drawable.proxy_on, LocaleController.getString("Proxy", R.string.Proxy))
+        menu.addSubItem(menu_proxy, R.drawable.msg2_proxy_on, LocaleController.getString("Proxy", R.string.Proxy))
                 .setContentDescription(LocaleController.getString("Proxy", R.string.Proxy));
         menu.addSubItem(menu_language, R.drawable.ic_translate, LocaleController.getString("Language", R.string.Language))
                 .setContentDescription(LocaleController.getString("Language", R.string.Language));
