@@ -24559,7 +24559,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         } else if (type == 21) {
                             items.add(LocaleController.getString("ImportProxyList", R.string.ImportProxyList));
                             options.add(5);
-                            icons.add(R.drawable.proxy_on);
+                            icons.add(R.drawable.msg2_proxy_on);
                         } else if (type == 7) {
                             items.add(LocaleController.getString("AddToStickers", R.string.AddToStickers));
                             options.add(OPTION_ADD_TO_STICKERS_OR_MASKS);
