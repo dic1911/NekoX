@@ -14,14 +14,8 @@ object ProxyConfig {
     @JvmStatic
     fun parseSingBoxConfig(url: String): SingProxyBean? {
         try {
-            if (url.startsWith(VMESS_PROTOCOL) || url.startsWith(VMESS1_PROTOCOL)) {
-                return VMessBean().parseFromLink(url)
-            } else if (url.startsWith(SS_PROTOCOL)) {
+            if (url.startsWith(SS_PROTOCOL)) {
                 return ShadowsocksBean().parseFromLink(url)
-            } else if (url.startsWith(SSR_PROTOCOL)) {
-                return ShadowsocksRBean().parseFromLink(url)
-            } else if (url.startsWith(TROJAN_PROTOCOL)) {
-                return TrojanBean().parseFromLink(url)
             }
             return null
         } catch (ex: Exception) {
@@ -38,9 +32,6 @@ object ProxyConfig {
         try {
             val boxConfig = when (outbound.opt("type")) {
                 "shadowsocks" -> ShadowsocksBean().parseFromStorage(outbound)
-                "shadowsocksr" -> ShadowsocksRBean().parseFromStorage(outbound)
-                "vmess" -> VMessBean().parseFromStorage(outbound)
-                "trojan" -> TrojanBean().parseFromStorage(outbound)
                 else -> null
             }
             return boxConfig

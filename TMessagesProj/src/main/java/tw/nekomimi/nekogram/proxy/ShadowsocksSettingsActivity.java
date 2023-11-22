@@ -29,8 +29,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-import androidx.annotation.RequiresApi;
-
 import com.github.shadowsocks.plugin.PluginConfiguration;
 import com.github.shadowsocks.plugin.PluginContract;
 import com.github.shadowsocks.plugin.PluginList;
@@ -58,7 +56,6 @@ import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
 import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
-import tw.nekomimi.nekogram.proxynext.VMessBean;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.ui.PopupBuilder;
 import tw.nekomimi.nekogram.utils.AlertUtil;
