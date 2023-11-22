@@ -118,6 +118,9 @@ android {
         if (properties != null) {
             appId = properties.getProperty("TELEGRAM_APP_ID") ?: System.getenv("TELEGRAM_APP_ID") ?: appId
             appHash = properties.getProperty("TELEGRAM_APP_HASH") ?: System.getenv("TELEGRAM_APP_HASH") ?: appHash
+        } else if (System.getenv("TELEGRAM_APP_ID") != null) {
+            appId = System.getenv("TELEGRAM_APP_ID") ?: appId
+            appHash = System.getenv("TELEGRAM_APP_HASH") ?: appHash
         }
 
 
