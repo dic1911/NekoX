@@ -231,22 +231,20 @@ public class ProxySettingsActivity extends BaseFragment {
                         SharedConfig.saveProxyList();
                     }
                     if (addingNewProxy || SharedConfig.currentProxy == currentProxyInfo) {
-                        editor.putString("proxy_ip", currentProxyInfo.address);
-                        editor.putString("proxy_pass", currentProxyInfo.password);
-                        editor.putString("proxy_user", currentProxyInfo.username);
-                        editor.putInt("proxy_port", currentProxyInfo.port);
-                        editor.putString("proxy_secret", currentProxyInfo.secret);
-                        if (currentProxyInfo instanceof SharedConfig.ShadowsocksProxy) {
-                            editor.putString("vmess_link", ((SharedConfig.ShadowsocksProxy) currentProxyInfo).bean.toString());
+                        if (currentProxyInfo.getProxyType() == SharedConfig.PROXY_TYPE_ORIGINAL) {
+                            editor.putString("proxy_ip", currentProxyInfo.address);
+                            editor.putString("proxy_pass", currentProxyInfo.password);
+                            editor.putString("proxy_user", currentProxyInfo.username);
+                            editor.putInt("proxy_port", currentProxyInfo.port);
+                            editor.putString("proxy_secret", currentProxyInfo.secret);
+                        } else {
+                            SharedConfig.saveProxyList();
                         }
-                        ConnectionsManager.setProxySettings(SharedConfig.proxyEnabled, currentProxyInfo.address, currentProxyInfo.port, currentProxyInfo.username, currentProxyInfo.password, currentProxyInfo.secret);
+                        ConnectionsManager.setProxySettings(SharedConfig.isProxyEnabled(), currentProxyInfo.address, currentProxyInfo.port, currentProxyInfo.username, currentProxyInfo.password, currentProxyInfo.secret);
                     }
                     editor.apply();
-
                     NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-
                     finishFragment();
-
                 }
             }
         });

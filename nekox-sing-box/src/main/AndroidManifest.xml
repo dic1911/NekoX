@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <application
+        android:allowBackup="false"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/nekox_singbox_plugin"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true">
+        <provider
+            android:authorities="nekox.messenger.sing.PluginProvider"
+            android:name=".PluginProvider"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="nekox.messenger.sing.ACTION_SING_PLUGIN"/>
+            </intent-filter>
+            <intent-filter>
+                <action android:name="nekox.messenger.sing.ACTION_SING_PLUGIN"/>
+                <data android:scheme="plugin"
+                    android:host="nekox.messenger.sing"
+                    android:pathPrefix="/sing-box"/>
+            </intent-filter>
+            <meta-data android:name="nekox.messenger.sing.executable_path"
+                android:value="sing-box.so"/>
+        </provider>
+
+    </application>
+
+</manifest>

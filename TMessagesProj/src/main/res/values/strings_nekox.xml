@@ -277,4 +277,14 @@
     <string name="ConfirmSettings">Confirmation</string>
     <string name="InteractionSettings">Interaction</string>
     <string name="nekoxPremiumGiftRemoved">Premium Gift is removed in NekoX.</string>
+    <string name="ReactionSettings">Reaction</string>
+    <string name="doubleTapAndReactions">Double tap</string>
+    <string name="doubleTapShowReactionsMenu">Show reactions menu</string>
+    <string name="doubleTapSendReaction">Send reaction</string>
+    <string name="doubleTapDisable">Disable</string>
+    <string name="disableReactionsWhenSelecting">Hide reactions while selecting</string>
+    <string name="UnsupportedProxy">Unsupported Proxy</string>
+    <string name="NekoXSingPluginNotFound">Not Found</string>
+    <string name="NekoXSingPluginPresents">Found</string>
+    <string name="NekoXSingPlugin">sing-box</string>
 </resources>

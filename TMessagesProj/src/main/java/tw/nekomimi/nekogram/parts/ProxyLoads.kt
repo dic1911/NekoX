@@ -6,8 +6,8 @@ import cn.hutool.http.HttpUtil
 import kotlinx.coroutines.*
 import org.telegram.messenger.FileLog
 import tw.nekomimi.nekogram.utils.DnsFactory
-import tw.nekomimi.nekogram.utils.ProxyUtil.parseProxies
 import tw.nekomimi.nekogram.NekoConfig
+import tw.nekomimi.nekogram.utils.ProxyUtil
 import tw.nekomimi.nekogram.utils.StrUtil
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -23,11 +23,11 @@ fun loadProxiesPublic(urls: List<String>, exceptions: MutableMap<String, Excepti
         val content = DnsFactory.getTxts("nachonekodayo.sekai.icu").joinToString()
 
         val proxiesString = StrUtil.getSubString(content, "#NekoXStart#", "#NekoXEnd#")
-        if (proxiesString.equals(content)) {
+        if (proxiesString == content) {
             throw Exception("DoH get public proxy: Not found")
         }
 
-        return parseProxies(proxiesString)
+        return ProxyUtil.parseProxies(proxiesString)
     } catch (e: Exception) {
         FileLog.e(e)
     }
@@ -80,7 +80,7 @@ fun loadProxies(urls: List<String>, exceptions: MutableMap<String, Exception>): 
                             content = String(Base64.decode(content, Base64.NO_PADDING))
                         }
 
-                        val proxies = parseProxies(content)
+                        val proxies = ProxyUtil.parseProxies(content)
                         if (urlFinal.contains("https://gitee.com/") && cl.decrementAndGet() > 0) {
                             defer = proxies
                         } else {

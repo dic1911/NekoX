@@ -1,0 +1,432 @@
+name: sing-box module
+on:
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Release Tag'
+        required: true
+jobs:
+  check:
+    name: Check Access
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Check access"
+        uses: "lannonbr/repo-permission-check-action@2.0.0"
+        with:
+          permission: "write"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  ffmpeg:
+    name: Native Build (FFmpeg)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: |
+          git submodule status TMessagesProj/jni/ffmpeg > ffmpeg_status
+          git submodule status TMessagesProj/jni/libvpx > libvpx_status
+      - name: FFmpeg Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/jni/ffmpeg/build
+            TMessagesProj/jni/libvpx/build
+          key: ${{ hashFiles('ffmpeg_status', 'libvpx_status', 'TMessagesProj/jni/*ffmpeg*.sh', 'TMessagesProj/jni/*libvpx*.sh', 'TMessagesProj/jni/patches/ffmpeg/*') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get install yasm -y
+          ./run init libs libvpx
+          ./run init libs ffmpeg
+  boringssl:
+    name: Native Build (BoringSSL)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status TMessagesProj/jni/boringssl > boringssl_status
+      - name: BoringSSL Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/jni/boringssl/build
+          key: ${{ hashFiles('boringssl_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          ./run init action boringssl
+          ./run init libs boringssl
+  native:
+    name: Native Build (Telegram)
+    runs-on: ubuntu-latest
+    needs:
+      - ffmpeg
+      - boringssl
+    strategy:
+      matrix:
+        flavor:
+          - armeabi-v7a
+          - arm64-v8a
+          - x86
+          - x86_64
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: |
+          git submodule status TMessagesProj/jni/ffmpeg > ffmpeg_status
+          git submodule status TMessagesProj/jni/libvpx > libvpx_status
+          git submodule status TMessagesProj/jni/boringssl > boringssl_status
+      - name: Native Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/src/main/libs
+          key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-${{ matrix.flavor }}
+      - name: Checkout Library
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          git submodule update --init 'TMessagesProj/jni/*'
+      - name: FFmpeg Cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            TMessagesProj/jni/ffmpeg/build
+            TMessagesProj/jni/libvpx/build
+          key: ${{ hashFiles('ffmpeg_status', 'libvpx_status', 'TMessagesProj/jni/*ffmpeg*.sh', 'TMessagesProj/jni/*libvpx*.sh', 'TMessagesProj/jni/patches/ffmpeg/*') }}
+      - name: BoringSSL Cache
+        uses: actions/cache@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          path: |
+            TMessagesProj/jni/boringssl/build
+          key: ${{ hashFiles('boringssl_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Fix BoringSSL
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          cd TMessagesProj/jni
+          ./patch_boringssl.sh
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          export NATIVE_TARGET="${{ matrix.flavor }}"
+          ./run libs native
+  v2ray:
+    name: Native Build (V2ray)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status v2ray > v2ray_status
+      - name: V2ray Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/libv2ray.aar
+          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Install Golang
+        uses: actions/setup-go@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+        with:
+          go-version: 1.16
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs v2ray
+  shadowsocks:
+    name: Native Build (Shadowsocks)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status ss-rust/src/main/rust/shadowsocks-rust > shadowsocks_status
+      - name: Shadowsocks Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/ss-rust-release.aar
+          key: ${{ hashFiles('shadowsocks_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Install Rust
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run init action shadowsocks
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs shadowsocks
+  shadowsocksr:
+    name: Native Build (ShadowsocksR)
+    runs-on: ubuntu-latest
+    needs: check
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Fetch Status
+        run: git submodule status 'ssr-libev/*' > shadowsocksr_status
+      - name: ShadowsocksR Cache
+        id: cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/ssr-libev-release.aar
+          key: ${{ hashFiles('shadowsocksr_status') }}
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+        if: steps.cache.outputs.cache-hit != 'true'
+      - name: Install NDK
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Native Build
+        if: steps.cache.outputs.cache-hit != 'true'
+        run: ./run libs ssr
+  build:
+    name: Gradle Build
+    runs-on: ubuntu-latest
+    needs:
+      - native
+      - v2ray
+      - shadowsocks
+      - shadowsocksr
+    strategy:
+      matrix:
+        flavor:
+          - FullRelease
+          - FullReleaseNoGcm
+          - MiniRelease
+          - MiniReleaseNoGcm
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Setup Android SDK Tools
+        uses: android-actions/setup-android@v2
+      - name: Install NDK
+        run: |
+          echo "y" | sudo ${ANDROID_HOME}/tools/bin/sdkmanager --install "ndk;21.4.7075529" --sdk_root=${ANDROID_SDK_ROOT} &> /dev/null
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
+          echo "ndk.dir=${ANDROID_HOME}/ndk/21.4.7075529" >> local.properties
+      - name: Fetch Status
+        run: |
+          git submodule status TMessagesProj/jni/ffmpeg > ffmpeg_status
+          git submodule status TMessagesProj/jni/boringssl > boringssl_status
+          git submodule status ss-rust/src/main/rust/shadowsocks-rust > shadowsocks_status
+          git submodule status 'ssr-libev/*' > shadowsocksr_status
+          git submodule status v2ray > v2ray_status
+      - name: Native Cache (armeabi-v7a)
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/src/main/libs
+          key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-armeabi-v7a
+      - name: Native Cache (arm64-v8a)
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/src/main/libs
+          key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-arm64-v8a
+      - name: Native Cache (x86)
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/src/main/libs
+          key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-x86
+      - name: Native Cache (x86_64)
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/src/main/libs
+          key: ${{ hashFiles('TMessagesProj/jni/**', 'ffmpeg_status', 'boringssl_status') }}-x86_64
+      - name: V2ray Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/libv2ray.aar
+          key: ${{ hashFiles('bin/libs/v2ray/*', 'v2ray_status') }}
+      - name: Shadowsocks Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/ss-rust-release.aar
+          key: ${{ hashFiles('shadowsocks_status') }}
+      - name: ShadowsocksR Cache
+        uses: actions/cache@v2
+        with:
+          path: |
+            TMessagesProj/libs/ssr-libev-release.aar
+          key: ${{ hashFiles('shadowsocksr_status') }}
+      - name: Fix Gradle Memoery
+        run: |
+          sed -i -e "s/16384/6144/g" gradle.properties
+#          echo "ndk.dir=${ANDROID_HOME}/ndk-bundle" > local.properties
+      - name: Gradle cache
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle
+          key: gradle-${{ hashFiles('**/*.gradle') }}
+      - name: Release Build
+        run: |
+          export LOCAL_PROPERTIES="${{ secrets.LOCAL_PROPERTIES }}"
+          ./gradlew TMessagesProj:assemble${{ matrix.flavor }}
+
+          APK=$(find TMessagesProj/build/outputs/apk -name '*arm64-v8a*.apk')
+          APK=$(dirname $APK)
+          echo "APK=$APK" >> $GITHUB_ENV
+      - uses: actions/upload-artifact@v2
+        with:
+          name: ${{ matrix.flavor }}
+          path: ${{ env.APK }}
+  publish:
+    name: Publish Release
+    if: github.event.inputs.publish != 'y'
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Donwload Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Release
+        run: |
+          wget -O ghr.tar.gz https://github.com/tcnksm/ghr/releases/download/v0.13.0/ghr_v0.13.0_linux_amd64.tar.gz
+          tar -xvf ghr.tar.gz
+          mv ghr*linux_amd64/ghr .
+          mkdir apks
+          find artifacts -name "*.apk" -exec cp {} apks \;
+          ./ghr -delete -t "${{ github.token }}" -n "${{ github.event.inputs.tag }}" "${{ github.event.inputs.tag }}" apks
+  upload:
+    name: Upload Release
+    if: github.event.inputs.upload != 'y'
+    runs-on: ubuntu-latest
+    needs:
+      - build
+      - telegram-bot-api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Download Artifacts
+        uses: actions/download-artifact@v2
+        with:
+          path: artifacts
+      - name: Download Telegram Bot API Binary
+        uses: actions/download-artifact@master
+        with:
+          name: telegram-bot-api-binary
+          path: .
+      - name: Prepare Upload
+        run: |
+          chmod +x telegram-bot-api-binary
+          function start() {
+            ./telegram-bot-api-binary -p 38118 --api-id=21724 --api-hash=3e0cb5efcd52300aec5994fdfc5bdc16 --local 2>&1 > /dev/null &
+            sleep 5
+          }
+          start
+          curl http://127.0.0.1:38118/ || start
+          curl http://127.0.0.1:38118/ || start
+          curl http://127.0.0.1:38118/ || start
+      - name: Upload
+        run: |
+          mkdir apks
+          find artifacts -name "*.apk" -exec cp {} apks \;
+          curl https://raw.githubusercontent.com/NekoX-Dev/NekoX/dev/.github/scripts/upload.py -o upload.py
+          export BOT_TOKEN="${{ secrets.HELPER_BOT_TOKEN }}"
+          export BOT_TARGET="${{ secrets.HELPER_BOT_TARGET }}"
+          export VERSION_CODE="$(grep -E "def verCode = ([0-9]+)" TMessagesProj/build.gradle | sed "s/def verCode = //")"
+          export VERSION_NAME="$(grep -E "def verName = " TMessagesProj/build.gradle | sed "s/def verName = //" | sed "s/\"//g")"
+          python3 upload.py release
+          pkill telegram-bot
+
+  telegram-bot-api:
+    name: Telegram Bot API
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Clone Telegram Bot API
+        run: |
+          git clone --recursive https://github.com/tdlib/telegram-bot-api.git
+          git status telegram-bot-api >> telegram-bot-api-status
+      - name: Cache Bot API Binary
+        id: cache-bot-api
+        uses: actions/cache@v2
+        with:
+          path: telegram-bot-api-binary
+          key: CI-telegram-bot-api-${{ hashFiles('telegram-bot-api-status') }}
+      - name: Compile Telegram Bot API
+        if: steps.cache-bot-api.outputs.cache-hit != 'true'
+        run: |
+          sudo apt-get update
+          sudo apt-get install make git zlib1g-dev libssl-dev gperf cmake g++
+          cd telegram-bot-api
+          rm -rf build
+          mkdir build
+          cd build
+          cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX:PATH=.. ..
+          cmake --build . --target install -j$(nproc)
+          cd ../..
+          ls -l telegram-bot-api/bin/telegram-bot-api*
+          cp telegram-bot-api/bin/telegram-bot-api telegram-bot-api-binary
+      - name: Upload Binary
+        uses: actions/upload-artifact@master
+        with:
+          name: telegram-bot-api-binary
+          path: telegram-bot-api-binary

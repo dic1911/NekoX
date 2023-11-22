@@ -8,10 +8,6 @@
 
 package org.telegram.messenger;
 
-import static com.v2ray.ang.V2RayConfig.SS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WSS_PROTOCOL;
-import static com.v2ray.ang.V2RayConfig.WS_PROTOCOL;
-
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -195,12 +191,12 @@ import java.util.regex.Pattern;
 
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
+import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
+import tw.nekomimi.nekogram.proxynext.SingProxyManager;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
-import tw.nekomimi.nekogram.utils.UIUtil;
-
 public class AndroidUtilities {
     public final static int LIGHT_STATUS_BAR_OVERLAY = 0x0f000000, DARK_STATUS_BAR_OVERLAY = 0x33000000;
 
@@ -3642,8 +3638,7 @@ public class AndroidUtilities {
                 link.startsWith("https://t.me/socks?") ||
                 link.startsWith(SS_PROTOCOL) ||
                 link.startsWith(WS_PROTOCOL) ||
-                link.startsWith(WSS_PROTOCOL) /*||
-                data.startsWith(RB_PROTOCOL)*/) {
+                link.startsWith(WSS_PROTOCOL) {
             return ProxyUtil.importProxy(activity, link);
         }
         return false;
@@ -3778,60 +3773,37 @@ public class AndroidUtilities {
         pickerBottomLayout.middleButtonTextView.setText(LocaleController.getString("Save", R.string.Save).toUpperCase());
         pickerBottomLayout.middleButton.setVisibility(View.VISIBLE);
         pickerBottomLayout.middleButton.setOnClickListener((it) -> {
-
             int p = Utilities.parseInt(port);
-
             SharedConfig.ProxyInfo info;
-
             if (TextUtils.isEmpty(secret)) {
-
                 info = new SharedConfig.ProxyInfo(address, p, user, password, "");
-
             } else {
-
                 info = new SharedConfig.ProxyInfo(address, p, "", "", secret);
-
             }
-
             info.setRemarks(remarks);
-
             SharedConfig.addProxy(info);
-
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-
             dismissRunnable.run();
-
         });
 
         pickerBottomLayout.doneButtonTextView.setText(LocaleController.getString("ConnectingConnectProxy", R.string.ConnectingConnectProxy).toUpperCase());
         pickerBottomLayout.doneButton.setOnClickListener(v -> {
             int p = Utilities.parseInt(port);
-
             SharedConfig.ProxyInfo info;
-
             if (TextUtils.isEmpty(secret)) {
-
                 info = new SharedConfig.ProxyInfo(address, p, user, password, "");
-
             } else {
-
                 info = new SharedConfig.ProxyInfo(address, p, "", "", secret);
-
             }
-
             info.setRemarks(remarks);
-
             SharedConfig.setCurrentProxy(SharedConfig.addProxy(info));
-
             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-
             dismissRunnable.run();
         });
         builder.show();
     }
 
-
-    public static void showShadowsocksAlert(Context activity, final SharedConfig.ShadowsocksProxy info) {
+    public static void showShadowsocksAlert(Context activity, final ShadowsocksBean bean) {
         try {
             BottomSheet.Builder builder = new BottomSheet.Builder(activity);
             final Runnable dismissRunnable = builder.getDismissRunnable();
@@ -3841,20 +3813,25 @@ public class AndroidUtilities {
             LinearLayout linearLayout = new LinearLayout(activity);
             builder.setCustomView(linearLayout);
             linearLayout.setOrientation(LinearLayout.VERTICAL);
+            long time2 = System.currentTimeMillis();
+            final SingProxyManager proxyManager = SingProxyManager.Companion.getTestInstance();
+            FileLog.e("use time " + (System.currentTimeMillis() - time2) + "ms");
+            SharedConfig.SingProxyInfo info = proxyManager.registerProxy(bean);
+            FileLog.e("use time " + (System.currentTimeMillis() - time2) + "ms");
             for (int a = 0; a < 5; a++) {
                 String text = null;
                 String detail = null;
                 if (a == 0) {
-                    text = info.bean.getHost();
+                    text = bean.getHost();
                     detail = LocaleController.getString("UseProxyAddress", R.string.UseProxyAddress);
                 } else if (a == 1) {
-                    text = "" + info.bean.getRemotePort();
+                    text = "" + bean.getPort();
                     detail = LocaleController.getString("UseProxyPort", R.string.UseProxyPort);
                 } else if (a == 2) {
-                    text = info.bean.getPassword();
+                    text = bean.getPassword();
                     detail = LocaleController.getString("UseProxyPassword", R.string.UseProxyPassword);
                 } else if (a == 3) {
-                    text = info.bean.getMethod();
+                    text = bean.getMethod();
                     detail = LocaleController.getString("SSMethod", R.string.SSMethod);
                 } else {
                     text = LocaleController.getString("Checking", R.string.Checking);
@@ -3868,43 +3845,28 @@ public class AndroidUtilities {
                 cell.getTextView().setTextColor(Theme.getColor(Theme.key_dialogTextBlack));
                 cell.getValueTextView().setTextColor(Theme.getColor(Theme.key_dialogTextGray3));
                 linearLayout.addView(cell, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-                AtomicInteger count = new AtomicInteger();
                 if (a == 4) {
-
                     RequestTimeDelegate callback = new RequestTimeDelegate() {
                         @Override
                         public void run(long time) {
-                            int c = count.getAndIncrement();
                             String colorKey;
                             if (time != -1) {
                                 info.stop();
+                                proxyManager.unregister(info);
                                 cell.setTextAndValue(LocaleController.getString("Available", R.string.Available), LocaleController.formatString("Ping", R.string.Ping, time), true);
-                                colorKey = Theme.key_windowBackgroundWhiteGreenText;
-                            } else if (c < 2) {
-                                ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", t -> AndroidUtilities.runOnUIThread(() -> run(t), 500));
                                 colorKey = Theme.key_windowBackgroundWhiteGreenText;
                             } else {
                                 info.stop();
+                                proxyManager.unregister(info);
                                 cell.setTextAndValue(LocaleController.getString("Unavailable", R.string.Unavailable), LocaleController.getString("Unavailable", R.string.Unavailable), true);
                                 colorKey = Theme.key_windowBackgroundWhiteRedText4;
                             }
                             cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                         }
-
                     };
-
-                    UIUtil.runOnIoDispatcher(() -> {
-
-                        try {
-                            info.start();
-                            ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                        } catch (Exception e) {
-                            FileLog.e(e);
-                            AlertUtil.showToast(e);
-                        }
-
+                    info.ensureStarted(() -> {
+                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                     });
-
                 }
             }
 
@@ -3924,22 +3886,16 @@ public class AndroidUtilities {
             pickerBottomLayout.middleButtonTextView.setText(LocaleController.getString("Save", R.string.Save).toUpperCase());
             pickerBottomLayout.middleButton.setVisibility(View.VISIBLE);
             pickerBottomLayout.middleButton.setOnClickListener((it) -> {
-                SharedConfig.addProxy(info);
-
+                SharedConfig.addProxy(bean);
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-
                 dismissRunnable.run();
 
             });
             pickerBottomLayout.doneButtonTextView.setText(LocaleController.getString("ConnectingConnectProxy", R.string.ConnectingConnectProxy).toUpperCase());
             pickerBottomLayout.doneButton.setOnClickListener(v -> {
-
-                SharedConfig.setCurrentProxy(SharedConfig.addProxy(info));
-
+                SharedConfig.setCurrentProxy(SharedConfig.addProxy(bean));
                 NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.proxySettingsChanged);
-
                 dismissRunnable.run();
-
             });
             builder.show();
         } catch (Exception e) {
@@ -4002,17 +3958,8 @@ public class AndroidUtilities {
                     }
 
                 };
-
-                UIUtil.runOnIoDispatcher(() -> {
-
-                    try {
-                        info.start();
-                        ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        AlertUtil.showToast(e);
-                    }
-
+                info.ensureStarted(() -> {
+                    ConnectionsManager.getInstance(UserConfig.selectedAccount).checkProxy(info.address, info.port, "", "", "", time -> AndroidUtilities.runOnUIThread(() -> callback.run(time)));
                 });
 
             }

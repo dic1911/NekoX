@@ -1879,10 +1879,15 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                     } else {
                         if (!userBlocked) {
-                            getMessagesController().blockPeer(userId);
+                            AlertsCreator.createClearOrDeleteDialogAlert(ProfileActivity.this, false, currentChat, user, currentEncryptedChat != null, true, true, (param) -> {
+                                if (getParentLayout().getFragmentStack().get(getParentLayout().getFragmentStack().size() - 2) instanceof ChatActivity) {
+                                    getParentLayout().removeFragmentFromStack(getParentLayout().getFragmentStack().size() - 2);
+                                }
+                                finishFragment();
+                                getNotificationCenter().postNotificationName(NotificationCenter.needDeleteDialog, dialogId, user, currentChat, param);
+                            }, getResourceProvider());
                         } else {
-                            getMessagesController().unblockPeer(userId);
-                            getSendMessagesHelper().sendMessage("/start", userId, null, null, null, false, null, null, null, true, 0, null, false);
+                            getMessagesController().unblockPeer(userId, ()-> getSendMessagesHelper().sendMessage("/start", userId, null, null, null, false, null, null, null, true, 0, null, false));
                             finishFragment();
                         }
                     }
@@ -3393,7 +3398,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 AlertDialog pro = AlertUtil.showProgress(getParentActivity());
                 pro.show();
                 UIUtil.runOnIoDispatcher(() -> {
-                    FileUtil.delete(new File(EnvUtil.getTelegramPath(), "logs"));
+                    FileUtil.delete(AndroidUtilities.getLogsDir());
                     ThreadUtil.sleep(100L);
                     LangsKt.uDismiss(pro);
                 });
@@ -7457,7 +7462,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (BuildVars.LOGS_ENABLED) {
                     sendLogsRow = rowCount++;
-                    sendLastLogsRow = rowCount++;
+                    sendLastLogsRow = -1;
+                    // disable send last logs
                     clearLogsRow = rowCount++;
                 }
                 versionRow = rowCount++;
@@ -8316,10 +8322,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         if (userBlocked) {
                             otherItem.addSubItem(block_contact, R.drawable.baseline_block_24, LocaleController.getString("Unblock", R.string.Unblock));
                         }
+                        otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString("AddShortcut", R.string.AddShortcut));
                     } else {
                         if (currentEncryptedChat == null) {
                             createAutoDeleteItem(context);
                         }
+                        otherItem.addSubItem(add_shortcut, R.drawable.msg_home, LocaleController.getString("AddShortcut", R.string.AddShortcut));
                         if (isBot) {
 //                            if (!user.bot_nochats) {
 //                                otherItem.addSubItem(invite_to_group, R.drawable.baseline_group_add_24, LocaleController.getString("BotInvite", R.string.BotInvite));
@@ -8332,7 +8340,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                             otherItem.addSubItem(share_contact, R.drawable.baseline_forward_24, LocaleController.getString("ShareContact", R.string.ShareContact));
                         }
                         if (isBot) {
-                            otherItem.addSubItem(block_contact, !userBlocked ? R.drawable.baseline_block_24 : R.drawable.baseline_replay_24, !userBlocked ? LocaleController.getString("BotStop", R.string.BotStop) : LocaleController.getString("BotRestart", R.string.BotRestart));
+                            if (!userBlocked) {
+                                otherItem.addSubItem(block_contact, R.drawable.baseline_block_24,  LocaleController.getString("BotStop", R.string.BotStop)).setColors(getThemedColor(Theme.key_dialogTextRed), getThemedColor(Theme.key_dialogTextRed));
+                            } else {
+                                otherItem.addSubItem(block_contact, R.drawable.baseline_replay_24, LocaleController.getString("BotRestart", R.string.BotRestart));
+                            }
                         } else {
                             otherItem.addSubItem(block_contact, !userBlocked ? R.drawable.baseline_block_24 : R.drawable.baseline_block_24, !userBlocked ? LocaleController.getString("BlockContact", R.string.BlockContact) : LocaleController.getString("Unblock", R.string.Unblock));
                         }
@@ -8358,7 +8370,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 if (StrUtil.isNotBlank(user.username)) {
                     otherItem.addSubItem(qr_code, R.drawable.wallet_qr, LocaleController.getString("ShareQRCode", R.string.ShareQRCode));
                 }
-                otherItem.addSubItem(add_shortcut, R.drawable.baseline_home_24, LocaleController.getString("AddShortcut", R.string.AddShortcut));
+                if (!isBot && getContactsController().contactsDict.get(userId) != null) {
+                    otherItem.addSubItem(add_shortcut, R.drawable.baseline_home_24, LocaleController.getString("AddShortcut", R.string.AddShortcut));
+                }
             }
         } else if (chatId != 0) {
             TLRPC.Chat chat = getMessagesController().getChat(chatId);
@@ -9020,6 +9034,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (activity == null) {
             return;
         }
+        // always send last logs
         AlertDialog progressDialog = new AlertDialog(activity, AlertDialog.ALERT_TYPE_SPINNER);
         progressDialog.setCanCancel(false);
         progressDialog.show();
@@ -9027,7 +9042,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             try {
                 File dir = AndroidUtilities.getLogsDir();
                 if (dir == null) {
+                    AndroidUtilities.runOnUIThread(progressDialog::dismiss);
                     return;
+                }
+
+                File logcatFile = new File(dir, "NekoX-" + System.currentTimeMillis() + ".log");
+                try {
+                    RuntimeUtil.exec("logcat", "-df", logcatFile.getPath()).waitFor();
+                    RuntimeUtil.exec("logcat", "-c").waitFor();
+                } catch (Exception e) {
+                    AlertUtil.showToast(e);
                 }
 
                 File zipFile = new File(dir, "logs.zip");
@@ -9037,18 +9061,13 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                 ArrayList<File> files = new ArrayList<>();
 
-                File[] logFiles = dir.listFiles();
-                for (File f : logFiles) {
-                    files.add(f);
-                }
+                files.addAll(Arrays.asList(dir.listFiles()));
 
                 File filesDir = ApplicationLoader.getFilesDirFixed();
                 filesDir = new File(filesDir, "malformed_database/");
                 if (filesDir.exists() && filesDir.isDirectory()) {
                     File[] malformedDatabaseFiles = filesDir.listFiles();
-                    for (File file : malformedDatabaseFiles) {
-                        files.add(file);
-                    }
+                    files.addAll(Arrays.asList(malformedDatabaseFiles));
                 }
 
                 boolean[] finished = new boolean[1];
@@ -9063,7 +9082,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                     for (int i = 0; i < files.size(); i++) {
                         File file = files.get(i);
-                        if (!file.getName().contains("cache4") && (last || file.getName().contains("_mtproto")) && (currentDate - file.lastModified()) > 24 * 60 * 60 * 1000) {
+                        if (!file.getName().contains("cache4") && (file.getName().contains("_mtproto")) && (currentDate - file.lastModified()) > 24 * 60 * 60 * 1000) {
                             continue;
                         }
                         if (!file.exists()) {
