@@ -3,15 +3,15 @@ import cn.hutool.core.util.RuntimeUtil
 apply plugin: "com.android.application"
 apply plugin: "kotlin-android"
 
-def verName = "9.6.0-broken"
-def verCode = 730
+def verName = "9.6.1-broken"
+def verCode = 731
 
 if (System.getenv("DEBUG_BUILD") == "true") {
     verName += "-" + RuntimeUtil.execForStr("git log --pretty=format:'%h' -n 1").trim().replace('\'','')
 }
 
-def officialVer = "9.6.0"
-def officialCode = 3319
+def officialVer = APP_VERSION_NAME
+def officialCode = APP_VERSION_CODE
 
 def serviceAccountCredentialsFile = rootProject.file("service_account_credentials.json")
 
