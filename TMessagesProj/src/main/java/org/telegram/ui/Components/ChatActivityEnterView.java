@@ -11264,7 +11264,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
     }
 
-    private int getThemedColor(int key) {
+    protected int getThemedColor(int key) {
         if (resourcesProvider != null) {
             return resourcesProvider.getColor(key);
         }

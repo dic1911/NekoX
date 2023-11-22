@@ -3931,7 +3931,7 @@ public class AndroidUtilities {
                     RequestTimeDelegate callback = new RequestTimeDelegate() {
                         @Override
                         public void run(long time) {
-                            String colorKey;
+                            int colorKey;
                             if (time != -1) {
                                 info.stop();
                                 proxyManager.unregister(info);
