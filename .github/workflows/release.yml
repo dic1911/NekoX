@@ -268,9 +268,7 @@ jobs:
     runs-on: self-hosted
     needs: build
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
-      - name: Donwload Artifacts
+      - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
           path: artifacts
@@ -290,8 +288,6 @@ jobs:
       - build
       - telegram-bot-api
     steps:
-      - name: Checkout
-        uses: actions/checkout@v2
       - name: Download Artifacts
         uses: actions/download-artifact@v2
         with:
