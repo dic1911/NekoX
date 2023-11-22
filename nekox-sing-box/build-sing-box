@@ -1,0 +1,43 @@
+#!/bin/bash
+
+COMMIT_HASH=$1
+[[ -z "${ANDROID_NDK_HOME}" ]] && ANDROID_NDK_HOME="${ANDROID_HOME}/ndk/23.1.7779620"
+
+echo "$COMMIT_HASH"
+git submodule init sing-box
+git submodule update sing-box
+
+pushd sing-box || exit 1
+git fetch origin
+git reset --hard
+git clean -fdx
+git checkout "$COMMIT_HASH"
+
+export PATH=$PATH:/usr/lib/go-1.19/bin/
+go version || exit 1
+
+TOOLCHAIN="$(find "${ANDROID_NDK_HOME}"/toolchains/llvm/prebuilt/* -maxdepth 1 -type d -print -quit)/bin"
+ABIS=(armeabi-v7a arm64-v8a x86 x86_64)
+GO_ARCHS=('arm GOARM=7' arm64 386 amd64)
+CLANG_ARCHS=(armv7a-linux-androideabi aarch64-linux-android i686-linux-android x86_64-linux-android)
+
+MIN_API="21"
+OUT_DIR="$(dirname "$(pwd)")/src/main/jniLibs"
+
+mkdir -p "$OUT_DIR"
+
+BIN="sing-box"
+for i in "${!ABIS[@]}"; do
+    ABI="${ABIS[$i]}"
+    [[ -f "${OUT_DIR}/${ABI}/${BIN}" ]] && continue
+    echo "Build ${BIN} for ${ABI}"
+    mkdir -p ${OUT_DIR}/${ABI}
+    env \
+        CGO_ENABLED=1 CC="${TOOLCHAIN}/${CLANG_ARCHS[$i]}${MIN_API}-clang" \
+        GOOS=android GOARCH=${GO_ARCHS[$i]} \
+        go build -v -trimpath -tags "-with_shadowsocksr " -ldflags "-s -w" ./cmd/sing-box || exit 1
+    "${TOOLCHAIN}/llvm-strip" "sing-box" -o "${OUT_DIR}/${ABI}/${BIN}.so" || exit 1
+    rm "sing-box" || exit 1
+done
+
+popd || exit 1
