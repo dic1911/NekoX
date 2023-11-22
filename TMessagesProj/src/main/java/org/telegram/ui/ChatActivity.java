@@ -33129,7 +33129,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             showDialog(alertDialog);
             TextView button = (TextView) alertDialog.getButton(DialogInterface.BUTTON_POSITIVE);
             if (button != null) {
-                button.setTextColor(Theme.getColor(Theme.key_dialogTextRed));
+                button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
             }
         } else if (id == nkheaderbtn_upgrade) {
             AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());

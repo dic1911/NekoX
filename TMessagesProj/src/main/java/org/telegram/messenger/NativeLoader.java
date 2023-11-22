@@ -52,64 +52,14 @@ public class NativeLoader {
         }
 
         try {
-            try {
-                System.loadLibrary(LIB_NAME);
-                nativeLoaded = true;
-                if (BuildVars.LOGS_ENABLED) {
-                    FileLog.d("loaded normal lib");
-                }
-                return;
-            } catch (Error e) {
-                FileLog.e(e);
-                log.append("129: ").append(e).append("\n");
-            }
-
-            String folder = getAbiFolder();
-
-            /*File destFile = getNativeLibraryDir(context);
-            if (destFile != null) {
-                destFile = new File(destFile, LIB_SO_NAME);
-                if (destFile.exists()) {
-                    try {
-                        System.loadLibrary(LIB_NAME);
-                        nativeLoaded = true;
-                        return;
-                    } catch (Error e) {
-                        FileLog.e(e);
-                    }
-                }
-            }*/
-
-            File destDir = new File(context.getFilesDir(), "lib");
-            destDir.mkdirs();
-
-            File destLocalFile = new File(destDir, LOCALE_LIB_SO_NAME);
-            if (destLocalFile.exists()) {
-                try {
-                    if (BuildVars.LOGS_ENABLED) {
-                        FileLog.d("Load local lib");
-                    }
-                    System.load(destLocalFile.getAbsolutePath());
-                    nativeLoaded = true;
-                    return;
-                } catch (Error e) {
-                    log.append(e).append("\n");
-                    FileLog.e(e);
-                }
-                destLocalFile.delete();
-            }
-
+            System.loadLibrary(LIB_NAME);
+            nativeLoaded = true;
             if (BuildVars.LOGS_ENABLED) {
-                FileLog.e("Library not found, arch = " + folder);
-                log.append("Library not found, arch = " + folder).append("\n");
+                FileLog.d("loaded normal lib");
             }
-
-            if (loadFromZip(context, destDir, destLocalFile, folder)) {
-                return;
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-            log.append("177: ").append(e).append("\n");
+            return;
+        } catch (Error e) {
+            FileLog.e(e);
         }
 
         try {

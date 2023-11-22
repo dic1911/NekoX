@@ -223,7 +223,7 @@ object PrivacyUtil {
 
         runCatching {
 
-            (builder.show().getButton(DialogInterface.BUTTON_NEUTRAL) as TextView?)?.setTextColor(Theme.getColor(Theme.key_dialogTextRed))
+            (builder.show().getButton(DialogInterface.BUTTON_NEUTRAL) as TextView?)?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
 
         }
 
@@ -261,7 +261,7 @@ object PrivacyUtil {
 
         runCatching {
 
-            (builder.show().getButton(DialogInterface.BUTTON_NEUTRAL) as TextView?)?.setTextColor(Theme.getColor(Theme.key_dialogTextRed))
+            (builder.show().getButton(DialogInterface.BUTTON_NEUTRAL) as TextView?)?.setTextColor(Theme.getColor(Theme.key_text_RedBold))
 
         }
 

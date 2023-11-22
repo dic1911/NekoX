@@ -295,7 +295,7 @@ public class WsSettingsActivity extends BaseFragment {
         cursor.setGravity((LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.CENTER_VERTICAL);
         cursor.setHeaderHintColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueHeader));
         cursor.setTransformHintToHeader(true);
-        cursor.setLineColors(Theme.getColor(Theme.key_windowBackgroundWhiteInputField), Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), Theme.getColor(Theme.key_windowBackgroundWhiteRedText3));
+        cursor.setLineColors(Theme.getColor(Theme.key_windowBackgroundWhiteInputField), Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated), Theme.getColor(Theme.key_windowBackgroundWhiteRedText2));
         return cursor;
 
     }
@@ -315,7 +315,7 @@ public class WsSettingsActivity extends BaseFragment {
                 for (int i = 0; i < inputFields.length; i++) {
                     inputFields[i].setLineColors(Theme.getColor(Theme.key_windowBackgroundWhiteInputField),
                             Theme.getColor(Theme.key_windowBackgroundWhiteInputFieldActivated),
-                            Theme.getColor(Theme.key_windowBackgroundWhiteRedText3));
+                            Theme.getColor(Theme.key_windowBackgroundWhiteRedText2));
                 }
             }
         };
@@ -343,7 +343,7 @@ public class WsSettingsActivity extends BaseFragment {
                 arrayList.add(new ThemeDescription(inputFields[a], ThemeDescription.FLAG_CURSORCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteBlackText));
                 arrayList.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_windowBackgroundWhiteInputField));
                 arrayList.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_windowBackgroundWhiteInputFieldActivated));
-                arrayList.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_windowBackgroundWhiteRedText3));
+                arrayList.add(new ThemeDescription(null, 0, null, null, null, delegate, Theme.key_windowBackgroundWhiteRedText2));
             }
         } else {
             arrayList.add(new ThemeDescription(null, ThemeDescription.FLAG_TEXTCOLOR, null, null, null, null, Theme.key_windowBackgroundWhiteBlackText));

@@ -3870,7 +3870,7 @@ public class AndroidUtilities {
                                 info.stop();
                                 proxyManager.unregister(info);
                                 cell.setTextAndValue(LocaleController.getString("Unavailable", R.string.Unavailable), LocaleController.getString("Unavailable", R.string.Unavailable), true);
-                                colorKey = Theme.key_windowBackgroundWhiteRedText4;
+                                colorKey = Theme.key_windowBackgroundWhiteRedText2;
                             }
                             cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                         }
@@ -3963,7 +3963,7 @@ public class AndroidUtilities {
                         } else {
                             info.stop();
                             cell.setTextAndValue(LocaleController.getString("Unavailable", R.string.Unavailable), LocaleController.getString("Unavailable", R.string.Unavailable), true);
-                            colorKey = Theme.key_windowBackgroundWhiteRedText4;
+                            colorKey = Theme.key_windowBackgroundWhiteRedText2;
                         }
                         cell.getValueTextView().setTextColor(Theme.getColor(colorKey));
                     }

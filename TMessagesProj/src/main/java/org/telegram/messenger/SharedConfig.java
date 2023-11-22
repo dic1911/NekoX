@@ -1626,7 +1626,7 @@ public class SharedConfig {
                         .ifPresent(newList::add);
             }
             proxyList = newList;
-        } catch (JSONException e) {
+        } catch (Exception e) {
             FileLog.e(e);
         }
         if (currentProxy == null) {
