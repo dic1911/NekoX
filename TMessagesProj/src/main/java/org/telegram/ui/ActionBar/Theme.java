@@ -3317,6 +3317,11 @@ public class Theme {
     public static final String key_windowBackgroundWhiteBlueIcon = "windowBackgroundWhiteBlueIcon";
     public static final String key_windowBackgroundWhiteGreenText = "windowBackgroundWhiteGreenText";
     public static final String key_windowBackgroundWhiteGreenText2 = "windowBackgroundWhiteGreenText2";
+    public static final String key_windowBackgroundWhiteRedText = "windowBackgroundWhiteRedText";
+    public static final String key_windowBackgroundWhiteRedText2 = "windowBackgroundWhiteRedText2";
+    public static final String key_windowBackgroundWhiteRedText3 = "windowBackgroundWhiteRedText3";
+    public static final String key_windowBackgroundWhiteRedText4 = "windowBackgroundWhiteRedText4";
+    public static final String key_windowBackgroundWhiteRedText5 = "windowBackgroundWhiteRedText5";
     public static final String key_windowBackgroundWhiteGrayText = "windowBackgroundWhiteGrayText";
     public static final String key_windowBackgroundWhiteGrayText2 = "windowBackgroundWhiteGrayText2";
     public static final String key_windowBackgroundWhiteGrayText3 = "windowBackgroundWhiteGrayText3";

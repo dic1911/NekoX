@@ -5514,7 +5514,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         editText.setTransformHintToHeader(true);
         editText.setLineColors(getThemedColor(Theme.key_windowBackgroundWhiteInputField),
             getThemedColor(Theme.key_windowBackgroundWhiteInputFieldActivated),
-            getThemedColor(Theme.key_windowBackgroundWhiteRedText3));
+            getThemedColor(Theme.key_windowBackgroundWhiteRedText2));
         editText.setImeOptions(EditorInfo.IME_ACTION_DONE);
         editText.setBackgroundDrawable(null);
         editText.requestFocus();
@@ -7392,11 +7392,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 dataRow = rowCount++;
                 privacyRow = rowCount++;
                 chatRow = rowCount++;
-                liteModeRow = rowCount++;
-//                stickersRow = rowCount++;
-                if (getMessagesController().filtersEnabled || !getMessagesController().dialogFilters.isEmpty() || true) {
-                    filtersRow = rowCount++;
-                }
+                stickersRow = rowCount++;
                 devicesRow = rowCount++;
                 filtersRow = rowCount++;
                 liteModeRow = rowCount++;
@@ -8299,7 +8295,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         if (isBot) {
                             if (!userBlocked) {
-                                otherItem.addSubItem(block_contact, R.drawable.baseline_block_24, LocaleController.getString(R.string.DeleteAndBlock)).setColors(getThemedColor(Theme.key_text_RedBold), getThemedColor(Theme.key_text_RedRegular));
+                                otherItem.addSubItem(block_contact, R.drawable.baseline_block_24, LocaleController.getString(R.string.DeleteAndBlock)).setColors(getThemedColor(Theme.key_text_RedRegular), getThemedColor(Theme.key_text_RedRegular));
                             } else {
                                 otherItem.addSubItem(block_contact, R.drawable.baseline_replay_24, LocaleController.getString("BotRestart", R.string.BotRestart));
                             }

@@ -7624,20 +7624,22 @@ public class MessagesController extends BaseController implements NotificationCe
                                             }
                                             objects.add(messageObject);
                                             dialogMessage.put(did, objects);
-                                            if (promoDialog.last_message_date == 0) {
-                                                promoDialog.last_message_date = messageObject.messageOwner.date;
-                                            }
-                                            getTranslateController().checkDialogMessage(did);
-                                        }
-                                        sortDialogs(null);
-                                        getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload, true);
-                                    });
-                                } else {
-                                    AndroidUtilities.runOnUIThread(() -> {
-                                        if (promoDialog != null) {
-                                            if (promoDialog.id < 0) {
-                                                TLRPC.Chat chat = getChat(-promoDialog.id);
-                                                if (ChatObject.isNotInChat(chat) || chat.restricted) {
+                                                if (promoDialog.last_message_date == 0) {
+                                                    promoDialog.last_message_date = messageObject.messageOwner.date;
+                                                }
+                                            getTranslateController().checkDialogMessage(did);}
+                                            sortDialogs(null);
+                                            getNotificationCenter().postNotificationName(NotificationCenter.dialogsNeedReload, true);
+                                        });
+                                    } else {
+                                        AndroidUtilities.runOnUIThread(() -> {
+                                            if (promoDialog != null) {
+                                                if (promoDialog.id < 0) {
+                                                    TLRPC.Chat chat = getChat(-promoDialog.id);
+                                                    if (ChatObject.isNotInChat(chat) || chat.restricted) {
+                                                        removeDialog(promoDialog);
+                                                    }
+                                                } else {
                                                     removeDialog(promoDialog);
                                                 }
                                                 promoDialog = null;
@@ -17211,17 +17213,17 @@ public class MessagesController extends BaseController implements NotificationCe
         if (DialogObject.isEncryptedDialog(d.id)) {
             return true;
         }
-        boolean _canAddToForward = true;
+        boolean canAddToForward = true;
         if (DialogObject.isChannel(d)) {
             TLRPC.Chat chat = getChat(-d.id);
             if (chat != null && chat.megagroup) {
-                _canAddToForward = !chat.gigagroup || ChatObject.hasAdminRights(chat);
+                canAddToForward = !chat.gigagroup || ChatObject.hasAdminRights(chat);
             } else {
                 dialogsChannelsOnly.add(d);
-                _canAddToForward = ChatObject.hasAdminRights(chat) && ChatObject.canPost(chat);
+                canAddToForward = ChatObject.hasAdminRights(chat) && ChatObject.canPost(chat);
             }
         }
-        return _canAddToForward;
+        return canAddToForward;
     }
 
     public void sortDialogs(LongSparseArray<TLRPC.Chat> chatsDict) {
