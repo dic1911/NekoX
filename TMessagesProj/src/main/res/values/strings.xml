@@ -1422,7 +1422,7 @@
     <string name="YouSenderNameHidden">You (sender’s name hidden)</string>
     <string name="YouSendersNameHidden">You (senders’ names hidden)</string>
     <string name="HiddenSendersNameDescription">Sender names removed</string>
-    <string name="ForwardingFromNameAndMessage">%s: %s</string>
+<!--    <string name="ForwardingFromNameAndMessage">%s: %s</string>-->
     <string name="ForwardingFromNames">From %s</string>
     <string name="NoWordsRecognized">No words recognized.</string>
     <string name="RateTranscription">Rate transcription</string>
@@ -6001,11 +6001,11 @@
     <string name="TopicClosedByAdmin">The topic is closed</string>
     <string name="AlmostDone">Almost done</string>
     <string name="TopicEmptyViewDescription">Send first message to start the topic</string>
-    <string name="NotificationTopicExceptionsDesctription_one">%s, %d exception</string>
-    <string name="NotificationTopicExceptionsDesctription_two">%s, %d exceptions</string>
-    <string name="NotificationTopicExceptionsDesctription_few">%s, %d exceptions</string>
-    <string name="NotificationTopicExceptionsDesctription_many">%s, %d exceptions</string>
-    <string name="NotificationTopicExceptionsDesctription_other">%s, %d exceptions</string>
+<!--    <string name="NotificationTopicExceptionsDesctription_one">%s, %d exception</string>-->
+<!--    <string name="NotificationTopicExceptionsDesctription_two">%s, %d exceptions</string>-->
+<!--    <string name="NotificationTopicExceptionsDesctription_few">%s, %d exceptions</string>-->
+<!--    <string name="NotificationTopicExceptionsDesctription_many">%s, %d exceptions</string>-->
+<!--    <string name="NotificationTopicExceptionsDesctription_other">%s, %d exceptions</string>-->
     <string name="FloatingDebugEnable">Enable floating debug</string>
     <string name="FloatingDebugDisable">Disable floating debug</string>
     <string name="DebugClearLocalDatabaseSuccess">Cleared local database.</string>
