@@ -677,7 +677,7 @@ public class DrawerProfileCell extends FrameLayout implements NotificationCenter
             drawPremiumProgress = Utilities.clamp(drawPremiumProgress, 1f, 0);
             if (drawPremiumProgress != 0) {
                 if (gradientTools == null) {
-                    gradientTools = new PremiumGradient.PremiumGradientTools(Theme.key_premiumGradientBottomSheet1, Theme.key_premiumGradientBottomSheet2, Theme.key_premiumGradientBottomSheet3, null);
+                    gradientTools = new PremiumGradient.PremiumGradientTools(Theme.key_premiumGradientBottomSheet1, Theme.key_premiumGradientBottomSheet2, Theme.key_premiumGradientBottomSheet3);
                     gradientTools.x1 = 0;
                     gradientTools.y1 = 1.1f;
                     gradientTools.x2 = 1.5f;
