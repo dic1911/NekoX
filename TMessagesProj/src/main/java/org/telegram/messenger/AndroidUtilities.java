@@ -8,6 +8,10 @@
 
 package org.telegram.messenger;
 
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.SS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.WSS_PROTOCOL;
+import static tw.nekomimi.nekogram.proxynext.ProxyConfig.WS_PROTOCOL;
+
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
 import android.animation.ValueAnimator;
@@ -3638,7 +3642,7 @@ public class AndroidUtilities {
                 link.startsWith("https://t.me/socks?") ||
                 link.startsWith(SS_PROTOCOL) ||
                 link.startsWith(WS_PROTOCOL) ||
-                link.startsWith(WSS_PROTOCOL) {
+                link.startsWith(WSS_PROTOCOL)) {
             return ProxyUtil.importProxy(activity, link);
         }
         return false;

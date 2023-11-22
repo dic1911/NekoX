@@ -114,6 +114,10 @@ data class ShadowsocksBean(
         TODO("Not yet implemented")
     }
 
+    override fun generateSingConfig(): JSONObject {
+        TODO("Not yet implemented")
+    }
+
     override fun generateLink(): String {
         TODO("Not yet implemented")
     }

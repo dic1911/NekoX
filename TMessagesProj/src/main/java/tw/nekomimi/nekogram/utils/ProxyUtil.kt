@@ -97,6 +97,9 @@ object ProxyUtil {
                                             proxy["name"] as String
                                     ).toString())
                         }
+                        else -> {
+                            // ignored
+                        }
                     }
                 }
             }
