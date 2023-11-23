@@ -240,7 +240,8 @@ public class ApplicationLoader extends Application {
             Runnable initRunnable = () -> loadAccount(finalA);
             if (finalA == UserConfig.selectedAccount) {
                 initRunnable.run();
-                ChatThemeController.init();
+                // 030: fix build, check if UI is still working as usual without this.
+//                ChatThemeController.init();
             }
             else postRun.add(initRunnable);
         }
@@ -262,6 +263,7 @@ public class ApplicationLoader extends Application {
                 SharedConfig.saveAccounts();
             }
         }
+
         BillingController.getInstance().startConnection();
     }
 
