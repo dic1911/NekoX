@@ -4753,25 +4753,25 @@ public class NotificationsController extends BaseController {
                 } else {
                     text.append(LocaleController.formatPluralString("StoryNotification4", storyPushMessages.size() - 2, cutLastName(names.get(0)), cutLastName(names.get(1))));
                 }
-                if (NekoConfig.ignoreBlocked.Bool() && getMessagesController().blockePeers.indexOfKey(messageObject.getSenderId()) >= 0) {
+                if (NekoConfig.ignoreBlocked.Bool() && getMessagesController().blockePeers.indexOfKey(lastMessageObject.getSenderId()) >= 0) {
                     continue;
                 }
-                String message = getShortStringForMessage(messageObject, senderName, preview);
+                String message = getShortStringForMessage(lastMessageObject, senderName, preview);
                 if (dialogId == selfUserId) {
                     senderName[0] = name;
-                } else if (DialogObject.isChatDialog(dialogId) && messageObject.messageOwner.from_scheduled) {
+                } else if (DialogObject.isChatDialog(dialogId) && lastMessageObject.messageOwner.from_scheduled) {
                     senderName[0] = LocaleController.getString("NotificationMessageScheduledName", R.string.NotificationMessageScheduledName);
                 }
                 if (message == null) {
                     if (BuildVars.LOGS_ENABLED) {
-                        FileLog.w("message text is null for " + messageObject.getId() + " did = " + messageObject.getDialogId());
+                        FileLog.w("message text is null for " + lastMessageObject.getId() + " did = " + lastMessageObject.getDialogId());
                     }
                     continue;
                 }
                 if (text.length() > 0) {
                     text.append("\n\n");
                 }
-                if (dialogId != selfUserId && messageObject.messageOwner.from_scheduled && DialogObject.isUserDialog(dialogId)) {
+                if (dialogId != selfUserId && lastMessageObject.messageOwner.from_scheduled && DialogObject.isUserDialog(dialogId)) {
                     message = String.format("%1$s: %2$s", LocaleController.getString("NotificationMessageScheduledName", R.string.NotificationMessageScheduledName), message);
                     text.append(message);
                 }

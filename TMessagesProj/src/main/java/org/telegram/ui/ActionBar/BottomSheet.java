@@ -1866,7 +1866,7 @@ public class BottomSheet extends Dialog {
 
         public NekoXBuilder setTitleMultipleLines(boolean allowMultipleLines) {
             if (this.title != null) {
-                var textView = this.title.getTextView();
+                TextView textView = this.title.getTextView();
                 if (allowMultipleLines) {
                     textView.setSingleLine(false);
                     textView.setMaxLines(5);

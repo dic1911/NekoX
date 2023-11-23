@@ -6907,7 +6907,13 @@ public boolean retriedToSend;
             sendingMedia.geo = new TLRPC.TL_geoPoint();
             sendingMedia.geo.lat = location.getLatitude();
             sendingMedia.geo._long = location.getLongitude();
-            accountInstance.getSendMessagesHelper().sendMessage(sendingMedia, dialog_id, null, null, null, null, true, 0);
+
+            // 030: fix build - dunno if this would work
+            // accountInstance.getSendMessagesHelper().sendMessage(sendingMedia, dialog_id, null, null, null, null, true, 0);
+            SendingMediaInfo info = new SendingMediaInfo();
+            ArrayList<SendingMediaInfo> infos = new ArrayList<>();
+            infos.add(info);
+            prepareSendingMedia(accountInstance, infos, dialog_id, null, null, null, false, false, null, true, 0, false, null);
         })));
     }
 

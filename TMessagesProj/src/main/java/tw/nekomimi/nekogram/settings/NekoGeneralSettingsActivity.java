@@ -412,7 +412,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
                 ((ConfigCellTextCheck) mapDriftingFixForGoogleMapsRow).setEnabled(!enabled);
                 listAdapter.notifyItemChanged(cellGroup.rows.indexOf(mapDriftingFixForGoogleMapsRow));
             } else if (key.equals(NekoConfig.useTelegramTranslateInChat.getKey())) {
-                var cell = (TextSettingsCell) (listView.findViewHolderForAdapterPosition(cellGroup.rows.indexOf(translationProviderRow)).itemView);
+                TextSettingsCell cell = (TextSettingsCell) (listView.findViewHolderForAdapterPosition(cellGroup.rows.indexOf(translationProviderRow)).itemView);
                 if (NekoConfig.useTelegramTranslateInChat.Bool()) {
                     NekoConfig.translationProvider.setConfigInt(Translator.providerTelegram);
                     ((ConfigCellCustom) translationProviderRow).setEnabled(false);

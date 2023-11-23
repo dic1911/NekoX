@@ -108,6 +108,7 @@ import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
 import tw.nekomimi.nekogram.proxy.SubSettingsActivity;
 import tw.nekomimi.nekogram.proxy.WsSettingsActivity;
+import tw.nekomimi.nekogram.proxynext.ProxyConfig;
 import tw.nekomimi.nekogram.proxynext.ShadowsocksBean;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
@@ -822,8 +823,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                         } else if (info.getProxyType() == SharedConfig.PROXY_TYPE_WSRELAY) {
                             presentFragment(new WsSettingsActivity((SharedConfig.WsProxy) info));
                         } else if (info.getProxyType() == SharedConfig.PROXY_TYPE_SING) {
-                            var singInfo = (SharedConfig.SingProxyInfo) info;
-                            var bean = singInfo.getProxyBean();
+                            SharedConfig.SingProxyInfo singInfo = (SharedConfig.SingProxyInfo) info;
+                            ProxyConfig.SingProxyBean bean = singInfo.getProxyBean();
                             if (bean instanceof ShadowsocksBean)
                                 presentFragment(new ShadowsocksSettingsActivity(singInfo));
                         }
@@ -1496,8 +1497,8 @@ public class ProxyListActivity extends BaseFragment implements NotificationCente
                         UIUtil.runOnIoDispatcher(() -> {
                             try {
                                 assert path != null;
-                                var pb = new ProcessBuilder(path, "version");
-                                var buffered = new BufferedInputStream(pb.start().getInputStream());
+                                ProcessBuilder pb = new ProcessBuilder(path, "version");
+                                BufferedInputStream buffered = new BufferedInputStream(pb.start().getInputStream());
                                 String version = new Scanner(buffered).next();
                                 FileLog.e("sing-box: " + version);
                                 String versionValue = version.split("version")[1];

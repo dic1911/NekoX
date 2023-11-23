@@ -1540,7 +1540,7 @@ public class SharedConfig {
             case "vmess":
             case "shadowsocks":
             case "shadowsocksr": {
-                var config = ProxyConfig.parseSingBoxConfig(obj.optString("link"));
+                ProxyConfig.SingProxyBean config = ProxyConfig.parseSingBoxConfig(obj.optString("link"));
                 if (config == null) return null;
                 info = new SingProxyInfo(11451, config);
                 break;
@@ -1699,15 +1699,15 @@ public class SharedConfig {
             // Load sing proxies
             for (int i = 0; i < sing.length(); i++) {
                 JSONObject outboundObj = sing.getJSONObject(i);
-                var singConfig = ProxyConfig.parseSingBoxConfig(outboundObj);
+                ProxyConfig.SingProxyBean singConfig = ProxyConfig.parseSingBoxConfig(outboundObj);
                 if (singConfig == null) continue;
-                var singProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(singConfig);
+                SingProxyInfo singProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(singConfig);
                 proxyList.add(singProxyInfo);
             }
             // Reorder
-            var newList = new ArrayList<ProxyInfo>();
+            ArrayList<ProxyInfo> newList = new ArrayList<ProxyInfo>();
             for (int i = 0; i < order.length(); i++) {
-                var hash = order.getString(i);
+                String hash = order.getString(i);
                 proxyList.stream()
                         .filter(proxyInfo -> proxyInfo.getHash().equals(hash))
                         .findFirst()
@@ -1734,7 +1734,7 @@ public class SharedConfig {
 
     public static void saveProxyList() {
         // Save original proxies
-        var originalProxies = proxyList.stream().filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_ORIGINAL).collect(Collectors.toList());
+        List<SharedConfig.ProxyInfo> originalProxies = proxyList.stream().filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_ORIGINAL).collect(Collectors.toList());
         List<ProxyInfo> infoToSerialize = new ArrayList<>(originalProxies);
         Collections.sort(infoToSerialize, (o1, o2) -> {
             long bias1 = SharedConfig.currentProxy == o1 ? -200000 : 0;
@@ -1815,7 +1815,7 @@ public class SharedConfig {
         }
 
         try {
-            var boxConfig = ProxyConfig.parseSingBoxConfig(url);
+            ProxyConfig.SingProxyBean boxConfig = ProxyConfig.parseSingBoxConfig(url);
             if (boxConfig == null) return null;
             return SingProxyManager.Companion.getMainInstance().registerProxy(boxConfig);
         } catch (Exception ex) {
@@ -1841,7 +1841,7 @@ public class SharedConfig {
 
     public static ProxyInfo addProxy(ProxyConfig.SingProxyBean singBean) {
         loadProxyList();
-        var info = SingProxyManager.Companion.getMainInstance().registerProxy(singBean);
+        SingProxyInfo info = SingProxyManager.Companion.getMainInstance().registerProxy(singBean);
         proxyList.add(0, info);
         saveProxyList();
         return info;
