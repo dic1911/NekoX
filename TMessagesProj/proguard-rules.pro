@@ -156,4 +156,10 @@
 # Osmdroid
 -dontwarn org.osmdroid.**
 
+-keepnames class androidx.recyclerview.widget.RecyclerView
+-keepclassmembers class androidx.recyclerview.widget.RecyclerView {
+    public void suppressLayout(boolean);
+    public boolean isLayoutSuppressed();
+}
+
 -keepattributes SourceFile,LineNumberTable
