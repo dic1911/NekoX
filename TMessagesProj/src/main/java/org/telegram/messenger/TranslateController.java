@@ -985,25 +985,7 @@ public class TranslateController extends BaseController {
 
     // ensure dialogId in storyItem is valid
     public void detectStoryLanguage(TLRPC.StoryItem storyItem) {
-        if (storyItem == null || storyItem.detectedLng != null || storyItem.caption == null || storyItem.caption.length() == 0 || !LanguageDetector.hasSupport()) {
-            return;
-        }
-
-        final StoryKey key = new StoryKey(storyItem);
-        if (detectingStories.contains(key)) {
-            return;
-        }
-        detectingStories.add(key);
-
-        LanguageDetector.detectLanguage(storyItem.caption, lng -> AndroidUtilities.runOnUIThread(() -> {
-            storyItem.detectedLng = lng;
-            getMessagesController().getStoriesController().getStoriesStorage().putStoryInternal(storyItem.dialogId, storyItem);
-            detectingStories.remove(key);
-        }), err -> AndroidUtilities.runOnUIThread(() -> {
-            storyItem.detectedLng = UNKNOWN_LANGUAGE;
-            getMessagesController().getStoriesController().getStoriesStorage().putStoryInternal(storyItem.dialogId, storyItem);
-            detectingStories.remove(key);
-        }));
+        // NekoX: official translator feature was removed
     }
 
     public boolean canTranslateStory(TLRPC.StoryItem storyItem) {
@@ -1104,37 +1086,7 @@ public class TranslateController extends BaseController {
     private final HashSet<MessageKey> translatingPhotos = new HashSet<>();
 
     public void detectPhotoLanguage(MessageObject messageObject, Utilities.Callback<String> done) {
-        if (messageObject == null || messageObject.messageOwner == null || !LanguageDetector.hasSupport() || TextUtils.isEmpty(messageObject.messageOwner.message)) {
-            return;
-        }
-        if (!TextUtils.isEmpty(messageObject.messageOwner.originalLanguage)) {
-            if (done != null) {
-                done.run(messageObject.messageOwner.originalLanguage);
-            }
-            return;
-        }
-
-        MessageKey key = new MessageKey(messageObject);
-        if (detectingPhotos.contains(key)) {
-            return;
-        }
-        detectingPhotos.add(key);
-
-        LanguageDetector.detectLanguage(messageObject.messageOwner.message, lng -> AndroidUtilities.runOnUIThread(() -> {
-            messageObject.messageOwner.originalLanguage = lng;
-            getMessagesStorage().updateMessageCustomParams(key.dialogId, messageObject.messageOwner);
-            detectingPhotos.remove(key);
-            if (done != null) {
-                done.run(lng);
-            }
-        }), err -> AndroidUtilities.runOnUIThread(() -> {
-            messageObject.messageOwner.originalLanguage = UNKNOWN_LANGUAGE;
-            getMessagesStorage().updateMessageCustomParams(key.dialogId, messageObject.messageOwner);
-            detectingPhotos.remove(key);
-            if (done != null) {
-                done.run(UNKNOWN_LANGUAGE);
-            }
-        }));
+        // NekoX: official translator feature was removed
     }
 
     public boolean canTranslatePhoto(MessageObject messageObject, String detectedLanguage) {
