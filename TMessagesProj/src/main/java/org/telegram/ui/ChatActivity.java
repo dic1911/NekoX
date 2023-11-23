@@ -10184,8 +10184,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
                     String str = StrUtil.utf8Str(os.toByteArray());
                     if (StrUtil.isBlank(str)) return;
-                    getSendMessagesHelper().sendMessage(str, dialog_id, null, null, null,
-                            false, null, null, null, true, 0, null, false);
+                    // 030: is this correct?
+                    SendMessagesHelper.SendMessageParams params = new SendMessagesHelper.SendMessageParams();
+                    params.message = str;
+                    params.peer = dialog_id;
+                    getSendMessagesHelper().sendMessage(params);
                     afterMessageSend();
                     hideFieldPanel(false);
                     break;
@@ -33724,15 +33727,30 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     caption = getMessageContent(selectedObject, 0, false);
                 }
                 if (!TextUtils.isEmpty(caption)) {
-                    SendMessagesHelper.getInstance(currentAccount)
-                            .sendMessage(caption.toString(), dialog_id, replyTo,
-                                    getThreadMessage(), null,
-                                    false, selectedObject.messageOwner.entities, null, null,
-                                    true, 0, null, false);
+                    // 030: is this correct?
+                    SendMessagesHelper.SendMessageParams params = new SendMessagesHelper.SendMessageParams();
+                    params.message = caption.toString();
+                    params.peer = dialog_id;
+                    params.replyToMsg = replyTo;
+                    params.replyToTopMsg = getThreadMessage();
+                    SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+//                     .sendMessage(caption.toString(), dialog_id, replyTo, getThreadMessage(), null, false, selectedObject.messageOwner.entities, null, null, true, 0, null, false);
                 }
             } else if ((selectedObject.isSticker() || selectedObject.isAnimatedSticker()) && selectedObject.getDocument() != null) {
-                SendMessagesHelper.getInstance(currentAccount)
-                        .sendSticker(selectedObject.getDocument(), null, dialog_id, replyTo, getThreadMessage(), null, null, true, 0, false);
+                // 030: is this correct?
+                SendMessagesHelper.SendMessageParams params = new SendMessagesHelper.SendMessageParams();
+                params.peer = dialog_id;
+                params.replyToMsg = replyTo;
+                params.replyToTopMsg = getThreadMessage();
+                TLRPC.Document doc = selectedObject.getDocument();
+                TLRPC.TL_document document = new TLRPC.TL_document();
+                document.id = doc.id;
+                document.mime_type = selectedObject.isSticker() ? "image/webp" : "video/webm";
+                document.access_hash = doc.access_hash;
+                document.file_reference = (doc.file_reference != null ? doc.file_reference : new byte[0]);
+                params.document = document;
+                SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+//                        .sendSticker(selectedObject.getDocument(), null, dialog_id, replyTo, getThreadMessage(), null, null, true, 0, false);
             }
             return;
         }
