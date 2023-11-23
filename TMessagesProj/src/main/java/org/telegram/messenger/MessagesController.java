@@ -18395,12 +18395,7 @@ public class MessagesController extends BaseController implements NotificationCe
         if (storiesController != null) {
             return storiesController;
         }
-        synchronized (lockObjects[currentAccount]) {
-            if (storiesController != null) {
-                return storiesController;
-            }
-            storiesController = new StoriesController(currentAccount);
-        }
+        storiesController = new StoriesController(currentAccount);
         return storiesController;
     }
 

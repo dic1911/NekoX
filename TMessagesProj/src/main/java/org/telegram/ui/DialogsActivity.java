@@ -8,8 +8,6 @@
 
 package org.telegram.ui;
 
-import static org.telegram.ui.DialogsHeader.DIALOGS_TYPE_WIDGET;
-
 import android.Manifest;
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;

@@ -33265,9 +33265,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             repeatMessage(false);
             clearSelectionMode();
         } else if (id == nkbtn_sharemessage) {
-            var selected = getSelectedMessages();
+            ArrayList<MessageObject> selected = getSelectedMessages();
             if (selected.isEmpty()) return;
-            var builder = new StringBuilder();
+            StringBuilder builder = new StringBuilder();
             for (int i = 0; i < selected.size(); i++) {
                 builder.append(selected.get(i).messageOwner.message);
                 if (i != selected.size() - 1)
