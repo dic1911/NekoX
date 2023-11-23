@@ -2571,6 +2571,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
 
                 sendPopupLayout.addView(itemCells[a], LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
 
+                TLRPC.Chat chat = chatActivity.getCurrentChat();
                 long chatId = chat == null ? -1 : chat.id;
                 long finalDialogId = dialogId;
                 itemCells[a].setOnClickListener(v -> {
