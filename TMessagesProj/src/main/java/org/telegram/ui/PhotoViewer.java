@@ -6367,20 +6367,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         sendPressed(true, 0, false, true, false);
                     }
                 });
-                cell.setOnLongClickListener(v -> {
-                    if (a == 4) {
-                        Translator.showTargetLangSelect(cell, true, (locale) -> {
-                            if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
-                                sendPopupWindow.dismiss();
-                            }
-                            translateComment(locale);
-                            TranslateDb.saveChatLanguage(chatId, locale);
-                            return Unit.INSTANCE;
-                        });
-                        return true;
-                    }
-                    return false;
-                });
+                // 030: nuked to fix build
+//                cell.setOnLongClickListener(v -> {
+//                    if (a == 4) {
+//                        Translator.showTargetLangSelect(cell, true, (locale) -> {
+//                            if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
+//                                sendPopupWindow.dismiss();
+//                            }
+//                            translateComment(locale);
+//                            TranslateDb.saveChatLanguage(chatId, locale);
+//                            return Unit.INSTANCE;
+//                        });
+//                        return true;
+//                    }
+//                    return false;
+//                });
             }
             if (sendPopupLayout.getChildCount() == 0) {
                 return false;
@@ -6596,191 +6597,6 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             switchToEditMode(EDIT_MODE_FILTER);
         });
         tuneItem.setContentDescription(LocaleController.getString("AccDescrPhotoAdjust", R.string.AccDescrPhotoAdjust));
-
-        compressItem = new VideoCompressButton(parentActivity);
-        compressItem.setTag(1);
-        compressItem.setScaleType(ImageView.ScaleType.CENTER);
-        compressItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
-
-        selectedCompression = selectCompression();
-        int compressIconWidth;
-        if (selectedCompression <= 1) {
-            compressItem.setImageResource(R.drawable.video_quality1);
-        } else if (selectedCompression == 2) {
-            compressItem.setImageResource(R.drawable.video_quality2);
-        } else {
-            selectedCompression = compressionsCount - 1;
-            compressItem.setImageResource(R.drawable.video_quality3);
-        }
-        compressItem.setContentDescription(LocaleController.getString("AccDescrVideoQuality", R.string.AccDescrVideoQuality));
-        itemsLayout.addView(compressItem, LayoutHelper.createLinear(48, 48));
-        compressItem.setOnClickListener(v -> {
-            if (captionEditText.getTag() != null || muteVideo) {
-                return;
-            }
-            if (compressItem.getTag() == null) {
-                if (videoConvertSupported) {
-                    if (tooltip == null) {
-                        tooltip = new Tooltip(activity, containerView, 0xcc111111, Color.WHITE);
-                    }
-                    tooltip.setText(LocaleController.getString("VideoQualityIsTooLow", R.string.VideoQualityIsTooLow));
-                    tooltip.show(compressItem);
-                }
-                return;
-            }
-            showQualityView(true);
-            requestVideoPreview(1);
-        });
-
-        timeItem = new ImageView(parentActivity);
-        timeItem.setScaleType(ImageView.ScaleType.CENTER);
-        timeItem.setImageResource(R.drawable.msg_autodelete);
-        timeItem.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR));
-        timeItem.setContentDescription(LocaleController.getString("SetTimer", R.string.SetTimer));
-        itemsLayout.addView(timeItem, LayoutHelper.createLinear(48, 48));
-        timeItem.setOnClickListener(v -> {
-            if (parentActivity == null || captionEditText.getTag() != null) {
-                return;
-            }
-            BottomSheet.Builder builder = new BottomSheet.Builder(parentActivity, false, resourcesProvider, 0xff000000);
-            builder.setUseHardwareLayer(false);
-            LinearLayout linearLayout = new LinearLayout(parentActivity);
-            linearLayout.setOrientation(LinearLayout.VERTICAL);
-            builder.setCustomView(linearLayout);
-
-            TextView titleView = new TextView(parentActivity);
-            titleView.setLines(1);
-            titleView.setSingleLine(true);
-            titleView.setText(LocaleController.getString("MessageLifetime", R.string.MessageLifetime));
-            titleView.setTextColor(0xffffffff);
-            titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-            titleView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-            titleView.setPadding(AndroidUtilities.dp(21), AndroidUtilities.dp(8), AndroidUtilities.dp(21), AndroidUtilities.dp(4));
-            titleView.setGravity(Gravity.CENTER_VERTICAL);
-            linearLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-            titleView.setOnTouchListener((v13, event) -> true);
-
-            titleView = new TextView(parentActivity);
-            titleView.setText(isCurrentVideo ? LocaleController.getString("MessageLifetimeVideo", R.string.MessageLifetimeVideo) : LocaleController.getString("MessageLifetimePhoto", R.string.MessageLifetimePhoto));
-            titleView.setTextColor(0xff808080);
-            titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            titleView.setEllipsize(TextUtils.TruncateAt.MIDDLE);
-            titleView.setPadding(AndroidUtilities.dp(21), 0, AndroidUtilities.dp(21), AndroidUtilities.dp(8));
-            titleView.setGravity(Gravity.CENTER_VERTICAL);
-            linearLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-            titleView.setOnTouchListener((v12, event) -> true);
-
-            final BottomSheet bottomSheet = builder.create();
-            final NumberPicker numberPicker = new NumberPicker(parentActivity, resourcesProvider);
-            numberPicker.setMinValue(0);
-            numberPicker.setMaxValue(28);
-            Object object = imagesArrLocals.get(currentIndex);
-            int currentTTL;
-            if (object instanceof MediaController.PhotoEntry) {
-                currentTTL = ((MediaController.PhotoEntry) object).ttl;
-            } else if (object instanceof MediaController.SearchImage) {
-                currentTTL = ((MediaController.SearchImage) object).ttl;
-            } else {
-                currentTTL = 0;
-            }
-            if (currentTTL == 0) {
-                SharedPreferences preferences1 = MessagesController.getGlobalMainSettings();
-                numberPicker.setValue(preferences1.getInt("self_destruct", 7));
-            } else {
-                if (currentTTL >= 0 && currentTTL < 21) {
-                    numberPicker.setValue(currentTTL);
-                } else {
-                    numberPicker.setValue(21 + currentTTL / 5 - 5);
-                }
-            }
-            numberPicker.setTextColor(0xffffffff);
-            numberPicker.setSelectorColor(0xff4d4d4d);
-            numberPicker.setFormatter(value -> {
-                if (value == 0) {
-                    return LocaleController.getString("ShortMessageLifetimeForever", R.string.ShortMessageLifetimeForever);
-                } else if (value >= 1 && value < 21) {
-                    return LocaleController.formatTTLString(value);
-                } else {
-                    return LocaleController.formatTTLString((value - 16) * 5);
-                }
-            });
-            linearLayout.addView(numberPicker, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
-
-            FrameLayout buttonsLayout = new FrameLayout(parentActivity) {
-                @Override
-                protected void onLayout(boolean changed, int left, int top, int right, int bottom) {
-                    int count = getChildCount();
-                    int width = right - left;
-                    for (int a = 0; a < count; a++) {
-                        View child = getChildAt(a);
-                        if ((Integer) child.getTag() == Dialog.BUTTON_POSITIVE) {
-                            child.layout(width - getPaddingRight() - child.getMeasuredWidth(), getPaddingTop(), width - getPaddingRight(), getPaddingTop() + child.getMeasuredHeight());
-                        } else if ((Integer) child.getTag() == Dialog.BUTTON_NEGATIVE) {
-                            int x = getPaddingLeft();
-                            child.layout(x, getPaddingTop(), x + child.getMeasuredWidth(), getPaddingTop() + child.getMeasuredHeight());
-                        } else {
-                            child.layout(getPaddingLeft(), getPaddingTop(), getPaddingLeft() + child.getMeasuredWidth(), getPaddingTop() + child.getMeasuredHeight());
-                        }
-                    }
-                }
-            };
-            buttonsLayout.setPadding(AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8), AndroidUtilities.dp(8));
-            linearLayout.addView(buttonsLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 52));
-
-            TextView textView = new TextView(parentActivity);
-            textView.setMinWidth(AndroidUtilities.dp(64));
-            textView.setTag(Dialog.BUTTON_POSITIVE);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTextColor(getThemedColor(Theme.key_dialogFloatingButton));
-            textView.setGravity(Gravity.CENTER);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            textView.setText(LocaleController.getString("Done", R.string.Done).toUpperCase());
-            textView.setBackgroundDrawable(Theme.getRoundRectSelectorDrawable(0xff49bcf2));
-            textView.setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), 0);
-            buttonsLayout.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.TOP | Gravity.RIGHT));
-            textView.setOnClickListener(v1 -> {
-                int value = numberPicker.getValue();
-                SharedPreferences preferences1 = MessagesController.getGlobalMainSettings();
-                SharedPreferences.Editor editor = preferences1.edit();
-                editor.putInt("self_destruct", value);
-                editor.apply();
-                bottomSheet.dismiss();
-                int seconds;
-                if (value >= 0 && value < 21) {
-                    seconds = value;
-                } else {
-                    seconds = (value - 16) * 5;
-                }
-                Object object1 = imagesArrLocals.get(currentIndex);
-                if (object1 instanceof MediaController.PhotoEntry) {
-                    ((MediaController.PhotoEntry) object1).ttl = seconds;
-                } else if (object1 instanceof MediaController.SearchImage) {
-                    ((MediaController.SearchImage) object1).ttl = seconds;
-                }
-                timeItem.setColorFilter(seconds != 0 ? new PorterDuffColorFilter(getThemedColor(Theme.key_dialogFloatingButton), PorterDuff.Mode.SRC_IN) : null);
-                if (!checkImageView.isChecked()) {
-                    checkImageView.callOnClick();
-                }
-            });
-
-            textView = new TextView(parentActivity);
-            textView.setMinWidth(AndroidUtilities.dp(64));
-            textView.setTag(Dialog.BUTTON_NEGATIVE);
-            textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-            textView.setTextColor(0xffffffff);
-            textView.setGravity(Gravity.CENTER);
-            textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
-            textView.setText(LocaleController.getString("Cancel", R.string.Cancel).toUpperCase());
-            textView.setBackgroundDrawable(Theme.getRoundRectSelectorDrawable(0xffffffff));
-            textView.setPadding(AndroidUtilities.dp(10), 0, AndroidUtilities.dp(10), 0);
-            buttonsLayout.addView(textView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.TOP | Gravity.RIGHT));
-            textView.setOnClickListener(v14 -> bottomSheet.dismiss());
-            bottomSheet.setBackgroundColor(0xff000000);
-            bottomSheet.show();
-            AndroidUtilities.setNavigationBarColor(bottomSheet.getWindow(), 0xff000000, false);
-            AndroidUtilities.setLightNavigationBar(bottomSheet.getWindow(), false);
-        });
 
         editorDoneLayout = new PickerBottomLayoutViewer(activityContext);
         editorDoneLayout.setBackgroundColor(0xcc000000);
@@ -7049,52 +6865,53 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentChatActivity.getDialogId(), this::sendPressed, colors);
     }
 
-    private void translateComment(Locale target) {
-
-        String origin = captionEditText.getFieldCharSequence().toString();
-
-        TranslateDb db = TranslateDb.forLocale(target);
-        if (db.contains(origin)) {
-            String translated = db.query(origin);
-            captionEditText.setFieldText(translated);
-            return;
-
-        }
-
-        Translator.translate(target, origin, new Translator.Companion.TranslateCallBack() {
-
-            final AtomicBoolean cancel = new AtomicBoolean();
-            AlertDialog status = AlertUtil.showProgress(parentActivity);
-
-            {
-
-                status.setOnCancelListener((__) -> {
-                    cancel.set(true);
-                });
-
-                status.show();
-
-            }
-
-            @Override
-            public void onSuccess(@NotNull String translation) {
-                status.dismiss();
-                captionEditText.setFieldText(translation);
-            }
-
-            @Override
-            public void onFailed(boolean unsupported, @NotNull String message) {
-                status.dismiss();
-                AlertUtil.showTransFailedDialog(parentActivity, unsupported, message, () -> {
-                    status = AlertUtil.showProgress(parentActivity);
-                    status.show();
-                    Translator.translate(origin, this);
-                });
-            }
-
-        });
-
-    }
+    // 030: nuked to fix build
+//    private void translateComment(Locale target) {
+//
+//        String origin = captionEditText.getFieldCharSequence().toString();
+//
+//        TranslateDb db = TranslateDb.forLocale(target);
+//        if (db.contains(origin)) {
+//            String translated = db.query(origin);
+//            captionEditText.setFieldText(translated);
+//            return;
+//
+//        }
+//
+//        Translator.translate(target, origin, new Translator.Companion.TranslateCallBack() {
+//
+//            final AtomicBoolean cancel = new AtomicBoolean();
+//            AlertDialog status = AlertUtil.showProgress(parentActivity);
+//
+//            {
+//
+//                status.setOnCancelListener((__) -> {
+//                    cancel.set(true);
+//                });
+//
+//                status.show();
+//
+//            }
+//
+//            @Override
+//            public void onSuccess(@NotNull String translation) {
+//                status.dismiss();
+//                captionEditText.setFieldText(translation);
+//            }
+//
+//            @Override
+//            public void onFailed(boolean unsupported, @NotNull String message) {
+//                status.dismiss();
+//                AlertUtil.showTransFailedDialog(parentActivity, unsupported, message, () -> {
+//                    status = AlertUtil.showProgress(parentActivity);
+//                    status.show();
+//                    Translator.translate(origin, this);
+//                });
+//            }
+//
+//        });
+//
+//    }
 
 
     private void sendPressed(boolean notify, int scheduleDate) {

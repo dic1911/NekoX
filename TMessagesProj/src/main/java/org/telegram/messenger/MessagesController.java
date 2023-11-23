@@ -18671,7 +18671,7 @@ public class MessagesController extends BaseController implements NotificationCe
         if (unconfirmedAuthController != null) {
             return unconfirmedAuthController;
         }
-        synchronized (lockObjects[currentAccount]) {
+        synchronized (lockObject) {
             if (unconfirmedAuthController != null) {
                 return unconfirmedAuthController;
             }
