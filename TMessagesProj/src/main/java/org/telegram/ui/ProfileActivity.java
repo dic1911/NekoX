@@ -4097,7 +4097,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             emptyView.setVisibility(View.GONE);
             frameLayout.addView(emptyView);
 
-            searchAdapter.loadFaqWebPage();
+            // 030: bandaid for crash
+            try {
+                searchAdapter.loadFaqWebPage();
+            } catch (Exception ignored) {}
         }
 
         if (banFromGroup != 0) {

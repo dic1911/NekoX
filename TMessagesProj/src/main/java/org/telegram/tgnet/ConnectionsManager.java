@@ -11,8 +11,6 @@ import android.util.Base64;
 import android.util.SparseArray;
 import android.util.Log;
 
-import com.google.android.exoplayer2.util.Log;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.telegram.messenger.AccountInstance;
