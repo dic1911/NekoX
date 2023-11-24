@@ -289,6 +289,7 @@ public class ApplicationLoader extends Application {
 
     @Override
     public void onCreate() {
+        applicationLoaderInstance = this;
         try {
             applicationContext = getApplicationContext();
         } catch (Throwable ignore) {
