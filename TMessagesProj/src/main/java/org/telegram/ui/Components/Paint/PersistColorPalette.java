@@ -79,10 +79,10 @@ public class PersistColorPalette {
     }
 
     public static PersistColorPalette getInstance(int currentAccount) {
-        if (instances.get(currentAccount) == null) {
-            instances.set(currentAccount, new PersistColorPalette(currentAccount));
+        if (instances[currentAccount] == null) {
+            instances[currentAccount] = new PersistColorPalette(currentAccount);
         }
-        return instances.get(currentAccount);
+        return instances[currentAccount];
     }
 
     public int getCurrentTextType() {
