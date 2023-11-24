@@ -177,7 +177,7 @@ public class MessagesController extends BaseController implements NotificationCe
         if (channelBoostsControler != null) {
             return channelBoostsControler;
         }
-        synchronized (lockObjects[currentAccount]) {
+        synchronized (lockObject) {
             if (channelBoostsControler != null) {
                 return channelBoostsControler;
             }
