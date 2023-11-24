@@ -12008,7 +12008,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     public void beforeMessageSend(boolean notify, int scheduleDate, boolean beforeSend) {
         if (beforeSend != NekoConfig.sendCommentAfterForward.Bool()) return;
-        if (messagePreviewParams.forwardMessages != null) {
+        if (messagePreviewParams != null && messagePreviewParams.forwardMessages != null) {
             ArrayList<MessageObject> messagesToForward = new ArrayList<>();
             messagePreviewParams.forwardMessages.getSelectedMessages(messagesToForward);
             forwardMessages(messagesToForward, messagePreviewParams.hideForwardSendersName, messagePreviewParams.hideCaption, notify, scheduleDate != 0 && scheduleDate != 0x7ffffffe ? scheduleDate + 1 : scheduleDate);
