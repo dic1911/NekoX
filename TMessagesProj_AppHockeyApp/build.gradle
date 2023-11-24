@@ -19,7 +19,7 @@ dependencies {
     implementation 'androidx.multidex:multidex:2.0.1'
     implementation 'androidx.core:core:1.10.1'
     coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
-    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
+//    implementation files('../TMessagesProj/libs/libgsaverification-client.aar')
 
     implementation "com.microsoft.appcenter:appcenter-distribute:3.3.1"
     implementation "com.microsoft.appcenter:appcenter-crashes:3.3.1"
