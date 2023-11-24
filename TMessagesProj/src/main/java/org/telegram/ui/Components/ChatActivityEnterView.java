@@ -4640,15 +4640,19 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             messageEditText.setFallbackLineSpacing(false);
         }
         messageEditText.wrapCanvasToFixClipping = true;
-        messageEditText.setDelegate(() -> {
-            messageEditText.invalidateEffects();
-            if (delegate != null) {
-                delegate.onTextSpansChanged(messageEditText.getText());
+
+        // 030: is this Delegate thingy correct?
+        messageEditText.setDelegate(new EditTextCaption.EditTextCaptionDelegate() {
+            @Override
+            public void onSpansChanged() {
+                messageEditText.invalidateEffects();
+                if (delegate != null) {
+                    delegate.onTextSpansChanged(messageEditText.getText());
+                }
             }
 
             @Override
             public long getCurrentChat() {
-
                 long chatId;
                 if (parentFragment.getCurrentChat() != null) {
                     chatId = parentFragment.getCurrentChat().id;
@@ -4660,7 +4664,6 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
                 return chatId;
             }
-
         });
         if (parentFragment != null && parentFragment.getParentLayout() != null && parentFragment.getParentLayout().isSheet()) {
             messageEditText.setWindowView(parentFragment.getParentLayout().getWindow().getDecorView());
@@ -11861,7 +11864,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
     }
 
-    private int getThemedColor(int key) {
+    protected int getThemedColor(int key) {
         if (resourcesProvider != null) {
             return resourcesProvider.getColor(key);
         }

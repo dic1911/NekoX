@@ -706,7 +706,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     private MessageObject selectedObjectToEditCaption;
     private MessageObject selectedObject;
-    private MessageObject.GroupedMessages selectedObjectGroup;
+    public MessageObject.GroupedMessages selectedObjectGroup;
     private boolean forbidForwardingWithDismiss;
     public MessagePreviewParams messagePreviewParams;
     private CharSequence formwardingNameText;
@@ -12008,11 +12008,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     public void beforeMessageSend(boolean notify, int scheduleDate, boolean beforeSend) {
         if (beforeSend != NekoConfig.sendCommentAfterForward.Bool()) return;
-        if (forwardingMessages != null) {
+        if (messagePreviewParams.forwardMessages != null) {
             ArrayList<MessageObject> messagesToForward = new ArrayList<>();
-            forwardingMessages.getSelectedMessages(messagesToForward);
-            forwardMessages(messagesToForward, forwardingMessages.hideForwardSendersName, forwardingMessages.hideCaption, notify, scheduleDate != 0 && scheduleDate != 0x7ffffffe ? scheduleDate + 1 : scheduleDate);
-            forwardingMessages = null;
+            messagePreviewParams.forwardMessages.getSelectedMessages(messagesToForward);
+            forwardMessages(messagesToForward, messagePreviewParams.hideForwardSendersName, messagePreviewParams.hideCaption, notify, scheduleDate != 0 && scheduleDate != 0x7ffffffe ? scheduleDate + 1 : scheduleDate);
+            messagePreviewParams.forwardMessages = null;
         }
     }
 
