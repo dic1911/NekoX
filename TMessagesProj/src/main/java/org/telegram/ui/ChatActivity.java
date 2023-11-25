@@ -12022,7 +12022,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (messagePreviewParams != null && messagePreviewParams.forwardMessages != null) {
             ArrayList<MessageObject> messagesToForward = new ArrayList<>();
             messagePreviewParams.forwardMessages.getSelectedMessages(messagesToForward);
-            forwardMessages(messagesToForward, messagePreviewParams.hideForwardSendersName, messagePreviewParams.hideCaption, notify, scheduleDate != 0 && scheduleDate != 0x7ffffffe ? scheduleDate + 1 : scheduleDate);
+            // 030: fix neko no quote fwd button
+            forwardMessages(messagesToForward, messagePreviewParams.hideForwardSendersName || noForwardQuote, messagePreviewParams.hideCaption, notify, scheduleDate != 0 && scheduleDate != 0x7ffffffe ? scheduleDate + 1 : scheduleDate);
             messagePreviewParams.forwardMessages = null;
         }
     }
@@ -12286,6 +12287,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     messagePreviewParams = new MessagePreviewParams(currentEncryptedChat != null, getMessagesController().isChatNoForwards(currentChat));
                     messagePreviewParams.attach(forwardingPreviewView);
                 }
+                // 030: fix neko no quote fwd button
+                messagePreviewParams.hideForwardSendersName |= noForwardQuote;
                 messagePreviewParams.updateForward(messageObjectsToForward, dialog_id);
                 if (messagePreviewParams.isEmpty() && editingMessageObject == null) {
                     messagePreviewParams = null;
