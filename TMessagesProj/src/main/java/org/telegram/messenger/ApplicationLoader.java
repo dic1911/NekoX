@@ -280,6 +280,12 @@ public class ApplicationLoader extends Application {
             }
         }
 
+        Utilities.stageQueue.postRunnable(() -> {
+            SendMessagesHelper.getInstance(account).checkUnsentMessages();
+            ContactsController.getInstance(account).checkAppAccount();
+            DownloadController.getInstance(account);
+        });
+
         BillingController.getInstance().startConnection();
     }
 
