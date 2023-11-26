@@ -1,4 +1,10 @@
-# NekoX
+# NekoX - ghetto edition
+
+This is a dirty updated fork of NekoX, due to how messy Telegram source code already is, I don't really want myself to be wasting too much time to deal with it, expect minor glitches for the client release, dirty hacks and force pushes for this repository, report bugs in linked disscussion group of my [Telegram channel](https://t.me/nekox_broken)
+
+---
+(original README below)
+---
 
 NekoX is an **free and open source** third-party Telegram client, based on Telegram-FOSS with features added.
 
