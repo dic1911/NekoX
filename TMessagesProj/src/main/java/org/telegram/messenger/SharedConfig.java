@@ -1708,17 +1708,6 @@ public class SharedConfig {
         if (proxyListLoaded) {
             return;
         }
-        SingProxyManager.Companion.getMainInstance().stop();
-        if (!proxyList.isEmpty()) {
-            for (ProxyInfo proxyInfo : proxyList) {
-                if (proxyInfo instanceof WsProxy) {
-                    proxyInfo.stop();
-                }
-            }
-        }
-
-        tryToMigrateProxy();
-
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
         String proxyAddress = preferences.getString("proxy_ip", "");
         String proxyUsername = preferences.getString("proxy_user", "");
@@ -1783,74 +1772,10 @@ public class SharedConfig {
             ProxyInfo info = currentProxy = new ProxyInfo(proxyAddress, proxyPort, proxyUsername, proxyPassword, proxySecret);
             proxyList.add(0, info);
         }
-        // NekoX parts
-
-        // Load proxies from subscribe
-        for (SubInfo subInfo : SubManager.getSubList().find()) {
-            if (!subInfo.enable) continue;
-            for (String proxy : subInfo.proxies) {
-                try {
-                    ProxyInfo info = parseProxyInfo(proxy);
-                    if (info == null) continue;
-                    info.subId = subInfo.id;
-                    proxyList.add(info);
-                } catch (Exception e) {
-                    FileLog.d("load sub proxy failed: " + e);
-                }
-            }
-        }
-
-        File proxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "nekox/proxy_list_V2.json");
-        try {
-            JSONObject root = new JSONObject(FileUtil.readUtf8String(proxyListFile));
-            JSONArray wsrelay = root.getJSONArray("wsrelay");
-            JSONArray sing = root.getJSONArray("sing");
-            JSONArray order = root.getJSONArray("order");
-            // Load WsRelay
-            for (int i = 0; i < wsrelay.length(); i++) {
-                String link = wsrelay.getString(i);
-                proxyList.add(new WsProxy(link));
-            }
-            // Load sing proxies
-            for (int i = 0; i < sing.length(); i++) {
-                JSONObject outboundObj = sing.getJSONObject(i);
-                ProxyConfig.SingProxyBean singConfig = ProxyConfig.parseSingBoxConfig(outboundObj);
-                if (singConfig == null) continue;
-                SingProxyInfo singProxyInfo = SingProxyManager.Companion.getMainInstance().registerProxy(singConfig);
-                proxyList.add(singProxyInfo);
-            }
-            // Reorder
-            ArrayList<ProxyInfo> newList = new ArrayList<ProxyInfo>();
-            for (int i = 0; i < order.length(); i++) {
-                String hash = order.getString(i);
-                proxyList.stream()
-                        .filter(proxyInfo -> proxyInfo.getHash().equals(hash))
-                        .findFirst()
-                        .ifPresent(newList::add);
-            }
-            proxyList = newList;
-        } catch (Exception e) {
-            FileLog.e(e);
-        }
-        if (currentProxy == null) {
-            // try to set currentProxy specified by
-            String nekoCurrentProxyHash = preferences.getString("neko_current_proxy_hash", "");
-            if (!StringUtils.isEmpty(nekoCurrentProxyHash)) {
-                proxyList.stream()
-                        .filter(proxyInfo -> proxyInfo.getHash().equals(nekoCurrentProxyHash))
-                        .findFirst()
-                        .ifPresentOrElse(
-                                proxyInfo -> currentProxy = proxyInfo,
-                                () -> preferences.edit().putString("neko_current_proxy_hash", "").apply()
-                        );
-            }
-        }
     }
 
     public static void saveProxyList() {
-        // Save original proxies
-        List<SharedConfig.ProxyInfo> originalProxies = proxyList.stream().filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_ORIGINAL).collect(Collectors.toList());
-        List<ProxyInfo> infoToSerialize = new ArrayList<>(originalProxies);
+        List<ProxyInfo> infoToSerialize = new ArrayList<>(proxyList);
         Collections.sort(infoToSerialize, (o1, o2) -> {
             long bias1 = SharedConfig.currentProxy == o1 ? -200000 : 0;
             if (!o1.available) {
@@ -1881,32 +1806,6 @@ public class SharedConfig {
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
         preferences.edit().putString("proxy_list", Base64.encodeToString(serializedData.toByteArray(), Base64.NO_WRAP)).apply();
         serializedData.cleanup();
-
-        File proxyListFile = new File(ApplicationLoader.applicationContext.getFilesDir(), "nekox/proxy_list_V2.json");
-        JSONObject root = new JSONObject();
-        try {
-            // Save WSRelay
-            JSONArray wsrelay = new JSONArray();
-            proxyList.stream()
-                    .filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_WSRELAY)
-                    .forEach(proxyInfo -> wsrelay.put(proxyInfo.getLink()));
-            root.put("wsrelay", wsrelay);
-
-            // Save SingProxy
-            JSONArray sing = new JSONArray();
-            proxyList.stream()
-                    .filter(proxyInfo -> proxyInfo.getProxyType() == PROXY_TYPE_SING)
-                    .forEach(proxyInfo -> sing.put(((SingProxyInfo) proxyInfo).getProxyBean().generateStorageJson()));
-            root.put("sing", sing);
-
-            // Save the order
-            JSONArray order = new JSONArray();
-            proxyList.stream().forEachOrdered(proxyInfo -> order.put(proxyInfo.getHash()));
-            root.put("order", order);
-        } catch (JSONException ex) {
-            FileLog.e(ex);
-        }
-        FileUtil.writeUtf8String(root.toString(), proxyListFile);
     }
 
     public static ProxyInfo parseProxyInfo(String url) {
@@ -1940,7 +1839,6 @@ public class SharedConfig {
     }
 
     public static ProxyInfo addProxy(ProxyInfo proxyInfo) {
-        if (proxyInfo.getProxyType() != PROXY_TYPE_ORIGINAL) return null;
         loadProxyList();
         int count = proxyList.size();
         for (int a = 0; a < count; a++) {
