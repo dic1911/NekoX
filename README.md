@@ -136,13 +136,15 @@ rustup target install armv7-linux-androideabi aarch64-linux-android i686-linux-a
 
 ## FAQ
 
-#### What is the differences between NekoX and Nekogram?
+#### What is the differences between NekoX and Nekogram, and what is this ghetto edition?
 
-Developed by different developers, read the feature list above to understand the differences.
+Developed by different developers, read the feature list above to understand the differences. And for this ghetto edition, the solely purpose is to make sure we have NekoX updated, while sacrificing unnecessary stuff as the price we pay for efficiency.
 
 #### What is the difference between the Full and Mini version?
 
-The full version comes with built-in proxy support for v2ray, shadowsocks, shadowsocksr, and trojan, which is usually provided to advanced users to help friends who have no computer knowledge in mainland China to bypass censorship. Don't complain about imperfect functions or ask to add other rare proxy types, you can use their clients directly.
+~~The full version comes with built-in proxy support for v2ray, shadowsocks, shadowsocksr, and trojan, which is usually provided to advanced users to help friends who have no computer knowledge in mainland China to bypass censorship. Don't complain about imperfect functions or ask to add other rare proxy types, you can use their clients directly.~~
+
+There's no more full version, only mini variant will be released as most VPN stuff is now nuked.
 
 #### What if I don't need a proxy?
 
@@ -154,11 +156,11 @@ Google Cloud Messaging, also known as gcm / fcm, message push service by google 
 
 #### I've encountered a bug!
 
-First, make sure you have the latest version installed (check the channel, Play store versions usually have a delay).
+First, make sure you have the latest version installed (check the channel).
 
 Then, if the issue appears in the official Telegram client too, please submit it to the officials, (be careful not to show NekoX in the description and screenshots, the official developers doesn't like us!).
 
-Then, please *detail* your issue, create an issue or submit it to our [group](https://t.me/NekoXChat) with #bug.
+Then, please *detail* your issue, submit it to our [linked disscussion group](https://t.me/nekox_broken) with #bug.
 
 If you experience a *crash*, you also need to click on the version number at the bottom of the settings and select "Enable Log" and send it to us.
 
