@@ -35,7 +35,8 @@ import tw.nekomimi.nekogram.database.NitritesKt;
 public class NekoXConfig {
 
     //  public static String FAQ_URL = "https://telegra.ph/NekoX-FAQ-03-31";
-    public static String FAQ_URL = "https://github.com/NekoX-Dev/NekoX#faq";
+    //  public static String FAQ_URL = "https://github.com/NekoX-Dev/NekoX#faq";
+    public static String FAQ_URL = "https://github.com/dic1911/NekoX#faq";
     public static long[] officialChats = {
             1305127566, // NekoX Updates
             1151172683, // NekoX Chat
@@ -46,6 +47,7 @@ public class NekoXConfig {
     public static long[] developers = {
             896711046, // nekohasekai
             380570774, // Haruhi
+            150725478, // HenTaku
     };
 
     public static final int TITLE_TYPE_TEXT = 0;
