@@ -1068,7 +1068,7 @@ public class SharedConfig {
         if (updateVersionString == null) {
             updateVersionString = BuildVars.BUILD_VERSION_STRING;
         }
-        if (update.version == null || versionBiggerOrEqual(updateVersionString, update.version)) {
+        if (update == null || update.version == null || versionBiggerOrEqual(updateVersionString, update.version)) {
             return false;
         }
         pendingAppUpdate = update;
