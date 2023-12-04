@@ -465,11 +465,11 @@ public class AndroidUtilities {
         return null;
     }
 
-    public static CharSequence premiumText(String str, Runnable runnable) {
+    public static SpannableStringBuilder premiumText(String str, Runnable runnable) {
         return replaceSingleTag(str, -1, REPLACING_TAG_TYPE_LINKBOLD, runnable);
     }
 
-    public static CharSequence replaceSingleTag(String str, Runnable runnable) {
+    public static SpannableStringBuilder replaceSingleTag(String str, Runnable runnable) {
         return replaceSingleTag(str, -1, 0, runnable);
     }
 
@@ -527,6 +527,10 @@ public class AndroidUtilities {
     }
 
     public static SpannableStringBuilder replaceSingleLink(String str, int color) {
+        return replaceSingleLink(str, color, null);
+    }
+
+    public static SpannableStringBuilder replaceSingleLink(String str, int color, Runnable onClick) {
         int startIndex = str.indexOf("**");
         int endIndex = str.indexOf("**", startIndex + 1);
         str = str.replace("**", "");
@@ -548,7 +552,9 @@ public class AndroidUtilities {
 
                 @Override
                 public void onClick(@NonNull View view) {
-
+                    if (onClick != null) {
+                        onClick.run();
+                    }
                 }
             }, index, index + len, 0);
         }
@@ -1120,7 +1126,7 @@ public class AndroidUtilities {
     public static int[] calcDrawableColor(Drawable drawable) {
         if (drawable instanceof ChatBackgroundDrawable) {
             ChatBackgroundDrawable chatBackgroundDrawable = (ChatBackgroundDrawable) drawable;
-            return calcDrawableColor(chatBackgroundDrawable.getDrawable());
+            return calcDrawableColor(chatBackgroundDrawable.getDrawable(true));
         }
         int bitmapColor = 0xff000000;
         int[] result = new int[4];
@@ -5647,6 +5653,9 @@ public class AndroidUtilities {
     }
 
     public static void forEachViews(RecyclerView recyclerView, Consumer<View> consumer) {
+        if (recyclerView == null) {
+            return;
+        }
         for (int i = 0; i < recyclerView.getChildCount(); i++) {
             consumer.accept(recyclerView.getChildAt(i));
         }
