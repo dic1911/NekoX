@@ -9667,6 +9667,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         onlineTextView[1].setTextColor(applyPeerColor(getThemedColor(key), true, isOnline[0]));
                     }
                 }
+                if (idTextView != null) {
+                    if (!isPulledDown) {
+                        idTextView.setTextColor(applyPeerColor(getThemedColor(Theme.key_avatar_subtitleInProfileBlue), true, false));
+                    }
+                }
             }
             hasCustomPhoto = user.photo != null && user.photo.personal;
             try {
