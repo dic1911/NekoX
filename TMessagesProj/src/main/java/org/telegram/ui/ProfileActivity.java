@@ -9143,7 +9143,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 return;
             }
             if (UserObject.isUserSelf(user)) {
-                otherItem.addSubItem(logout, LocaleController.getString("LogOut", R.string.LogOut));
                 otherItem.addSubItem(edit_name, R.drawable.msg_edit, LocaleController.getString(R.string.EditName));
                 otherItem.addSubItem(edit_color, R.drawable.msg_colors, LocaleController.getString(R.string.EditProfileColor));
                 selfUser = true;
@@ -10485,35 +10484,35 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                         textCell.setColors(-1, Theme.key_text_RedRegular);
                     } else if (position == languageRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("Language", R.string.Language), R.drawable.baseline_language_24, false);
+                        textCell.setTextAndIcon(LocaleController.getString("Language", R.string.Language), R.drawable.msg2_language, false);
                     } else if (position == notificationRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NotificationsAndSounds", R.string.NotificationsAndSounds), R.drawable.baseline_notifications_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("NotificationsAndSounds", R.string.NotificationsAndSounds), R.drawable.msg2_notifications, true);
                     } else if (position == privacyRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("PrivacySettings", R.string.PrivacySettings), R.drawable.baseline_lock_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("PrivacySettings", R.string.PrivacySettings), R.drawable.msg2_secret, true);
                     } else if (position == dataRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("DataSettings", R.string.DataSettings), R.drawable.baseline_data_usage_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("DataSettings", R.string.DataSettings), R.drawable.msg2_data, true);
                     } else if (position == chatRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("ChatSettings", R.string.ChatSettings), R.drawable.baseline_palette_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("ChatSettings", R.string.ChatSettings), R.drawable.msg2_discussion, true);
                     } else if (position == stickersRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("StickersAndMasks", R.string.StickersAndMasks), R.drawable.deproko_baseline_stickers_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("StickersAndMasks", R.string.StickersAndMasks), R.drawable.msg2_sticker, true);
                     } else if (position == nekoRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NekoSettings", R.string.NekoSettings), R.drawable.baseline_extension_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("NekoSettings", R.string.NekoSettings), R.drawable.notification, true);
                     } else if (position == filtersRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("Filters", R.string.Filters), R.drawable.baseline_folder_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("Filters", R.string.Filters), R.drawable.msg2_folder, true);
                     } else if (position == liteModeRow) {
                         textCell.setTextAndIcon(LocaleController.getString(R.string.PowerUsage), R.drawable.msg2_battery, true);
                     } else if (position == questionRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NekoXUpdatesChannel", R.string.NekoXUpdatesChannel), R.drawable.baseline_bullhorn_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("NekoXUpdatesChannel", R.string.NekoXUpdatesChannel), R.drawable.msg_channel, true);
                     } else if (position == faqRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("NekoXFaq", R.string.NekoXFaq), R.drawable.baseline_help_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("NekoXFaq", R.string.NekoXFaq), R.drawable.msg2_help, true);
                     } else if (position == policyRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("PrivacyPolicy", R.string.PrivacyPolicy), R.drawable.baseline_security_24, true);
+                        textCell.setTextAndIcon(LocaleController.getString("PrivacyPolicy", R.string.PrivacyPolicy), R.drawable.msg2_policy, true);
                     } else if (position == sendLogsRow) {
                         textCell.setTextAndIcon(LocaleController.getString("DebugSendLogs", R.string.DebugSendLogs), R.drawable.baseline_bug_report_24, true);
                     } else if (position == sendLastLogsRow) {
                         textCell.setTextAndIcon(LocaleController.getString("DebugSendLastLogs", R.string.DebugSendLastLogs), R.drawable.baseline_bug_report_24 ,true);
                     } else if (position == clearLogsRow) {
-                        textCell.setTextAndIcon(LocaleController.getString("DebugClearLogs", R.string.DebugClearLogs), R.drawable.baseline_delete_sweep_24, switchBackendRow != -1);
+                        textCell.setTextAndIcon(LocaleController.getString("DebugClearLogs", R.string.DebugClearLogs), R.drawable.msg_clearcache, switchBackendRow != -1);
                     } else if (position == switchBackendRow) {
                         textCell.setText("Switch Backend", false);
                     } else if (position == devicesRow) {
