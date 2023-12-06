@@ -8131,7 +8131,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             if (UserObject.isUserSelf(user)) {
                 numberSectionRow = rowCount++;
                 setUsernameRow = rowCount++;
-                if (!hideNumber) {
+                if (!hideNumber && !NekoConfig.hidePhone.Bool()) {
                     numberRow = rowCount++;
                 }
                 bioRow = rowCount++;
