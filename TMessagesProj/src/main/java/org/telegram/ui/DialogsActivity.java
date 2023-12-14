@@ -379,6 +379,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             AndroidUtilities.runOnUIThread(updateListRunnable, 36);
         }
+
+        public void workaroundArchiveUiGlitch(DialogCell cell) {
+            listView.forceArchiveHiddenTemp(cell);
+        }
     }
 
     private ViewPagerFixed.TabsView searchTabsView;
@@ -2099,6 +2103,13 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     dialogCell.invalidate();
                 }
             }
+        }
+
+        private void forceArchiveHiddenTemp(DialogCell dialogCell) {
+            if (dialogCell == null) return;
+            dialogCell.resetPinnedArchiveState(true);
+            updatePullState();
+            dialogCell.invalidate();
         }
 
         private void updatePullState() {
@@ -6555,6 +6566,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public void onResume() {
         super.onResume();
+        if (viewPages.length > 0 && viewPages[0] != null) {
+            DialogCell cell = findArchiveDialogCell(viewPages[0]);
+            viewPages[0].workaroundArchiveUiGlitch(cell);
+        }
         if (dialogStoriesCell != null) {
             dialogStoriesCell.onResume();
         }
