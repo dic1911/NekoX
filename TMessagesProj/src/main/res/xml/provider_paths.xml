@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <paths>
     <external-path name="media" path="."/>
+    <cache-path name="internal-cache" path="." />
     <cache-path name="cache-logs" path="logs/" />
     <cache-path
         name="cache-media"

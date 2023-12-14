@@ -52,8 +52,12 @@ import org.telegram.ui.DocumentSelectActivity;
 import org.telegram.ui.LaunchActivity;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -189,7 +193,9 @@ public class NekoSettingsActivity extends BaseFragment {
     private void backupSettings() {
 
         try {
-            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), new Date().toLocaleString() + ".nekox-settings.json");
+            DateFormat df = new SimpleDateFormat("yyyyMMdd-HHmmss", Locale.getDefault());
+            Date today = Calendar.getInstance().getTime();
+            File cacheFile = new File(ApplicationLoader.applicationContext.getCacheDir(), df.format(today) + ".nekox-settings.json");
             FileUtil.writeUtf8String(backupSettingsJson(), cacheFile);
             ShareUtil.shareFile(getParentActivity(), cacheFile);
         } catch (JSONException e) {
