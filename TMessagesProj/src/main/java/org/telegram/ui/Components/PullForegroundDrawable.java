@@ -15,6 +15,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.StaticLayout;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.animation.LinearInterpolator;
@@ -29,6 +30,8 @@ import org.telegram.messenger.R;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Stories.recorder.HintView2;
 import org.telegram.ui.TopicsFragment;
+
+import java.util.Arrays;
 
 public class PullForegroundDrawable {
 
@@ -228,8 +231,11 @@ public class PullForegroundDrawable {
     }
 
     public void draw(Canvas canvas, boolean header) {
-        if (!willDraw || isOut || cell == null || listView == null) {
+        if (!willDraw || cell == null || listView == null) {
+            Log.d("030-UI", String.format("skip drawing PullForegroundDrawable, willDraw: %s, isOut: %s, cell: %s, listView: %s", willDraw, isOut, cell != null, listView != null));
             return;
+        } else if (isOut) {
+//            Log.w("030-UI", "ignoring isOut");
         }
         boolean isTopic = cell instanceof TopicsFragment.TopicDialogCell;
         int startPadding = AndroidUtilities.dp(isTopic ? 15 : 28);
@@ -638,6 +644,7 @@ public class PullForegroundDrawable {
     }
 
     public void doNotShow() {
+        Log.d("030-UI", "doNotShow()");
         if (textSwipingAnimator != null) {
             textSwipingAnimator.cancel();
         }
@@ -664,6 +671,7 @@ public class PullForegroundDrawable {
     }
 
     public void showHidden() {
+        Log.d("030-UI", "showHidden()");
         if (outAnimator != null) {
             outAnimator.removeAllListeners();
             outAnimator.cancel();
