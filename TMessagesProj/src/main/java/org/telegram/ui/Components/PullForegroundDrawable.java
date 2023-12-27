@@ -644,7 +644,6 @@ public class PullForegroundDrawable {
     }
 
     public void doNotShow() {
-        Log.d("030-UI", "doNotShow()");
         if (textSwipingAnimator != null) {
             textSwipingAnimator.cancel();
         }
@@ -671,7 +670,6 @@ public class PullForegroundDrawable {
     }
 
     public void showHidden() {
-        Log.d("030-UI", "showHidden()");
         if (outAnimator != null) {
             outAnimator.removeAllListeners();
             outAnimator.cancel();
