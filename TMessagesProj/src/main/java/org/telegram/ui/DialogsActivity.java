@@ -270,6 +270,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean wasDrawn;
     private int fragmentContextTopPadding;
 
+    private boolean chatOpened;
+
     public MessagesStorage.TopicKey getOpenedDialogId() {
         return openedDialogId;
     }
@@ -2217,7 +2219,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                     AndroidUtilities.makeAccessibilityAnnouncement(LocaleController.getString(R.string.AccDescrArchivedChatsShown));
                                 }
 
-                                if (NekoConfig.openArchiveOnPull.Bool()) {
+                                if (!chatOpened && NekoConfig.openArchiveOnPull.Bool()) {
                                     AndroidUtilities.runOnUIThread(() -> {
                                         // Open the folder.
                                         // Delay was taken from PullForegroundDrawable::startOutAnimation().
@@ -6578,6 +6580,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public void onResume() {
         super.onResume();
+        chatOpened = false;
         if (viewPages.length > 0 && viewPages[0] != null) {
             DialogCell cell = findArchiveDialogCell(viewPages[0]);
             viewPages[0].workaroundArchiveUiGlitch(cell);
@@ -7687,6 +7690,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         } else {
+            chatOpened = true;
             Bundle args = new Bundle();
             if (DialogObject.isEncryptedDialog(dialogId)) {
                 args.putInt("enc_id", DialogObject.getEncryptedChatId(dialogId));
