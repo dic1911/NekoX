@@ -9,12 +9,14 @@
 package org.telegram.ui.Cells;
 
 import android.content.Context;
+import android.graphics.Canvas;
 import android.graphics.drawable.Drawable;
 import android.view.HapticFeedbackConstants;
 import android.view.MotionEvent;
 import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 
+import org.telegram.ui.ActionBar.Theme;
 import tw.nekomimi.nekogram.NekoConfig;
 
 public abstract class BaseCell extends ViewGroup {
@@ -113,5 +115,13 @@ public abstract class BaseCell extends ViewGroup {
 
     protected boolean onLongPress() {
         return true;
+    }
+
+    public int getBoundsLeft() {
+        return 0;
+    }
+
+    public int getBoundsRight() {
+        return getWidth();
     }
 }

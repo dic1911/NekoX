@@ -185,9 +185,8 @@ android {
             debuggable true
             jniDebuggable true
             multiDexEnabled true
-            zipAlignEnabled true;
             signingConfig keystorePwd == null ? signingConfigs.debug : signingConfigs.release
-            ndk.debugSymbolLevel = "FULL"
+            ndk.debugSymbolLevel = 'FULL'
         }
 
         releaseNoGcm {
@@ -196,7 +195,6 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            zipAlignEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ["release", "debug"]
             signingConfig keystorePwd == null ? signingConfigs.debug : signingConfigs.release
@@ -208,7 +206,6 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            zipAlignEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ["release", "debug"]
             signingConfig keystorePwd == null ? signingConfigs.debug : signingConfigs.release
@@ -220,7 +217,6 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            zipAlignEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ["release", "debug"]
         }
@@ -396,6 +392,15 @@ dependencies {
     testImplementation "junit:junit:4.13.2"
     testImplementation "androidx.test:core:1.5.0"
     testImplementation "org.robolectric:robolectric:4.5.1"
+
+    constraints {
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.8.0") {
+            because("kotlin-stdlib-jdk7 is now a part of kotlin-stdlib")
+        }
+        implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.8.0") {
+            because("kotlin-stdlib-jdk8 is now a part of kotlin-stdlib")
+        }
+    }
 
     coreLibraryDesugaring "com.android.tools:desugar_jdk_libs:1.2.0"
 
