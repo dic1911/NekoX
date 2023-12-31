@@ -47,6 +47,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.transition.ChangeBounds;
 import android.transition.TransitionManager;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.Property;
 import android.util.SparseArray;
@@ -271,6 +272,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private boolean storiesOverscrollCalled;
     private boolean wasDrawn;
     private int fragmentContextTopPadding;
+
+    private boolean chatOpened;
 
     public MessagesStorage.TopicKey getOpenedDialogId() {
         return openedDialogId;
@@ -2221,7 +2224,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                     AndroidUtilities.makeAccessibilityAnnouncement(LocaleController.getString(R.string.AccDescrArchivedChatsShown));
                                 }
 
-                                if (NekoConfig.openArchiveOnPull.Bool()) {
+                                if (!chatOpened && NekoConfig.openArchiveOnPull.Bool()) {
                                     AndroidUtilities.runOnUIThread(() -> {
                                         // Open the folder.
                                         // Delay was taken from PullForegroundDrawable::startOutAnimation().
@@ -3829,6 +3832,17 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         }
                         viewPage.listView.setViewsOffset(ty);
                     }
+
+                    // 030: ?
+                    if (hasArchivedDialogs && ((SharedConfig.archiveHidden && viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_PINNED) || (!SharedConfig.archiveHidden && viewPage.archivePullViewState != ARCHIVE_ITEM_STATE_PINNED))) {
+                        Log.d("030-UI", String.format("state mismatch, original values: cfg hide: %s, viewPage.archivePullViewState = %d", SharedConfig.archiveHidden, viewPage.archivePullViewState));
+                        if (getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null)
+                            viewPage.archivePullViewState = SharedConfig.archiveHidden ? ARCHIVE_ITEM_STATE_HIDDEN : ARCHIVE_ITEM_STATE_PINNED;
+                        else
+                            Log.d("030-UI", "no archived chat, skip patching state");
+                    }
+                    if (viewPage.listView != null && viewPage.pullForegroundDrawable != null) viewPage.pullForegroundDrawable.setListView(viewPage.listView);
+                    else if (viewPage.listView == null) Log.w("030-UI", "listView is null!");
 
                     if (viewPage.dialogsType == DIALOGS_TYPE_DEFAULT && viewPage.archivePullViewState != ARCHIVE_ITEM_STATE_PINNED && hasHiddenArchive() && !fixScrollYAfterArchiveOpened) {
                         int usedDy = super.scrollVerticallyBy(measuredDy, recycler, state);
@@ -6603,6 +6617,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public void onResume() {
         super.onResume();
+        chatOpened = false;
         if (viewPages.length > 0 && viewPages[0] != null) {
             DialogCell cell = findArchiveDialogCell(viewPages[0]);
             viewPages[0].workaroundArchiveUiGlitch(cell);
@@ -7716,6 +7731,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
             }
         } else {
+            chatOpened = true;
             Bundle args = new Bundle();
             if (DialogObject.isEncryptedDialog(dialogId)) {
                 args.putInt("enc_id", DialogObject.getEncryptedChatId(dialogId));
@@ -8373,7 +8389,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         }
     }
 
+    public boolean hasArchivedDialogs = true;
     private boolean hasHiddenArchive() {
+        boolean has = getMessagesController().hasHiddenArchive();
+        hasArchivedDialogs = (SharedConfig.archiveHidden == has) && has;
         return !onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT && folderId == 0 && getMessagesController().hasHiddenArchive();
     }
 

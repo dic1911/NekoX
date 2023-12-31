@@ -27,6 +27,7 @@ import android.os.SystemClock;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.util.SparseBooleanArray;
@@ -7785,7 +7786,9 @@ public class MessagesController extends BaseController implements NotificationCe
     }
 
     public boolean hasHiddenArchive() {
-        return SharedConfig.archiveHidden && dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null;
+        TLRPC.Dialog archivedDialogs = dialogs_dict.get(DialogObject.makeFolderDialogId(1));
+        if (archivedDialogs == null) Log.e("030-UI", "archived dialogs is null!");
+        return SharedConfig.archiveHidden && archivedDialogs != null;
     }
 
     public ArrayList<TLRPC.Dialog> getDialogs(int folderId) {

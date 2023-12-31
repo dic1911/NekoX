@@ -762,7 +762,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     }
 
     public void resetPinnedArchiveState(boolean forceHidden) {
-        archiveHidden = SharedConfig.archiveHidden && !forceHidden;
+        archiveHidden = SharedConfig.archiveHidden || forceHidden;
         archiveBackgroundProgress = archiveHidden ? 0.0f : 1.0f;
         avatarDrawable.setArchivedAvatarHiddenProgress(archiveBackgroundProgress);
         clipProgress = 0.0f;
