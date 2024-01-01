@@ -171,11 +171,7 @@ public class BoostRepository {
                                    TLRPC.Chat chat, int date, boolean onlyNewSubscribers, BaseFragment baseFragment,
                                    boolean winnersVisible, boolean withAdditionPrize, String prizeDesc,
                                    Utilities.Callback<Void> onSuccess, Utilities.Callback<TLRPC.TL_error> onError) {
-        if (!isGoogleBillingAvailable()) {
-            payGiveAwayByInvoice(chats, selectedCountries, option, chat, date, onlyNewSubscribers, baseFragment, winnersVisible, withAdditionPrize, prizeDesc, onSuccess, onError);
-        } else {
-            payGiveAwayByGoogle(chats, selectedCountries, option, chat, date, onlyNewSubscribers, baseFragment, winnersVisible, withAdditionPrize, prizeDesc, onSuccess, onError);
-        }
+        // 030: remove premium shit
     }
 
     public static void payGiveAwayByInvoice(List<TLObject> chats, List<TLObject> selectedCountries, TLRPC.TL_premiumGiftCodeOption option, TLRPC.Chat chat, int date, boolean onlyNewSubscribers, BaseFragment baseFragment, Utilities.Callback<Void> onSuccess, Utilities.Callback<TLRPC.TL_error> onError) {

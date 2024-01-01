@@ -1060,7 +1060,7 @@ public class SharedConfig {
         if (pendingAppUpdate == null || pendingAppUpdate.document == null || !ApplicationLoader.isStandaloneBuild()) {
             return false;
         }
-        return pendingAppUpdateBuildVersion == BuildVars.BUILD_VERSION;
+        return pendingAppUpdateBuildVersion == buildVersion();
     }
 
     public static boolean setNewAppVersionAvailable(TLRPC.TL_help_appUpdate update) {

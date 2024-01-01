@@ -8210,12 +8210,12 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 nekoRow = rowCount++;
                 languageRow = rowCount++;
                 devicesSectionRow = rowCount++;
-                if (!getMessagesController().premiumFeaturesBlocked()) {
-                    premiumRow = rowCount++;
-                }
-                if (!getMessagesController().premiumPurchaseBlocked()) {
-                    premiumGiftingRow = rowCount++;
-                }
+//                if (!getMessagesController().premiumFeaturesBlocked()) {
+//                    premiumRow = rowCount++;
+//                }
+//                if (!getMessagesController().premiumPurchaseBlocked()) {
+//                    premiumGiftingRow = rowCount++;
+//                }
                 if (premiumRow >= 0 || premiumGiftingRow >= 0) {
                     premiumSectionsRow = rowCount++;
                 }
@@ -9302,6 +9302,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 //                        otherItem.addSubItem(gift_premium, R.drawable.msg_gift_premium, LocaleController.getString(R.string.GiftPremium));
 //                    }
                     otherItem.addSubItem(start_secret_chat, R.drawable.msg_secret, LocaleController.getString("StartEncryptedChat", R.string.StartEncryptedChat));
+                }
                 if (StrUtil.isNotBlank(user.username)) {
                     otherItem.addSubItem(qr_code, R.drawable.wallet_qr, LocaleController.getString("ShareQRCode", R.string.ShareQRCode));
                 }
@@ -12113,9 +12114,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             put(++pointer, settingsSectionRow2, sparseIntArray);
             put(++pointer, notificationRow, sparseIntArray);
             put(++pointer, languageRow, sparseIntArray);
-            put(++pointer, premiumRow, sparseIntArray);
-            put(++pointer, premiumSectionsRow, sparseIntArray);
-            put(++pointer, premiumGiftingRow, sparseIntArray);
+//            put(++pointer, premiumRow, sparseIntArray);
+//            put(++pointer, premiumSectionsRow, sparseIntArray);
+//            put(++pointer, premiumGiftingRow, sparseIntArray);
             put(++pointer, privacyRow, sparseIntArray);
             put(++pointer, dataRow, sparseIntArray);
             put(++pointer, liteModeRow, sparseIntArray);

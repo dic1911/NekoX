@@ -4,6 +4,7 @@ import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.TLRPC;
 import org.webrtc.EglBase;
@@ -27,7 +28,7 @@ public class InternalUpdater {
     static final String CHANNEL_APKS_NAME = "NekoXApks";
 
     static void retrieveUpdateMetadata(retrieveUpdateMetadataCallback callback) {
-        final int localVersionCode = BuildVars.BUILD_VERSION;
+        final int localVersionCode = SharedConfig.buildVersion();
         AccountInstance accountInstance = AccountInstance.getInstance(UserConfig.selectedAccount);
         TLRPC.TL_messages_getHistory req = new TLRPC.TL_messages_getHistory();
         req.peer = accountInstance.getMessagesController().getInputPeer(-CHANNEL_METADATA_ID);

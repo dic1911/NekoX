@@ -23,12 +23,6 @@ import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 
-import com.google.mlkit.common.MlKitException;
-import com.google.mlkit.vision.common.InputImage;
-import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation;
-import com.google.mlkit.vision.segmentation.subject.SubjectSegmenter;
-import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions;
-
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.FileLoader;
@@ -170,27 +164,7 @@ public class PhotoView extends EntityView {
     private boolean segmentingLoading, segmentingLoaded;
     public Bitmap segmentedImage;
     public void segmentImage(Bitmap source) {
-        if (segmentingLoaded || segmentingLoading || source == null) return;
-        if (Build.VERSION.SDK_INT < 24) return;
-        SubjectSegmenter segmenter = SubjectSegmentation.getClient(new SubjectSegmenterOptions.Builder().enableForegroundBitmap().build());
-        segmentingLoading = true;
-        InputImage inputImage = InputImage.fromBitmap(source, orientation);
-        segmenter.process(inputImage)
-            .addOnSuccessListener(result -> {
-                segmentingLoaded = true;
-                segmentingLoading = false;
-                segmentedImage = result.getForegroundBitmap();
-                highlightSegmented();
-            })
-            .addOnFailureListener(error -> {
-                segmentingLoading = false;
-                FileLog.e(error);
-                if (isWaitingMlKitError(error) && isAttachedToWindow()) {
-                    AndroidUtilities.runOnUIThread(() -> segmentImage(source), 2000);
-                } else {
-                    segmentingLoaded = true;
-                }
-            });
+        // 030: no mlkit
     }
 
     public boolean hasSegmentedImage() {
@@ -198,8 +172,8 @@ public class PhotoView extends EntityView {
     }
 
     public static boolean isWaitingMlKitError(Exception e) {
-        if (Build.VERSION.SDK_INT < 24) return false;
-        return e instanceof MlKitException && e.getMessage() != null && e.getMessage().contains("segmentation optional module to be downloaded");
+        // 030: no mlkit
+        return false;
     }
 
     public File saveSegmentedImage(int currentAccount) {

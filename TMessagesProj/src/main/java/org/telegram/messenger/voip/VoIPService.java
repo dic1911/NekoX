@@ -2757,12 +2757,11 @@ public class VoIPService extends Service implements SensorEventListener, AudioMa
 									currentBluetoothDeviceName != null ? currentBluetoothDeviceName : LocaleController.getString("VoipAudioRoutingBluetooth", R.string.VoipAudioRoutingBluetooth)},
 							new int[]{R.drawable.msg_call_speaker,
 									isHeadsetPlugged ? R.drawable.calls_menu_headset : R.drawable.msg_call_earpiece,
-									R.drawable.msg_call_bluetooth}, (which, dialog, __) -> {
+									R.drawable.msg_call_bluetooth}, (dialog, which) -> {
 								if (getSharedInstance() == null) {
-									return Unit.INSTANCE;
+									return;
 								}
 								setAudioOutput(which);
-								return Unit.INSTANCE;
 							});
 
 			BottomSheet bottomSheet = builder.create();
