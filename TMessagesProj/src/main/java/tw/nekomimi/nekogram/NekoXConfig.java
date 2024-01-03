@@ -42,6 +42,8 @@ public class NekoXConfig {
             1151172683, // NekoX Chat
             1299578049, // NekoX Chat Channel
             1137038259, // NekoX APKs
+            2137047153, // ghetto channel
+            2037198618, // ghetto chat
     };
 
     public static long[] developers = {
@@ -125,7 +127,7 @@ public class NekoXConfig {
         if (hasDeveloper != null)
             return hasDeveloper;
         hasDeveloper = false;
-        if (BuildVars.DEBUG_VERSION) hasDeveloper = true;
+        // if (BuildVars.DEBUG_VERSION) hasDeveloper = true;
         for (int acc : SharedConfig.activeAccounts) {
             long myId = UserConfig.getInstance(acc).clientUserId;
             if (ArrayUtil.contains(NekoXConfig.developers, myId)) {

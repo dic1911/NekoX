@@ -42,7 +42,7 @@ public class NekoConfig {
     public static ConfigItem disableInstantCamera = addConfig("DisableInstantCamera", configTypeBool, false);
     public static ConfigItem showSeconds = addConfig("showSeconds", configTypeBool, false);
 
-    public static ConfigItem enablePublicProxy = addConfig("enablePublicProxy", configTypeBool, true);
+    public static ConfigItem enablePublicProxy = addConfig("enablePublicProxy", configTypeBool, false);
     public static ConfigItem autoUpdateSubInfo = addConfig("autoUpdateSubInfo", configTypeBool, true);
     public static ConfigItem lastUpdateCheckTime = addConfig("lastUpdateCheckTime", configTypeLong, 0L);
 

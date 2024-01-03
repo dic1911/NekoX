@@ -18,22 +18,27 @@ import kotlin.coroutines.suspendCoroutine
 fun loadProxiesPublic(urls: List<String>, exceptions: MutableMap<String, Exception>): List<String> {
     if (!NekoConfig.enablePublicProxy.Bool())
         return emptyList()
-    // Try DoH first ( github.com is often blocked
-    try {
-        val content = DnsFactory.getTxts("nachonekodayo.sekai.icu").joinToString()
-
-        val proxiesString = StrUtil.getSubString(content, "#NekoXStart#", "#NekoXEnd#")
-        if (proxiesString == content) {
-            throw Exception("DoH get public proxy: Not found")
-        }
-
-        return ProxyUtil.parseProxies(proxiesString)
-    } catch (e: Exception) {
-        FileLog.e(e)
+    else {
+        // 030: public proxies is broken & disabled
+        NekoConfig.enablePublicProxy.setConfigBool(false)
+        return emptyList()
     }
+    // Try DoH first ( github.com is often blocked
+//    try {
+//        val content = DnsFactory.getTxts("nachonekodayo.sekai.icu").joinToString()
+//
+//        val proxiesString = StrUtil.getSubString(content, "#NekoXStart#", "#NekoXEnd#")
+//        if (proxiesString == content) {
+//            throw Exception("DoH get public proxy: Not found")
+//        }
+//
+//        return ProxyUtil.parseProxies(proxiesString)
+//    } catch (e: Exception) {
+//        FileLog.e(e)
+//    }
 
     // Try Other Urls
-    return loadProxies(urls, exceptions)
+//    return loadProxies(urls, exceptions)
 }
 
 

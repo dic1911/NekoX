@@ -52,11 +52,8 @@ public class SubInfo implements Mappable {
             if (id == SubManager.publicProxySubID) {
                 if (!NekoConfig.enablePublicProxy.Bool())
                     return new ArrayList<>();
-                List<String> pubs = ProxyLoadsKt.loadProxiesPublic(urls, exceptions);
-                if (!NekoConfig.enablePublicProxy.Bool())
-                    return new ArrayList<>();
-                else
-                    return pubs;
+
+                return ProxyLoadsKt.loadProxiesPublic(urls, exceptions);
             } else {
                 return ProxyLoadsKt.loadProxies(urls, exceptions);
             }

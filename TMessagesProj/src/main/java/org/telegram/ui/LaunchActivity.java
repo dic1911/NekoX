@@ -946,21 +946,21 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         MediaController.getInstance().setBaseActivity(this, true);
 
-        UIUtil.runOnIoDispatcher(() -> {
+//        UIUtil.runOnIoDispatcher(() -> {
 //            ExternalGcm.checkUpdate(this);
-            if (NekoConfig.autoUpdateSubInfo.Bool())
-                for (SubInfo subInfo : SubManager.getSubList().find()) {
-                    if (subInfo == null || !subInfo.enable) continue;
-                    try {
-                        subInfo.proxies = subInfo.reloadProxies();
-                        subInfo.lastFetch = System.currentTimeMillis();
-                        SubManager.getSubList().update(subInfo, true);
-                        SharedConfig.reloadProxyList();
-                    } catch (IOException allTriesFailed) {
-                        FileLog.e(allTriesFailed);
-                    }
-                }
-        }, 4000);
+//            if (NekoConfig.autoUpdateSubInfo.Bool())
+//                for (SubInfo subInfo : SubManager.getSubList().find()) {
+//                    if (subInfo == null || !subInfo.enable) continue;
+//                    try {
+//                        subInfo.proxies = subInfo.reloadProxies();
+//                        subInfo.lastFetch = System.currentTimeMillis();
+//                        SubManager.getSubList().update(subInfo, true);
+//                        SharedConfig.reloadProxyList();
+//                    } catch (IOException allTriesFailed) {
+//                        FileLog.e(allTriesFailed);
+//                    }
+//                }
+//        }, 4000);
         //FileLog.d("UI create time = " + (SystemClock.elapsedRealtime() - ApplicationLoader.startTime));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
