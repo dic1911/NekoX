@@ -374,7 +374,7 @@ dependencies {
     compileOnly fileTree("libs")
 
     compileOnly "com.google.firebase:firebase-messaging:$fcmVersion"
-    compileOnly "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
+//    compileOnly "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
     compileOnly "com.google.android.play:core:$playCoreVersion"
 
     debugImplementation 'com.google.android.gms:play-services-maps:18.1.0'
@@ -383,10 +383,10 @@ dependencies {
     releaseImplementation 'com.google.android.gms:play-services-location:20.0.0'
 
     debugImplementation "com.google.firebase:firebase-messaging:$fcmVersion"
-    debugImplementation "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
+//    debugImplementation "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
     debugImplementation "com.google.android.play:core:$playCoreVersion"
     releaseImplementation "com.google.firebase:firebase-messaging:$fcmVersion"
-    releaseImplementation "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
+//    releaseImplementation "com.google.firebase:firebase-crashlytics:$crashlyticsVersion"
     releaseImplementation "com.google.android.play:core:$playCoreVersion"
 
     testImplementation "junit:junit:4.13.2"
@@ -407,7 +407,7 @@ dependencies {
 }
 
 apply plugin: "com.google.gms.google-services"
-apply plugin: "com.google.firebase.crashlytics"
+//apply plugin: "com.google.firebase.crashlytics"
 
 android {
 
