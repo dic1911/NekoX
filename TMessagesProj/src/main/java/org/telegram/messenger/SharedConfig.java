@@ -670,18 +670,6 @@ public class SharedConfig {
     private static boolean proxyListLoaded;
     public static ProxyInfo currentProxy;
 
-    public static Proxy getActiveSocks5Proxy() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M)
-            return null;
-        // https://stackoverflow.com/questions/36205896/how-to-use-httpurlconnection-over-socks-proxy-on-android
-        // Android did not support socks proxy natively(using HURL) on devices previous than Marshmallow
-        // Hutool use HttpURLConnection too
-        if (currentProxy.getProxyType() == PROXY_TYPE_SING
-                || (currentProxy.getProxyType() == PROXY_TYPE_ORIGINAL && currentProxy.secret.equals("") && currentProxy.username.equals("")))
-            return new Proxy(Proxy.Type.SOCKS, new InetSocketAddress(currentProxy.address, currentProxy.port));
-        return null;
-    }
-
     public static void saveConfig() {
         synchronized (sync) {
             try {

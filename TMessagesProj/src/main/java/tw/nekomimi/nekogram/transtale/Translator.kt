@@ -18,10 +18,6 @@ import tw.nekomimi.nekogram.utils.receive
 import tw.nekomimi.nekogram.utils.receiveLazy
 import java.util.*
 
-fun <T : HttpRequest> T.applyProxy(): T {
-    SharedConfig.getActiveSocks5Proxy()?.let { setProxy(it) }
-    return this
-}
 
 val String.code2Locale: Locale by receiveLazy<String, Locale> {
     var ret: Locale
