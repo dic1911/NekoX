@@ -155,4 +155,5 @@
     <string name="ProviderTelegramAPI">Telegram API</string>
     <string name="DisableStories">Disable Stories</string>
     <string name="DisableSendReadStories">Disable Send Read Stories</string>
+    <string name="IgnoreAllReactions">Ignore All Reactions</string>
 </resources>

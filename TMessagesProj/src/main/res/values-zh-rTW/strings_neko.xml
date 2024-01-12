@@ -145,4 +145,7 @@
     <string name="forceBlurInChat">強制啟用聊天背景模糊</string>
     <string name="ChatBlurAlphaValue">背景模糊度</string>
     <string name="disablePremiumStickerAnimation">停用會員貼圖動畫</string>
+    <string name="DisableStories">停用動態功能</string>
+    <string name="DisableSendReadStories">偷偷看動態</string>
+    <string name="IgnoreAllReactions">忽略表情符號回應</string>
 </resources>

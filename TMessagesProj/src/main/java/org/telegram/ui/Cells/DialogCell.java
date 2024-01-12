@@ -1705,7 +1705,10 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         drawMention = false;
                     }
                     if (reactionMentionCount > 0) {
-                        drawReactionMention = true;
+                        drawReactionMention = !NekoConfig.ignoreAllReactions.Bool();
+                        if (!drawReactionMention) {
+                            reactionMentionCount = 0;
+                        }
                     } else {
                         drawReactionMention = false;
                     }

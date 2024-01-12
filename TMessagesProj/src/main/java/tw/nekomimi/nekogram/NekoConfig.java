@@ -193,6 +193,7 @@ public class NekoConfig {
     public static ConfigItem mapDriftingFixForGoogleMaps = addConfig("mapDriftingFixForGoogleMaps", configTypeBool, true);
     public static ConfigItem disableStories = addConfig("DisableStories", ConfigItem.configTypeBool, false);
     public static ConfigItem disableSendReadStories = addConfig("DisableSendReadStories", ConfigItem.configTypeBool, false);
+    public static ConfigItem ignoreAllReactions = addConfig("IgnoreAllReactions", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);

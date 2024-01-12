@@ -6565,12 +6565,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         });
         reactionsMentiondownButton.setOnLongClickListener(view -> {
             scrimPopupWindow = ReadAllMentionsMenu.show(ReadAllMentionsMenu.TYPE_REACTIONS, getParentActivity(), getParentLayout(), contentView, view, getResourceProvider(), () -> {
-                for (int i = 0; i < messages.size(); i++) {
-                    messages.get(i).markReactionsAsRead();
-                }
-                reactionsMentionCount = 0;
-                updateReactionsMentionButton(true);
-                getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
+                readAllReceivedReactions(true);
                 if (scrimPopupWindow != null) {
                     scrimPopupWindow.dismiss();
                 }
@@ -7581,6 +7576,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         return fragmentView;
     }
 
+    private void readAllReceivedReactions(boolean animated) {
+        for (int i = 0; i < messages.size(); i++) {
+            messages.get(i).markReactionsAsRead();
+        }
+        reactionsMentionCount = 0;
+        updateReactionsMentionButton(animated);
+        getMessagesController().markReactionsAsRead(dialog_id, getTopicId());
+    }
+
     private void createBottomMessagesActionButtons() {
         if (replyButton != null || getContext() == null) {
             return;
@@ -8380,6 +8384,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             return;
         }
         boolean visible = reactionsMentionCount > 0 && chatMode == 0;
+
+        // 030: ignore & read all received reactions automatically
+        if (visible && NekoConfig.ignoreAllReactions.Bool()) {
+            readAllReceivedReactions(false);
+            return;
+        }
+
         reactionsMentiondownButtonCounter.setCount(reactionsMentionCount, animated);
         if (visible && reactionsMentiondownButton.getTag() == null) {
             reactionsMentiondownButton.setTag(1);

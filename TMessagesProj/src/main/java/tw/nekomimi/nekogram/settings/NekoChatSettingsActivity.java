@@ -118,6 +118,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
                     LocaleController.getString("doubleTapDisable", R.string.doubleTapDisable),
             }, null));
     private final AbstractConfigCell disableReactionsWhenSelectingRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableReactionsWhenSelecting));
+    private final AbstractConfigCell ignoreAllReactionsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.ignoreAllReactions));
     private final AbstractConfigCell dividerReaction = cellGroup.appendCell(new ConfigCellDivider());
 
     // Operation Confirmatation
