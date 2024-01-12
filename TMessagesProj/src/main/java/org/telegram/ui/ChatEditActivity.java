@@ -1185,7 +1185,8 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
 
         if (currentChat != null) {
             if (!ChatObject.hasAdminRights(currentChat)) {
-                infoContainer.setVisibility(View.GONE);
+                // 030: always show those buttons, pt.1 (hide recent actions though - not working for non-admin anyway)
+//                infoContainer.setVisibility(View.GONE);
                 settingsTopSectionCell.setVisibility(View.GONE);
             }
 
@@ -1801,7 +1802,8 @@ public class ChatEditActivity extends BaseFragment implements ImageUpdater.Image
         }
 
         if (logCell != null) {
-            logCell.setVisibility(!currentChat.megagroup || currentChat.gigagroup || info != null ? View.VISIBLE : View.GONE);
+            // 030: hide recent actions for non-admin
+            logCell.setVisibility(ChatObject.hasAdminRights(currentChat) && (!currentChat.megagroup || currentChat.gigagroup || info != null) ? View.VISIBLE : View.GONE);
         }
 
         if (linkedCell != null) {
