@@ -8617,16 +8617,35 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
                 return;
             }
-            TLRPC.User user = messageObject != null && DialogObject.isChatDialog(dialog_id) ? accountInstance.getMessagesController().getUser(messageObject.messageOwner.from_id.user_id) : null;
-            SendMessagesHelper.SendMessageParams sendMessageParams;
-            if ((botCount != 1 || username) && user != null && user.bot && !command.contains("@")) {
-                sendMessageParams = SendMessagesHelper.SendMessageParams.of(String.format(Locale.US, "%s@%s", command, UserObject.getPublicUsername(user)), dialog_id, replyingMessageObject, getThreadMessage(), null, false, null, null, null, true, 0, null, false);
-            } else {
-                sendMessageParams = SendMessagesHelper.SendMessageParams.of(command, dialog_id, replyingMessageObject, getThreadMessage(), null, false, null, null, null, true, 0, null, false);
+
+            if (!NekoConfig.confirmToSendCommandByClick.Bool()) {
+                sendMessageForSetCommand(messageObject, command, username);
+                return;
             }
-            applyStoryToSendMessageParams(sendMessageParams);
-            SendMessagesHelper.getInstance(currentAccount).sendMessage(sendMessageParams);
+
+            AlertDialog.Builder dialog = new AlertDialog.Builder(this.getContext());
+            dialog.setMessage(LocaleController.getString("ConfirmToSendCommand", R.string.ConfirmToSendCommand));
+            dialog.setPositiveButton(LocaleController.getString(android.R.string.ok), (dialog1, which) -> {
+                sendMessageForSetCommand(messageObject, command, username);
+            });
+            dialog.setNegativeButton(LocaleController.getString(android.R.string.cancel), null);
+            Dialog dialogFinal = dialog.create();
+            dialogFinal.setCanceledOnTouchOutside(true);
+            dialogFinal.show();
+
         }
+    }
+
+    private void sendMessageForSetCommand(MessageObject messageObject, String command, boolean username) {
+        TLRPC.User user = messageObject != null && DialogObject.isChatDialog(dialog_id) ? accountInstance.getMessagesController().getUser(messageObject.messageOwner.from_id.user_id) : null;
+        SendMessagesHelper.SendMessageParams sendMessageParams;
+        if ((botCount != 1 || username) && user != null && user.bot && !command.contains("@")) {
+            sendMessageParams = SendMessagesHelper.SendMessageParams.of(String.format(Locale.US, "%s@%s", command, UserObject.getPublicUsername(user)), dialog_id, replyingMessageObject, getThreadMessage(), null, false, null, null, null, true, 0, null, false);
+        } else {
+            sendMessageParams = SendMessagesHelper.SendMessageParams.of(command, dialog_id, replyingMessageObject, getThreadMessage(), null, false, null, null, null, true, 0, null, false);
+        }
+        applyStoryToSendMessageParams(sendMessageParams);
+        SendMessagesHelper.getInstance(currentAccount).sendMessage(sendMessageParams);
     }
 
     public void setEditingMessageObject(MessageObject messageObject, boolean caption) {

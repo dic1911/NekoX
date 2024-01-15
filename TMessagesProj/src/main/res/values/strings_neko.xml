@@ -156,4 +156,6 @@
     <string name="DisableStories">Disable Stories</string>
     <string name="DisableSendReadStories">Disable Send Read Stories</string>
     <string name="IgnoreAllReactions">Ignore All Reactions</string>
+    <string name="ConfirmToSendCommandToggle">Confirm before sending command by click</string>
+    <string name="ConfirmToSendCommand">Are you sure you want to send this command?</string>
 </resources>
