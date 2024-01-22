@@ -2967,6 +2967,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             clear();
             textSelectionOverlay = null;
             this.chatActivity = chatActivity;
+
+            setOnTranslate((text, fromLang, toLang, onAlertDismiss) -> {
+                TranslateAlert2.showAlert(chatActivity.getContext(), chatActivity.getFragmentForAlert(0), chatActivity.currentAccount, fromLang, toLang, text, null, false, null, onAlertDismiss);
+            });
         }
 
     @Override

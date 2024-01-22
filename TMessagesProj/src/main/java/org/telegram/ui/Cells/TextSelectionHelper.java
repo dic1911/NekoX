@@ -64,6 +64,7 @@ import org.telegram.ui.ArticleViewer;
 import org.telegram.ui.Components.AnimatedEmojiSpan;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.TranslateAlert2;
 import org.telegram.ui.RestrictedLanguagesSelectActivity;
 
 import java.util.ArrayList;
@@ -1430,7 +1431,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                 menu.add(Menu.NONE, android.R.id.copy, 0, android.R.string.copy);
                 menu.add(Menu.NONE, R.id.menu_quote, 1, LocaleController.getString(R.string.Quote));
                 menu.add(Menu.NONE, android.R.id.selectAll, 2, android.R.string.selectAll);
-//                menu.add(Menu.NONE, TRANSLATE, 3, LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
+                menu.add(Menu.NONE, TRANSLATE, 3, LocaleController.getString("TranslateMessage", R.string.TranslateMessage));
                 return true;
             }
 
@@ -1487,13 +1488,15 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                     AndroidUtilities.runOnUIThread(showActionsRunnable);
                     return true;
                 } else if (itemId == TRANSLATE) {
-                    // NekoX / 030: Translate removed
-//                    if (onTranslateListener != null) {
-//                        String translateToLanguage = LocaleController.getInstance().getCurrentLocale().getLanguage();
+                    // NekoX / 030: Translate ~~removed~~ revived
+                    if (onTranslateListener != null) {
+                        String configTargetLanguage = NekoConfig.translateToLang.String();
+                        String translateToLanguage = configTargetLanguage.isEmpty() ? LocaleController.getInstance().getCurrentLocale().getLanguage() : configTargetLanguage;
 //                        onTranslateListener.run(getSelectedText(), translateFromLanguage, translateToLanguage, () -> showActions());
-//                    }
-//                    hideActions();
-//                    return true;
+                        onTranslateListener.run(getSelectedText(), "auto", translateToLanguage, () -> showActions());
+                    }
+                    hideActions();
+                    return true;
                 } else if (itemId == R.id.menu_quote) {
                     quoteText();
                     hideActions();
