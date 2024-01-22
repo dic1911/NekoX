@@ -287,4 +287,6 @@
     <string name="NekoXSingPluginPresents">Found</string>
     <string name="NekoXSingPlugin">sing-box</string>
     <string name="ShowSelfInsteadOfSavedMessages">Display as self instead of "Saved Messages"</string>
+    <string name="DisableCustomWallpaperUser">Disable user custom wallpaper</string>
+    <string name="DisableCustomWallpaperChannel">Disable channel custom wallpaper</string>
 </resources>

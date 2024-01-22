@@ -198,6 +198,8 @@ public class NekoConfig {
     public static ConfigItem showCopyPhoto = addConfig("CopyPhoto", ConfigItem.configTypeBool, false);
     public static ConfigItem increasedMaxPhotoResolution = addConfig("IncreasedMaxPhotoResolution", ConfigItem.configTypeBool, false);
     public static ConfigItem showSelfInsteadOfSavedMessages = addConfig("ShowSelfInsteadOfSavedMessages", ConfigItem.configTypeBool, false);
+    public static ConfigItem disableCustomWallpaperUser = addConfig("DisableCustomWallpaperUser", ConfigItem.configTypeBool, false);
+    public static ConfigItem disableCustomWallpaperChannel = addConfig("DisableCustomWallpaperChannel", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);

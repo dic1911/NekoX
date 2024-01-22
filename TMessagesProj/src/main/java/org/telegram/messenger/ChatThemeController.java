@@ -23,6 +23,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ChatThemeController extends BaseController {
 
     private final long reloadTimeoutMs = 2 * 60 * 60 * 1000;
@@ -300,11 +302,17 @@ public class ChatThemeController extends BaseController {
 
     public TLRPC.WallPaper getDialogWallpaper(long dialogId) {
         if (dialogId >= 0) {
+            if (NekoConfig.disableCustomWallpaperUser.Bool()) {
+                return null;
+            }
             TLRPC.UserFull userFull = getMessagesController().getUserFull(dialogId);
             if (userFull != null) {
                 return userFull.wallpaper;
             }
         } else {
+            if (NekoConfig.disableCustomWallpaperChannel.Bool()) {
+                return null;
+            }
             TLRPC.ChatFull chatFull = getMessagesController().getChatFull(-dialogId);
             if (chatFull != null) {
                 return chatFull.wallpaper;
