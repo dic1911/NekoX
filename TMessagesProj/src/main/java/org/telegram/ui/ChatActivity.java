@@ -30120,13 +30120,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private void logSponsoredClicked(MessageObject messageObject) {
-        if (messageObject == null || !messageObject.isSponsored()) {
-            return;
-        }
-        TLRPC.TL_channels_clickSponsoredMessage req = new TLRPC.TL_channels_clickSponsoredMessage();
-        req.random_id = messageObject.sponsoredId;
-        req.channel = getMessagesController().getInputChannel(-getDialogId());
-        getConnectionsManager().sendRequest(req, null);
+        // 030: screw telemetry
     }
 
     private void didPressMessageUrl(CharacterStyle url, boolean longPress, MessageObject messageObject, ChatMessageCell cell) {
