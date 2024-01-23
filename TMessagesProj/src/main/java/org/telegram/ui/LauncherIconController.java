@@ -35,6 +35,7 @@ public class LauncherIconController {
 
     public enum LauncherIcon {
         DEFAULT("DefaultIcon", R.drawable.ic_launcher_foreground, R.mipmap.ic_launcher, R.string.AppIconDefault),
+        OLD("OldIcon", R.drawable.ic_launcher_foreground, R.mipmap.ic_launcher_old, R.string.AppIconOld),
         VINTAGE("VintageIcon", R.drawable.icon_6_background_sa, R.mipmap.icon_6_foreground_sa, R.string.AppIconVintage),
         AQUA("AquaIcon", R.drawable.icon_4_background_sa, R.mipmap.icon_foreground_sa, R.string.AppIconAqua),
         PREMIUM("PremiumIcon", R.drawable.icon_3_background_sa, R.mipmap.icon_3_foreground_sa, R.string.AppIconPremium),
@@ -69,7 +70,7 @@ public class LauncherIconController {
         }
 
         public boolean isNekoX() {
-            return this == DEFAULT;
+            return this == DEFAULT || this == OLD;
         }
     }
 }
