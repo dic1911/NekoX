@@ -5,10 +5,14 @@ import static tw.nekomimi.nekogram.utils.LangsKt.uUpdate;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
+import android.os.Build;
 import android.text.TextUtils;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -19,11 +23,15 @@ import android.widget.DatePicker;
 import android.widget.FrameLayout;
 import android.widget.TextView;
 
+import androidx.core.content.FileProvider;
+
 import org.telegram.SQLite.SQLiteCursor;
 import org.telegram.SQLite.SQLiteException;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BaseController;
+import org.telegram.messenger.BuildConfig;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
@@ -637,5 +645,76 @@ public class MessageHelper extends BaseController {
             acc = MediaDataController.calcHash(acc, message.id);
         }
         return acc;
+    }
+
+    public File getPathToMessage(MessageObject messageObject) {
+        String path = messageObject.messageOwner.attachPath;
+        if (!TextUtils.isEmpty(path)) {
+            File file = new File(path);
+            if (file.exists()) {
+                return file;
+            } else {
+                path = null;
+            }
+        }
+        if (TextUtils.isEmpty(path)) {
+            File file = FileLoader.getInstance(messageObject.currentAccount)
+                    .getPathToMessage(messageObject.messageOwner);
+            if (file != null && file.exists()) {
+                return file;
+            } else {
+                path = null;
+            }
+        }
+        if (TextUtils.isEmpty(path)) {
+            File file = FileLoader.getInstance(messageObject.currentAccount)
+                    .getPathToAttach(messageObject.getDocument(), true);
+            return (file != null && file.exists()) ? file : null;
+        }
+        return null;
+    }
+
+    private void addFileToClipboard(File file, Runnable callback) {
+        try {
+            Context context = ApplicationLoader.applicationContext;
+            ClipboardManager clipboard = (ClipboardManager) context.getSystemService(Context.CLIPBOARD_SERVICE);
+            Uri uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider", file);
+            ClipData clip = ClipData.newUri(context.getContentResolver(), "label", uri);
+            clipboard.setPrimaryClip(clip);
+            callback.run();
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
+    }
+
+    public void addMessageToClipboard(MessageObject selectedObject, Runnable callback) {
+        File file = getPathToMessage(selectedObject);
+        if (file != null) {
+            if (file.exists()) {
+                addFileToClipboard(file, callback);
+            }
+        }
+    }
+
+    public void addMessageToClipboardAsSticker(MessageObject selectedObject, Runnable callback) {
+        File file = getPathToMessage(selectedObject);
+        try {
+            if (file != null) {
+                String path = file.getPath();
+                Bitmap image = BitmapFactory.decodeFile(path);
+                if (image != null && !TextUtils.isEmpty(path)) {
+                    File file2 = new File((path.endsWith(".jpg")) ? path.replace(".jpg",".webp") : String.format("%s.webp", path));
+                    FileOutputStream stream = new FileOutputStream(file2);
+                    if (Build.VERSION.SDK_INT >= 30) {
+                        image.compress(Bitmap.CompressFormat.WEBP_LOSSLESS, 100, stream);
+                    } else {
+                        image.compress(Bitmap.CompressFormat.WEBP, 100, stream);
+                    }
+                    stream.close();
+                    addFileToClipboard(file2, callback);
+                }
+            }
+        } catch (java.lang.Exception ignored) {
+        }
     }
 }

@@ -158,4 +158,7 @@
     <string name="IgnoreAllReactions">Ignore All Reactions</string>
     <string name="ConfirmToSendCommandToggle">Confirm before sending command by click</string>
     <string name="ConfirmToSendCommand">Are you sure you want to send this command?</string>
+    <string name="CopyPhoto">Copy Photo</string>
+    <string name="PhotoCopied">Photo Copied</string>
+    <string name="CopyPhotoAsSticker">Copy Photo As Sticker</string>
 </resources>

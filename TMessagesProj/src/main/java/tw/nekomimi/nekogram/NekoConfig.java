@@ -195,6 +195,7 @@ public class NekoConfig {
     public static ConfigItem disableSendReadStories = addConfig("DisableSendReadStories", ConfigItem.configTypeBool, false);
     public static ConfigItem ignoreAllReactions = addConfig("IgnoreAllReactions", ConfigItem.configTypeBool, false);
     public static ConfigItem confirmToSendCommandByClick = addConfig("ConfirmToSendCommandToggle", ConfigItem.configTypeBool, false);
+    public static ConfigItem showCopyPhoto = addConfig("CopyPhoto", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);

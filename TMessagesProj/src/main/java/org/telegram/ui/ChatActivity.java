@@ -1006,6 +1006,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int OPTION_EDIT_SCHEDULE_TIME = 102;
     private final static int OPTION_SPEED_PROMO = 103;
     private final static int OPTION_OPEN_PROFILE = 104;
+    private final static int OPTION_COPY_PHOTO = 150;
+    private final static int OPTION_COPY_PHOTO_AS_STICKER = 151;
 
     private final static int[] allowedNotificationsDuringChatListAnimations = new int[]{
             NotificationCenter.messagesRead,
@@ -25928,6 +25930,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                         items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                                         options.add(OPTION_SAVE_TO_GALLERY);
                                         icons.add(R.drawable.baseline_image_24);
+                                        if (NekoConfig.showCopyPhoto.Bool()){
+                                            items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
+                                            options.add(OPTION_COPY_PHOTO);
+                                            icons.add(R.drawable.msg_copy);
+                                            items.add(LocaleController.getString("CopyPhotoAsSticker", R.string.CopyPhotoAsSticker));
+                                            options.add(OPTION_COPY_PHOTO_AS_STICKER);
+                                            icons.add(R.drawable.msg_copy);
+                                        }
                                     }
                                 }
                             }
@@ -26270,6 +26280,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 items.add(LocaleController.getString("SaveToGallery", R.string.SaveToGallery));
                                 options.add(OPTION_SAVE_TO_GALLERY);
                                 icons.add(R.drawable.baseline_image_24);
+                                if (NekoConfig.showCopyPhoto.Bool()){
+                                    items.add(LocaleController.getString("CopyPhoto", R.string.CopyPhoto));
+                                    options.add(OPTION_COPY_PHOTO);
+                                    icons.add(R.drawable.msg_copy);
+                                    items.add(LocaleController.getString("CopyPhotoAsSticker", R.string.CopyPhotoAsSticker));
+                                    options.add(OPTION_COPY_PHOTO_AS_STICKER);
+                                    icons.add(R.drawable.msg_copy);
+                                }
                             }
                         } else if (type == 5) {
                             items.add(LocaleController.getString("ApplyLocalizationFile", R.string.ApplyLocalizationFile));
@@ -28683,6 +28701,22 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     .setOnPreDismissListener(di -> dimBehindView(false))
                     .setDimBehind(false);
                 preserveDim = true;
+                break;
+            }
+            case OPTION_COPY_PHOTO:{
+                getMessageHelper().addMessageToClipboard(selectedObject, () -> {
+                    if (BulletinFactory.canShowBulletin(ChatActivity.this)) {
+                        BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
+                    }
+                });
+                break;
+            }
+            case OPTION_COPY_PHOTO_AS_STICKER:{
+                getMessageHelper().addMessageToClipboardAsSticker(selectedObject, () -> {
+                    if (BulletinFactory.canShowBulletin(ChatActivity.this)) {
+                        BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("PhotoCopied", R.string.PhotoCopied)).show();
+                    }
+                });
                 break;
             }
             case OPTION_HIDE_SPONSORED_MESSAGE: {

@@ -338,7 +338,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
         linearLayoutInviteContainer.setOrientation(LinearLayout.VERTICAL);
         linearLayout.addView(linearLayoutInviteContainer, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT));
 
-        int count = 11;
+        int count = 12;
         for (int a = 0; a < count; a++) {
             TextCheckCell textCell = new TextCheckCell(context);
             switch (a) {
@@ -385,6 +385,9 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
                 case 10: {
                     textCell.setTextAndCheck(LocaleController.getString("MessageDetails", R.string.MessageDetails), NekoConfig.showMessageDetails.Bool(), false);
                     break;
+                }
+                case 11: {
+                    textCell.setTextAndCheck(LocaleController.getString("CopyPhoto", R.string.CopyPhoto), NekoConfig.showCopyPhoto.Bool(), false);
                 }
             }
             textCell.setTag(a);
@@ -435,6 +438,10 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
                     }
                     case 10: {
                         textCell.setChecked(NekoConfig.showMessageDetails.toggleConfigBool());
+                        break;
+                    }
+                    case 11: {
+                        textCell.setChecked(NekoConfig.showCopyPhoto.toggleConfigBool());
                         break;
                     }
                 }
