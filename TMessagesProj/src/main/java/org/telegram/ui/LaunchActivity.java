@@ -49,6 +49,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.style.ClickableSpan;
 import android.util.Base64;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
 import android.view.ActionMode;
@@ -167,6 +168,7 @@ import org.telegram.ui.Components.Premium.boosts.UserSelectorBottomSheet;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.RLottieImageView;
 import org.telegram.ui.Components.RecyclerListView;
+import org.telegram.ui.Components.SearchTagsList;
 import org.telegram.ui.Components.SharingLocationsAlert;
 import org.telegram.ui.Components.SideMenultItemAnimator;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
@@ -1350,6 +1352,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return frameLayout;
     }
 
+    private boolean switchingAccount;
     public void switchToAccount(int account, boolean removeAll) {
         switchToAccount(account, removeAll, obj -> new DialogsActivity(null));
     }
@@ -1358,6 +1361,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         if (account == UserConfig.selectedAccount || !UserConfig.isValidAccount(account)) {
             return;
         }
+        switchingAccount = true;
 
         ConnectionsManager.getInstance(currentAccount).setAppPaused(true, false);
         UserConfig.selectedAccount = account;
@@ -1398,6 +1402,8 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         updateCurrentConnectionState(currentAccount);
         NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.updateUserStatus, (Object) null);
+
+        switchingAccount = false;
     }
 
     private void switchToAvailableAccountOrLogout() {
@@ -1735,7 +1741,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         long push_chat_id = 0;
         long[] push_story_dids = null;
         int push_story_id = 0;
-        int push_topic_id = 0;
+        long push_topic_id = 0;
         int push_enc_id = 0;
         int push_msg_id = 0;
         int open_settings = 0;
@@ -2645,7 +2651,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                         data = Uri.parse(url);
                                         theme = data.getQueryParameter("slug");
                                     } else if (url.startsWith("tg:settings") || url.startsWith("tg://settings")) {
-                                        if (url.contains("themes")) {
+                                        if (url.contains("themes") || url.contains("theme")) {
                                             open_settings = 2;
                                         } else if (url.contains("devices")) {
                                             open_settings = 3;
@@ -2653,6 +2659,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                             open_settings = 4;
                                         } else if (url.contains("change_number")) {
                                             open_settings = 5;
+                                        } else if (url.contains("language")) {
+                                            open_settings = 10;
+                                        } else if (url.contains("auto_delete")) {
+                                            open_settings = 11;
+                                        } else if (url.contains("privacy")) {
+                                            open_settings = 12;
                                         } else if (url.contains("?enablelogs")) {
                                             open_settings = 7;
                                         } else if (url.contains("?sendlogs")) {
@@ -2676,7 +2688,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                                             FileLog.e(e);
                                         }
                                     } else if (url.startsWith("tg:upgrade") || url.startsWith("tg://upgrade") || url.startsWith("tg:update") || url.startsWith("tg://update")) {
-                                        checkAppUpdate(true);
+                                        checkAppUpdate(true, null);
                                     } else if ((url.startsWith("tg:search") || url.startsWith("tg://search"))) {
                                         url = url.replace("tg:search", "tg://telegram.org").replace("tg://search", "tg://telegram.org");
                                         data = Uri.parse(url);
@@ -2839,7 +2851,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     long userId = intent.getLongExtra("userId", 0);
                     int encId = intent.getIntExtra("encId", 0);
                     int widgetId = intent.getIntExtra("appWidgetId", 0);
-                    int topicId = intent.getIntExtra("topicId", 0);
+                    long topicId = intent.getLongExtra("topicId", 0);
                     if (widgetId != 0) {
                         open_settings = 6;
                         open_widget_edit = widgetId;
@@ -2937,7 +2949,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         } else {
                             boolean finalIsNew = isNew;
                             long finalPush_chat_id = push_chat_id;
-                            int finalPush_topic_id = push_topic_id;
+                            long finalPush_topic_id = push_topic_id;
                             MessagesController.getInstance(currentAccount).getTopicsController().loadTopic(push_chat_id, push_topic_id, () -> {
                                 TLRPC.TL_forumTopic loadedTopic = MessagesController.getInstance(currentAccount).getTopicsController().findTopic(finalPush_chat_id, finalPush_topic_id);
                                 FileLog.d("LaunchActivity openForum after load " + finalPush_chat_id + " " + finalPush_topic_id + " TL_forumTopic " + loadedTopic);
@@ -3058,6 +3070,12 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     closePrevious = true;
                 } else if (open_settings == 6) {
                     fragment = new EditWidgetActivity(open_widget_edit_type, open_widget_edit);
+                } else if (open_settings == 10) {
+                    fragment = new LanguageSelectActivity();
+                } else if (open_settings == 11) {
+                    fragment = new AutoDeleteMessagesActivity();
+                } else if (open_settings == 12) {
+                    fragment = new PrivacySettingsActivity();
                 } else if (open_settings == 100) {
                     fragment = new NekoSettingsActivity();
                 } else {
@@ -5339,36 +5357,76 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         return foundContacts;
     }
 
-    public void checkAppUpdate(boolean force) {
+    public void checkAppUpdate(boolean force, Browser.Progress progress) {
         if (BuildVars.isFdroid || BuildVars.isPlay) return;
         if (NekoXConfig.autoUpdateReleaseChannel == 0) return;
-        if (!force && System.currentTimeMillis() < NekoConfig.lastUpdateCheckTime.Long() + 48 * 60 * 60 * 1000L) return;
-        NekoConfig.lastUpdateCheckTime.setConfigLong(System.currentTimeMillis());
-        FileLog.d("checking update");
+        if (!force && BuildVars.DEBUG_VERSION || !force) {
+            return;
+        }
+        if (!force && Math.abs(System.currentTimeMillis() - SharedConfig.lastUpdateCheckTime) < MessagesController.getInstance(0).updateCheckDelay * 1000) {
+            return;
+        }
+        TLRPC.TL_help_getAppUpdate req = new TLRPC.TL_help_getAppUpdate();
+        try {
+            req.source = ApplicationLoader.applicationContext.getPackageManager().getInstallerPackageName(ApplicationLoader.applicationContext.getPackageName());
+        } catch (Exception ignore) {}
 
         final int accountNum = currentAccount;
-        InternalUpdater.checkUpdate((res, error) -> AndroidUtilities.runOnUIThread(() -> {
-            if (res != null) {
-                SharedConfig.setNewAppVersionAvailable(res);
-                SharedConfig.saveConfig();
-                if (res.can_not_skip) {
-                    showUpdateActivity(accountNum, res, false);
-                } else if (ApplicationLoader.isStandaloneBuild() || BuildVars.DEBUG_VERSION) {
-                    drawerLayoutAdapter.notifyDataSetChanged();
-                    ApplicationLoader.applicationLoaderInstance.showUpdateAppPopup(LaunchActivity.this, res, accountNum);
-                }
-            } else {
-                if (force) {
-                    if (error)
-                        Toast.makeText(LaunchActivity.this, LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred), Toast.LENGTH_SHORT).show();
-                    else
-                        Toast.makeText(LaunchActivity.this, LocaleController.getString("VersionUpdateNoUpdate", R.string.VersionUpdateNoUpdate), Toast.LENGTH_SHORT).show();
-                }
-                SharedConfig.setNewAppVersionAvailable(null);
-                drawerLayoutAdapter.notifyDataSetChanged();
+        int reqId = ConnectionsManager.getInstance(currentAccount).sendRequest(req, (response, error) -> {
+            SharedConfig.lastUpdateCheckTime = System.currentTimeMillis();
+            SharedConfig.saveConfig();
+            if (response instanceof TLRPC.TL_help_appUpdate) {
+                final TLRPC.TL_help_appUpdate res = (TLRPC.TL_help_appUpdate) response;
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.version.equals(res.version)) {
+                        return;
+                    }
+                    final boolean newVersionAvailable = SharedConfig.setNewAppVersionAvailable(res);
+                    if (newVersionAvailable) {
+                        if (res.can_not_skip) {
+                            showUpdateActivity(accountNum, res, false);
+                        } else if (ApplicationLoader.isStandaloneBuild() || BuildVars.DEBUG_VERSION) {
+                            drawerLayoutAdapter.notifyDataSetChanged();
+                            ApplicationLoader.applicationLoaderInstance.showUpdateAppPopup(LaunchActivity.this, res, accountNum);
+                        }
+                        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
+                    }
+                    if (progress != null) {
+                        progress.end();
+                        if (!newVersionAvailable) {
+                            BaseFragment fragment = getLastFragment();
+                            if (fragment != null) {
+                                BulletinFactory.of(fragment).createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.YourVersionIsLatest)).show();
+                            }
+                        }
+                    }
+                });
+            } else if (response instanceof TLRPC.TL_help_noAppUpdate) {
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (progress != null) {
+                        progress.end();
+                        BaseFragment fragment = getLastFragment();
+                        if (fragment != null) {
+                            BulletinFactory.of(fragment).createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.YourVersionIsLatest)).show();
+                        }
+                    }
+                });
+            } else if (error != null) {
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (progress != null) {
+                        progress.end();
+                        BaseFragment fragment = getLastFragment();
+                        if (fragment != null) {
+                            BulletinFactory.of(fragment).showForError(error);
+                        }
+                    }
+                });
             }
-            NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.appUpdateAvailable);
-        }));
+        });
+        if (progress != null) {
+            progress.init();
+            progress.onCancel(() -> ConnectionsManager.getInstance(currentAccount).cancelRequest(reqId, true));
+        }
     }
 
     public Dialog showAlertDialog(AlertDialog.Builder builder) {
@@ -6122,7 +6180,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         } else if (SharedConfig.pendingAppUpdate != null && SharedConfig.pendingAppUpdate.can_not_skip) {
             showUpdateActivity(UserConfig.selectedAccount, SharedConfig.pendingAppUpdate, true);
         }
-        checkAppUpdate(false);
+        checkAppUpdate(false, null);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             ApplicationLoader.canDrawOverlays = Settings.canDrawOverlays(this);
@@ -7304,44 +7362,44 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
     }
 
+
+
     @Override
     public void onBackPressed() {
-        try {
-            if (FloatingDebugController.onBackPressed()) {
-                return;
-            }
-            if (passcodeView != null && passcodeView.getVisibility() == View.VISIBLE) {
-                finish();
-                return;
-            }
-            if (ContentPreviewViewer.hasInstance() && ContentPreviewViewer.getInstance().isVisible()) {
+        if (FloatingDebugController.onBackPressed()) {
+            return;
+        }
+        if (passcodeView != null && passcodeView.getVisibility() == View.VISIBLE) {
+            finish();
+            return;
+        }
+        if (SearchTagsList.onBackPressedRenameTagAlert()) {
+            return;
+        } else if (ContentPreviewViewer.hasInstance() && ContentPreviewViewer.getInstance().isVisible()) {
             ContentPreviewViewer.getInstance().closeWithMenu();
-        } if (SecretMediaViewer.hasInstance() && SecretMediaViewer.getInstance().isVisible()) {
-                SecretMediaViewer.getInstance().closePhoto(true, false);
-            } else if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
-                PhotoViewer.getInstance().closePhoto(true, false);
-            } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
-                ArticleViewer.getInstance().close(true, false);
-            } else if (drawerLayoutContainer.isDrawerOpened()) {
-                drawerLayoutContainer.closeDrawer(false);
-            } else if (AndroidUtilities.isTablet()) {
-                if (layersActionBarLayout != null && layersActionBarLayout.getView().getVisibility() == View.VISIBLE) {
-                    layersActionBarLayout.onBackPressed();
-                } else if (rightActionBarLayout != null) {
-
-                    if (rightActionBarLayout.getView().getVisibility() == View.VISIBLE && !rightActionBarLayout.getFragmentStack().isEmpty()) {
-                        BaseFragment lastFragment = rightActionBarLayout.getFragmentStack().get(rightActionBarLayout.getFragmentStack().size() - 1);
-                        if (lastFragment.onBackPressed()) {
-                    lastFragment.finishFragment();
+        } else if (SecretMediaViewer.hasInstance() && SecretMediaViewer.getInstance().isVisible()) {
+            SecretMediaViewer.getInstance().closePhoto(true, false);
+        } else if (PhotoViewer.hasInstance() && PhotoViewer.getInstance().isVisible()) {
+            PhotoViewer.getInstance().closePhoto(true, false);
+        } else if (ArticleViewer.hasInstance() && ArticleViewer.getInstance().isVisible()) {
+            ArticleViewer.getInstance().close(true, false);
+        } else if (drawerLayoutContainer.isDrawerOpened()) {
+            drawerLayoutContainer.closeDrawer(false);
+        } else if (AndroidUtilities.isTablet()) {
+            if (layersActionBarLayout.getView().getVisibility() == View.VISIBLE) {
+                layersActionBarLayout.onBackPressed();
+            } else {
+                if (rightActionBarLayout.getView().getVisibility() == View.VISIBLE && !rightActionBarLayout.getFragmentStack().isEmpty()) {
+                    BaseFragment lastFragment = rightActionBarLayout.getFragmentStack().get(rightActionBarLayout.getFragmentStack().size() - 1);
+                    if (lastFragment.onBackPressed()) {
+                        lastFragment.finishFragment();
                     }
                 } else {
-                        actionBarLayout.onBackPressed();
-                    }
+                    actionBarLayout.onBackPressed();
                 }
-            } else {
-                actionBarLayout.onBackPressed();
             }
-        } catch (Exception ignored) {
+        } else {
+            actionBarLayout.onBackPressed();
         }
     }
 
@@ -7548,7 +7606,9 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     }
                     return result;
                 } else if (!tabletFullSize && layout != rightActionBarLayout) {
-                    rightActionBarLayout.getView().setVisibility(View.VISIBLE);
+                    if (rightActionBarLayout.getView() != null) {
+                        rightActionBarLayout.getView().setVisibility(View.VISIBLE);
+                    }
                     backgroundTablet.setVisibility(View.GONE);
                     rightActionBarLayout.removeAllFragments();
                     rightActionBarLayout.presentFragment(params.setNoAnimation(true).setRemoveLast(removeLast).setCheckPresentFromDelegate(false));
@@ -7705,7 +7765,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
     @Override
     public boolean needCloseLastFragment(INavigationLayout layout) {
         if (AndroidUtilities.isTablet()) {
-            if (layout == actionBarLayout && layout.getFragmentStack().size() <= 1) {
+            if (layout == actionBarLayout && layout.getFragmentStack().size() <= 1 && !switchingAccount) {
                 onFinish();
                 finish();
                 return false;

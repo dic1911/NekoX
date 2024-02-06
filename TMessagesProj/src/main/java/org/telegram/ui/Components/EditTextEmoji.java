@@ -488,6 +488,10 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
         editText.setSelection(selection);
     }
 
+    public void setSelection(int from, int to) {
+        editText.setSelection(from, to);
+    }
+
     public void hidePopup(boolean byBackButton) {
         if (isPopupShowing()) {
             showPopup(0);
@@ -533,6 +537,7 @@ public class EditTextEmoji extends FrameLayout implements NotificationCenter.Not
     }
 
     public void openKeyboard() {
+        editText.requestFocus();
         AndroidUtilities.showKeyboard(editText);
     }
 

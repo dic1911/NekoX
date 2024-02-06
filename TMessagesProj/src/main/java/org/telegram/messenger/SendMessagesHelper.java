@@ -2187,6 +2187,7 @@ public boolean retriedToSend;
                                     a1--;
                                 }
                             }
+                            getNotificationCenter().postNotificationNameOnUIThread(NotificationCenter.savedMessagesForwarded, newMessagesByIds);
                             Integer value = getMessagesController().dialogs_read_outbox_max.get(peer);
                             if (value == null) {
                                 value = getMessagesStorage().getDialogReadMax(true, peer);
@@ -2956,7 +2957,7 @@ public boolean retriedToSend;
         return voteSendTime.get(pollId, 0L);
     }
 
-    public void sendReaction(MessageObject messageObject, ArrayList<ReactionsLayoutInBubble.VisibleReaction> visibleReactions, ReactionsLayoutInBubble.VisibleReaction addedReaction, boolean big, boolean addToRecent, ChatActivity parentFragment, Runnable callback) {
+    public void sendReaction(MessageObject messageObject, ArrayList<ReactionsLayoutInBubble.VisibleReaction> visibleReactions, ReactionsLayoutInBubble.VisibleReaction addedReaction, boolean big, boolean addToRecent, BaseFragment parentFragment, Runnable callback) {
         if (messageObject == null || parentFragment == null) {
             return;
         }
@@ -4085,6 +4086,7 @@ public boolean retriedToSend;
                         inputWebPage.url = mediaWebPage.webpage.url;
                         inputWebPage.force_large_media = mediaWebPage.force_large_media;
                         inputWebPage.force_small_media = mediaWebPage.force_small_media;
+                        inputWebPage.optional = true;
                         reqSend.media = inputWebPage;
                         if (replyToStoryItem != null) {
                             reqSend.reply_to = createReplyInput(replyToStoryItem);
@@ -5095,10 +5097,12 @@ public boolean retriedToSend;
                         }
                     }
                     putToDelayedMessages(location, message);
-                    if (message.obj.videoEditedInfo != null && message.obj.videoEditedInfo.needConvert()) {
-                        getFileLoader().uploadFile(location, true, false, document.size, ConnectionsManager.FileTypeVideo, false);
-                    } else {
-                        getFileLoader().uploadFile(location, true, false, ConnectionsManager.FileTypeVideo);
+                    if (message.obj.videoEditedInfo == null || !message.obj.videoEditedInfo.notReadyYet) {
+                        if (message.obj.videoEditedInfo != null && message.obj.videoEditedInfo.needConvert()) {
+                            getFileLoader().uploadFile(location, true, false, document.size, ConnectionsManager.FileTypeVideo, false);
+                        } else {
+                            getFileLoader().uploadFile(location, true, false, ConnectionsManager.FileTypeVideo);
+                        }
                     }
                     putToUploadingMessages(message.obj);
                 }
