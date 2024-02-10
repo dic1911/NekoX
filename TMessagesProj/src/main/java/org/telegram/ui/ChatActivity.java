@@ -28263,7 +28263,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (optionsView != null) {
                 scrimPopupContainerLayout.addView(optionsView);
             } else {
+                final boolean isPremium = getUserConfig().isPremium();
                 final boolean tags = getUserConfig().getClientUserId() == getDialogId();
+
+                if (tags && !isPremium) isReactionsAvailable = false;
+
                 reactionsLayout = new ReactionsContainerLayout(tags ? ReactionsContainerLayout.TYPE_TAGS : ReactionsContainerLayout.TYPE_DEFAULT, ChatActivity.this, contentView.getContext(), currentAccount, getResourceProvider());
                 if (tags) {
                     reactionsLayout.setHint(getUserConfig().isPremium() ? LocaleController.getString(R.string.SavedTagReactionsHint2) : AndroidUtilities.replaceSingleTag(LocaleController.getString(R.string.SavedTagReactionsPremiumHint), Theme.key_windowBackgroundWhiteBlueText2, 0, () -> {
