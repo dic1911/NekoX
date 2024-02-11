@@ -161,4 +161,5 @@
     <string name="CopyPhoto">Copy Photo</string>
     <string name="PhotoCopied">Photo Copied</string>
     <string name="CopyPhotoAsSticker">Copy Photo As Sticker</string>
+    <string name="IncreasedMaxPhotoResolution">Increased max photo resolution width (2560px)</string>
 </resources>

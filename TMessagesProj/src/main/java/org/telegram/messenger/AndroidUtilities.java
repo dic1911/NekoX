@@ -2520,7 +2520,7 @@ public class AndroidUtilities {
 
     public static int getPhotoSize() {
         if (photoSize == null) {
-            photoSize = 2560;
+            photoSize = NekoConfig.increasedMaxPhotoResolution.Bool() ? 2560 : 1280;
         }
         return photoSize;
     }
