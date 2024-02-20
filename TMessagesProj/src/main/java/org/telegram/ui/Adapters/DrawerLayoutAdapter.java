@@ -502,7 +502,7 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
         }
 
         public void bindCheck(DrawerActionCheckCell actionCell) {
-            actionCell.setTextAndValueAndCheck(text, icon, null, isChecked.invoke(), false, false);
+            actionCell.setTextAndValueAndCheck(String.valueOf(text), icon, null, isChecked.invoke(), false, false);
             if (doSwitch != null) {
                 actionCell.setOnCheckClickListener((v) -> {
                     if (doSwitch.invoke()) {

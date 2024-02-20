@@ -2970,7 +2970,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             delegate.needStartRecordAudio(0);
                         }
                         recordingAudioVideo = false;
-                        updateRecordInterface(RECORD_STATE_SENDING);
+                        updateRecordInterface(RECORD_STATE_SENDING, true);
                     }
                     return;
                 }

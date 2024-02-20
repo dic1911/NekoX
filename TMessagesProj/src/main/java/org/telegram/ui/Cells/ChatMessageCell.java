@@ -14661,14 +14661,14 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 if (NekoConfig.channelAlias.Bool()) {
                     String aliasName = NekoXConfig.getChannelAlias(currentMessageObject.messageOwner.from_id.channel_id);
                     if (aliasName != null) {
-                        adminString = aliasName + " | " + channelStr;
+                        adminString = new SpannableStringBuilder(aliasName + " | " + channelStr);
                     } else {
-                        adminString = channelStr;
+                        adminString = new SpannableStringBuilder(channelStr);
                     }
                 } else {
-                    adminString = channelStr;
+                    adminString = new SpannableStringBuilder(channelStr);
                 }
-                adminWidth = (int) Math.ceil(Theme.chat_adminPaint.measureText(adminString));
+                adminWidth = (int) Math.ceil(Theme.chat_adminPaint.measureText(adminString.toString()));
                 nameWidth -= adminWidth;
             } else {
                 adminString = null;
