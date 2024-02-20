@@ -41,7 +41,7 @@ public class LanguageCell extends FrameLayout {
 
     private RadioButton radioButton;
     private TextView textView;
-    private TextView textView2;
+    public TextView textView2;
     private boolean needDivider;
     private LocaleController.LocaleInfo currentLocale;
     private int marginStartDp = 62, marginEndDp = 23;
@@ -96,7 +96,7 @@ public class LanguageCell extends FrameLayout {
     }
 
 
-    public void setValue(String name, String nameEnglish) {
+    public void setValue(CharSequence name, CharSequence nameEnglish) {
         textView.setText(name);
         textView2.setText(nameEnglish);
         radioButton.setChecked(false, false);
