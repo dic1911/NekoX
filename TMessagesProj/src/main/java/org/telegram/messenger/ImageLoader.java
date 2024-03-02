@@ -2841,8 +2841,9 @@ public class ImageLoader {
         }
         ArrayList<Runnable> runnables = imageReceiver.getLoadingOperations();
         if (!runnables.isEmpty()) {
-            for (int i = 0; i < runnables.size(); i++) {
-                imageLoadQueue.cancelRunnable(runnables.get(i));
+            // 030: attempt to avoid out of bounds exception
+            for (Runnable r : runnables) {
+                imageLoadQueue.cancelRunnable(r);
             }
             runnables.clear();
         }
