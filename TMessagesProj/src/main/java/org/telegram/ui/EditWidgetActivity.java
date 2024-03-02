@@ -82,6 +82,8 @@ import org.telegram.ui.Components.RecyclerListView;
 import java.io.File;
 import java.util.ArrayList;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class EditWidgetActivity extends BaseFragment {
 
     private ListAdapter listAdapter;
@@ -234,6 +236,7 @@ public class EditWidgetActivity extends BaseFragment {
         }
 
         public void updateDialogs() {
+            boolean displayAsSelf = NekoConfig.showSelfInsteadOfSavedMessages.Bool();
             if (widgetType == TYPE_CHATS) {
                 for (int a = 0; a < 2; a++) {
                     TLRPC.Dialog dialog;
@@ -263,7 +266,7 @@ public class EditWidgetActivity extends BaseFragment {
                     if (DialogObject.isUserDialog(dialog.id)) {
                         user = getMessagesController().getUser(dialog.id);
                         if (user != null) {
-                            if (UserObject.isUserSelf(user)) {
+                            if (UserObject.isUserSelf(user) && !displayAsSelf) {
                                 name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                             } else if (UserObject.isReplyUser(user)) {
                                 name = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
@@ -272,7 +275,7 @@ public class EditWidgetActivity extends BaseFragment {
                             } else {
                                 name = ContactsController.formatName(user.first_name, user.last_name);
                             }
-                            if (!UserObject.isReplyUser(user) && !UserObject.isUserSelf(user) && user.photo != null && user.photo.photo_small != null && user.photo.photo_small.volume_id != 0 && user.photo.photo_small.local_id != 0) {
+                            if (!UserObject.isReplyUser(user) && (displayAsSelf || !UserObject.isUserSelf(user)) && user.photo != null && user.photo.photo_small != null && user.photo.photo_small.volume_id != 0 && user.photo.photo_small.local_id != 0) {
                                 photoPath = user.photo.photo_small;
                             }
                         }
@@ -304,7 +307,7 @@ public class EditWidgetActivity extends BaseFragment {
                                 avatarDrawable = new AvatarDrawable(user);
                                 if (UserObject.isReplyUser(user)) {
                                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
-                                } else if (UserObject.isUserSelf(user)) {
+                                } else if (UserObject.isUserSelf(user) && !displayAsSelf) {
                                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                                 }
                             } else {
@@ -541,7 +544,7 @@ public class EditWidgetActivity extends BaseFragment {
                         TLRPC.Chat chat = null;
                         if (DialogObject.isUserDialog(dialog.id)) {
                             user = getMessagesController().getUser(dialog.id);
-                            if (UserObject.isUserSelf(user)) {
+                            if (UserObject.isUserSelf(user) && !displayAsSelf) {
                                 name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                             } else if (UserObject.isReplyUser(user)) {
                                 name = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
@@ -550,7 +553,7 @@ public class EditWidgetActivity extends BaseFragment {
                             } else {
                                 name = UserObject.getFirstName(user);
                             }
-                            if (!UserObject.isReplyUser(user) && !UserObject.isUserSelf(user) && user != null && user.photo != null && user.photo.photo_small != null && user.photo.photo_small.volume_id != 0 && user.photo.photo_small.local_id != 0) {
+                            if (!UserObject.isReplyUser(user) && (displayAsSelf || !UserObject.isUserSelf(user)) && user != null && user.photo != null && user.photo.photo_small != null && user.photo.photo_small.volume_id != 0 && user.photo.photo_small.local_id != 0) {
                                 photoPath = user.photo.photo_small;
                             }
                         } else {
@@ -578,7 +581,7 @@ public class EditWidgetActivity extends BaseFragment {
                                     avatarDrawable = new AvatarDrawable(user);
                                     if (UserObject.isReplyUser(user)) {
                                         avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
-                                    } else if (UserObject.isUserSelf(user)) {
+                                    } else if (UserObject.isUserSelf(user) && !displayAsSelf) {
                                         avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                                     }
                                 } else {

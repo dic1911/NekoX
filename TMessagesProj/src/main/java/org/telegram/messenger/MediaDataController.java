@@ -5267,7 +5267,7 @@ public class MediaDataController extends BaseController {
                 if (UserObject.isReplyUser(user)) {
                     name = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
                     overrideAvatar = true;
-                } else if (UserObject.isUserSelf(user)) {
+                } else if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                     name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     overrideAvatar = true;
                 } else {
@@ -5299,7 +5299,7 @@ public class MediaDataController extends BaseController {
                             AvatarDrawable avatarDrawable = new AvatarDrawable(user);
                             if (UserObject.isReplyUser(user)) {
                                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
-                            } else {
+                            } else if (!NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                             }
                             avatarDrawable.setBounds(0, 0, size, size);

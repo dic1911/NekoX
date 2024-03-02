@@ -55,6 +55,8 @@ import org.telegram.ui.LaunchActivity;
 import java.io.File;
 import java.util.Collections;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class StoriesUtilities {
 
     private final static int ANIMATION_SEGMENT_COUNT = 16;
@@ -1229,6 +1231,7 @@ public class StoriesUtilities {
         }
 
         public void openStory(long dialogId, Runnable onDone) {
+            if (NekoConfig.disableStories.Bool()) return;
             BaseFragment fragment = LaunchActivity.getLastFragment();
             if (fragment != null && child != null) {
                 fragment.getOrCreateStoryViewer().doOnAnimationReady(onDone);

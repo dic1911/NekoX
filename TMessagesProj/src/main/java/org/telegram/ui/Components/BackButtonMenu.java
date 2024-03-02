@@ -41,6 +41,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class BackButtonMenu {
     public static class PulledDialog<T> {
         Class<T> activity;
@@ -120,7 +122,7 @@ public class BackButtonMenu {
                 if (user.photo != null && user.photo.strippedBitmap != null) {
                     thumb = user.photo.strippedBitmap;
                 }
-                if (pDialog.activity == ChatActivity.class && UserObject.isUserSelf(user)) {
+                if (pDialog.activity == ChatActivity.class && UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                     name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                     imageView.setImageDrawable(avatarDrawable);
@@ -473,7 +475,7 @@ public class BackButtonMenu {
                 if (user.photo != null && user.photo.strippedBitmap != null) {
                     thumb = user.photo.strippedBitmap;
                 }
-                if (pDialog.activity == ChatActivity.class && UserObject.isUserSelf(user)) {
+                if (pDialog.activity == ChatActivity.class && UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                     name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                     imageView.setImageDrawable(avatarDrawable);

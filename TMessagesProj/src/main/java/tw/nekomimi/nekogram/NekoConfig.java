@@ -197,6 +197,7 @@ public class NekoConfig {
     public static ConfigItem confirmToSendCommandByClick = addConfig("ConfirmToSendCommandToggle", ConfigItem.configTypeBool, false);
     public static ConfigItem showCopyPhoto = addConfig("CopyPhoto", ConfigItem.configTypeBool, false);
     public static ConfigItem increasedMaxPhotoResolution = addConfig("IncreasedMaxPhotoResolution", ConfigItem.configTypeBool, false);
+    public static ConfigItem showSelfInsteadOfSavedMessages = addConfig("ShowSelfInsteadOfSavedMessages", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);

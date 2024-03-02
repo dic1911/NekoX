@@ -17329,7 +17329,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         } else if (currentChat != null) {
             avatarContainer.setTitle(currentChat.title, currentChat.scam, currentChat.fake, currentChat.verifiedExtended(), false, currentChat.emoji_status, animated);
         } else if (currentUser != null) {
-            if (currentUser.self) {
+            if (currentUser.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                 avatarContainer.setTitle(LocaleController.getString("SavedMessages", R.string.SavedMessages));
             } else if (!MessagesController.isSupportUser(currentUser) && getContactsController().contactsDict.get(currentUser.id) == null && (getContactsController().contactsDict.size() != 0 || !getContactsController().isLoadingContacts())) {
                 if (!TextUtils.isEmpty(currentUser.phone)) {

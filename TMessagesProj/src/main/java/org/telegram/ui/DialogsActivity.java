@@ -8012,7 +8012,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     did = -chat.id;
                 } else if (item instanceof TLRPC.User) {
                     TLRPC.User user = (TLRPC.User) item;
-                    if (user.id == getUserConfig().clientUserId) {
+                    if (user.id == getUserConfig().clientUserId && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         builder.setMessage(LocaleController.formatString("ClearSearchSingleChatAlertText", R.string.ClearSearchSingleChatAlertText, LocaleController.getString("SavedMessages", R.string.SavedMessages)));
                     } else {
                         builder.setMessage(LocaleController.formatString("ClearSearchSingleUserAlertText", R.string.ClearSearchSingleUserAlertText, ContactsController.formatName(user.first_name, user.last_name)));
@@ -11237,7 +11237,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 message = LocaleController.formatStringSimple(selectAlertString, UserObject.getUserName(user));
                 buttonText = LocaleController.getString("Send", R.string.Send);
             } else if (DialogObject.isUserDialog(dialogId)) {
-                if (dialogId == getUserConfig().getClientUserId()) {
+                if (dialogId == getUserConfig().getClientUserId() && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                     title = LocaleController.getString("SendMessageTitle", R.string.SendMessageTitle);
                     message = LocaleController.formatStringSimple(selectAlertStringGroup, LocaleController.getString("SavedMessages", R.string.SavedMessages));
                     buttonText = LocaleController.getString("Send", R.string.Send);

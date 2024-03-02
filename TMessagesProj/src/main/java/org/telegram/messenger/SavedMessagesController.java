@@ -22,6 +22,8 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Objects;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class SavedMessagesController {
 
     private final int currentAccount;
@@ -155,7 +157,7 @@ public class SavedMessagesController {
             String name2 = null;
             if (d.dialogId == UserObject.ANONYMOUS) {
                 name = LocaleController.getString(R.string.AnonymousForward);
-            } else if (d.dialogId == UserConfig.getInstance(currentAccount).getClientUserId()) {
+            } else if (!NekoConfig.showSelfInsteadOfSavedMessages.Bool() && d.dialogId == UserConfig.getInstance(currentAccount).getClientUserId()) {
                 name = LocaleController.getString(R.string.MyNotes);
                 name2 = LocaleController.getString(R.string.SavedMessages);
             } else if (d.dialogId >= 0) {

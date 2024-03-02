@@ -42,6 +42,8 @@ import org.telegram.ui.ActionBar.Theme;
 
 import java.util.ArrayList;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class AvatarDrawable extends Drawable {
 
     private TextPaint namePaint;
@@ -524,7 +526,7 @@ public class AvatarDrawable extends Drawable {
             Theme.dialogs_archiveAvatarDrawable.setBounds(x, y, x + w, y + h);
             Theme.dialogs_archiveAvatarDrawable.draw(canvas);
             canvas.restore();
-        } else if (avatarType != 0) {
+        } else if (avatarType != 0 && !(avatarType == AVATAR_TYPE_SAVED && NekoConfig.showSelfInsteadOfSavedMessages.Bool())) {
             Drawable drawable;
 
             if (avatarType == AVATAR_TYPE_SAVED) {

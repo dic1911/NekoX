@@ -82,6 +82,8 @@ import org.telegram.ui.Components.RecyclerListView;
 
 import java.util.ArrayList;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class UsersSelectActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, View.OnClickListener {
 
     public final static int TYPE_FILTER = 0;
@@ -1434,7 +1436,7 @@ public class UsersSelectActivity extends BaseFragment implements NotificationCen
                                 username = UserObject.getPublicUsername(user);
                                 if (UserObject.isReplyUser(user)) {
                                     names[2] = LocaleController.getString("RepliesTitle", R.string.RepliesTitle).toLowerCase();
-                                } else if (user.self) {
+                                } else if (user.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                                     names[2] = LocaleController.getString("SavedMessages", R.string.SavedMessages).toLowerCase();
                                 }
                             } else {

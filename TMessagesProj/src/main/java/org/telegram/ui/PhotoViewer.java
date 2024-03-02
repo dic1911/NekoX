@@ -12629,7 +12629,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 if (chat != null) {
                     title = chat.title;
                 } else {
-                    if (UserObject.isUserSelf(user)) {
+                    if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         title = LocaleController.getString(parentChatActivity.getChatMode() == ChatActivity.MODE_SAVED ? R.string.MyNotes : R.string.SavedMessages);
                     } else if (UserObject.isAnonymous(user)) {
                         title = LocaleController.getString(R.string.AnonymousForward);

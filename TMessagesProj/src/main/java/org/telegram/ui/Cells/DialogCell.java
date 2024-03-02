@@ -181,6 +181,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
     public final StoriesUtilities.AvatarStoryParams storyParams = new StoriesUtilities.AvatarStoryParams(false) {
         @Override
         public void openStory(long dialogId, Runnable onDone) {
+            if (NekoConfig.disableStories.Bool()) return;
             if (delegate == null) {
                 return;
             }
@@ -1839,7 +1840,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         nameString = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
                     } else if (UserObject.isAnonymous(user)) {
                         nameString = LocaleController.getString(R.string.AnonymousForward);
-                    } else if (UserObject.isUserSelf(user)) {
+                    } else if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         if (isSavedDialog) {
                             nameString = LocaleController.getString(R.string.MyNotes);
                         } else if (useMeForMyMessages) {
@@ -3002,7 +3003,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                     } else if (UserObject.isUserSelf(user) && isSavedDialog) {
                         avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_MY_NOTES);
                         avatarImage.setImage(null, null, avatarDrawable, null, user, 0);
-                    } else if (UserObject.isUserSelf(user) && !useMeForMyMessages) {
+                    } else if (UserObject.isUserSelf(user) && !useMeForMyMessages && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                         avatarImage.setImage(null, null, avatarDrawable, null, user, 0);
                     } else {
@@ -4657,7 +4658,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                         sb.append(LocaleController.getString("Bot", R.string.Bot));
                         sb.append(". ");
                     }
-                    if (user.self) {
+                    if (user.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         sb.append(LocaleController.getString("SavedMessages", R.string.SavedMessages));
                     } else {
                         sb.append(ContactsController.formatName(user.first_name, user.last_name));

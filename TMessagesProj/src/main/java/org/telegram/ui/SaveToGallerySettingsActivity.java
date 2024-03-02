@@ -59,6 +59,8 @@ import org.telegram.ui.Components.SeekBarView;
 import java.util.ArrayList;
 import java.util.Objects;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class SaveToGallerySettingsActivity extends BaseFragment {
 
     int type;
@@ -538,7 +540,7 @@ public class SaveToGallerySettingsActivity extends BaseFragment {
                 String title = null;
                 if (object instanceof TLRPC.User) {
                     TLRPC.User user = (TLRPC.User) object;
-                    if (user.self) {
+                    if (user.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         title = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     } else {
                         title = ContactsController.formatName(user.first_name, user.last_name);

@@ -61,6 +61,8 @@ import org.telegram.ui.TopicsFragment;
 
 import java.util.concurrent.atomic.AtomicReference;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ChatAvatarContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     public boolean allowDrawStories;
@@ -169,6 +171,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             StoriesUtilities.AvatarStoryParams params = new StoriesUtilities.AvatarStoryParams(true) {
                 @Override
                 public void openStory(long dialogId, Runnable onDone) {
+                    if (NekoConfig.disableStories.Bool()) return;
                     baseFragment.getOrCreateStoryViewer().open(getContext(), dialogId, (dialogId1, messageId, storyId, type, holder) -> {
                         holder.crossfadeToAvatarImage = holder.storyImage = imageReceiver;
                         holder.params = params;
@@ -876,7 +879,8 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             return;
         }
         TLRPC.User user = parentFragment.getCurrentUser();
-        if ((UserObject.isUserSelf(user) || UserObject.isReplyUser(user) || parentFragment.getChatMode() != 0) && parentFragment.getChatMode() != ChatActivity.MODE_SAVED) {
+        boolean showAsSelf = NekoConfig.showSelfInsteadOfSavedMessages.Bool();
+        if (((UserObject.isUserSelf(user) && !showAsSelf) || UserObject.isReplyUser(user) || parentFragment.getChatMode() != 0) && parentFragment.getChatMode() != ChatActivity.MODE_SAVED) {
             if (getSubtitleTextView().getVisibility() != GONE) {
                 getSubtitleTextView().setVisibility(GONE);
             }
@@ -953,7 +957,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
                 String newStatus;
                 if (UserObject.isReplyUser(user)) {
                     newStatus = "";
-                } else if (user.id == UserConfig.getInstance(currentAccount).getClientUserId()) {
+                } else if (user.id == UserConfig.getInstance(currentAccount).getClientUserId() && !showAsSelf) {
                     newStatus = LocaleController.getString("ChatYourSelf", R.string.ChatYourSelf);
                 } else if (user.id == 333000 || user.id == 777000 || user.id == 42777) {
                     newStatus = LocaleController.getString("ServiceNotifications", R.string.ServiceNotifications);
@@ -1120,7 +1124,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
             if (avatarImageView != null) {
                 avatarImageView.setImage(null, null, avatarDrawable, user);
             }
-        } else if (UserObject.isUserSelf(user) && !showSelf) {
+        } else if (UserObject.isUserSelf(user) && !showSelf && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
             avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
             avatarDrawable.setScaleSize(.8f);
             if (avatarImageView != null) {
@@ -1170,7 +1174,7 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
                 if (avatarImageView != null) {
                     avatarImageView.setImage(null, null, avatarDrawable, user);
                 }
-            } else if (UserObject.isUserSelf(user)) {
+            } else if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                 avatarDrawable.setScaleSize(.8f);
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 if (avatarImageView != null) {

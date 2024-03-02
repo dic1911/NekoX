@@ -58,6 +58,8 @@ import org.telegram.ui.Stories.StoriesUtilities;
 
 import java.util.Locale;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ProfileSearchCell extends BaseCell implements NotificationCenter.NotificationCenterDelegate {
 
     private CharSequence currentName;
@@ -645,7 +647,7 @@ public class ProfileSearchCell extends BaseCell implements NotificationCenter.No
             if (UserObject.isReplyUser(user)) {
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
                 avatarImage.setImage(null, null, avatarDrawable, null, null, 0);
-            } else if (savedMessages) {
+            } else if (savedMessages && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 avatarImage.setImage(null, null, avatarDrawable, null, null, 0);
             } else {

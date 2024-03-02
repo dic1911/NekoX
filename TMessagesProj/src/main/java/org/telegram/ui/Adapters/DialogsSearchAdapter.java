@@ -63,6 +63,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
 
     private final int VIEW_TYPE_PROFILE_CELL = 0;
@@ -1593,7 +1595,8 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                 }
                 cell.setChecked(false, false);
                 boolean savedMessages = false;
-                if (user != null && user.id == selfUserId) {
+                boolean displayAsSelf = NekoConfig.showSelfInsteadOfSavedMessages.Bool();
+                if (!displayAsSelf && user != null && user.id == selfUserId) {
                     name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     username = null;
                     savedMessages = true;

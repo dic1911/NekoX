@@ -62,6 +62,8 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.RLottieDrawable;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ShareDialogCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     private final BackupImageView imageView;
@@ -208,7 +210,7 @@ public class ShareDialogCell extends FrameLayout implements NotificationCenter.N
                 nameTextView.setText(LocaleController.getString("RepliesTitle", R.string.RepliesTitle));
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
                 imageView.setImage(null, null, avatarDrawable, user);
-            } else if (currentType != TYPE_CREATE && UserObject.isUserSelf(user)) {
+            } else if (currentType != TYPE_CREATE && UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                 nameTextView.setText(LocaleController.getString("SavedMessages", R.string.SavedMessages));
                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                 imageView.setImage(null, null, avatarDrawable, user);

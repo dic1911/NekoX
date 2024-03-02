@@ -286,4 +286,5 @@
     <string name="NekoXSingPluginNotFound">Not Found</string>
     <string name="NekoXSingPluginPresents">Found</string>
     <string name="NekoXSingPlugin">sing-box</string>
+    <string name="ShowSelfInsteadOfSavedMessages">Display as self instead of "Saved Messages"</string>
 </resources>

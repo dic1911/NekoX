@@ -51,6 +51,8 @@ import org.telegram.ui.NotificationsSettingsActivity;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class UserCell extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
 
     public BackupImageView avatarImageView;
@@ -95,6 +97,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     };
 
     public void openStory(long dialogId, Runnable runnable) {
+        if (NekoConfig.disableStories.Bool()) return;
         BaseFragment fragment = LaunchActivity.getLastFragment();
         if (fragment != null) {
             fragment.getOrCreateStoryViewer().doOnAnimationReady(runnable);
@@ -615,7 +618,7 @@ public class UserCell extends FrameLayout implements NotificationCenter.Notifica
     }
 
     public void setSelfAsSavedMessages(boolean value) {
-        selfAsSavedMessages = value;
+        selfAsSavedMessages = value && !NekoConfig.showSelfInsteadOfSavedMessages.Bool();
     }
 
     @Override

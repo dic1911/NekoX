@@ -30,6 +30,8 @@ import org.telegram.ui.EditWidgetActivity;
 import java.io.File;
 import java.util.ArrayList;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ContactsWidgetService extends RemoteViewsService {
     @Override
     public RemoteViewsFactory onGetViewFactory(Intent intent) {
@@ -109,7 +111,7 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
                 TLRPC.Chat chat = null;
                 if (DialogObject.isUserDialog(id)) {
                     user = accountInstance.getMessagesController().getUser(id);
-                    if (UserObject.isUserSelf(user)) {
+                    if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                     } else if (UserObject.isReplyUser(user)) {
                         name = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
@@ -151,7 +153,7 @@ class ContactsRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactor
                             avatarDrawable = new AvatarDrawable(user);
                             if (UserObject.isReplyUser(user)) {
                                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
-                            } else if (UserObject.isUserSelf(user)) {
+                            } else if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                                 avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);
                             }
                         } else {

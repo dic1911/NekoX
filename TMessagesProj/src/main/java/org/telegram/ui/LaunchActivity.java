@@ -5340,7 +5340,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                             }
                             if (UserObject.isReplyUser(user)) {
                                 names[2] = LocaleController.getString("RepliesTitle", R.string.RepliesTitle).toLowerCase();
-                            } else if (user.self) {
+                            } else if (user.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                                 names[2] = LocaleController.getString("SavedMessages", R.string.SavedMessages).toLowerCase();
                             }
 

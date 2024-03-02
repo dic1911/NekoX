@@ -13,6 +13,8 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.Components.AvatarDrawable;
 import org.telegram.ui.Components.BackupImageView;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class DialogObject {
 
     public static boolean isChannel(TLRPC.Dialog dialog) {
@@ -118,7 +120,7 @@ public class DialogObject {
                 if (imageReceiver != null) {
                     imageReceiver.setForUserOrChat(null, avatarDrawable);
                 }
-            } else if (UserObject.isUserSelf(user)) {
+            } else if (UserObject.isUserSelf(user) && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                 title = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                 if (avatarDrawable != null) {
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_SAVED);

@@ -43,6 +43,8 @@ import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class SearchAdapter extends RecyclerListView.SelectionAdapter {
 
     private Context mContext;
@@ -179,7 +181,7 @@ public class SearchAdapter extends RecyclerListView.SelectionAdapter {
                     }
                     if (UserObject.isReplyUser(user)) {
                         names[2] = LocaleController.getString("RepliesTitle", R.string.RepliesTitle).toLowerCase();
-                    } else if (user.self) {
+                    } else if (user.self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                         names[2] = LocaleController.getString("SavedMessages", R.string.SavedMessages).toLowerCase();
                     }
 
@@ -417,7 +419,7 @@ public class SearchAdapter extends RecyclerListView.SelectionAdapter {
                         }
                     } else {
                         ProfileSearchCell profileSearchCell = (ProfileSearchCell) holder.itemView;
-                        if (self) {
+                        if (self && !NekoConfig.showSelfInsteadOfSavedMessages.Bool()) {
                             name = LocaleController.getString("SavedMessages", R.string.SavedMessages);
                         }
                         profileSearchCell.setData(object, null, name, username, false, self);

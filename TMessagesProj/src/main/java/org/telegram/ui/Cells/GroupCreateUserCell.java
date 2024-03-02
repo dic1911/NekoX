@@ -47,6 +47,8 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class GroupCreateUserCell extends FrameLayout {
 
     private BackupImageView avatarImageView;
@@ -119,7 +121,7 @@ public class GroupCreateUserCell extends FrameLayout {
 
         drawDivider = false;
         padding = pad;
-        showSelfAsSaved = selfAsSaved;
+        showSelfAsSaved = selfAsSaved && !NekoConfig.showSelfInsteadOfSavedMessages.Bool();
         avatarDrawable = new AvatarDrawable();
 
         avatarImageView = new BackupImageView(context);
