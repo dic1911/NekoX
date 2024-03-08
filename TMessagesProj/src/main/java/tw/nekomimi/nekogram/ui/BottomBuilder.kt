@@ -223,9 +223,10 @@ class BottomBuilder(val ctx: Context, val needFocus: Boolean = true, val bgColor
                 dismiss()
                 listener?.invoke(this)
             }
-            if (red) {
-                setColors(Theme.getColor(Theme.key_text_RedRegular), Theme.getColor(Theme.key_text_RedRegular))
-            }
+            // 030: workaround
+//            if (red) {
+//                setColors(Theme.getColor(Theme.key_text_RedRegular), Theme.getColor(Theme.key_text_RedRegular))
+//            }
             this@BottomBuilder.rootView.addView(this, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, rtl))
         }
     }

@@ -207,6 +207,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     public final static int LOCATION_TYPE_SEND = 0;
     public final static int LOCATION_TYPE_SEND_WITH_LIVE = 1;
     public final static int LOCATION_TYPE_STORY = 7;
+    public final static int LOCATION_TYPE_BIZ = 8;
 
     public static class VenueLocation {
         public int num;
@@ -402,6 +403,8 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         dialogId = chatActivity.getDialogId();
         if (parentAlert.isStoryLocationPicker) {
             locationType = LOCATION_TYPE_STORY;
+        } else if (parentAlert.isBizLocationPicker) {
+            locationType = LOCATION_TYPE_BIZ;
         } else if (chatActivity.getCurrentEncryptedChat() == null && !chatActivity.isInScheduleMode() && !UserObject.isUserSelf(chatActivity.getCurrentUser())) {
             locationType = LOCATION_TYPE_SEND_WITH_LIVE;
         } else {
@@ -483,7 +486,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
                 searchAdapter.searchDelayed(text, userLocation);
             }
         });
-        searchItem.setVisibility(locationDenied && !parentAlert.isStoryLocationPicker ? View.GONE : View.VISIBLE);
+        searchItem.setVisibility(locationDenied && !parentAlert.isStoryLocationPicker || parentAlert.isBizLocationPicker ? View.GONE : View.VISIBLE);
         searchItem.setSearchFieldHint(LocaleController.getString("Search", R.string.Search));
         searchItem.setContentDescription(LocaleController.getString("Search", R.string.Search));
         EditTextBoldCursor editText = searchItem.getSearchField();
@@ -491,7 +494,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         editText.setCursorColor(getThemedColor(Theme.key_dialogTextBlack));
         editText.setHintTextColor(getThemedColor(Theme.key_chat_messagePanelHint));
 
-        FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(21));
+        LayoutParams layoutParams = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, AndroidUtilities.dp(21));
         layoutParams.gravity = Gravity.LEFT | Gravity.BOTTOM;
 
         mapViewClip = new FrameLayout(context) {
@@ -666,7 +669,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         locationButton.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_location_actionActiveIcon), PorterDuff.Mode.SRC_IN));
         locationButton.setTag(Theme.key_location_actionActiveIcon);
         locationButton.setContentDescription(LocaleController.getString("AccDescrMyLocation", R.string.AccDescrMyLocation));
-        FrameLayout.LayoutParams layoutParams1 = LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 40 : 44, Build.VERSION.SDK_INT >= 21 ? 40 : 44, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 12, 12);
+        LayoutParams layoutParams1 = LayoutHelper.createFrame(Build.VERSION.SDK_INT >= 21 ? 40 : 44, Build.VERSION.SDK_INT >= 21 ? 40 : 44, Gravity.RIGHT | Gravity.BOTTOM, 0, 0, 12, 12);
         mapViewClip.addView(locationButton, layoutParams1);
         locationButton.setOnClickListener(v -> {
             if (Build.VERSION.SDK_INT >= 23) {
@@ -687,7 +690,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
                 final IMapController controller = mapView.getController();
                 controller.animateTo(new GeoPoint(myLocation.getLatitude(), myLocation.getLongitude()));
                 if (searchedForCustomLocations) {
-                    if (myLocation != null) {
+                    if (myLocation != null && locationType != LOCATION_TYPE_BIZ) {
                         adapter.searchPlacesWithQuery(null, myLocation, true, true);
                     }
                     searchedForCustomLocations = false;
@@ -733,7 +736,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
             }
         };
         listView.setClipToPadding(false);
-        listView.setAdapter(adapter = new LocationActivityAdapter(context, locationType, dialogId, true, resourcesProvider, parentAlert.isStoryLocationPicker));
+        listView.setAdapter(adapter = new LocationActivityAdapter(context, locationType, dialogId, true, resourcesProvider, parentAlert.isStoryLocationPicker, parentAlert.isBizLocationPicker));
         DefaultItemAnimator itemAnimator = new DefaultItemAnimator();
         itemAnimator.setDurations(350);
         itemAnimator.setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT);
@@ -946,7 +949,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         searchListView = new RecyclerListView(context, resourcesProvider);
         searchListView.setVisibility(GONE);
         searchListView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
-        searchAdapter = new LocationActivitySearchAdapter(context, resourcesProvider, parentAlert.isStoryLocationPicker) {
+        searchAdapter = new LocationActivitySearchAdapter(context, resourcesProvider, parentAlert.isStoryLocationPicker, parentAlert.isBizLocationPicker) {
             @Override
             public void notifyDataSetChanged() {
                 if (searchItem != null) {
@@ -992,12 +995,12 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    boolean shouldHideBottomButtons() {
+    public boolean shouldHideBottomButtons() {
         return !locationDenied;
     }
 
     @Override
-    void onPause() {
+    public void onPause() {
         if (mapView != null && mapsInitialized) {
             try {
                 mapView.onPause();
@@ -1013,7 +1016,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    void onDestroy() {
+    public void onDestroy() {
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.locationPermissionGranted);
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.locationPermissionDenied);
         doNotDrawMap = true;
@@ -1049,23 +1052,23 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    void onHide() {
+    public void onHide() {
         searchItem.setVisibility(GONE);
     }
 
     @Override
-    int needsActionBar() {
+    public int needsActionBar() {
         return 1;
     }
 
     @Override
-    boolean onDismiss() {
+    public boolean onDismiss() {
         onDestroy();
         return false;
     }
 
     @Override
-    int getCurrentItemTop() {
+    public int getCurrentItemTop() {
         if (listView.getChildCount() <= 0) {
             return Integer.MAX_VALUE;
         }
@@ -1086,17 +1089,17 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    int getListTopPadding() {
+    public int getListTopPadding() {
         return listView.getPaddingTop();
     }
 
     @Override
-    int getFirstOffset() {
+    public int getFirstOffset() {
         return getListTopPadding() + AndroidUtilities.dp(56);
     }
 
     @Override
-    void onPreMeasure(int availableWidth, int availableHeight) {
+    public void onPreMeasure(int availableWidth, int availableHeight) {
         int padding;
         if (parentAlert.actionBar.isSearchFieldVisible() || parentAlert.sizeNotifierFrameLayout.measureKeyboardHeight() > AndroidUtilities.dp(20)) {
             padding = mapHeight - overScrollHeight;
@@ -1132,7 +1135,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    int getButtonsHideOffset() {
+    public int getButtonsHideOffset() {
         return AndroidUtilities.dp(56);
     }
 
@@ -1145,7 +1148,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    void scrollToTop() {
+    public void scrollToTop() {
         listView.smoothScrollToPosition(0);
     }
 
@@ -1179,6 +1182,9 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
             if (myLocation == null || userLocation == null || userLocation.distanceTo(myLocation) < 300) {
                 show = false;
             }
+        }
+        if (locationType == LOCATION_TYPE_BIZ) {
+            show = false;
         }
         if (searchAreaButton == null || show && searchAreaButton.getTag() != null || !show && searchAreaButton.getTag() == null) {
             return;
@@ -1469,7 +1475,9 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         if (lat != 0 && _long != 0) {
             userLocationMoved = true;
             showSearchPlacesButton(false);
-            adapter.searchPlacesWithQuery(null, userLocation, true, true);
+            if (locationType != LOCATION_TYPE_BIZ) {
+                adapter.searchPlacesWithQuery(null, userLocation, true, true);
+            }
             searchedForCustomLocations = true;
             showResults();
         }
@@ -1598,7 +1606,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
 
     private int buttonsHeight() {
         int buttonsHeight = AndroidUtilities.dp(66);
-        if (locationType == LOCATION_TYPE_SEND_WITH_LIVE || locationType == LOCATION_TYPE_STORY)
+        if (locationType == LOCATION_TYPE_SEND_WITH_LIVE || locationType == LOCATION_TYPE_STORY || locationType == LOCATION_TYPE_BIZ)
             buttonsHeight += AndroidUtilities.dp(66);
         return buttonsHeight;
     }
@@ -1726,7 +1734,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
         if (mapView != null) {
             GeoPoint latLng = new GeoPoint(location.getLatitude(), location.getLongitude());
             if (adapter != null) {
-                if (!searchedForCustomLocations) {
+                if (!searchedForCustomLocations && locationType != LOCATION_TYPE_BIZ) {
                     adapter.searchPlacesWithQuery(null, myLocation, true);
                 }
                 adapter.setGpsLocation(myLocation);
@@ -1774,7 +1782,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
             }
         }
         fixLayoutInternal(true);
-        searchItem.setVisibility(locationDenied && !parentAlert.isStoryLocationPicker ? View.GONE : View.VISIBLE);
+        searchItem.setVisibility(locationDenied && !parentAlert.isStoryLocationPicker || parentAlert.isBizLocationPicker ? View.GONE : View.VISIBLE);
     }
 
     @Override
@@ -1792,7 +1800,7 @@ public class ChatAttachAlertLocationLayout extends ChatAttachAlert.AttachAlertLa
     }
 
     @Override
-    void onShow(ChatAttachAlert.AttachAlertLayout previousLayout) {
+    public void onShow(ChatAttachAlert.AttachAlertLayout previousLayout) {
         parentAlert.actionBar.setTitle(LocaleController.getString("ShareLocation", R.string.ShareLocation));
         if (mapView.getParent() == null) {
             mapViewClip.addView(mapView, 0, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, overScrollHeight + AndroidUtilities.dp(10), Gravity.TOP | Gravity.LEFT));
