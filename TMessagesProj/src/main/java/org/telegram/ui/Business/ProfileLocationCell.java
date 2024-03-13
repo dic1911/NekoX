@@ -85,7 +85,7 @@ public class ProfileLocationCell extends LinearLayout {
         if (value != null) {
             textView1.setText(value.address);
             if (value.geo_point != null) {
-                imageReceiver.setImage(AndroidUtilities.formapMapUrl(UserConfig.selectedAccount, value.geo_point.lat, value.geo_point._long, dp(44), dp(44), false, 15, -1), "44_44", thumbDrawable, null, 0);
+                imageReceiver.setImage(AndroidUtilities.formapMapUrl(false, value.geo_point.lat, value.geo_point._long, dp(44), dp(44), false, 15), "44_44", thumbDrawable, null, 0);
             } else {
                 imageReceiver.setImageBitmap((Drawable) null);
             }

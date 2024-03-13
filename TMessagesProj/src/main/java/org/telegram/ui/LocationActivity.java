@@ -1365,11 +1365,11 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
             });
             searchListView.setOnItemClickListener((view, position) -> {
                 TLRPC.TL_messageMediaVenue object = searchAdapter.getItem(position);
-                if (object != null && object.icon != null && locationType == ChatAttachAlertLocationLayout.LOCATION_TYPE_BIZ && this.map != null) {
+                if (object != null && object.icon != null && locationType == ChatAttachAlertLocationLayout.LOCATION_TYPE_BIZ && this.mapView != null) {
                     userLocationMoved = true;
                     menu.closeSearchField(true);
-                    final float zoom = "pin".equals(object.icon) ? this.map.getMaxZoomLevel() - 4 : this.map.getMaxZoomLevel() - 9;
-                    this.map.animateCamera(ApplicationLoader.getMapsProvider().newCameraUpdateLatLngZoom(new IMapsProvider.LatLng(object.geo.lat, object.geo._long), zoom));
+                    final double zoom = "pin".equals(object.icon) ? this.mapView.getMaxZoomLevel() - 4 : this.mapView.getMaxZoomLevel() - 9;
+                    this.mapView.getController().animateTo(new GeoPoint(object.geo.lat, object.geo._long), zoom, null);
                     if (userLocation != null) {
                         userLocation.setLatitude(object.geo.lat);
                         userLocation.setLongitude(object.geo._long);
