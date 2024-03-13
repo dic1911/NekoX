@@ -3848,14 +3848,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
                     // 030: ?
                     if (hasArchivedDialogs && ((SharedConfig.archiveHidden && viewPage.archivePullViewState == ARCHIVE_ITEM_STATE_PINNED) || (!SharedConfig.archiveHidden && viewPage.archivePullViewState != ARCHIVE_ITEM_STATE_PINNED))) {
-                        Log.d("030-UI", String.format("state mismatch, original values: cfg hide: %s, viewPage.archivePullViewState = %d", SharedConfig.archiveHidden, viewPage.archivePullViewState));
+//                        Log.d("030-UI", String.format("state mismatch, original values: cfg hide: %s, viewPage.archivePullViewState = %d", SharedConfig.archiveHidden, viewPage.archivePullViewState));
                         if (getMessagesController().dialogs_dict.get(DialogObject.makeFolderDialogId(1)) != null)
                             viewPage.archivePullViewState = SharedConfig.archiveHidden ? ARCHIVE_ITEM_STATE_HIDDEN : ARCHIVE_ITEM_STATE_PINNED;
-                        else
-                            Log.d("030-UI", "no archived chat, skip patching state");
+//                        else
+//                            Log.d("030-UI", "no archived chat, skip patching state");
                     }
                     if (viewPage.listView != null && viewPage.pullForegroundDrawable != null) viewPage.pullForegroundDrawable.setListView(viewPage.listView);
-                    else if (viewPage.listView == null) Log.w("030-UI", "listView is null!");
+//                    else if (viewPage.listView == null) Log.w("030-UI", "listView is null!");
 
                     if (viewPage.dialogsType == DIALOGS_TYPE_DEFAULT && viewPage.archivePullViewState != ARCHIVE_ITEM_STATE_PINNED && hasHiddenArchive() && !fixScrollYAfterArchiveOpened) {
                         int usedDy = super.scrollVerticallyBy(measuredDy, recycler, state);

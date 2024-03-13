@@ -1005,6 +1005,7 @@ public class MessagesStorage extends BaseController {
                                 break;
                             }
                             case 4: {
+                                if (NekoConfig.unlimitedPinnedDialogs.Bool()) break;
                                 long did = data.readInt64(false);
                                 boolean pin = data.readBool(false);
                                 TLRPC.InputPeer peer = TLRPC.InputPeer.TLdeserialize(data, data.readInt32(false), false);

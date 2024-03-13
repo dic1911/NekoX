@@ -232,7 +232,7 @@ public class PullForegroundDrawable {
 
     public void draw(Canvas canvas, boolean header) {
         if (!willDraw || cell == null || listView == null) {
-            Log.d("030-UI", String.format("skip drawing PullForegroundDrawable, willDraw: %s, isOut: %s, cell: %s, listView: %s", willDraw, isOut, cell != null, listView != null));
+//            Log.d("030-UI", String.format("skip drawing PullForegroundDrawable, willDraw: %s, isOut: %s, cell: %s, listView: %s", willDraw, isOut, cell != null, listView != null));
             return;
         } else if (isOut) {
 //            Log.w("030-UI", "ignoring isOut");

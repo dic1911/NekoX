@@ -8127,7 +8127,7 @@ public class MessagesController extends BaseController implements NotificationCe
 
     public boolean hasHiddenArchive() {
         TLRPC.Dialog archivedDialogs = dialogs_dict.get(DialogObject.makeFolderDialogId(1));
-        if (archivedDialogs == null) Log.e("030-UI", "archived dialogs is null!");
+//        if (archivedDialogs == null) Log.e("030-UI", "archived dialogs is null!");
         return SharedConfig.archiveHidden && archivedDialogs != null;
     }
 
@@ -14926,6 +14926,10 @@ public class MessagesController extends BaseController implements NotificationCe
             }
             getMessagesStorage().setDialogsPinned(dids, pinned);
 
+            if (NekoConfig.unlimitedPinnedDialogs.Bool()) {
+                return;
+            }
+
             NativeByteBuffer data = null;
             try {
                 data = new NativeByteBuffer(4 + 4 + 4 + size);
@@ -14997,6 +15001,11 @@ public class MessagesController extends BaseController implements NotificationCe
                 inputDialogPeer.peer = peer;
                 req.peer = inputDialogPeer;
 
+                if (NekoConfig.unlimitedPinnedDialogs.Bool()) {
+                    getMessagesStorage().setDialogPinned(dialogId, dialog.pinnedNum);
+                    return true;
+                }
+
                 long newTaskId;
                 if (taskId == 0) {
                     NativeByteBuffer data = null;
@@ -15014,7 +15023,7 @@ public class MessagesController extends BaseController implements NotificationCe
                     newTaskId = taskId;
                 }
 
-                if (!NekoConfig.unlimitedPinnedDialogs.Bool()) getConnectionsManager().sendRequest(req, (response, error) -> {
+                getConnectionsManager().sendRequest(req, (response, error) -> {
                     if (newTaskId != 0) {
                         getMessagesStorage().removePendingTask(newTaskId);
                     }
@@ -17418,23 +17427,31 @@ public class MessagesController extends BaseController implements NotificationCe
                         toDbUser.username = (update.usernames != null && update.usernames.size() == 1) ? update.usernames.get(0).username : null;
                         dbUsers.add(toDbUser);
                     } else if (baseUpdate instanceof TLRPC.TL_updateDialogPinned) {
-                        TLRPC.TL_updateDialogPinned update = (TLRPC.TL_updateDialogPinned) baseUpdate;
-                        long did;
-                        if (update.peer instanceof TLRPC.TL_dialogPeer) {
-                            TLRPC.TL_dialogPeer dialogPeer = (TLRPC.TL_dialogPeer) update.peer;
-                            did = DialogObject.getPeerDialogId(dialogPeer.peer);
+                        if (NekoConfig.unlimitedPinnedDialogs.Bool()) {
+                            Log.w("030-pin", "ignore TL_updateDialogPinned for unlimited pinned dlgs");
                         } else {
-                            did = 0;
-                        }
-                        if (!pinDialog(did, update.pinned, null, -1)) {
-                            getUserConfig().setPinnedDialogsLoaded(update.folder_id, false);
-                            getUserConfig().saveConfig(false);
-                            loadPinnedDialogs(update.folder_id, did, null);
+                            TLRPC.TL_updateDialogPinned update = (TLRPC.TL_updateDialogPinned) baseUpdate;
+                            long did;
+                            if (update.peer instanceof TLRPC.TL_dialogPeer) {
+                                TLRPC.TL_dialogPeer dialogPeer = (TLRPC.TL_dialogPeer) update.peer;
+                                did = DialogObject.getPeerDialogId(dialogPeer.peer);
+                            } else {
+                                did = 0;
+                            }
+                            if (!pinDialog(did, update.pinned, null, -1)) {
+                                getUserConfig().setPinnedDialogsLoaded(update.folder_id, false);
+                                getUserConfig().saveConfig(false);
+                                loadPinnedDialogs(update.folder_id, did, null);
+                            }
                         }
                     } else if (baseUpdate instanceof TLRPC.TL_updatePinnedDialogs) {
                         TLRPC.TL_updatePinnedDialogs update = (TLRPC.TL_updatePinnedDialogs) baseUpdate;
-                        getUserConfig().setPinnedDialogsLoaded(update.folder_id, false);
-                        getUserConfig().saveConfig(false);
+                        if (NekoConfig.unlimitedPinnedDialogs.Bool()) {
+                            Log.w("030-pin", "ignore status update of TL_updatePinnedDialogs for unlimited pinned dlgs");
+                        } else {
+                            getUserConfig().setPinnedDialogsLoaded(update.folder_id, false);
+                            getUserConfig().saveConfig(false);
+                        }
                         ArrayList<Long> order;
                         if ((update.flags & 1) != 0) {
                             order = new ArrayList<>();
