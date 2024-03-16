@@ -30305,11 +30305,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             hideFieldPanel(false);
             for (int a = 0; a < dids.size(); a++) {
                 long did = dids.get(a).dialogId;
-                SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, null, false);
-                params.quick_reply_shortcut = quickReplyShortcut;
-                params.quick_reply_shortcut_id = getQuickReplyId();
-                if (message != null && !NekoConfig.sendCommentAfterForward.Bool()) {
-                    getSendMessagesHelper().sendMessage(params);
+                SendMessagesHelper.SendMessageParams params = null;
+                if (message != null) {
+                    SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, null, false);
+                    params.quick_reply_shortcut = quickReplyShortcut;
+                    params.quick_reply_shortcut_id = getQuickReplyId();
+
+                    if (!NekoConfig.sendCommentAfterForward.Bool()) {
+                        getSendMessagesHelper().sendMessage(params);
+                    }
                 }
                 forwardMessages(fmessages, noForwardQuote, true, 0, did);
                 if (message != null && NekoConfig.sendCommentAfterForward.Bool()) {
