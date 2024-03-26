@@ -1025,21 +1025,21 @@ public class MediaDataController extends BaseController {
         if (!found) {
             recentGifs.add(0, document);
         }
-        if ((recentGifs.size() > getMessagesController().savedGifsLimitDefault && !UserConfig.getInstance(currentAccount).isPremium()) || recentGifs.size() > getMessagesController().savedGifsLimitPremium) {
-            TLRPC.Document old = recentGifs.remove(recentGifs.size() - 1);
-            getMessagesStorage().getStorageQueue().postRunnable(() -> {
-                try {
-                    getMessagesStorage().getDatabase().executeFast("DELETE FROM web_recent_v3 WHERE id = '" + old.id + "' AND type = 2").stepThis().dispose();
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
-            });
-            if (showReplaceBulletin) {
-                AndroidUtilities.runOnUIThread(() -> {
-                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, StickerSetBulletinLayout.TYPE_REPLACED_TO_FAVORITES_GIFS);
-                });
-            }
-        }
+//        if ((recentGifs.size() > getMessagesController().savedGifsLimitDefault && !UserConfig.getInstance(currentAccount).isPremium()) || recentGifs.size() > getMessagesController().savedGifsLimitPremium) {
+//            TLRPC.Document old = recentGifs.remove(recentGifs.size() - 1);
+//            getMessagesStorage().getStorageQueue().postRunnable(() -> {
+//                try {
+//                    getMessagesStorage().getDatabase().executeFast("DELETE FROM web_recent_v3 WHERE id = '" + old.id + "' AND type = 2").stepThis().dispose();
+//                } catch (Exception e) {
+//                    FileLog.e(e);
+//                }
+//            });
+//            if (showReplaceBulletin) {
+//                AndroidUtilities.runOnUIThread(() -> {
+//                    NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.showBulletin, Bulletin.TYPE_STICKER, document, StickerSetBulletinLayout.TYPE_REPLACED_TO_FAVORITES_GIFS);
+//                });
+//            }
+//        }
         ArrayList<TLRPC.Document> arrayList = new ArrayList<>();
         arrayList.add(document);
         processLoadedRecentDocuments(0, arrayList, true, date, false);

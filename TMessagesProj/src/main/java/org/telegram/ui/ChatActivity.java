@@ -30307,7 +30307,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 long did = dids.get(a).dialogId;
                 SendMessagesHelper.SendMessageParams params = null;
                 if (message != null) {
-                    SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, null, false);
+                    params = SendMessagesHelper.SendMessageParams.of(message.toString(), did, null, null, null, true, null, null, null, true, 0, null, false);
                     params.quick_reply_shortcut = quickReplyShortcut;
                     params.quick_reply_shortcut_id = getQuickReplyId();
 
@@ -37847,12 +37847,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 noForwardQuote = true;
                 forwardingMessage = selectedObject;
                 forwardingMessageGroup = selectedObjectGroup;
-                Bundle args = new Bundle();
-                args.putBoolean("onlySelect", true);
-                args.putInt("dialogsType", 3);
-                DialogsActivity fragment = new DialogsActivity(args);
-                fragment.setDelegate(this);
-                presentFragment(fragment);
+                openForward(false);
                 break;
             }
             case nkbtn_deldlcache: {
