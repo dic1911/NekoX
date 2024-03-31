@@ -51,6 +51,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import androidx.annotation.IntDef;
 import androidx.annotation.NonNull;
+import androidx.biometric.BiometricManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -882,14 +883,22 @@ public class PasscodeActivity extends BaseFragment implements NotificationCenter
         changePasscodeRow = rowCount++;
         try {
             if (Build.VERSION.SDK_INT >= 23) {
-                boolean useBiometric;
-                if (Build.VERSION.SDK_INT >= 29) {
-                    BiometricManager biometricManager = (BiometricManager) ApplicationLoader.applicationContext.getSystemService(Context.BIOMETRIC_SERVICE);
-                    if (Build.VERSION.SDK_INT >= 30) {
-                        useBiometric = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
-                    } else {
-                        useBiometric = biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
-                    }
+//<<<<<<< HEAD
+                boolean useBiometric = false;
+//                if (Build.VERSION.SDK_INT >= 29) {
+//                    BiometricManager biometricManager = (BiometricManager) ApplicationLoader.applicationContext.getSystemService(Context.BIOMETRIC_SERVICE);
+//                    if (Build.VERSION.SDK_INT >= 30) {
+//                        useBiometric = biometricManager.canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_WEAK) == BiometricManager.BIOMETRIC_SUCCESS;
+//                    } else {
+//                        useBiometric = biometricManager.canAuthenticate() == BiometricManager.BIOMETRIC_SUCCESS;
+//                    }
+//=======
+                if (
+                    BiometricManager.from(getContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS &&
+                    AndroidUtilities.isKeyguardSecure()
+                ) {
+                    fingerprintRow = rowCount++;
+//>>>>>>> 3a822b15f (update to 10.10.0 (4571))
                 } else {
                     FingerprintManagerCompat fingerprintManager = FingerprintManagerCompat.from(ApplicationLoader.applicationContext);
                     useBiometric = fingerprintManager.isHardwareDetected();

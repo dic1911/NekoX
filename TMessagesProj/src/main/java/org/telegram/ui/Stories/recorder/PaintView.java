@@ -1749,7 +1749,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
     private void openStickersView() {
         final int wasSelectedIndex = tabsSelectedIndex;
         switchTab(1);
-        EmojiBottomSheet alert = emojiPopup = new EmojiBottomSheet(getContext(), isVideo, resourcesProvider) {
+        EmojiBottomSheet alert = emojiPopup = new EmojiBottomSheet(getContext(), false, resourcesProvider) {
             @Override
             public void onDismissAnimationStart() {
                 super.onDismissAnimationStart();

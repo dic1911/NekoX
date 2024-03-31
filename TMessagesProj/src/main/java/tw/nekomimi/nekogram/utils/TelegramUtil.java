@@ -63,12 +63,10 @@ public class TelegramUtil {
                         return;
                 }
             }
-            Log.d("030-conn", "applying workaround, enable proxy");
             SharedConfig.setProxyEnable(true);
             try {
                 Thread.sleep(300);
             } catch (InterruptedException ignored) {}
-            Log.d("030-conn", "applying workaround, disable proxy");
             SharedConfig.setProxyEnable(false);
         }
     };

@@ -140,7 +140,7 @@ public class LPhotoPaintView extends SizeNotifierFrameLayoutPhoto implements IPh
     private RenderView renderView;
     private View renderInputView;
     private FrameLayout selectionContainerView;
-    private EntitiesContainerView entitiesView;
+    public EntitiesContainerView entitiesView;
     private ThanosEffect thanosEffect;
     private FrameLayout topLayout;
     public FrameLayout bottomLayout;

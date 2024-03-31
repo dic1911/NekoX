@@ -694,8 +694,10 @@ public class ItemTouchHelper extends RecyclerView.ItemDecoration
             mSelected = selected;
 
             if (actionState == ACTION_STATE_DRAG) {
-                if (!NekoConfig.disableVibration.Bool()) {
-                    mSelected.itemView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS);
+                try {
+                    if (!NekoConfig.disableVibration.Bool())
+                        mSelected.itemView.performHapticFeedback(HapticFeedbackConstants.LONG_PRESS, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                } catch (Exception ignore) {
                 }
             }
         }

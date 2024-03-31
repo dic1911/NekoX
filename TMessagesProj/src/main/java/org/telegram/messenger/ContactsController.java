@@ -86,6 +86,7 @@ public class ContactsController extends BaseController {
     private ArrayList<TLRPC.PrivacyRule> phonePrivacyRules;
     private ArrayList<TLRPC.PrivacyRule> addedByPhonePrivacyRules;
     private ArrayList<TLRPC.PrivacyRule> voiceMessagesRules;
+    private ArrayList<TLRPC.PrivacyRule> birthdayPrivacyRules;
     private TLRPC.TL_globalPrivacySettings globalPrivacySettings;
 
     public final static int PRIVACY_RULES_TYPE_LASTSEEN = 0;
@@ -99,8 +100,9 @@ public class ContactsController extends BaseController {
     public final static int PRIVACY_RULES_TYPE_VOICE_MESSAGES = 8;
     public final static int PRIVACY_RULES_TYPE_BIO = 9;
     public final static int PRIVACY_RULES_TYPE_MESSAGES = 10;
+    public final static int PRIVACY_RULES_TYPE_BIRTHDAY = 11;
 
-    public final static int PRIVACY_RULES_TYPE_COUNT = 10;
+    public final static int PRIVACY_RULES_TYPE_COUNT = 12;
 
     private class MyContentObserver extends ContentObserver {
 
@@ -336,6 +338,7 @@ public class ContactsController extends BaseController {
         p2pPrivacyRules = null;
         profilePhotoPrivacyRules = null;
         bioPrivacyRules = null;
+        birthdayPrivacyRules = null;
         forwardsPrivacyRules = null;
         phonePrivacyRules = null;
 
@@ -2669,10 +2672,14 @@ public class ContactsController extends BaseController {
                 case PRIVACY_RULES_TYPE_VOICE_MESSAGES:
                     req.key = new TLRPC.TL_inputPrivacyKeyVoiceMessages();
                     break;
+                case PRIVACY_RULES_TYPE_BIRTHDAY:
+                    req.key = new TLRPC.TL_inputPrivacyKeyBirthday();
+                    break;
                 case PRIVACY_RULES_TYPE_ADDED_BY_PHONE:
-                default:
                     req.key = new TLRPC.TL_inputPrivacyKeyAddedByPhone();
                     break;
+                default:
+                    continue;
             }
 
             getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
@@ -2699,6 +2706,9 @@ public class ContactsController extends BaseController {
                             break;
                         case PRIVACY_RULES_TYPE_BIO:
                             bioPrivacyRules = rules.rules;
+                            break;
+                        case PRIVACY_RULES_TYPE_BIRTHDAY:
+                            birthdayPrivacyRules = rules.rules;
                             break;
                         case PRIVACY_RULES_TYPE_FORWARDS:
                             forwardsPrivacyRules = rules.rules;
@@ -2762,6 +2772,8 @@ public class ContactsController extends BaseController {
                 return profilePhotoPrivacyRules;
             case PRIVACY_RULES_TYPE_BIO:
                 return bioPrivacyRules;
+            case PRIVACY_RULES_TYPE_BIRTHDAY:
+                return birthdayPrivacyRules;
             case PRIVACY_RULES_TYPE_FORWARDS:
                 return forwardsPrivacyRules;
             case PRIVACY_RULES_TYPE_PHONE:
@@ -2793,6 +2805,9 @@ public class ContactsController extends BaseController {
                 break;
             case PRIVACY_RULES_TYPE_BIO:
                 bioPrivacyRules = rules;
+                break;
+            case PRIVACY_RULES_TYPE_BIRTHDAY:
+                birthdayPrivacyRules = rules;
                 break;
             case PRIVACY_RULES_TYPE_FORWARDS:
                 forwardsPrivacyRules = rules;
