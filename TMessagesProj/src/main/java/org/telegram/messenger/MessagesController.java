@@ -251,7 +251,7 @@ public class MessagesController extends BaseController implements NotificationCe
     public boolean dialogFiltersLoaded;
     public ArrayList<TLRPC.TL_dialogFilterSuggested> suggestedFilters = new ArrayList<>();
 
-    private LongSparseArray<ArrayList<TLRPC.Updates>> updatesQueueChannels = new LongSparseArray<>();
+    private final LongSparseArray<ArrayList<TLRPC.Updates>> updatesQueueChannels = new LongSparseArray<>();
     private LongSparseLongArray updatesStartWaitTimeChannels = new LongSparseLongArray();
     private LongSparseIntArray channelsPts = new LongSparseIntArray();
     private LongSparseArray<Boolean> gettingDifferenceChannels = new LongSparseArray<>();
@@ -13677,9 +13677,11 @@ public class MessagesController extends BaseController implements NotificationCe
                     });
                     return;
                 }
-                if (processInvitedUsers != null) {
-                    processInvitedUsers.run(null);
-                }
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (processInvitedUsers != null) {
+                        processInvitedUsers.run(null);
+                    }
+                });
                 if ("USER_ALREADY_PARTICIPANT".equals(error.text) && ignoreIfAlreadyExists) {
                     if (onFinishRunnable != null) {
                         AndroidUtilities.runOnUIThread(onFinishRunnable);
@@ -13715,9 +13717,11 @@ public class MessagesController extends BaseController implements NotificationCe
                 updates = (TLRPC.Updates) response;
             } else {
                 FileLog.e("unexpected " + response + " in addUserToChat");
-                if (processInvitedUsers != null) {
-                    processInvitedUsers.run(null);
-                }
+                AndroidUtilities.runOnUIThread(() -> {
+                    if (processInvitedUsers != null) {
+                        processInvitedUsers.run(null);
+                    }
+                });
                 return;
             }
             for (int a = 0; a < updates.updates.size(); a++) {

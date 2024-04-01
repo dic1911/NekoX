@@ -1982,7 +1982,7 @@ public class LPhotoPaintView extends SizeNotifierFrameLayoutPhoto implements IPh
             return;
         }
 
-        if (editingText) {
+        if (editingText && currentEntityView != null) {
             selectEntity(null);
             return;
         }

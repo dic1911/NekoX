@@ -39,6 +39,8 @@ public class ColoredImageSpan extends ReplacementSpan {
     public float spaceScaleX = 1f;
     private float scaleX = 1f, scaleY = 1f;
     private Runnable checkColorDelegate;
+    private boolean isRelativeSize;
+    private Paint.FontMetricsInt fontMetrics;
 
     public ColoredImageSpan(int imageRes) {
         this(imageRes, ALIGN_DEFAULT);
@@ -69,6 +71,17 @@ public class ColoredImageSpan extends ReplacementSpan {
         this.verticalAlignment = verticalAlignment;
     }
 
+    public void setRelativeSize(Paint.FontMetricsInt fontMetricsInt) {
+        this.isRelativeSize = true;
+        this.fontMetrics = fontMetricsInt;
+        if (fontMetrics != null) {
+            setSize(Math.abs(fontMetrics.descent) + Math.abs(fontMetrics.ascent));
+            if (size == 0) {
+                setSize(AndroidUtilities.dp(20));
+            }
+        }
+    }
+
     public void setSize(int size) {
         this.size = size;
         drawable.setBounds(0, 0, size, size);
@@ -92,7 +105,20 @@ public class ColoredImageSpan extends ReplacementSpan {
     }
 
     @Override
-    public int getSize(@NonNull Paint paint, CharSequence charSequence, int i, int i1, @Nullable Paint.FontMetricsInt fontMetricsInt) {
+    public int getSize(@NonNull Paint paint, CharSequence charSequence, int i, int i1, @Nullable Paint.FontMetricsInt fm) {
+        if (isRelativeSize && fontMetrics != null) {
+            if (fm == null) {
+                fm = new Paint.FontMetricsInt();
+            }
+            if (fm != null) {
+                fm.ascent = fontMetrics.ascent;
+                fm.descent = fontMetrics.descent;
+
+                fm.top = fontMetrics.top;
+                fm.bottom = fontMetrics.bottom;
+            }
+            return (int) (scaleX * Math.abs(spaceScaleX) * size);
+        }
         if (sizeWidth != 0)
             return (int) (Math.abs(scaleX) * sizeWidth);
         return (int) (Math.abs(scaleX) * Math.abs(spaceScaleX) * (size != 0 ? size : drawable.getIntrinsicWidth()));
