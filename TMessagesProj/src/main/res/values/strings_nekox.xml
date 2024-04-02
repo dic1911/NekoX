@@ -289,4 +289,5 @@
     <string name="ShowSelfInsteadOfSavedMessages">Display as self instead of "Saved Messages"</string>
     <string name="DisableCustomWallpaperUser">Disable user custom wallpaper</string>
     <string name="DisableCustomWallpaperChannel">Disable channel custom wallpaper</string>
+    <string name="FasterReconnectHack">Faster reconnect by toggling proxy on/off</string>
 </resources>

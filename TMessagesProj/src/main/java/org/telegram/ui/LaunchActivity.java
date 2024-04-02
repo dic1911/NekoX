@@ -218,6 +218,7 @@ import tw.nekomimi.nekogram.settings.NekoSettingsActivity;
 import tw.nekomimi.nekogram.proxy.SubInfo;
 import tw.nekomimi.nekogram.proxy.SubManager;
 import tw.nekomimi.nekogram.utils.AlertUtil;
+import tw.nekomimi.nekogram.utils.TelegramUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
 public class LaunchActivity extends BasePermissionsActivity implements INavigationLayout.INavigationLayoutDelegate, NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate {
@@ -7363,6 +7364,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         int titleId = 0;
         Runnable action = null;
         currentConnectionState = ConnectionsManager.getInstance(currentAccount).getConnectionState();
+        boolean isConnecting = false;
         if (currentConnectionState == ConnectionsManager.ConnectionStateWaitingForNetwork) {
             title = "WaitingForNetwork";
             titleId = R.string.WaitingForNetwork;
@@ -7375,7 +7377,14 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         } else if (currentConnectionState == ConnectionsManager.ConnectionStateConnecting) {
             title = "Connecting";
             titleId = R.string.Connecting;
+            if (!SharedConfig.getProxyEnable()) {
+                isConnecting = true;
+                TelegramUtil.toggleProxyOnOff(false);
+            }
         }
+
+        if (!isConnecting) TelegramUtil.toggleProxyOnOff(true);
+
         if (currentConnectionState == ConnectionsManager.ConnectionStateConnecting || currentConnectionState == ConnectionsManager.ConnectionStateConnectingToProxy) {
             action = () -> {
                 BaseFragment lastFragment = null;

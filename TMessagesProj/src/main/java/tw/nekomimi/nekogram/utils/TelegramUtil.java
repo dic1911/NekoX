@@ -1,18 +1,17 @@
 package tw.nekomimi.nekogram.utils;
 
 
-import org.telegram.messenger.MessageObject;
+import android.util.Log;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.zip.GZIPInputStream;
+import org.telegram.messenger.MessageObject;
+import org.telegram.messenger.SharedConfig;
+import org.telegram.messenger.UserConfig;
+import org.telegram.tgnet.ConnectionsManager;
+
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.Semaphore;
+
+import tw.nekomimi.nekogram.NekoConfig;
 
 public class TelegramUtil {
 
@@ -44,4 +43,51 @@ public class TelegramUtil {
         return !cansave;
     }
 
+    public static boolean isConnecting() {
+        int state = ConnectionsManager.getInstance(UserConfig.selectedAccount).getConnectionState();
+        return state == ConnectionsManager.ConnectionStateConnecting;
+    }
+
+    private static Thread toggleProxyOnOffThread = null;
+    private static final Runnable toggleProxyOnOffRunnable = new Runnable() {
+        @Override
+        public void run() {
+            boolean suc = false;
+            while (!suc) {
+                try {
+                    Thread.sleep(1000);
+                    suc = true;
+                } catch (InterruptedException e) {
+                    Log.w("030-conn", "interrupted");
+                    if (!isConnecting())
+                        return;
+                }
+            }
+            Log.d("030-conn", "applying workaround, enable proxy");
+            SharedConfig.setProxyEnable(true);
+            try {
+                Thread.sleep(300);
+            } catch (InterruptedException ignored) {}
+            Log.d("030-conn", "applying workaround, disable proxy");
+            SharedConfig.setProxyEnable(false);
+        }
+    };
+    public static void toggleProxyOnOff(boolean cancel) {
+        if (toggleProxyOnOffThread != null) {
+            if (cancel) toggleProxyOnOffThread.interrupt();
+            else {
+                try {
+                    toggleProxyOnOffThread.join(350);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+            toggleProxyOnOffThread = null;
+            return;
+        }
+        else if (cancel || !NekoConfig.fasterReconnectHack.Bool()) return;
+        else if (!isConnecting()) return;
+        toggleProxyOnOffThread = new Thread(toggleProxyOnOffRunnable);
+        toggleProxyOnOffThread.start();
+    }
 }

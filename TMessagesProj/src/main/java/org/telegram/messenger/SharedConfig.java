@@ -649,6 +649,11 @@ public class SharedConfig {
         }
     }
 
+    public static boolean getProxyEnable() {
+        SharedPreferences preferences = MessagesController.getGlobalMainSettings();
+        return preferences.getBoolean("proxy_enabled", false);
+    }
+
     public static void setProxyEnable(boolean enable) {
         SharedPreferences preferences = MessagesController.getGlobalMainSettings();
         preferences.edit().putBoolean("proxy_enabled", enable).apply();
