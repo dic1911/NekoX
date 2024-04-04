@@ -78694,6 +78694,19 @@ public class TLRPC {
             stream.writeInt32(flags);
         }
     }
+
+    public static class TL_account_getContentSettings extends TLObject {
+        public static int constructor = 0x8b9b4dae;
+
+        public TLObject deserializeResponse(AbstractSerializedData stream, int constructor, boolean exception) {
+            return TL_account_contentSettings.TLdeserialize(stream, constructor, exception);
+        }
+
+        public void serializeToStream(AbstractSerializedData stream) {
+            stream.writeInt32(constructor);
+        }
+    }
+
     public static class TL_account_toggleConnectedBotPaused extends TLObject {
         public static final int constructor = 0x646E1097;
         

@@ -437,9 +437,9 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
 
         actionBar.setBackgroundColor(backgroundColor);
         actionBar.setItemsColor(ColorUtils.blendARGB(getColor(Theme.key_actionBarDefaultIcon), actionBarColors.getColor(key_windowBackgroundWhiteBlackText), actionBarTransitionProgress), false);
-        if (actionBar.backButtonImageView != null) {
-            actionBar.backButtonImageView.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(getColor(Theme.key_actionBarDefaultIcon), actionBarColors.getColor(key_windowBackgroundWhiteBlackText), actionBarTransitionProgress), PorterDuff.Mode.SRC_IN));
-        }
+//        if (actionBar.backButtonImageView != null) {
+//            actionBar.backButtonImageView.setColorFilter(new PorterDuffColorFilter(ColorUtils.blendARGB(getColor(Theme.key_actionBarDefaultIcon), actionBarColors.getColor(key_windowBackgroundWhiteBlackText), actionBarTransitionProgress), PorterDuff.Mode.SRC_IN));
+//        }
         actionBar.setItemsBackgroundColor(ColorUtils.blendARGB(getColor(Theme.key_actionBarDefaultSelector), actionBarColors.getColor(Theme.key_actionBarWhiteSelector), actionBarTransitionProgress), false);
 
         ChatAvatarContainer chatAvatarContainer = chatActivity.getAvatarContainer();
@@ -1010,9 +1010,9 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
             this.progress = progress;
             actionBar.setTitleColor(getColor(Theme.key_windowBackgroundWhiteBlackText));
             actionBar.setItemsColor(getColor(Theme.key_windowBackgroundWhiteBlackText), false);
-            if (actionBar.backButtonImageView != null) {
-                actionBar.backButtonImageView.setColorFilter(new PorterDuffColorFilter(getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.SRC_IN));
-            }
+//            if (actionBar.backButtonImageView != null) {
+//                actionBar.backButtonImageView.setColorFilter(new PorterDuffColorFilter(getColor(Theme.key_windowBackgroundWhiteBlackText), PorterDuff.Mode.SRC_IN));
+//            }
             actionBar.setItemsBackgroundColor(getColor(Theme.key_actionBarWhiteSelector), false);
             actionBar.setPopupBackgroundColor(getColor(Theme.key_actionBarDefaultSubmenuBackground), false);
             actionBar.setPopupItemsColor(getColor(Theme.key_actionBarDefaultSubmenuItem), false, false);

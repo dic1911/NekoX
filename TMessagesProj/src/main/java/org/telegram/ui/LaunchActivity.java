@@ -3838,13 +3838,13 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                         }
                     } else {
                         AndroidUtilities.runOnUIThread(() -> {
-                            final String text;
+                            final String errText;
                             if (error.text.equals("AUTH_TOKEN_EXCEPTION")) {
-                                text = LocaleController.getString("AccountAlreadyLoggedIn", R.string.AccountAlreadyLoggedIn);
+                                errText = LocaleController.getString("AccountAlreadyLoggedIn", R.string.AccountAlreadyLoggedIn);
                             } else {
-                                text = LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + error.text;
+                                errText = LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred) + "\n" + error.text;
                             }
-                            AlertUtil.showSimpleAlert(this, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), text);
+                            AlertUtil.showSimpleAlert(this, LocaleController.getString("AuthAnotherClient", R.string.AuthAnotherClient), errText);
                         });
                     }
                 }));

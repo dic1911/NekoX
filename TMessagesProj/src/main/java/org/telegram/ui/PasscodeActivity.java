@@ -22,7 +22,6 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffColorFilter;
 import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
-import android.hardware.biometrics.BiometricManager;
 import android.os.Build;
 import android.text.Editable;
 import android.text.InputType;

@@ -233,6 +233,7 @@ import org.telegram.ui.Components.LinkSpanDrawable;
 import org.telegram.ui.Components.MediaActivity;
 import org.telegram.ui.Components.MessagePrivateSeenView;
 import org.telegram.ui.Components.Paint.PersistColorPalette;
+import org.telegram.ui.Components.Premium.GiftPremiumBottomSheet;
 import org.telegram.ui.Components.Premium.LimitReachedBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumGradient;
@@ -12656,26 +12657,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         } else if (parent.getTag() != null && ((int) parent.getTag()) == birthdayRow) {
             TLRPC.User user = getMessagesController().getUser(dialogId);
             if (user == null || userInfo == null) return;
-            ArrayList<TLRPC.TL_premiumGiftOption> options = new ArrayList<>(userInfo.premium_gifts);
-            if (options.isEmpty()) {
-                if (getVisibleDialog() != null) return;
-                final AlertDialog progressDialog = new AlertDialog(getContext(), AlertDialog.ALERT_TYPE_SPINNER);
-                final int reqId = BoostRepository.loadGiftOptions(null, loadedOptions -> {
-                    progressDialog.dismiss();
-                    if (getVisibleDialog() != null) return;
-                    loadedOptions = BoostRepository.filterGiftOptions(loadedOptions, 1);
-                    loadedOptions = BoostRepository.filterGiftOptionsByBilling(loadedOptions);
-                    ArrayList<TLRPC.User> users = new ArrayList<>();
-                    users.add(user);
-                    PremiumPreviewGiftToUsersBottomSheet.show(users, loadedOptions);
-                });
-                progressDialog.setOnCancelListener(di -> {
-                    getConnectionsManager().cancelRequest(reqId, true);
-                });
-                progressDialog.showDelayed(500);
-            } else {
-                showDialog(new GiftPremiumBottomSheet(this, user));
-            }
+            if (getVisibleDialog() != null) return;
+            showDialog(new GiftPremiumBottomSheet(this, user));
         }
     }
 

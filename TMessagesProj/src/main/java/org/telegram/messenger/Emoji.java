@@ -657,7 +657,7 @@ public class Emoji {
     }
 
     public static CharSequence replaceWithRestrictedEmoji(CharSequence cs, Paint.FontMetricsInt fontMetrics, Runnable update) {
-        if (SharedConfig.useSystemEmoji || cs == null || cs.length() == 0) {
+        if (NekoConfig.useSystemEmoji.Bool() || cs == null || cs.length() == 0) {
             return cs;
         }
 

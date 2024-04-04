@@ -57,8 +57,6 @@ import android.widget.TextView;
 
 import androidx.annotation.IdRes;
 import androidx.annotation.NonNull;
-import androidx.biometric.BiometricManager;
-import androidx.biometric.BiometricPrompt;
 import androidx.core.content.ContextCompat;
 import androidx.core.os.CancellationSignal;
 import androidx.dynamicanimation.animation.FloatValueHolder;
@@ -1161,36 +1159,6 @@ public class PasscodeView extends FrameLayout implements NotificationCenter.Noti
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            }
-            try {
-                if (BiometricManager.from(getContext()).canAuthenticate(BiometricManager.Authenticators.BIOMETRIC_STRONG) == BiometricManager.BIOMETRIC_SUCCESS && FingerprintController.isKeyReady() && !FingerprintController.checkDeviceFingerprintsChanged()) {
-                    final Executor executor = ContextCompat.getMainExecutor(getContext());
-                    BiometricPrompt prompt = new BiometricPrompt(LaunchActivity.instance, executor, new BiometricPrompt.AuthenticationCallback() {
-                        @Override
-                        public void onAuthenticationError(int errMsgId, @NonNull CharSequence errString) {
-                            FileLog.d("PasscodeView onAuthenticationError " + errMsgId + " \"" + errString + "\"");
-                        }
-
-                        @Override
-                        public void onAuthenticationSucceeded(@NonNull BiometricPrompt.AuthenticationResult result) {
-                            FileLog.d("PasscodeView onAuthenticationSucceeded");
-                            processDone(true);
-                        }
-
-                        @Override
-                        public void onAuthenticationFailed() {
-                            FileLog.d("PasscodeView onAuthenticationFailed");
-                        }
-                    });
-                    final BiometricPrompt.PromptInfo promptInfo = new BiometricPrompt.PromptInfo.Builder()
-                        .setTitle(LocaleController.getString("AppName", R.string.AppName))
-                        .setNegativeButtonText(LocaleController.getString(R.string.Back))
-                        .setAllowedAuthenticators(BiometricManager.Authenticators.BIOMETRIC_STRONG)
-                        .build();
-                    prompt.authenticate(promptInfo);
-                }
-            } catch (Throwable e) {
-                //ignore
             }
         }
     }
