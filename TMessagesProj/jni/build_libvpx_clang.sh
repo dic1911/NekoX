@@ -55,6 +55,8 @@ function build_one {
 	--disable-examples \
 	--disable-tools \
 	--disable-debug \
+	--disable-neon-asm \
+	--disable-neon-dotprod \
 	--disable-unit-tests \
 	--disable-install-docs \
 	--enable-realtime-only \
@@ -132,11 +134,10 @@ function build {
 				OPTIMIZE_CFLAGS="-O3 -march=x86-64 -mtune=intel -msse4.2 -mpopcnt -m64 -fPIC"
 				TARGET="x86_64-android-gcc"
 				PREFIX=./build/$CPU
-        CPU_DETECT="--enable-runtime-cpu-detect"
+                CPU_DETECT="--enable-runtime-cpu-detect"
 				build_one
 			;;
 			x86)
-        ANDROID_API=21
 				ARCH=x86
 				ARCH_NAME=i686
 				PREBUILT_ARCH=x86
