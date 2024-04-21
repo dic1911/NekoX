@@ -15761,6 +15761,14 @@ public class MessagesStorage extends BaseController {
         SQLitePreparedStatement state_polls = null;
         SQLitePreparedStatement state_tasks = null;
         SQLiteCursor cursor = null;
+
+        // 030
+        boolean autoArchiveAndMute = NekoConfig.autoArchiveAndMute.Bool();
+        List<Long> toArchiveAndMute = null;
+        if (autoArchiveAndMute) {
+            toArchiveAndMute = new ArrayList<>();
+        }
+
         try {
             database.beginTransaction();
             LongSparseArray<TLRPC.Message> new_dialogMessage = new LongSparseArray<>(dialogs.messages.size());
@@ -15819,6 +15827,12 @@ public class MessagesStorage extends BaseController {
                             continue;
                         }
                     }
+
+                    // 030
+                    if (autoArchiveAndMute && !exists && dialog.id > 0 && !UserObject.isService(dialog.id)) {
+                        toArchiveAndMute.add(dialog.id);
+                    }
+
                     int messageDate = 0;
 
                     TLRPC.Message message = new_dialogMessage.get(dialog.id);
@@ -16038,6 +16052,15 @@ public class MessagesStorage extends BaseController {
             }
             if (state_tasks != null) {
                 state_tasks.dispose();
+            }
+        }
+
+        if (autoArchiveAndMute) {
+            for (long did : toArchiveAndMute) {
+                ArrayList<Long> list = new ArrayList<>();
+                list.add(did);
+                getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
+                getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
             }
         }
     }

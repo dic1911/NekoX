@@ -201,6 +201,7 @@ public class NekoConfig {
     public static ConfigItem disableCustomWallpaperUser = addConfig("DisableCustomWallpaperUser", ConfigItem.configTypeBool, false);
     public static ConfigItem disableCustomWallpaperChannel = addConfig("DisableCustomWallpaperChannel", ConfigItem.configTypeBool, false);
     public static ConfigItem fasterReconnectHack = addConfig("FasterReconnectHack", ConfigItem.configTypeBool, false);
+    public static ConfigItem autoArchiveAndMute = addConfig("AutoArchiveAndMute", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);
