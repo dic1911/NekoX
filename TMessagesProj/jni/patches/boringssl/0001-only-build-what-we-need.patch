@@ -13,10 +13,11 @@ diff --git a/CMakeLists.txt b/CMakeLists.txt
 index fd3532664..7fcfb1627 100644
 --- a/CMakeLists.txt
 +++ b/CMakeLists.txt
-@@ -562,44 +562,8 @@ if(USE_CUSTOM_LIBCXX)
+@@ -562,45 +562,9 @@ if(USE_CUSTOM_LIBCXX)
    target_link_libraries(libcxx libcxxabi)
+   install(TARGETS libcxx EXPORT OpenSSLTargets DESTINATION ${CMAKE_INSTALL_LIBDIR})
  endif()
-
+ 
 -# Add minimal googletest targets. The provided one has many side-effects, and
 -# googletest has a very straightforward build.
 -add_library(boringssl_gtest third_party/googletest/src/gtest-all.cc)
@@ -52,17 +53,16 @@ index fd3532664..7fcfb1627 100644
  add_subdirectory(ssl)
 -add_subdirectory(ssl/test)
 -add_subdirectory(tool)
--add_subdirectory(util/fipstools/cavp)
+-add_subdirectory(util/fipstools)
 -add_subdirectory(util/fipstools/acvp/modulewrapper)
 -add_subdirectory(decrepit)
-
+ 
  if(FUZZ)
    if(LIBFUZZER_FROM_DEPS)
-@@ -589,38 +564,3 @@ endif()
- if(UNIX AND NOT APPLE AND NOT ANDROID)
+@@ -634,41 +598,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
    set(HANDSHAKER_ARGS "-handshaker-path" $<TARGET_FILE:handshaker>)
  endif()
--
+ 
 -if(FIPS)
 -  add_custom_target(
 -    acvp_tests
@@ -97,19 +97,23 @@ index fd3532664..7fcfb1627 100644
 -    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
 -    DEPENDS all_tests bssl_shim handshaker fips_specific_tests_if_any
 -    USES_TERMINAL)
+-
+ install(DIRECTORY include/ DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+ 
+ install(EXPORT OpenSSLTargets
 diff --git a/crypto/CMakeLists.txt b/crypto/CMakeLists.txt
 index e940f7d5f..f5221d70d 100644
 --- a/crypto/CMakeLists.txt
 +++ b/crypto/CMakeLists.txt
 @@ -85,7 +85,6 @@ function(perlasm dest src)
  endfunction()
-
+ 
  add_subdirectory(fipsmodule)
 -add_subdirectory(test)
-
+ 
  if(FIPS_DELOCATE OR FIPS_SHARED)
    SET_SOURCE_FILES_PROPERTIES(fipsmodule/bcm.o PROPERTIES EXTERNAL_OBJECT true)
-@@ -466,96 +466,3 @@ endif()
+@@ -466,97 +466,3 @@ endif()
  if(USE_CUSTOM_LIBCXX)
    target_link_libraries(crypto libcxx)
  endif()
@@ -141,11 +145,10 @@ index e940f7d5f..f5221d70d 100644
 -  chacha/chacha_test.cc
 -  cipher_extra/aead_test.cc
 -  cipher_extra/cipher_test.cc
--  cmac/cmac_test.cc
 -  compiler_test.cc
 -  conf/conf_test.cc
 -  constant_time_test.cc
--  cpu-arm-linux_test.cc
+-  cpu_arm_linux_test.cc
 -  crypto_test.cc
 -  curve25519/ed25519_test.cc
 -  curve25519/spake25519_test.cc
@@ -161,13 +164,15 @@ index e940f7d5f..f5221d70d 100644
 -  evp/scrypt_test.cc
 -  fipsmodule/aes/aes_test.cc
 -  fipsmodule/bn/bn_test.cc
+-  fipsmodule/cmac/cmac_test.cc
 -  fipsmodule/ec/ec_test.cc
--  fipsmodule/ec/p256-x86_64_test.cc
+-  fipsmodule/ec/p256-nistz_test.cc
 -  fipsmodule/ecdsa/ecdsa_test.cc
 -  fipsmodule/md5/md5_test.cc
 -  fipsmodule/modes/gcm_test.cc
 -  fipsmodule/rand/ctrdrbg_test.cc
 -  fipsmodule/rand/fork_detect_test.cc
+-  fipsmodule/service_indicator/service_indicator_test.cc
 -  fipsmodule/sha/sha_test.cc
 -  hkdf/hkdf_test.cc
 -  hpke/hpke_test.cc
@@ -232,6 +237,6 @@ index 0fb532eae..f5cab9807 100644
 -  target_link_libraries(ssl_test ws2_32)
 -endif()
 -add_dependencies(all_tests ssl_test)
---
+-- 
 2.20.1
 
