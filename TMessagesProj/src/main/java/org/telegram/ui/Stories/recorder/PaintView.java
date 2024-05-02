@@ -42,7 +42,6 @@ import android.view.Gravity;
 import android.view.HapticFeedbackConstants;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
-import android.view.TextureView;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -65,7 +64,6 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.Bitmaps;
 import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.DialogObject;
 import org.telegram.messenger.DispatchQueue;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
@@ -1475,7 +1473,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
                     showReactionsLayout(false);
                 }
             });
-            reactionLayout.setMessage(null, null);
+            reactionLayout.setMessage(null, null, true);
         }
         reactionLayout.setFragment(LaunchActivity.getLastFragment());
         reactionForEntity = entityView;
@@ -1749,7 +1747,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
     private void openStickersView() {
         final int wasSelectedIndex = tabsSelectedIndex;
         switchTab(1);
-        EmojiBottomSheet alert = emojiPopup = new EmojiBottomSheet(getContext(), false, resourcesProvider) {
+        EmojiBottomSheet alert = emojiPopup = new EmojiBottomSheet(getContext(), false, resourcesProvider, false) {
             @Override
             public void onDismissAnimationStart() {
                 super.onDismissAnimationStart();
@@ -1808,6 +1806,7 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
                 stickerView.setScale(1.5f);
             }
             appearAnimation(stickerView);
+            return true;
         });
         alert.whenWidgetSelected(widgetId -> {
             if (widgetId == EmojiBottomSheet.WIDGET_LOCATION) {
