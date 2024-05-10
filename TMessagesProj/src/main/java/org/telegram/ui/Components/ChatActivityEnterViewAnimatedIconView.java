@@ -39,15 +39,18 @@ public class ChatActivityEnterViewAnimatedIconView extends FrameLayout {
     private State currentState;
     private AnimatorSet buttonsAnimation;
     private final ImageView[] buttonViews = new ImageView[2];
+    private ChatActivityEnterView parent = null;
 
     public ChatActivityEnterViewAnimatedIconView(Context context, ChatActivityEnterView parentActivity) {
         super(context);
+        parent = parentActivity;
         for (int a = 0; a < 2; a++) {
             buttonViews[a] = new ImageView(context);
-            buttonViews[a].setColorFilter(new PorterDuffColorFilter(parentActivity.getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
+            buttonViews[a].setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.MULTIPLY));
+
             buttonViews[a].setScaleType(ImageView.ScaleType.CENTER_INSIDE);
             if (Build.VERSION.SDK_INT >= 21) {
-                buttonViews[a].setBackground(Theme.createSelectorDrawable(parentActivity.getThemedColor(Theme.key_listSelector)));
+                buttonViews[a].setBackground(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
             }
             addView(buttonViews[a], LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.BOTTOM | Gravity.LEFT, 0, 0, 0, 0));
         }
@@ -129,6 +132,13 @@ public class ChatActivityEnterViewAnimatedIconView extends FrameLayout {
                 setContentDescription(LocaleController.getString("AccDescrVideoMessage", R.string.AccDescrVideoMessage));
                 break;
         }
+    }
+
+    private int getThemedColor(int key) {
+        if (parent != null)
+            return parent.getThemedColor(key);
+
+        return Theme.getColor(key);
     }
 
 //    private TransitState getAnyState(State from) {

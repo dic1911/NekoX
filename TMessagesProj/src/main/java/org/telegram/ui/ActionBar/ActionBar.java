@@ -1902,7 +1902,7 @@ public class ActionBar extends FrameLayout {
 
     private StaticLayout countLayout;
 
-    private class UnreadImageView extends ImageView {
+    public class UnreadImageView extends ImageView {
         public UnreadImageView(Context context) {
             super(context);
         }

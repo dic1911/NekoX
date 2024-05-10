@@ -13799,20 +13799,21 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             if (stickerEmpty) {
                 stickerMakerView.clean();
             } else {
-                stickerMakerView.segmentImage(centerImage.getBitmap(), centerImage.getOrientation(), getContainerViewWidth(), getContainerViewHeight(), object -> {
-                    try {
-                        MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
-                        boolean hasFilters = !TextUtils.isEmpty(entry.filterPath);
-                        stickerMakerView.setSegmentedState(true, object);
-                        Bitmap segmentedImage = stickerMakerView.getSegmentedImage(centerImage.getBitmap(), hasFilters, centerImage.getOrientation());
-                        centerImage.setImageBitmap(segmentedImage);
-                        cutOutBtn.setUndoCutState(true);
-                        showStickerMode(true, true, true);
-                        cutOutBtn.post(this::applyCurrentEditMode);
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                    }
-                });
+                // 030: no mlkit
+//                stickerMakerView.segmentImage(centerImage.getBitmap(), centerImage.getOrientation(), getContainerViewWidth(), getContainerViewHeight(), object -> {
+//                    try {
+//                        MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
+//                        boolean hasFilters = !TextUtils.isEmpty(entry.filterPath);
+//                        stickerMakerView.setSegmentedState(true, object);
+//                        Bitmap segmentedImage = stickerMakerView.getSegmentedImage(centerImage.getBitmap(), hasFilters, centerImage.getOrientation());
+//                        centerImage.setImageBitmap(segmentedImage);
+//                        cutOutBtn.setUndoCutState(true);
+//                        showStickerMode(true, true, true);
+//                        cutOutBtn.post(this::applyCurrentEditMode);
+//                    } catch (Exception e) {
+//                        FileLog.e(e);
+//                    }
+//                });
             }
         }
     }

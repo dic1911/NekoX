@@ -2832,17 +2832,6 @@ public class TLRPC {
 
         public String translatedText; // custom
 
-        public static TL_pollAnswer TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
-            if (TL_pollAnswer.constructor != constructor) {
-                if (exception) {
-                    throw new RuntimeException(String.format("can't parse magic %x in TL_pollAnswer", constructor));
-                } else {
-                    return null;
-                }
-            }
-            return result;
-        }
-
         public static PollAnswer TLdeserialize(AbstractSerializedData stream, int constructor, boolean exception) {
             PollAnswer result = null;
             switch (constructor) {

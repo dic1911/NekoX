@@ -17355,10 +17355,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 ActionBarMenuItem deleteItem = actionBar.createActionMode().getItem(delete);
                 ActionBarMenuItem selectItem = actionBar.createActionMode().getItem(nkactionbarbtn_selectBetween);
 
-                ActionBarMenuSubItem saveToDownloadsItem = actionModeOtherItem.getSubItem(save_to);
-                ActionBarMenuSubItem saveMessageItem = actionModeOtherItem.getSubItem(nkbtn_savemessage);
-                ActionBarMenuSubItem forwardNoQuoteItem = actionModeOtherItem.getSubItem(nkbtn_forward_noquote);
-                ActionBarMenuSubItem starItem = actionModeOtherItem.getSubItem(star);
+                ActionBarMenuSubItem saveToDownloadsItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(save_to);
+                ActionBarMenuSubItem saveMessageItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_savemessage);
+                ActionBarMenuSubItem forwardNoQuoteItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_forward_noquote);
+                ActionBarMenuSubItem starItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(star);
 
                 boolean noforwards = (getMessagesController().isChatNoForwards(currentChat) || hasSelectedNoforwardsMessage()) && !NekoXConfig.disableFlagSecure;
                 boolean canForward = chatMode != MODE_SCHEDULED && cantForwardMessagesCount == 0 && !noforwards;

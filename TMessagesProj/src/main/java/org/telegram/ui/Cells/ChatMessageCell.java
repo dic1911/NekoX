@@ -7119,10 +7119,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     question = media.poll.translatedQuestion;
                     if (question == null) {
                         messageObject.messageOwner.translated = false;
-                        question = media.poll.question;
+                        question = media.poll.question.text;
                     }
                 } else {
-                    question = media.poll.question;
+                    question = media.poll.question.text;
                 }
 
                 CharSequence questionText = question;
@@ -7275,9 +7275,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     TLRPC.PollAnswer pollAnswer = media.poll.answers.get(a);
                     CharSequence answerText = new SpannableStringBuilder(pollAnswer.text.text);
                     if (messageObject.messageOwner.translated) {
-                        answerText = button.answer.translatedText;
+                        answerText = pollAnswer.translatedText;
                     } else {
-                        answerText = button.answer.text;
+                        answerText = pollAnswer.text.text;
                     }
                     answerText = Emoji.replaceEmoji(answerText, Theme.chat_audioTitlePaint.getFontMetricsInt(), AndroidUtilities.dp(16), false);
                     if (pollAnswer.text.entities != null) {

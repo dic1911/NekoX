@@ -9,6 +9,7 @@
 package org.telegram.ui.Cells;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.AndroidUtilities.findActivity;
 
 import android.animation.Animator;
 import android.animation.AnimatorSet;
@@ -42,6 +43,7 @@ import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.SimpleTextView;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
+import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.ChatActivityEnterViewAnimatedIconView;
 import org.telegram.ui.Components.CheckBox2;
 import org.telegram.ui.Components.EditTextBoldCursor;
@@ -190,7 +192,7 @@ public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.An
         }
 
         if (type == TYPE_EMOJI) {
-            emojiButton = new ChatActivityEnterViewAnimatedIconView(context);
+            emojiButton = new ChatActivityEnterViewAnimatedIconView(context, null); // 030: is null okay for this?
             emojiButton.setAlpha(0.80f);
             emojiButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_windowBackgroundWhiteGrayIcon), PorterDuff.Mode.SRC_IN));
             emojiButton.setState(ChatActivityEnterViewAnimatedIconView.State.SMILE, false);

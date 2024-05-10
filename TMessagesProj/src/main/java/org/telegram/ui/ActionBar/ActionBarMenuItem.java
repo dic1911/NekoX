@@ -1947,13 +1947,6 @@ public class ActionBarMenuItem extends FrameLayout {
         else hideSubItem(id);
     }
 
-    public ActionBarMenuSubItem getSubItem(int id) {
-        if (popupLayout == null) {
-            return null;
-        }
-        return popupLayout.findViewWithTag(id);
-    }
-
     public void showSubItem(int id) {
         showSubItem(id, false);
     }
