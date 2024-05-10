@@ -1099,7 +1099,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             viewPages[a].setTranslationY(0);
                         }
                     }
-                    if ((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) || !onlySelect) {
+                    if (NekoConfig.showTabsOnForward.Bool() || !onlySelect) {
                         actionBar.setTranslationY(0);
                         if (topBulletin != null) {
                             topBulletin.updatePosition();
@@ -1140,7 +1140,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 h += authHintCell.getMeasuredHeight();
                             }
                         }
-                    } else if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                    } else if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
                         h -= actionBar.getMeasuredHeight();
                     }
                     if (dialogsHintCell != null) {
@@ -1279,7 +1279,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else if (child instanceof DatabaseMigrationHint) {
                     childTop = actionBar.getMeasuredHeight();
                 } else if (child instanceof ViewPage) {
-                    if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                    if (!onlySelect || NekoConfig.showTabsOnForward.Bool()) {
                         if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
                             childTop = 0;
                             if (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE) {
@@ -1341,7 +1341,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                             startedTracking ||
                                             ev.getY() > getActionBarTop() + getActionBarFullHeight()
                             ) && (
-                            initialDialogsType == DIALOGS_TYPE_FORWARD ||
+                            initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool() ||
                                     SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS ||
                                     SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_ARCHIVE &&
                                             viewPages[0] != null && (viewPages[0].dialogsAdapter.getDialogsType() == 7 || viewPages[0].dialogsAdapter.getDialogsType() == 8))
@@ -2031,7 +2031,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else if (pos == RecyclerView.NO_POSITION && firstLayout) {
                 parentPage.layoutManager.scrollToPositionWithOffset(parentPage.dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() ? 1 : 0, (int) scrollYOffset);
             }
-            if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
+            if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
                 ignoreLayout = true;
                 if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
                     t = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -2715,7 +2715,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
             getNotificationCenter().addObserver(this, NotificationCenter.dialogsNeedReload);
             NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
-            if ((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) || !onlySelect) {
+            if (NekoConfig.showTabsOnForward.Bool() || !onlySelect) {
                 NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.closeSearchByActiveAction);
                 NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.proxySettingsChanged);
                 getNotificationCenter().addObserver(this, NotificationCenter.filterSettingsUpdated);
@@ -2872,7 +2872,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (searchString == null) {
             getNotificationCenter().removeObserver(this, NotificationCenter.dialogsNeedReload);
             NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
-            if ((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) || !onlySelect) {
+            if (NekoConfig.showTabsOnForward.Bool() || !onlySelect) {
                 NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.closeSearchByActiveAction);
                 NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.proxySettingsChanged);
                 getNotificationCenter().removeObserver(this, NotificationCenter.filterSettingsUpdated);
@@ -3298,7 +3298,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 actionBar.setSupportsHolidayImage(true);
             }
         }
-        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
+        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
             actionBar.setAddToContainer(false);
             actionBar.setCastShadows(false);
             actionBar.setClipContent(true);
@@ -3315,8 +3315,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         if (
-                (initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) &&
-                        folderId == 0 && TextUtils.isEmpty(searchString)
+                ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) &&
+                        folderId == 0 && TextUtils.isEmpty(searchString)) || NekoConfig.showTabsOnForward.Bool()
         ) {
             filterTabsView = new FilterTabsView(context) {
                 @Override
@@ -3637,7 +3637,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ContentView contentView = new ContentView(context);
         fragmentView = contentView;
 
-        int pagesCount = folderId == 0 && (initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) ? 2 : 1;
+        int pagesCount = folderId == 0 && ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect) || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) ? 2 : 1;
         viewPages = new ViewPage[pagesCount];
         for (int a = 0; a < pagesCount; a++) {
             final ViewPage viewPage = new ViewPage(context) {
@@ -4722,7 +4722,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         searchTabsView = null;
 
-        if (!onlySelect && initialDialogsType == 0) {
+        if (!onlySelect && initialDialogsType == DIALOGS_TYPE_DEFAULT) {
             fragmentLocationContextView = new FragmentContextView(context, this, true);
             fragmentLocationContextView.setLayoutParams(LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 38, Gravity.TOP | Gravity.LEFT, 0, -36, 0, 0));
             contentView.addView(fragmentLocationContextView);
@@ -5172,7 +5172,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             MessagesController.getInstance(currentAccount).getSavedReactionTags(0);
         }
 
-        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
+        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (NekoConfig.showTabsOnForward.Bool() && (initialDialogsType == DIALOGS_TYPE_START_ATTACH_BOT || initialDialogsType == DIALOGS_TYPE_BOT_SHARE))) {
             final FrameLayout.LayoutParams layoutParams = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
             if (inPreviewMode && Build.VERSION.SDK_INT >= 21) {
                 layoutParams.topMargin = AndroidUtilities.statusBarHeight;
@@ -6325,7 +6325,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     }
 
     private void updateFiltersView(boolean showMediaFilters, ArrayList<Object> users, ArrayList<FiltersView.DateData> dates, boolean archive, boolean animated) {
-        if (!searchIsShowed || onlySelect && !(initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool())) {
+        if ((!searchIsShowed || onlySelect) && !NekoConfig.showTabsOnForward.Bool()) {
             return;
         }
         boolean hasMediaFilter = false;
@@ -12548,7 +12548,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public boolean isSwipeBackEnabled(MotionEvent event) {
-        return !((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) && viewPages[0].selectedType != filterTabsView.getFirstTabId());
+        return !(NekoConfig.showTabsOnForward.Bool() && viewPages[0].selectedType != filterTabsView.getFirstTabId());
     }
 
     public void setShowSearch(String query, int i) {
