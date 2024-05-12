@@ -290,4 +290,5 @@
     <string name="DisableCustomWallpaperUser">Disable user custom wallpaper</string>
     <string name="DisableCustomWallpaperChannel">Disable channel custom wallpaper</string>
     <string name="FasterReconnectHack">Faster reconnect by toggling proxy on/off</string>
+    <string name="FasterReconnectHackAbout">This hack only work with good network environment.</string>
 </resources>
