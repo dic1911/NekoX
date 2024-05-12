@@ -4397,7 +4397,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             cell.setMinimumWidth(AndroidUtilities.dp(196));
             menuPopupLayout.addView(cell, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 48, LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT, 0, 48 * a++, 0, 0));
 
-            if (SharedConfig.inappCamera) {
+            if (SharedConfig.inappCamera || NekoConfig.inappCamera.Bool()) {
 
                 cell = new ActionBarMenuSubItem(getContext(), false, dlps == 0);
 
@@ -4416,6 +4416,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     }
 
                     isInVideoMode = true;
+                    hasRecordVideo = true;
                     recordAudioVideoRunnable.run();
                     delegate.onSwitchRecordMode(isInVideoMode);
                     setRecordVideoButtonVisible(isInVideoMode, true);
