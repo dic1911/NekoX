@@ -8986,9 +8986,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 infoStartRow = rowCount;
                 infoHeaderRow = rowCount++;
-                if (user != null && !TextUtils.isEmpty(user.username)) {
-                    usernameRow = rowCount++;
-                }
                 if (!isBot && (hasPhone || !hasInfo) && !hideNumber) {
                     phoneRow = rowCount++;
                 }
