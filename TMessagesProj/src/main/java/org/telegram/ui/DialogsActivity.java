@@ -1140,7 +1140,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                 h += authHintCell.getMeasuredHeight();
                             }
                         }
-                    } else if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
+                    } else if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) {
                         h -= actionBar.getMeasuredHeight();
                     }
                     if (dialogsHintCell != null) {
@@ -1279,15 +1279,20 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 } else if (child instanceof DatabaseMigrationHint) {
                     childTop = actionBar.getMeasuredHeight();
                 } else if (child instanceof ViewPage) {
-                    if (!onlySelect || NekoConfig.showTabsOnForward.Bool()) {
-                        if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
+                    boolean useTabsView = getMessagesController().dialogFilters.size() > 1 && (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE);
+                    if (!onlySelect || useTabsView) {
+                        if (hasStories || useTabsView) {
                             childTop = 0;
-                            if (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE) {
+                            if (useTabsView) {
                                 childTop += dp(44);
                             }
                         } else {
                             childTop = actionBar.getMeasuredHeight();
                         }
+                    } else if (!useTabsView && initialDialogsType == DIALOGS_TYPE_FORWARD) {
+                        // 030: fix top padding for accounts with no folders/filters
+                        Log.d("030-ui", "workaround, using getMeasuredHeight");
+                        childTop = actionBar.getMeasuredHeight();
                     }
                     childTop += topPadding;
                     if (dialogsHintCell != null) {
@@ -1341,7 +1346,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                                             startedTracking ||
                                             ev.getY() > getActionBarTop() + getActionBarFullHeight()
                             ) && (
-                            initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool() ||
+                            initialDialogsType == DIALOGS_TYPE_FORWARD ||
                                     SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_FOLDERS ||
                                     SharedConfig.getChatSwipeAction(currentAccount) == SwipeGestureSettingsView.SWIPE_GESTURE_ARCHIVE &&
                                             viewPages[0] != null && (viewPages[0].dialogsAdapter.getDialogsType() == 7 || viewPages[0].dialogsAdapter.getDialogsType() == 8))
@@ -3637,7 +3642,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ContentView contentView = new ContentView(context);
         fragmentView = contentView;
 
-        int pagesCount = folderId == 0 && ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect) || initialDialogsType == DIALOGS_TYPE_FORWARD) ? 2 : 1;
+        int pagesCount = folderId == 0 && ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect) || initialDialogsType == DIALOGS_TYPE_FORWARD)
+                || (getMessagesController().filtersEnabled && (getMessagesController().dialogFilters.size() > 1)) ? 2 : 1;
         viewPages = new ViewPage[pagesCount];
         for (int a = 0; a < pagesCount; a++) {
             final ViewPage viewPage = new ViewPage(context) {
