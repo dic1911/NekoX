@@ -3298,7 +3298,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 actionBar.setSupportsHolidayImage(true);
             }
         }
-        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
+        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (folderId == 0 && NekoConfig.showTabsOnForward.Bool())) {
             actionBar.setAddToContainer(false);
             actionBar.setCastShadows(false);
             actionBar.setClipContent(true);
@@ -3316,7 +3316,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
         if (
                 ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) &&
-                        folderId == 0 && TextUtils.isEmpty(searchString)) || NekoConfig.showTabsOnForward.Bool()
+                        folderId == 0 && TextUtils.isEmpty(searchString)) || (folderId == 0 && NekoConfig.showTabsOnForward.Bool())
         ) {
             filterTabsView = new FilterTabsView(context) {
                 @Override
@@ -3637,7 +3637,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         ContentView contentView = new ContentView(context);
         fragmentView = contentView;
 
-        int pagesCount = folderId == 0 && ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect) || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) ? 2 : 1;
+        int pagesCount = folderId == 0 && ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect) || initialDialogsType == DIALOGS_TYPE_FORWARD) ? 2 : 1;
         viewPages = new ViewPage[pagesCount];
         for (int a = 0; a < pagesCount; a++) {
             final ViewPage viewPage = new ViewPage(context) {
@@ -12548,7 +12548,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public boolean isSwipeBackEnabled(MotionEvent event) {
-        return !(NekoConfig.showTabsOnForward.Bool() && viewPages[0].selectedType != filterTabsView.getFirstTabId());
+        return !((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) && viewPages[0].selectedType != filterTabsView.getFirstTabId());
     }
 
     public void setShowSearch(String query, int i) {
