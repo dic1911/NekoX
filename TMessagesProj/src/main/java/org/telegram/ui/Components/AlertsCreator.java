@@ -6047,8 +6047,6 @@ public class AlertsCreator {
             }
         }
 
-        TLRPC.User actionUser = null;
-        TLRPC.Chat actionChat = null;
         final boolean[] deleteForAll = new boolean[] {true};
         boolean canRevokeInbox = user != null && MessagesController.getInstance(currentAccount).canRevokePmInbox;
         int revokeTimeLimit;
@@ -6074,9 +6072,6 @@ public class AlertsCreator {
                     } else {
                         messages.add(selectedMessage);
                     }
-                    if (actionChat != null && actionChat.id == -linked_channel_id) {
-                        actionChat = null;
-                    }
                 }
                 boolean hasOutgoing = !selectedMessage.isSendError() && selectedMessage.getDialogId() == mergeDialogId && (selectedMessage.messageOwner.action == null || selectedMessage.messageOwner.action instanceof TLRPC.TL_messageActionEmpty) && selectedMessage.isOut() && (currentDate - selectedMessage.messageOwner.date) <= revokeTimeLimit;
                 if (hasOutgoing) {
@@ -6096,30 +6091,8 @@ public class AlertsCreator {
                                 }
                             }
                         }
-                        if (from_id == -1) {
-                            from_id = msg.getFromChatId();
-                        }
-                        if (from_id < 0 && from_id == msg.getSenderId() && from_id != linked_channel_id) {
-                            from_channel_id = from_id;
-                            continue;
-                        }
-                        if (from_id < 0 || from_id != msg.getSenderId()) {
-                            if (from_channel_id != msg.getSenderId())
-                                from_channel_id = 0;
-                            from_id = -2;
-                            break;
-                        }
                         messages.add(msg);
                     }
-                    if (from_id == -2) {
-                        break;
-                    }
-                }
-                if (from_id != -1) {
-                    actionUser = MessagesController.getInstance(currentAccount).getUser(from_id);
-                }
-                if (actionUser == null && from_channel_id != -1) {
-                    actionChat = MessagesController.getInstance(currentAccount).getChat(-from_channel_id);
                 }
             }
 
