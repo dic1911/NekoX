@@ -250,9 +250,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
 
         // Cells: Set OnSettingChanged Callbacks
         cellGroup.callBackSettingsChanged = (key, newValue) -> {
-            if (key.equals(NekoConfig.hideAllTab.getKey())) {
-                getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
-            } else if (key.equals(NekoConfig.tabsTitleType.getKey())) {
+            if (key.equals(NekoConfig.tabsTitleType.getKey())) {
                 getNotificationCenter().postNotificationName(NotificationCenter.dialogFiltersUpdated);
             } else if (key.equals(NekoConfig.disableProximityEvents.getKey())) {
                 MediaController.getInstance().recreateProximityWakeLock();

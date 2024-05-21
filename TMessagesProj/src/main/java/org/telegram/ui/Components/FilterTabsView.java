@@ -1102,8 +1102,6 @@ public class FilterTabsView extends FrameLayout {
             delegate.onPageSelected(tab, scrollingForward);
         }
         scrollToChild(position);
-        if (NekoConfig.hideAllTab.Bool() && !currentTabIsDefault())
-            toggleAllTabs(false);
     }
 
     public void selectFirstTab() {
@@ -1111,13 +1109,6 @@ public class FilterTabsView extends FrameLayout {
             return;
         }
         scrollToTab(tabs.get(0), 0);
-    }
-
-    public void selectDefaultTab() {
-        Tab defaultTab = findDefaultTab();
-        if (defaultTab == null) return;
-        if (defaultTab.id == getCurrentTabId()) return;
-        scrollToTab(defaultTab, defaultTab.id);
     }
 
     public boolean isFirstTab() {
@@ -1370,7 +1361,7 @@ public class FilterTabsView extends FrameLayout {
             Tab firstTab = findDefaultTab();
             int tabWith = 0;
             int trueTabsWidth = allTabsWidth ;
-            if (showAllChatsTab && firstTab != null) {
+            if (firstTab != null) {
                 tabWith = firstTab.getWidth(false);
                 trueTabsWidth = allTabsWidth - tabWith;
                 firstTab.setTitle(allTabsWidth > width ? LocaleController.getString("FilterAllChatsShort", R.string.FilterAllChatsShort) : LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
@@ -1463,8 +1454,6 @@ public class FilterTabsView extends FrameLayout {
             manualScrollingToId = -1;
             currentPosition = position;
             selectedTabId = id;
-            if (NekoConfig.hideAllTab.Bool() && showAllChatsTab)
-                toggleAllTabs(false);
         }
     }
 
@@ -1539,8 +1528,7 @@ public class FilterTabsView extends FrameLayout {
                 invalidated = true;
                 requestLayout();
                 allTabsWidth = 0;
-                if (showAllChatsTab)
-                    findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+                findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
                 for (int b = 0; b < N; b++) {
                     allTabsWidth += tabs.get(b).getWidth(true) + AndroidUtilities.dp(32);
                 }
@@ -1571,8 +1559,7 @@ public class FilterTabsView extends FrameLayout {
             listView.setItemAnimator(itemAnimator);
             adapter.notifyDataSetChanged();
             allTabsWidth = 0;
-            if (showAllChatsTab)
-                findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
+            findDefaultTab().setTitle(LocaleController.getString("FilterAllChats", R.string.FilterAllChats));
             for (int b = 0, N = tabs.size(); b < N; b++) {
                 allTabsWidth += tabs.get(b).getWidth(true) + AndroidUtilities.dp(32);
             }
@@ -1623,25 +1610,18 @@ public class FilterTabsView extends FrameLayout {
         }
 
         public void swapElements(int fromIndex, int toIndex) {
-            int idx1 = fromIndex;
-            int idx2 = toIndex;
             int count = tabs.size();
-            if (!showAllChatsTab) {
-                idx1++;
-                idx2++;
-                count++;
-            }
-            if (idx1 < 0 || idx2 < 0 || idx1 >= count || idx2 >= count) {
+            if (fromIndex < 0 || toIndex < 0 || fromIndex >= count || toIndex >= count) {
                 return;
             }
             ArrayList<MessagesController.DialogFilter> filters = MessagesController.getInstance(UserConfig.selectedAccount).getDialogFilters();
-            MessagesController.DialogFilter filter1 = filters.get(idx1);
-            MessagesController.DialogFilter filter2 = filters.get(idx2);
+            MessagesController.DialogFilter filter1 = filters.get(fromIndex);
+            MessagesController.DialogFilter filter2 = filters.get(toIndex);
             int temp = filter1.order;
             filter1.order = filter2.order;
             filter2.order = temp;
-            filters.set(idx1, filter2);
-            filters.set(idx2, filter1);
+            filters.set(fromIndex, filter2);
+            filters.set(toIndex, filter1);
 
             Tab tab1 = tabs.get(fromIndex);
             Tab tab2 = tabs.get(toIndex);
@@ -1843,36 +1823,5 @@ public class FilterTabsView extends FrameLayout {
 
     protected void onDefaultTabMoved() {
 
-    }
-
-    // NekoX show all chats tab
-    public boolean showAllChatsTab = !NekoConfig.hideAllTab.Bool();
-
-    public void toggleAllTabs(boolean show) {
-        if (show == showAllChatsTab)
-            return;
-        showAllChatsTab = show;
-        ArrayList<MessagesController.DialogFilter> filters = AccountInstance.getInstance(UserConfig.selectedAccount).getMessagesController().dialogFilters;
-        removeTabs();
-        for (int a = 0, N = filters.size(); a < N; a++) {
-            MessagesController.DialogFilter dialogFilter = filters.get(a);
-            if (filters.get(a).isDefault()) {
-                if (showAllChatsTab)
-                    addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  false);
-            } else {
-                switch (NekoConfig.tabsTitleType.Int()) {
-                    case NekoXConfig.TITLE_TYPE_TEXT:
-                        addTab(a, filters.get(a).localId, dialogFilter.name, false, false);
-                        break;
-                    case NekoXConfig.TITLE_TYPE_ICON:
-                        addTab(a, filters.get(a).localId, dialogFilter.emoticon != null ? dialogFilter.emoticon : "📂", false, false);
-                        break;
-                    case NekoXConfig.TITLE_TYPE_MIX:
-                        addTab(a, filters.get(a).localId, dialogFilter.emoticon != null ? dialogFilter.emoticon + " " + dialogFilter.name : "📂 " + dialogFilter.name, false, false);
-                        break;
-                }
-            }
-        }
-        finishAddingTabs(true);
     }
 }

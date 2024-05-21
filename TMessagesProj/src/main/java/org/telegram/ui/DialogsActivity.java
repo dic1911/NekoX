@@ -3269,13 +3269,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 actionBar.setTitle(LocaleController.getString("SelectChat", R.string.SelectChat));
             }
             actionBar.setBackgroundColor(Theme.getColor(Theme.key_actionBarDefault));
-            actionBar.setOnLongClickListener(v -> {
-                if (NekoConfig.hideAllTab.Bool() && filterTabsView != null && filterTabsView.getDefaultTabId() != filterTabsView.getCurrentTabId()) {
-                    filterTabsView.toggleAllTabs(true);
-                    filterTabsView.selectDefaultTab();
-                }
-                return false;
-            });
         } else {
             if (searchString != null || folderId != 0) {
                 actionBar.setBackButtonDrawable(backDrawable = new BackDrawable(false));
@@ -3290,13 +3283,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                 statusDrawable.center = true;
                 actionBar.setTitle(LocaleController.getString("NekoX", R.string.NekoX), statusDrawable);
-                actionBar.setOnLongClickListener(v -> {
-                    if (NekoConfig.hideAllTab.Bool() && filterTabsView != null && filterTabsView.getCurrentTabId() != Integer.MAX_VALUE) {
-                        filterTabsView.toggleAllTabs(true);
-                        filterTabsView.selectDefaultTab();
-                    }
-                    return false;
-                });
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
@@ -6810,8 +6796,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 for (int a = 0, N = filters.size(); a < N; a++) {
                     MessagesController.DialogFilter dialogFilter = filters.get(a);
                     if (filters.get(a).isDefault()) {
-                        if (filterTabsView.showAllChatsTab)
-                            filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  filters.get(a).locked);
+                        filterTabsView.addTab(a, 0, LocaleController.getString("FilterAllChats", R.string.FilterAllChats), true,  filters.get(a).locked);
                     } else {
                         switch (NekoConfig.tabsTitleType.Int()) {
                             case NekoXConfig.TITLE_TYPE_TEXT:
@@ -6826,7 +6811,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                         }
                     }
                 }
-                boolean updateCurrentTab = NekoConfig.hideAllTab.Bool();
+                boolean updateCurrentTab = false;
                 if (stableId >= 0) {
                     if (selectWithStableId) {
                         if (!filterTabsView.selectTabWithStableId(stableId)) {
@@ -7209,10 +7194,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             return false;
         } else if (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE && !tabsAnimationInProgress && !filterTabsView.isAnimatingIndicator()
                 && !startedTracking && !filterTabsView.isFirstTabSelected()) {
-            if (!NekoConfig.hideAllTab.Bool()){
-                filterTabsView.selectFirstTab();
-                return false;
-            }
+            filterTabsView.selectFirstTab();
+            return false;
         } else if (commentView != null && commentView.isPopupShowing()) {
             commentView.hidePopup(true);
             return false;

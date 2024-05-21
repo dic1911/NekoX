@@ -87,7 +87,6 @@ public class NekoConfig {
     public static ConfigItem useSystemEmoji = addConfig("EmojiUseDefault", configTypeBool, false);
     public static ConfigItem showTabsOnForward = addConfig("ShowTabsOnForward", configTypeBool, false);
     public static ConfigItem rearVideoMessages = addConfig("RearVideoMessages", configTypeBool, false);
-    public static ConfigItem hideAllTab = addConfig("HideAllTab", configTypeBool, false);
 //    public static ConfigItem pressTitleToOpenAllChats = addConfig("pressTitleToOpenAllChats", configTypeBool, false);
 
     public static ConfigItem disableChatAction = addConfig("DisableChatAction", configTypeBool, false);
@@ -344,8 +343,6 @@ public class NekoConfig {
             showTabsOnForward.setConfigBool(preferences.getBoolean("showTabsOnForward", false));
         if (preferences.contains("rearVideoMessages"))
             rearVideoMessages.setConfigBool(preferences.getBoolean("rearVideoMessages", false));
-        if (preferences.contains("hideAllTab"))
-            hideAllTab.setConfigBool(preferences.getBoolean("hideAllTab", false));
         if (preferences.contains("disable_chat_action"))
             disableChatAction.setConfigBool(preferences.getBoolean("disable_chat_action", false));
         if (preferences.contains("sort_by_unread"))
