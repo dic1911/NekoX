@@ -6396,7 +6396,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
         });
         cutOutBtn.setCutOutState(false);
-        containerView.addView(cutOutBtn, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.CENTER));
+//        containerView.addView(cutOutBtn, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.CENTER));
 
         btnLayout = new LinearLayout(parentActivity);
         btnLayout.setOrientation(LinearLayout.HORIZONTAL);
@@ -6417,9 +6417,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             switchToEditMode(EDIT_MODE_STICKER_MASK);
         });
-        btnLayout.addView(eraseBtn, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 36));
+//        btnLayout.addView(eraseBtn, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 36));
 
-        btnLayout.addView(new Space(parentActivity), LayoutHelper.createLinear(12, LayoutHelper.MATCH_PARENT));
+//        btnLayout.addView(new Space(parentActivity), LayoutHelper.createLinear(12, LayoutHelper.MATCH_PARENT));
 
         restoreBtn = new BlurButton();
         restoreBtn.wrapContent();
@@ -6437,9 +6437,9 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
             switchToEditMode(EDIT_MODE_STICKER_MASK);
         });
-        btnLayout.addView(restoreBtn, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 36));
+//        btnLayout.addView(restoreBtn, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, 36));
 
-        containerView.addView(btnLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
+//        containerView.addView(btnLayout, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
 
         undoBtn = new BlurButton();
         undoBtn.setUndoState(false);
@@ -6461,7 +6461,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 showStickerMode(true, true);
             }
         });
-        containerView.addView(undoBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
+//        containerView.addView(undoBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
 
         outlineBtn = new BlurButton();
         outlineBtn.setOutlineState(false);
@@ -6473,7 +6473,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 stickerMakerView.setOutlineVisible(outlineBtn.isActive() && !(eraseBtn.isActive() || restoreBtn.isActive()));
             }
         });
-        containerView.addView(outlineBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
+//        containerView.addView(outlineBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
 
         showEditCaption(false, false);
         showStickerMode(false, false);
