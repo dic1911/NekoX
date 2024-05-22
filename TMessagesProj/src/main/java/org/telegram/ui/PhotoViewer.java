@@ -6268,7 +6268,135 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
         stickerMakerView.setCurrentAccount(currentAccount);
         containerView.addView(stickerMakerView, containerView.indexOfChild(actionBar) - 1, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.TOP | Gravity.LEFT, 0, 0, 0, 0));
-        // 030: cut out feature not available
+        cutOutBtn = new BlurButton();
+        cutOutBtn.setRad(18);
+        cutOutBtn.wrapContentDynamic();
+        stickerMakerView.setStickerCutOutBtn(cutOutBtn);
+        cutOutBtn.setOnClickListener(v -> {
+            if (stickerEmpty) {
+                return;
+            }
+            if (cutOutBtn.isLoading() || cutOutBtn.isUndoCutState()) {
+                return;
+            }
+            if (currentIndex < 0 || currentIndex >= imagesArrLocals.size() || stickerMakerView.isThanosInProgress) {
+                return;
+            }
+            MediaController.MediaEditState entry = (MediaController.MediaEditState) imagesArrLocals.get(currentIndex);
+            boolean hasFilters = !TextUtils.isEmpty(entry.filterPath);
+            if (cutOutBtn.isCutOutState()) {
+                cutOutBtn.setCancelState(true);
+                stickerMakerView.enableClippingMode(segmentedObject -> {
+                    if (stickerMakerView.hasSegmentedBitmap()) {
+                        ThanosEffect thanosEffect = stickerMakerView.getThanosEffect();
+                        stickerMakerView.setSegmentedState(true, segmentedObject);
+                        Bitmap segmentedImage = stickerMakerView.getSegmentedImage(centerImage.getBitmap(), hasFilters, centerImage.getOrientation());
+
+                        Object object = imagesArrLocals.get(currentIndex);
+                        MediaController.PhotoEntry photoEntry = ((MediaController.PhotoEntry) object);
+
+                        if (thanosEffect == null/* || photoEntry.isCropped || centerImage.getOrientation() == 180*/) {
+                            centerImage.setImageBitmap(segmentedImage);
+                            cutOutBtn.setUndoCutState(true);
+                            showStickerMode(true, true);
+                            cutOutBtn.post(this::applyCurrentEditMode);
+                            return;
+                        }
+
+                        Bitmap bitmap = stickerMakerView.getThanosImage(photoEntry, centerImage.getOrientation());
+                        if (bitmap == null) {
+                            centerImage.setImageBitmap(segmentedImage);
+                            cutOutBtn.setUndoCutState(true);
+                            showStickerMode(true, true);
+                            cutOutBtn.post(this::applyCurrentEditMode);
+                            return;
+                        }
+                        if (entry.cropState != null) {
+                            bitmap = createCroppedBitmap(bitmap, entry.cropState, new int[]{centerImage.getOrientation(), centerImage.getInvert()}, true);
+                        }
+                        if (bitmap == null) {
+                            centerImage.setImageBitmap(segmentedImage);
+                            cutOutBtn.setUndoCutState(true);
+                            showEditStickerMode(true, true);
+                            cutOutBtn.post(this::applyCurrentEditMode);
+                            return;
+                        }
+
+                        Matrix matrix = new Matrix();
+                        int BW = bitmap.getWidth(), BH = bitmap.getHeight();
+                        if (!photoEntry.isCropped && centerImage.getOrientation() / 90 % 2 != 0) {
+                            BW = bitmap.getHeight();
+                            BH = bitmap.getWidth();
+                        }
+                        float scale = Math.min(
+                            (float) getContainerViewWidth() / BW,
+                            (float) getContainerViewHeight() / BH
+                        );
+                        float w = BW * scale, h = BH * scale;
+                        float tx = 0, ty = 0;
+                        if (centerImage.getOrientation() != 0 && !photoEntry.isCropped || rotate != 0) {
+                            final float bw = bitmap.getWidth();
+                            final float bh = bitmap.getHeight();
+                            final float r = (float) Math.sqrt((bw / 2f) * (bw / 2f) + (bh / 2f) * (bh / 2f));
+                            final float d = 2 * r;
+                            Bitmap newBitmap = Bitmap.createBitmap((int) d, (int) d, Bitmap.Config.ARGB_8888);
+                            Canvas canvas = new Canvas(newBitmap);
+                            canvas.save();
+                            canvas.rotate((photoEntry.isCropped ? 0 : centerImage.getOrientation()) + rotate, r, r);
+                            canvas.drawBitmap(bitmap, (d - bw) / 2, (d - bh) / 2, null);
+                            bitmap.recycle();
+                            bitmap = newBitmap;
+
+                            final float pd = 2 * (float) Math.sqrt((w / 2f) * (w / 2f) + (h / 2f) * (h / 2f));
+                            tx = -(pd - w) / 2;
+                            ty = -(pd - h) / 2;
+                            w = pd;
+                            h = pd;
+                        }
+                        matrix.postScale(w, h);
+                        matrix.postScale(this.scale, this.scale, w / 2f, h / 2f);
+                        matrix.postTranslate(
+                            translationX + tx + Math.max(0, (int) ((getContainerViewWidth() - BW * scale) / 2f)),
+                            translationY + ty + Math.max(0, (int) ((getContainerViewHeight() - BH * scale) / 2f))
+                        );
+                        stickerMakerView.isThanosInProgress = true;
+                        Utilities.themeQueue.postRunnable(() -> {
+                            applyCurrentEditMode(segmentedImage);
+                        });
+                        Runnable turnOff = () -> stickerMakerView.isThanosInProgress = false;
+                        thanosEffect.animate(matrix, bitmap, () -> {
+                            centerImage.setImageBitmap(segmentedImage);
+                            cutOutBtn.setUndoCutState(true);
+                            showStickerMode(true, true);
+                            AndroidUtilities.cancelRunOnUIThread(turnOff);
+                            AndroidUtilities.runOnUIThread(turnOff, 800);
+                        }, () -> {});
+                        AndroidUtilities.runOnUIThread(turnOff, 1200);
+                    } else {
+                        cutOutBtn.setCutOutState(true);
+                        showEditStickerMode(false, true);
+                    }
+                    stickerMakerView.disableClippingMode();
+                    containerView.invalidate();
+                });
+                containerView.invalidate();
+            } else if (cutOutBtn.isCancelState()) {
+                cutOutBtn.setCutOutState(true);
+                showEditStickerMode(false, true);
+                stickerMakerView.disableClippingMode();
+                containerView.invalidate();
+            } else {
+                stickerMakerView.resetPaths();
+                stickerMakerView.getThanosEffect();
+                stickerMakerView.setSegmentedState(false, null);
+                centerImage.setImageBitmap(stickerMakerView.getSourceBitmap(hasFilters));
+                cutOutBtn.setCutOutState(true);
+                showEditStickerMode(false, true);
+                applyCurrentEditMode();
+            }
+        });
+        cutOutBtn.setCutOutState(false);
+        containerView.addView(cutOutBtn, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, 36, Gravity.CENTER));
 
         btnLayout = new LinearLayout(parentActivity);
         btnLayout.setOrientation(LinearLayout.HORIZONTAL);
