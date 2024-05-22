@@ -4658,6 +4658,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     int sz = _r - _l - dp(20);
                     undoBtn.setTranslationY(-sz / 2f - dp(29 + 18));
                     btnLayout.setTranslationY(sz / 2f + dp(29 + 18));
+                    cutOutBtn.setTranslationY(sz / 2f + dp(29 + 18));
+                    outlineBtn.setTranslationY(sz / 2f + dp(29 + 18 + 36 + 12));
                 }
                 super.onLayout(changed, _l, t, _r, _b);
             }
@@ -6325,10 +6327,25 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     stickerMakerView.setSegmentedState(false, null);
                 }
                 centerImage.setImageBitmap(stickerMakerView.getSourceBitmap(hasFilters));
+                if (stickerMakerView == null || !stickerMakerView.empty) {
+                    cutOutBtn.setCutOutState(true);
+                }
                 showStickerMode(true, true);
             }
         });
         containerView.addView(undoBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
+
+        outlineBtn = new BlurButton();
+        outlineBtn.setOutlineState(false);
+        outlineBtn.setRad(18);
+        outlineBtn.wrapContent();
+        outlineBtn.setOnClickListener(v -> {
+            if (stickerMakerView != null) {
+                outlineBtn.setActive(!outlineBtn.isActive(), true);
+                stickerMakerView.setOutlineVisible(outlineBtn.isActive() && !(eraseBtn.isActive() || restoreBtn.isActive()));
+            }
+        });
+        containerView.addView(outlineBtn, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 36, Gravity.CENTER));
 
         showEditCaption(false, false);
         showStickerMode(false, false);
@@ -13703,8 +13720,47 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
             }
         }
         stickerMakerView.setTag(show ? 1 : null);
+        boolean buttonShow = show && !cutOutBtn.isUndoCutState() && !stickerEmpty;
+        if (!animated) {
+            cutOutBtn.animate().setListener(null).cancel();
+            cutOutBtn.setVisibility(buttonShow ? View.VISIBLE : View.GONE);
+            cutOutBtn.setAlpha(buttonShow ? 1f : 0f);
+        } else {
+            if (buttonShow && cutOutBtn.getTag() == null) {
+                cutOutBtn.animate().setListener(null).cancel();
+                if (cutOutBtn.getVisibility() != View.VISIBLE) {
+                    cutOutBtn.setVisibility(View.VISIBLE);
+                }
+                cutOutBtn.animate().alpha(1f).start();
+            } else if (!buttonShow && cutOutBtn.getTag() != null) {
+                cutOutBtn.animate().setListener(null).cancel();
+                cutOutBtn.animate().alpha(0f).setListener(new HideViewAfterAnimation(cutOutBtn)).start();
+            }
+        }
+        cutOutBtn.setTag(buttonShow ? 1 : null);
+        showEditStickerMode(show && cutOutBtn.isUndoCutState() && !stickerEmpty, animated);
 
-        // 030: both cutOutBtn and outlineBtn is removed
+        stickerMakerView.setOutlineVisible(show && cutOutBtn.isUndoCutState() && outlineBtn.isActive() && !(eraseBtn.isActive() || restoreBtn.isActive()));
+        boolean outlineShow = show && cutOutBtn.isUndoCutState() && !(eraseBtn.isActive() || restoreBtn.isActive());
+        if (!animated) {
+            outlineBtn.animate().setListener(null).cancel();
+            outlineBtn.setVisibility(outlineShow ? View.VISIBLE : View.GONE);
+            outlineBtn.setAlpha(outlineShow ? 1f : 0f);
+            outlineBtn.setScaleX(outlineShow ? 1f : .8f);
+            outlineBtn.setScaleY(outlineShow ? 1f : .8f);
+        } else {
+            if (outlineShow && outlineBtn.getTag() == null) {
+                outlineBtn.animate().setListener(null).cancel();
+                if (outlineBtn.getVisibility() != View.VISIBLE) {
+                    outlineBtn.setVisibility(View.VISIBLE);
+                }
+                outlineBtn.animate().alpha(1f).scaleX(1f).scaleY(1f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(400).start();
+            } else if (!outlineShow && outlineBtn.getTag() != null) {
+                outlineBtn.animate().setListener(null).cancel();
+                outlineBtn.animate().alpha(0f).scaleX(.8f).scaleY(.8f).setListener(new HideViewAfterAnimation(outlineBtn)).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(400).start();
+            }
+        }
+        outlineBtn.setTag(outlineShow ? 1 : null);
     }
 
     private void showEditStickerMode(boolean show, boolean animated) {
@@ -16096,8 +16152,13 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     public void closePhoto(boolean animated, boolean fromEditMode) {
         if (stickerMakerView != null) {
             stickerMakerView.isThanosInProgress = false;
+            if (cutOutBtn.isCancelState()) {
+                cutOutBtn.setCutOutState(true);
+                showEditStickerMode(false, true);
+                stickerMakerView.disableClippingMode();
+                containerView.invalidate();
+            }
         }
-        // 030: cutOutBtn removed
         if (!fromEditMode && currentEditMode != EDIT_MODE_NONE) {
             if (currentEditMode == EDIT_MODE_PAINT && photoPaintView != null) {
                 closePaintMode();
@@ -20256,7 +20317,12 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     }
 
     private void cancelStickerClippingMode() {
-        // 030: cutOutBtn removed
+        if (sendPhotoType == SELECT_TYPE_STICKER && cutOutBtn.isCancelState()) {
+            cutOutBtn.setCutOutState(true);
+            showEditStickerMode(true, true);
+            stickerMakerView.disableClippingMode();
+            containerView.invalidate();
+        }
     }
 
     private void invalidateBlur() {
