@@ -166,13 +166,11 @@ import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.MessagesStorage;
 import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.NotificationsController;
-import org.telegram.messenger.PushListenerController;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SecretChatHelper;
 import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.SvgHelper;
-import org.telegram.messenger.TranslateController;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -754,6 +752,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private int cantSaveMessagesCount;
     private int canSaveMusicCount;
     private int canSaveDocumentsCount;
+    private boolean onlyAlbum = true;
+    private HashSet<Long> selectedAlbums = new HashSet<>();
     private ArrayList<Integer> waitingForLoad = new ArrayList<>();
     private boolean needRemovePreviousSameChatActivity = true;
 
@@ -3279,6 +3279,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         cantSaveMessagesCount = 0;
         canSaveMusicCount = 0;
         canSaveDocumentsCount = 0;
+        onlyAlbum = true;
+        selectedAlbums.clear();
 
         hasOwnBackground = true;
         if (chatAttachAlert != null) {
@@ -9995,6 +9997,23 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             selectedMessagesIds[0].put(messageObject.getId(), messageObject);
                         }
                     }
+
+                    int msgCount = messagePreviewParams.forwardMessages == null ? 0 : messagePreviewParams.forwardMessages.messages.size();
+                    if (msgCount > 0) {
+                        long gid = -1;
+                        boolean ok = true;
+                        for (MessageObject msg : messagePreviewParams.forwardMessages.messages) {
+                            if (gid != msg.getGroupId()) {
+                                if (gid == -1) gid = msg.getGroupId();
+                                else {
+                                    ok = false;
+                                    break;
+                                }
+                            }
+                        }
+                        if (ok) msgCount = 1;
+                    }
+
                     Bundle args = new Bundle();
                     args.putBoolean("onlySelect", true);
                     args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
@@ -10002,7 +10021,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     args.putBoolean("reply_to", !forward && messagePreviewParams.replyMessage != null && messagePreviewParams.quote == null);
                     args.putInt("hasPoll", hasPoll);
                     args.putBoolean("hasInvoice", hasInvoice);
-                    args.putInt("messagesCount", messagePreviewParams.forwardMessages == null ? 0 : messagePreviewParams.forwardMessages.messages.size());
+                    args.putInt("messagesCount", msgCount);
                     args.putBoolean("canSelectTopics", true);
                     DialogsActivity fragment = new DialogsActivity(args);
                     fragment.setDelegate(ChatActivity.this);
@@ -11304,10 +11323,14 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (selectionReactionsOverlay != null && selectionReactionsOverlay.isVisible()) {
             selectionReactionsOverlay.setHiddenByScroll(true);
         }
+
+        // 030: fix forward single album to groups with slow mode enabled
+        int actualMessagesCount = onlyAlbum ? selectedAlbums.size() : canForwardMessagesCount;
+
         Bundle args = new Bundle();
         args.putBoolean("onlySelect", true);
         args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
-        args.putInt("messagesCount", canForwardMessagesCount);
+        args.putInt("messagesCount", actualMessagesCount);
         args.putInt("hasPoll", hasPoll);
         args.putBoolean("hasInvoice", hasInvoice);
         args.putBoolean("canSelectTopics", true);
@@ -17286,6 +17309,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         cantForwardMessagesCount--;
                     } else {
                         canForwardMessagesCount--;
+                        if (canForwardMessagesCount == 0) {
+                            onlyAlbum = true;
+                            selectedAlbums.clear();
+                        }
                     }
                     if (messageObject.isMusic() && !noforwards) {
                         canSaveMusicCount--;
@@ -17323,6 +17350,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         cantForwardMessagesCount++;
                     } else {
                         canForwardMessagesCount++;
+
+                        // 030: fix album fwd to groups with slow mode enabled
+                        if (messageObject.getGroupId() == 0) onlyAlbum = false;
+                        else selectedAlbums.add(messageObject.getGroupId());
                     }
                     if (messageObject.isMusic() && !noforwards) {
                         canSaveMusicCount++;
