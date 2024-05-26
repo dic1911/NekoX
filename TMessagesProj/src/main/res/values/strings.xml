@@ -6246,7 +6246,15 @@
     <string name="BioLimitSubtitle">Add more symbols and use links in your bio.</string>
     <string name="AppIcon">App Icon</string>
     <string name="AppIconDefault">Default</string>
-    <string name="AppIconOld">Colored</string>
+    <string name="AppIconColored">Colored</string>
+    <string name="AppIconColoredClassic">Classic</string>
+    <string name="AppIconThemedClassic">MonoClassic</string>
+    <string name="AppIconThemedXEye">MonoX</string>
+    <string name="AppIconPusheen">Pusheen</string>
+    <string name="AppIconMusheen">Musheen</string>
+    <string name="AppIconRainbow">Rainbow</string>
+    <string name="AppIconNeon">Neon</string>
+    <string name="AppIconSpace">Space</string>
     <string name="AppIconVintage">Vintage</string>
     <string name="AppIconAqua">Aqua</string>
     <string name="AppIconPremium">Premium</string>
