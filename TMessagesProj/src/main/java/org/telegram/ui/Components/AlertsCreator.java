@@ -133,12 +133,9 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import kotlin.Unit;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
@@ -1401,7 +1398,7 @@ public class AlertsCreator {
         TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -1487,7 +1484,7 @@ public class AlertsCreator {
         TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -1565,7 +1562,7 @@ public class AlertsCreator {
         TextView titleView = new TextView(context);
         titleView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleView.setLines(1);
         titleView.setMaxLines(1);
         titleView.setSingleLine(true);
@@ -1695,7 +1692,7 @@ public class AlertsCreator {
         TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -1983,7 +1980,7 @@ public class AlertsCreator {
         TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -2101,7 +2098,7 @@ public class AlertsCreator {
         TextView textView = new TextView(context);
         textView.setTextColor(Theme.getColor(Theme.key_actionBarDefaultSubmenuItem));
         textView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        textView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        textView.setTypeface(AndroidUtilities.bold());
         textView.setLines(1);
         textView.setMaxLines(1);
         textView.setSingleLine(true);
@@ -2427,7 +2424,7 @@ public class AlertsCreator {
         buttonTextView.setPadding(dp(34), 0, dp(34), 0);
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setText(LocaleController.getString("IUnderstand", R.string.IUnderstand));
 
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText));
@@ -2692,7 +2689,7 @@ public class AlertsCreator {
         titleView.setText(title);
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
         container.addView(titleLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 22, 0, 0, 4));
@@ -2883,7 +2880,7 @@ public class AlertsCreator {
         titleView.setText(title);
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
         container.addView(titleLayout, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 22, 0, 0, 4));
@@ -3247,7 +3244,7 @@ public class AlertsCreator {
         }
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -3362,7 +3359,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackground(Theme.AdaptiveRipple.filledRect(datePickerColors.buttonBackgroundColor, 8));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
         buttonTextView.setOnClickListener(v -> {
@@ -3463,7 +3460,7 @@ public class AlertsCreator {
 
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -3542,7 +3539,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(dp(8), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
         buttonTextView.setText(button);
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -3623,7 +3620,7 @@ public class AlertsCreator {
         titleView.setText(title);
         titleView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -3793,7 +3790,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText, resourcesProvider));
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setText(button);
         buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(8), Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider)));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -3891,7 +3888,7 @@ public class AlertsCreator {
 
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface(AndroidUtilities.TYPEFACE_ROBOTO_MEDIUM));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -3974,7 +3971,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(dp(8), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
         buttonTextView.setText(LocaleController.getString("SetEmojiStatusUntilButton", R.string.SetEmojiStatusUntilButton));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -4097,7 +4094,7 @@ public class AlertsCreator {
 
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -4119,7 +4116,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(dp(14));
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(dp(8), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
         buttonTextView.setText(LocaleController.getString("DisableAutoDeleteTimer", R.string.DisableAutoDeleteTimer));
@@ -4238,7 +4235,7 @@ public class AlertsCreator {
 
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -4262,7 +4259,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(dp(8), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
         buttonTextView.setText(LocaleController.getString("AutoDeleteConfirm", R.string.AutoDeleteConfirm));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -4398,7 +4395,7 @@ public class AlertsCreator {
         titleView.setText(LocaleController.getString("MuteForAlert", R.string.MuteForAlert));
         titleView.setTextColor(datePickerColors.textColor);
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -4424,7 +4421,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(datePickerColors.buttonTextColor);
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setBackgroundDrawable(Theme.createSimpleSelectorRoundRectDrawable(dp(8), datePickerColors.buttonBackgroundColor, datePickerColors.buttonBackgroundPressedColor));
         buttonTextView.setText(LocaleController.getString("AutoDeleteConfirm", R.string.AutoDeleteConfirm));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -4563,7 +4560,7 @@ public class AlertsCreator {
         titleView.setText(LocaleController.getString("ChooseDate", R.string.ChooseDate));
         titleView.setTextColor(Theme.getColor(Theme.key_dialogTextBlack, resourcesProvider));
         titleView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 20);
-        titleView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        titleView.setTypeface(AndroidUtilities.bold());
         titleLayout.addView(titleView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.LEFT | Gravity.TOP, 0, 12, 0, 0));
         titleView.setOnTouchListener((v, event) -> true);
 
@@ -4639,7 +4636,7 @@ public class AlertsCreator {
         buttonTextView.setGravity(Gravity.CENTER);
         buttonTextView.setTextColor(Theme.getColor(Theme.key_featuredStickers_buttonText, resourcesProvider));
         buttonTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
-        buttonTextView.setTypeface(AndroidUtilities.getTypeface("fonts/rmedium.ttf"));
+        buttonTextView.setTypeface(AndroidUtilities.bold());
         buttonTextView.setText(LocaleController.getString(R.string.JumpToDate));
         buttonTextView.setBackground(Theme.createSimpleSelectorRoundRectDrawable(dp(8), Theme.getColor(Theme.key_featuredStickers_addButton, resourcesProvider), Theme.getColor(Theme.key_featuredStickers_addButtonPressed, resourcesProvider)));
         container.addView(buttonTextView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48, Gravity.LEFT | Gravity.BOTTOM, 16, 15, 16, 16));
@@ -5050,9 +5047,9 @@ public class AlertsCreator {
         } else if (result == 8) {
             builder.setMessage(LocaleController.getString("ErrorSendRestrictedPrivacyVideoMessages", R.string.ErrorSendRestrictedPrivacyVideoMessages));
         } else if (result == 9) {
-            builder.setMessage(LocaleController.getString("ErrorSendRestrictedPrivacyVideo", R.string.ErrorSendRestrictedVideoAll));
+            builder.setMessage(LocaleController.getString("ErrorSendRestrictedVideoAll", R.string.ErrorSendRestrictedVideoAll));
         } else if (result == 10) {
-            builder.setMessage(LocaleController.getString("ErrorSendRestrictedPrivacyPhoto", R.string.ErrorSendRestrictedPhotoAll));
+            builder.setMessage(LocaleController.getString("ErrorSendRestrictedPhotoAll", R.string.ErrorSendRestrictedPhotoAll));
         } else if (result == 11) {
             builder.setMessage(LocaleController.getString("ErrorSendRestrictedVideo", R.string.ErrorSendRestrictedVideo));
         } else if (result == 12) {

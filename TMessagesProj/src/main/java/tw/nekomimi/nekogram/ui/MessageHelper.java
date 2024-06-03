@@ -422,7 +422,7 @@ public class MessageHelper extends BaseController {
         imageView.setRoundRadius(AndroidUtilities.dp(20));
         if (forumTopic != null) {
             if (forumTopic.id == 1) {
-                imageView.setImageDrawable(ForumUtilities.createGeneralTopicDrawable(context, 0.75f, resourcesProvider));
+                imageView.setImageDrawable(ForumUtilities.createGeneralTopicDrawable(context, 0.75f, Theme.getColor(Theme.key_actionBarDefaultIcon, resourcesProvider), false));
             } else {
                 ForumUtilities.setTopicIcon(imageView, forumTopic, false, true, resourcesProvider);
             }

@@ -58,6 +58,7 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SimpleFloatPropertyCompat;
 import org.telegram.ui.DialogsActivity;
+import org.telegram.ui.Stars.StarsController;
 
 import java.util.List;
 import java.util.Locale;
@@ -280,6 +281,11 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
                     });
                     parentEnterView.getParentFragment().presentFragment(dialogsActivity);
                 }
+            }
+
+            @Override
+            public void onWebAppOpenInvoice(TLRPC.InputInvoice inputInvoice, String slug, TLObject response) {
+
             }
 
             @Override

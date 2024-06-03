@@ -112,13 +112,7 @@ public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.An
             @Override
             protected void onFocusChanged(boolean focused, int direction, Rect previouslyFocusedRect) {
                 super.onFocusChanged(focused, direction, previouslyFocusedRect);
-                if (type == TYPE_EMOJI) {
-                    if (focused && emojiButton.getVisibility() == View.GONE) {
-                        setEmojiButtonVisibility(true);
-                    } else if (!focused && emojiButton.getVisibility() == View.VISIBLE) {
-                        setEmojiButtonVisibility(false);
-                    }
-                }
+                onEditTextFocusChanged(focused);
             }
 
             @Override
@@ -209,6 +203,10 @@ public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.An
             });
             emojiButton.setContentDescription(LocaleController.getString("Emoji", R.string.Emoji));
         }
+    }
+
+    protected void onEditTextFocusChanged(boolean focused) {
+
     }
 
     public void createErrorTextView() {
@@ -397,7 +395,7 @@ public class PollEditTextCell extends FrameLayout implements SuggestEmojiView.An
         return textView2;
     }
 
-    private void setEmojiButtonVisibility(boolean visible) {
+    public void setEmojiButtonVisibility(boolean visible) {
         if (valueAnimator != null) {
             valueAnimator.cancel();
         }
