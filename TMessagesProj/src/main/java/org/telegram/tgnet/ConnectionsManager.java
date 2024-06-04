@@ -1449,7 +1449,9 @@ public void init(int version, int layer, int apiId, String deviceModel, String s
     }
 
     public static void onIntegrityCheckClassic(final int currentAccount, final int requestToken, final String nonce) {
-        // 030: no safetynet, no play integrity
+        // 030: no safetynet, no play integrity, simply fail silently
+        FileLog.e("onIntegrityCheckClassic: fuck durov");
+        native_receivedIntegrityCheckClassic(currentAccount, requestToken, nonce, "PLAYINTEGRITY_FAILED_EXCEPTION_NULL");
 //        AndroidUtilities.runOnUIThread(() -> {
 //            long start = System.currentTimeMillis();
 //            FileLog.d("account"+currentAccount+": server requests integrity classic check with nonce = " + nonce);
