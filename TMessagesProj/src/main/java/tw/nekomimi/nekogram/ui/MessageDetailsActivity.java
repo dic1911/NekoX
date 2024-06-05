@@ -462,6 +462,13 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                                 builder.append(messageObject.messageOwner.fwd_from.from_name);
                             }
                         }
+
+                        long original_date = (long) messageObject.messageOwner.fwd_from.date * 1000;
+                        String year = LocaleController.getInstance().formatterYear.format(new Date(original_date));
+                        String day = LocaleController.getInstance().formatterDay.format(new Date(original_date));
+                        builder.append("\n")
+                                .append(LocaleController.formatString("formatDateAtTime", R.string.formatDateAtTime, year, day));
+
                         textCell.setTextAndValue("Forward from", builder.toString(), divider);
                     } else if (position == fileNameRow) {
                         textCell.setTextAndValue("File name", fileName, divider);
