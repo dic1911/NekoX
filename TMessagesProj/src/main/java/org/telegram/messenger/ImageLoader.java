@@ -2846,13 +2846,15 @@ public class ImageLoader {
         if (imageReceiver == null) {
             return;
         }
-        ArrayList<Runnable> runnables = imageReceiver.getLoadingOperations();
-        if (!runnables.isEmpty()) {
-            // 030: attempt to avoid out of bounds exception
-            for (Runnable r : runnables) {
-                imageLoadQueue.cancelRunnable(r);
+        List<Runnable> runnables = imageReceiver.getLoadingOperations();
+        synchronized (runnables) {
+            if (!runnables.isEmpty()) {
+                // 030: attempt to avoid out of bounds exception
+                for (Runnable r : runnables) {
+                    imageLoadQueue.cancelRunnable(r);
+                }
+                runnables.clear();
             }
-            runnables.clear();
         }
         imageReceiver.addLoadingImageRunnable(null);
         imageLoadQueue.postRunnable(() -> {

@@ -47,6 +47,7 @@ import org.telegram.ui.Components.VectorAvatarThumbDrawable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ImageReceiver implements NotificationCenter.NotificationCenterDelegate {
@@ -345,7 +346,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
     private float pressedProgress;
     private int animateFromIsPressed;
     private String uniqKeyPrefix;
-    private ArrayList<Runnable> loadingOperations = new ArrayList<>();
+    private List<Runnable> loadingOperations = Collections.synchronizedList(new ArrayList<>());
     private boolean attachedToWindow;
     private boolean videoThumbIsSame;
     private boolean allowLoadingOnAttachedOnly = false;
@@ -3109,7 +3110,7 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         loadingOperations.add(loadOperationRunnable);
     }
 
-    public ArrayList<Runnable> getLoadingOperations() {
+    public List<Runnable> getLoadingOperations() {
         return loadingOperations;
     }
 
