@@ -301,15 +301,15 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
         int helpIcon;
         int peopleNearbyIcon;
         if (eventType == 0) {
-            newGroupIcon = R.drawable.msg_groups_ny;
+//            newGroupIcon = R.drawable.msg_groups_ny;
             //newSecretIcon = R.drawable.msg_secret_ny;
             //newChannelIcon = R.drawable.msg_channel_ny;
-            contactsIcon = R.drawable.msg_contacts_ny;
-            callsIcon = R.drawable.msg_calls_ny;
-            savedIcon = R.drawable.msg_saved_ny;
-            settingsIcon = R.drawable.msg_settings_ny;
-            inviteIcon = R.drawable.msg_invite_ny;
-            helpIcon = R.drawable.msg_help_ny;
+//            contactsIcon = R.drawable.msg_contacts_ny;
+//            callsIcon = R.drawable.msg_calls_ny;
+//            savedIcon = R.drawable.msg_saved_ny;
+//            settingsIcon = R.drawable.msg_settings_ny;
+//            inviteIcon = R.drawable.msg_invite_ny;
+//            helpIcon = R.drawable.msg_help_ny;
             peopleNearbyIcon = R.drawable.msg_nearby_ny;
         } else if (eventType == 1) {
             newGroupIcon = R.drawable.msg_groups_14;
