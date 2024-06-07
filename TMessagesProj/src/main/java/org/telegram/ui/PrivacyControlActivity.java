@@ -761,7 +761,7 @@ public class PrivacyControlActivity extends BaseFragment implements Notification
         } else {
             req.key = new TLRPC.TL_inputPrivacyKeyStatusTimestamp();
         }
-        if (currentType != 0 && currentPlus.size() > 0) {
+        if (currentType != TYPE_EVERYBODY && currentPlus.size() > 0) {
             TLRPC.TL_inputPrivacyValueAllowUsers usersRule = new TLRPC.TL_inputPrivacyValueAllowUsers();
             TLRPC.TL_inputPrivacyValueAllowChatParticipants chatsRule = new TLRPC.TL_inputPrivacyValueAllowChatParticipants();
             for (int a = 0; a < currentPlus.size(); a++) {

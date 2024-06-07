@@ -1,6 +1,7 @@
 package org.telegram.ui.Components;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
+import static org.telegram.messenger.ContactsController.PRIVACY_RULES_TYPE_LASTSEEN;
 
 import android.content.Context;
 import android.graphics.Canvas;
@@ -12,6 +13,7 @@ import android.graphics.drawable.Drawable;
 import android.text.Layout;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.View;
@@ -23,11 +25,13 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.core.content.ContextCompat;
 
+import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
+import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.UserObject;
 import org.telegram.tgnet.ConnectionsManager;
@@ -41,7 +45,9 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.PremiumPreviewFragment;
 import org.telegram.ui.Stories.recorder.ButtonWithCounterView;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MessagePrivateSeenView extends FrameLayout {
 
@@ -152,6 +158,8 @@ public class MessagePrivateSeenView extends FrameLayout {
         sheet.fixNavigationBar(Theme.getColor(Theme.key_dialogBackground, resourcesProvider));
 
         final boolean premiumLocked = MessagesController.getInstance(currentAccount).premiumFeaturesBlocked();
+        final ContactsController contactsController = ContactsController.getInstance(currentAccount);
+        contactsController.loadPrivacySettings();
 
         LinearLayout layout = new LinearLayout(context);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -193,21 +201,75 @@ public class MessagePrivateSeenView extends FrameLayout {
             if (lastSeen) {
                 TLRPC.TL_account_setPrivacy req = new TLRPC.TL_account_setPrivacy();
                 req.key = new TLRPC.TL_inputPrivacyKeyStatusTimestamp();
-                req.rules.add(new TLRPC.TL_inputPrivacyValueAllowAll());
-                ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
-                    if (err != null) {
-                        BulletinFactory.global().showForError(err);
+
+                // 030: only allow current user instead of allow all
+                List<TLRPC.PrivacyRule> currentRules = contactsController.getPrivacyRules(PRIVACY_RULES_TYPE_LASTSEEN);
+                if (currentRules == null) {
+                    Log.d("03030-tg", "cant get current rules! attempting to try again after loading");
+                    contactsController.loadPrivacySettings();
+                    currentRules = contactsController.getPrivacyRules(PRIVACY_RULES_TYPE_LASTSEEN);
+                    if (currentRules == null) {
+                        Log.d("03030-tg", "still cant get rules... give...");
+                        sendLastSeenControlUpdate(sheet, currentAccount, button1, updated, null);
                         return;
                     }
+                }
+                TLRPC.User targetUser = MessagesController.getInstance(currentAccount).getUser(dialogId);
+                TLRPC.InputUser inputTargetUser = targetUser != null ? MessagesController.getInstance(currentAccount).getInputUser(targetUser) : null;
+                if (inputTargetUser == null) {
+                    Log.d("03030-tg", "couldn't get target user, give up... use official behavior");
+                    sendLastSeenControlUpdate(sheet, currentAccount, button1, updated, null);
+                    return;
+                }
 
-                    button1.setLoading(false);
-                    sheet.dismiss();
+                TLRPC.TL_inputPrivacyValueAllowUsers newAllowedUsers = new TLRPC.TL_inputPrivacyValueAllowUsers();
+                TLRPC.TL_privacyValueAllowUsers allowUsersRule = null;
+                TLRPC.TL_privacyValueDisallowUsers disallowUsersRule = null;
+                ArrayList<TLRPC.InputPrivacyRule> newRuleSet = new ArrayList<TLRPC.InputPrivacyRule>();
 
-                    BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.PremiumLastSeenSet)).show();
-                    if (updated != null) {
-                        updated.run();
+                for (TLRPC.PrivacyRule rule : currentRules) {
+                    if (rule instanceof TLRPC.TL_privacyValueAllowUsers) {
+                        allowUsersRule = (TLRPC.TL_privacyValueAllowUsers) rule;
+                    } else if (rule instanceof TLRPC.TL_privacyValueDisallowUsers) {
+                        disallowUsersRule = (TLRPC.TL_privacyValueDisallowUsers) rule;
                     }
-                }));
+                }
+
+                newAllowedUsers.users.add(inputTargetUser);
+                boolean isNobody = currentRules.isEmpty();
+                if (allowUsersRule != null || disallowUsersRule != null || isNobody) {
+                    if (allowUsersRule != null) {
+                        for (Long id : allowUsersRule.users) {
+                            targetUser = MessagesController.getInstance(currentAccount).getUser(id);
+                            if (inputTargetUser == null) {
+                                Log.d("03030-tg", "couldn't get target allowed user " + id);
+                                continue;
+                            }
+                            inputTargetUser = MessagesController.getInstance(currentAccount).getInputUser(targetUser);
+                            newAllowedUsers.users.add(inputTargetUser);
+                        }
+                    }
+                    newRuleSet.add(newAllowedUsers);
+                    if (disallowUsersRule != null) {
+                        TLRPC.TL_inputPrivacyValueDisallowUsers newDisallowedUsers = new TLRPC.TL_inputPrivacyValueDisallowUsers();
+                        for (Long id : allowUsersRule.users) {
+                            targetUser = MessagesController.getInstance(currentAccount).getUser(id);
+                            if (inputTargetUser == null) {
+                                Log.d("03030-tg", "couldn't get target disallowed user " + id);
+                                continue;
+                            }
+                            inputTargetUser = MessagesController.getInstance(currentAccount).getInputUser(targetUser);
+                            newDisallowedUsers.users.add(inputTargetUser);
+                        }
+                        newRuleSet.add(newDisallowedUsers);
+                    }
+                } else {
+                    // official default - allow all
+                    Log.d("03030-tg", "rule not found, resort to allow all :(");
+                    newRuleSet.add(new TLRPC.TL_inputPrivacyValueAllowAll());
+                }
+
+                sendLastSeenControlUpdate(sheet, currentAccount, button1, updated, newRuleSet);
             } else {
                 TLRPC.TL_account_setGlobalPrivacySettings req = new TLRPC.TL_account_setGlobalPrivacySettings();
                 req.settings = ContactsController.getInstance(currentAccount).getGlobalPrivacySettings();
@@ -329,5 +391,30 @@ public class MessagePrivateSeenView extends FrameLayout {
         }
 
         super.onMeasure(MeasureSpec.makeMeasureSpec(width, widthMode), heightMeasureSpec);
+    }
+
+    private static void sendLastSeenControlUpdate(BottomSheet sheet, int currentAccount, ButtonWithCounterView button1, Runnable updated, ArrayList<TLRPC.InputPrivacyRule> rules) {
+        TLRPC.TL_account_setPrivacy req = new TLRPC.TL_account_setPrivacy();
+        req.key = new TLRPC.TL_inputPrivacyKeyStatusTimestamp();
+
+        if (rules == null)
+            req.rules.add(new TLRPC.TL_inputPrivacyValueAllowAll());
+        else
+            req.rules = rules;
+
+        ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (err != null) {
+                BulletinFactory.global().showForError(err);
+                return;
+            }
+
+            button1.setLoading(false);
+            sheet.dismiss();
+
+            BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.PremiumLastSeenSet)).show();
+            if (updated != null) {
+                updated.run();
+            }
+        }));
     }
 }
