@@ -70,6 +70,7 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
+import android.util.Log;
 import android.util.Property;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -509,6 +510,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private TLRPC.FileLocation avatar;
     private TLRPC.FileLocation avatarBig;
     private ImageLocation uploadingImageLocation;
+
+    private boolean toRevert = false;
 
     private final static int add_contact = 1;
     private final static int block_contact = 2;
@@ -7796,6 +7799,20 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         } else if (id == NotificationCenter.updateInterfaces) {
             int mask = (Integer) args[0];
             boolean infoChanged = (mask & MessagesController.UPDATE_MASK_AVATAR) != 0 || (mask & MessagesController.UPDATE_MASK_NAME) != 0 || (mask & MessagesController.UPDATE_MASK_STATUS) != 0 || (mask & MessagesController.UPDATE_MASK_EMOJI_STATUS) != 0;
+            // 030 mark
+//            if (toRevert) {
+//                toRevert = false;
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        super.run();
+//                        try {
+//                            Thread.sleep(5000);
+//                        } catch (InterruptedException ignored) {}
+//                        ContactsController.getInstance(account).revertLastSeenChange();
+//                    }
+//                }.start();
+//            }
             if (userId != 0) {
                 if (infoChanged) {
                     updateProfileData(true);
@@ -9501,6 +9518,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 onlineTextView[a].setRightDrawable(a == 1 && hiddenStatusButton ? getShowStatusButton() : null);
                 onlineTextView[a].setRightDrawableOnClick(a == 1 && hiddenStatusButton ? v -> {
                     MessagePrivateSeenView.showSheet(getContext(), currentAccount, dialogId, true, null, () -> {
+                        // toRevert = true;
+                        BulletinFactory.global().createSimpleBulletin(R.raw.chats_infotip, LocaleController.getString(R.string.PremiumLastSeenSet)).show();
                         getMessagesController().reloadUser(dialogId);
                     }, resourcesProvider);
                 } : null);

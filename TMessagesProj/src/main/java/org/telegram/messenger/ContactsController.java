@@ -8,6 +8,10 @@
 
 package org.telegram.messenger;
 
+import static org.telegram.ui.PrivacyControlActivity.TYPE_CONTACTS;
+import static org.telegram.ui.PrivacyControlActivity.TYPE_EVERYBODY;
+import static org.telegram.ui.PrivacyControlActivity.TYPE_NOBODY;
+
 import android.Manifest;
 import android.accounts.Account;
 import android.accounts.AccountManager;
@@ -26,12 +30,11 @@ import android.os.Build;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.SparseArray;
 
 import androidx.annotation.NonNull;
 import androidx.collection.LongSparseArray;
-
-import com.google.android.exoplayer2.util.Log;
 
 import org.telegram.PhoneFormat.PhoneFormat;
 import org.telegram.tgnet.ConnectionsManager;
@@ -39,6 +42,7 @@ import org.telegram.tgnet.TLObject;
 import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
 
 import java.text.CollationKey;
 import java.text.Collator;
@@ -52,7 +56,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import tw.nekomimi.nekogram.NekoConfig;
-import androidx.collection.LongSparseArray;
 
 public class ContactsController extends BaseController {
 
@@ -2953,6 +2956,189 @@ public class ContactsController extends BaseController {
         } catch (Exception x) {
             FileLog.e(x);
         }
+    }
+
+    private TLRPC.InputUser lastAllowedLastSeen = null;
+
+    public boolean allowUserWithLastSeen(Long id, Runnable callback) {
+        TLRPC.InputUser inputUser = MessagesController.getInstance(currentAccount).getInputUser(id);
+        return allowUserWithLastSeen(inputUser, callback);
+    }
+
+    public boolean allowUserWithLastSeen(TLRPC.InputUser user, Runnable callback) {
+        if (user == null) return false;
+        if (lastseenPrivacyRules == null) {
+            loadPrivacySettings();
+            try {
+                Thread.sleep(1000);
+                return allowUserWithLastSeen(user, callback);
+            } catch (InterruptedException ignored) {}
+        }
+
+        int currentType = checkPrivacyRuleTypeAndPrepareInput(PRIVACY_RULES_TYPE_LASTSEEN);
+        if (currentType == TYPE_EVERYBODY) return false; // what?
+
+        boolean added = false;
+        ArrayList<TLRPC.InputPrivacyRule> newRuleSet = inputRulesMap.get(PRIVACY_RULES_TYPE_LASTSEEN);
+        if (newRuleSet == null) {
+            newRuleSet = new ArrayList<TLRPC.InputPrivacyRule>();
+            newRuleSet.add(new TLRPC.TL_inputPrivacyValueAllowUsers());
+        }
+
+        for (TLRPC.InputPrivacyRule rule : newRuleSet) {
+            if (rule instanceof TLRPC.TL_inputPrivacyValueAllowUsers) {
+                added = true;
+                Log.d("03030-tg", user.user_id + " added?");
+                ((TLRPC.TL_inputPrivacyValueAllowUsers) rule).users.add(user);
+                break;
+            }
+        }
+        if (!added) {
+            TLRPC.TL_inputPrivacyValueAllowUsers rule = new TLRPC.TL_inputPrivacyValueAllowUsers();
+            rule.users.add(user);
+            newRuleSet.add(rule);
+        }
+
+        lastAllowedLastSeen = user;
+        sendLastSeenReq(newRuleSet, callback);
+        return true;
+    }
+
+    private HashMap<Integer, ArrayList<TLRPC.InputPrivacyRule>> inputRulesMap = new HashMap<>();
+
+    private TLRPC.InputPrivacyRule convertRuleToInputRule(TLRPC.PrivacyRule rule) {
+        TLRPC.InputPrivacyRule ret = null;
+        if (rule instanceof TLRPC.TL_privacyValueAllowUsers) {
+            TLRPC.TL_inputPrivacyValueAllowUsers inputRule = new TLRPC.TL_inputPrivacyValueAllowUsers();
+            for (Long id : ((TLRPC.TL_privacyValueAllowUsers) rule).users) {
+                TLRPC.InputUser inputUser = MessagesController.getInstance(currentAccount).getInputUser(id);
+                inputRule.users.add(inputUser);
+            }
+            ret = (TLRPC.InputPrivacyRule) inputRule;
+        } else if (rule instanceof TLRPC.TL_privacyValueDisallowUsers) {
+            TLRPC.TL_inputPrivacyValueDisallowUsers inputRule = new TLRPC.TL_inputPrivacyValueDisallowUsers();
+            for (Long id : ((TLRPC.TL_privacyValueDisallowUsers) rule).users) {
+                TLRPC.InputUser inputUser = MessagesController.getInstance(currentAccount).getInputUser(id);
+                inputRule.users.add(inputUser);
+            }
+            ret = (TLRPC.InputPrivacyRule) inputRule;
+        } else if (rule instanceof TLRPC.TL_privacyValueAllowChatParticipants) {
+            TLRPC.TL_inputPrivacyValueAllowChatParticipants inputRule = new TLRPC.TL_inputPrivacyValueAllowChatParticipants();
+            inputRule.chats = ((TLRPC.TL_privacyValueAllowChatParticipants) rule).chats;
+            ret = (TLRPC.InputPrivacyRule) inputRule;
+        } else if (rule instanceof TLRPC.TL_privacyValueDisallowChatParticipants) {
+            TLRPC.TL_inputPrivacyValueDisallowChatParticipants inputRule = new TLRPC.TL_inputPrivacyValueDisallowChatParticipants();
+            inputRule.chats = ((TLRPC.TL_privacyValueDisallowChatParticipants) rule).chats;
+            ret = (TLRPC.InputPrivacyRule) inputRule;
+        } else if (rule instanceof TLRPC.TL_privacyValueAllowAll) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueAllowAll();
+        } else if (rule instanceof TLRPC.TL_privacyValueDisallowAll) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueDisallowAll();
+        } else if (rule instanceof TLRPC.TL_privacyValueAllowContacts) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueAllowContacts();
+        } else if (rule instanceof TLRPC.TL_privacyValueDisallowContacts) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueDisallowContacts();
+        } else if (rule instanceof TLRPC.TL_privacyValueAllowCloseFriends) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueAllowCloseFriends();
+        } else if (rule instanceof TLRPC.TL_privacyValueAllowPremium) {
+            ret = (TLRPC.InputPrivacyRule) new TLRPC.TL_inputPrivacyValueAllowPremium();
+        }
+        return ret;
+    }
+
+    private int checkPrivacyRuleTypeAndPrepareInput(int category) {
+        if (category == PRIVACY_RULES_TYPE_MESSAGES) {
+            TLRPC.TL_globalPrivacySettings settings = ContactsController.getInstance(currentAccount).getGlobalPrivacySettings();
+            int ret = settings != null && settings.new_noncontact_peers_require_premium ? TYPE_CONTACTS : TYPE_EVERYBODY;
+            return ret;
+        }
+        ArrayList<TLRPC.PrivacyRule> privacyRules = getPrivacyRules(category);
+        ArrayList<TLRPC.InputPrivacyRule> inputPrivacyRules = new ArrayList<>();
+        if (privacyRules == null || privacyRules.isEmpty()) {
+            inputPrivacyRules.add(new TLRPC.TL_inputPrivacyValueDisallowAll());
+            inputRulesMap.put(category, inputPrivacyRules);
+            return TYPE_NOBODY;
+        }
+
+        int type = -1;
+        boolean hadAllowContacts = false;
+        int currentPlus = 0, currentMinus = 0;
+        for (int a = 0; a < privacyRules.size(); a++) {
+            TLRPC.PrivacyRule rule = privacyRules.get(a);
+            if (rule instanceof TLRPC.TL_privacyValueAllowChatParticipants) {
+                TLRPC.TL_privacyValueAllowChatParticipants privacyValueAllowChatParticipants = (TLRPC.TL_privacyValueAllowChatParticipants) rule;
+                currentPlus += privacyValueAllowChatParticipants.chats.size();
+            } else if (rule instanceof TLRPC.TL_privacyValueDisallowChatParticipants) {
+                TLRPC.TL_privacyValueDisallowChatParticipants privacyValueDisallowChatParticipants = (TLRPC.TL_privacyValueDisallowChatParticipants) rule;
+                currentMinus += privacyValueDisallowChatParticipants.chats.size();
+            } else if (rule instanceof TLRPC.TL_privacyValueAllowUsers) {
+                TLRPC.TL_privacyValueAllowUsers privacyValueAllowUsers = (TLRPC.TL_privacyValueAllowUsers) rule;
+                currentPlus += privacyValueAllowUsers.users.size();
+            } else if (rule instanceof TLRPC.TL_privacyValueDisallowUsers) {
+                TLRPC.TL_privacyValueDisallowUsers privacyValueDisallowUsers = (TLRPC.TL_privacyValueDisallowUsers) rule;
+                currentMinus += privacyValueDisallowUsers.users.size();
+            } else if (rule instanceof TLRPC.TL_privacyValueAllowAll) {
+                type = 0;
+            } else if (rule instanceof TLRPC.TL_privacyValueDisallowAll && !hadAllowContacts) {
+                type = 1;
+            } else if (rule instanceof TLRPC.TL_privacyValueAllowContacts) {
+                hadAllowContacts = true;
+                type = 2;
+            } else if (type == -1) {
+                if (rule instanceof TLRPC.TL_privacyValueAllowAll) {
+                    type = TYPE_EVERYBODY;
+                } else if (rule instanceof TLRPC.TL_privacyValueDisallowAll && !hadAllowContacts) {
+                    type = TYPE_NOBODY;
+                } else {
+                    type = TYPE_CONTACTS;
+                }
+            }
+            inputPrivacyRules.add(convertRuleToInputRule(rule));
+        }
+        inputRulesMap.put(category, inputPrivacyRules);
+        if (type == TYPE_EVERYBODY || type == -1 && currentMinus > 0) {
+            return TYPE_EVERYBODY;
+        } else if (type == TYPE_CONTACTS || type == -1 && currentMinus > 0 && currentPlus > 0) {
+            return TYPE_CONTACTS;
+        } else if (type == TYPE_NOBODY || type == -1 && currentPlus > 0) {
+            return TYPE_NOBODY;
+        }
+        return TYPE_NOBODY;
+    }
+
+    public boolean revertLastSeenChange() {
+        Log.d("03030-tg", "revertLastSeenChange");
+        if (!inputRulesMap.containsKey(PRIVACY_RULES_TYPE_LASTSEEN) || lastAllowedLastSeen == null) {
+            Log.e("03030-tg", "missing info, cant revert");
+            return false;
+        }
+
+        ArrayList<TLRPC.InputPrivacyRule> newRuleSet = inputRulesMap.get(PRIVACY_RULES_TYPE_LASTSEEN);
+        for (TLRPC.InputPrivacyRule rule : newRuleSet) {
+            if (rule instanceof TLRPC.TL_inputPrivacyValueAllowUsers) {
+                ((TLRPC.TL_inputPrivacyValueAllowUsers) rule).users.remove(lastAllowedLastSeen);
+                break;
+            }
+        }
+
+        sendLastSeenReq(newRuleSet, null);
+        return true;
+    }
+
+    private void sendLastSeenReq(ArrayList<TLRPC.InputPrivacyRule> newRuleSet, Runnable callback) {
+        TLRPC.TL_account_setPrivacy req = new TLRPC.TL_account_setPrivacy();
+        req.key = new TLRPC.TL_inputPrivacyKeyStatusTimestamp();
+        req.rules = newRuleSet;
+        ConnectionsManager.getInstance(currentAccount).sendRequest(req, (res, err) -> AndroidUtilities.runOnUIThread(() -> {
+            if (err != null) {
+                BulletinFactory.global().showForError(err);
+                return;
+            }
+
+            if (callback != null) {
+                callback.run();
+            }
+        }));
     }
 
     public static String formatName(TLObject object) {
