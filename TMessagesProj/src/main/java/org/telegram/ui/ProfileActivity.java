@@ -6460,16 +6460,6 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     getConnectionsManager().bindRequestToGuid(reqId, getClassGuid());
                     return true;
                 }
-
-                try {
-                    android.content.ClipboardManager clipboard = (android.content.ClipboardManager) ApplicationLoader.applicationContext.getSystemService(Context.CLIPBOARD_SERVICE);
-                    String text = "@" + username;
-                    BulletinFactory.of(this).createCopyBulletin(LocaleController.getString("UsernameCopied", R.string.UsernameCopied), resourcesProvider).show();
-                    android.content.ClipData clip = android.content.ClipData.newPlainText("label", text);
-                    clipboard.setPrimaryClip(clip);
-                } catch (Exception e) {
-                    FileLog.e(e);
-                }
             }
 
             builder.addItem(LocaleController.getString("Copy", R.string.Copy), R.drawable.baseline_content_copy_24, __ -> {
