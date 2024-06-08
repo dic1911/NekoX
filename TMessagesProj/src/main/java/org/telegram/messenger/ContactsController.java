@@ -2988,7 +2988,6 @@ public class ContactsController extends BaseController {
         for (TLRPC.InputPrivacyRule rule : newRuleSet) {
             if (rule instanceof TLRPC.TL_inputPrivacyValueAllowUsers) {
                 added = true;
-                Log.d("03030-tg", user.user_id + " added?");
                 ((TLRPC.TL_inputPrivacyValueAllowUsers) rule).users.add(user);
                 break;
             }
