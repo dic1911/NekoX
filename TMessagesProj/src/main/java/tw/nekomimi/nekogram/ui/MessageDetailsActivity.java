@@ -50,6 +50,9 @@ import org.telegram.ui.Cells.ShadowSectionCell;
 import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.Cells.TextDetailSettingsCell;
 import org.telegram.ui.Cells.TextSettingsCell;
+import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.Bulletin;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.UndoView;
@@ -115,7 +118,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         }
 
         public boolean shouldSkipField(FieldAttributes f) {
-            return f.getName().equals("disableFree") || f.getName().equals("networkType");
+            return f.getName().equals("disableFree") || f.getName().equals("networkType") || f.getDeclaringClass() == android.content.res.ColorStateList.class;
         }
     }
 
@@ -205,17 +208,26 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (position == exportRow) {
+                String clip = "failed to generate json";
                 try {
-                    AndroidUtilities.addToClipboard(gson.toJson(messageObject.messageOwner));
-                    copyTooltip.showWithAction(0, UndoView.ACTION_CACHE_WAS_CLEARED, null, null);
+                    clip = gson.toJson(messageObject.messageOwner);
                 } catch (Exception e) {
+                    clip += (", " + e.getMessage());
                     FileLog.e(e);
+                }
+                if (AndroidUtilities.addToClipboard(clip)) {
+                    copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
+                    copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
+                } else {
+                    copyTooltip.setInfoText(LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred));
+                    copyTooltip.showWithAction(0, UndoView.ACTION_GIGAGROUP_CANCEL, null, null);
                 }
             } else if (position != endRow && position != emptyRow) {
                 TextDetailSettingsCell textCell = (TextDetailSettingsCell) view;
                 try {
-                    AndroidUtilities.addToClipboard(textCell.getValueTextView().getText());
-                    copyTooltip.showWithAction(0, UndoView.ACTION_CACHE_WAS_CLEARED, null, null);
+                    if (AndroidUtilities.addToClipboard(textCell.getValueTextView().getText())) {
+                        copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
+                    }
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
