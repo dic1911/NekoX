@@ -62,6 +62,7 @@ import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 public class MessageDetailsActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate {
 
@@ -73,6 +74,10 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
     private TLRPC.User fromUser;
     private String filePath;
     private String fileName;
+    private String messageDetailsJson;
+    private String messageDetailsPrettyJsonHead;
+    private String messageDetailsPrettyJson;
+    private boolean detailExpanded = false;
 
     private int rowCount;
 
@@ -93,12 +98,19 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
     private int dcRow;
     private int buttonsRow;
     private int emptyRow;
+    private int rawRow;
+    private int emptyRow2;
     private int exportRow;
     private int endRow;
 
     private UndoView copyTooltip;
 
     public static final Gson gson = new GsonBuilder()
+            .setExclusionStrategies(new Exclusion())
+            .registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter()).create();
+
+    public static final Gson prettyGson = new GsonBuilder()
+            .setPrettyPrinting()
             .setExclusionStrategies(new Exclusion())
             .registerTypeHierarchyAdapter(byte[].class, new ByteArrayToBase64TypeAdapter()).create();
 
@@ -165,6 +177,24 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
             }
         }
 
+        try {
+            messageDetailsJson = "failed to generate json";
+            try {
+                messageDetailsJson = gson.toJson(messageObject.messageOwner);
+                messageDetailsPrettyJson = prettyGson.toJson(messageObject.messageOwner);
+                String[] spl = messageDetailsPrettyJson.split("\n");
+                StringBuilder sb = new StringBuilder();
+                for (int i = 0; i < 3; ++i) sb.append(spl[i]).append("\n");
+                sb.append("...");
+                messageDetailsPrettyJsonHead = sb.toString();
+            } catch (Exception e) {
+                messageDetailsJson += (", " + e.getMessage());
+                messageDetailsPrettyJson = messageDetailsJson;
+                FileLog.e(e);
+            }
+        } catch (Exception e) {
+            FileLog.e(e);
+        }
     }
 
     @Override
@@ -208,20 +238,16 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         listView.setAdapter(listAdapter);
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (position == exportRow) {
-                String clip = "failed to generate json";
-                try {
-                    clip = gson.toJson(messageObject.messageOwner);
-                } catch (Exception e) {
-                    clip += (", " + e.getMessage());
-                    FileLog.e(e);
-                }
-                if (AndroidUtilities.addToClipboard(clip)) {
+                if (AndroidUtilities.addToClipboard(messageDetailsJson)) {
                     copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
                     copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
                 } else {
                     copyTooltip.setInfoText(LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred));
                     copyTooltip.showWithAction(0, UndoView.ACTION_GIGAGROUP_CANCEL, null, null);
                 }
+            } else if (position == rawRow) {
+                ((TextDetailSettingsCell) view).setValue(detailExpanded ? messageDetailsPrettyJsonHead : messageDetailsPrettyJson);
+                detailExpanded = !detailExpanded;
             } else if (position != endRow && position != emptyRow) {
                 TextDetailSettingsCell textCell = (TextDetailSettingsCell) view;
                 try {
@@ -264,6 +290,11 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                     args.putLong("user_id", fromUser.id);
                     ProfileActivity fragment = new ProfileActivity(args);
                     presentFragment(fragment);
+                }
+            } else if (position == rawRow) {
+                if (AndroidUtilities.addToClipboard(messageDetailsPrettyJson)) {
+                    copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
+                    copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
                 }
             } else {
                 return false;
@@ -312,6 +343,8 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         }
         buttonsRow = messageObject.messageOwner.reply_markup instanceof TLRPC.TL_replyInlineMarkup ? rowCount++ : -1;
         emptyRow = rowCount++;
+        rawRow = rowCount++;
+        emptyRow2 = rowCount++;
         exportRow = rowCount++;
         endRow = rowCount++;
         if (listAdapter != null) {
@@ -498,6 +531,8 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                         textCell.setTextAndValue("Scheduled", "Yes", divider);
                     } else if (position == buttonsRow) {
                         textCell.setTextAndValue("Buttons", gson.toJson(messageObject.messageOwner.reply_markup), divider);
+                    } else if (position == rawRow) {
+                        textCell.setTextAndValue("Raw JSON", messageDetailsPrettyJsonHead, divider);
                     }
                     break;
                 }
@@ -541,7 +576,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
 
         @Override
         public int getItemViewType(int position) {
-            if (position == endRow || position == emptyRow) {
+            if (position == endRow || position == emptyRow || position == emptyRow2) {
                 return 1;
             } else if (position == exportRow) {
                 return 3;
