@@ -40012,7 +40012,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             }
                         }
                     } else {
-                        if (path.startsWith(EnvUtil.getTelegramPath().getAbsolutePath())) {
+                        if (path.startsWith(EnvUtil.getTelegramPath().getAbsolutePath()) || path.startsWith(NekoConfig.cachePath.String())) {
                             try {
                                 file.delete();
                                 so.mediaExists = false;
