@@ -29165,7 +29165,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         options.add(OPTION_DELETE);
                         icons.add(selectedObject.messageOwner.ttl_period != 0 ? R.drawable.msg_delete_auto : R.drawable.baseline_delete_24);
                     }
-                    if (chatInfo != null && chatInfo.participants != null && chatInfo.participants.participants != null) {
+                    if (chatInfo != null && chatInfo.participants != null && chatInfo.participants.participants != null && selectedObject.messageOwner.from_id != null) {
                         selectedParticipant = null;
                         long user_id = selectedObject.messageOwner.from_id.user_id;
                         for (int a = 0; a < chatInfo.participants.participants.size(); a++) {
