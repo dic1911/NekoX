@@ -1025,34 +1025,6 @@ public class AndroidUtilities {
         return true;
     };
 
-    public static boolean addProxyLinks(Spannable text) {
-        if (text == null) return false;
-        final URLSpan[] old = text.getSpans(0, text.length(), URLSpan.class);
-        for (int i = old.length - 1; i >= 0; i--) {
-            String url = old[i].getURL();
-            if (url.startsWith("ss")) {
-                text.removeSpan(old[i]);
-            }
-        }
-        final ArrayList<LinkSpec> links = new ArrayList<>();
-        gatherLinks(links, text, LinkifyPort.PROXY_PATTERN, new String[]{SS_PROTOCOL, WS_PROTOCOL, WSS_PROTOCOL,/*, RB_PROTOCOL*/}, sUrlMatchFilter, false);
-        pruneOverlaps(links);
-        if (links.size() == 0) {
-            return false;
-        }
-        for (int a = 0, N = links.size(); a < N; a++) {
-            LinkSpec link = links.get(a);
-            URLSpan[] oldSpans = text.getSpans(link.start, link.end, URLSpan.class);
-            if (oldSpans != null && oldSpans.length > 0) {
-                for (int b = 0; b < oldSpans.length; b++) {
-                    text.removeSpan(oldSpans[b]);
-                }
-            }
-            text.setSpan(new URLSpan(link.url), link.start, link.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
-        }
-        return true;
-    }
-
     @Deprecated // use addLinksSafe
     public static boolean addLinks(Spannable text, int mask) {
         return addLinks(text, mask, false);
