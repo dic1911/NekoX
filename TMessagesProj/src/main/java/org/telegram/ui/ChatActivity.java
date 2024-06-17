@@ -30256,7 +30256,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (item != null) {
             item.setVisibility(View.VISIBLE);
         }
-        if (chatMode != MODE_SCHEDULED)
+        if (chatMode != MODE_SCHEDULED && actionModeOtherItem != null)
             actionModeOtherItem.showSubItem(nkbtn_forward_noquote);
         actionMode.setItemVisibility(delete, View.VISIBLE);
         createBottomMessagesActionButtons();
