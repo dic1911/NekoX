@@ -1937,6 +1937,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             pressedCopyCode = null;
                         } else {
                             pressedCopyCode = block;
+
+                            // 030: avoid NPE
+                            if (block.copySelector == null) return true;
+
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 block.copySelector.setHotspot(x, y);
                             }
@@ -2160,6 +2164,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                             pressedCopyCode = null;
                         } else {
                             pressedCopyCode = block;
+
+                            // 030: avoid NPE
+                            if (block.copySelector == null) return true;
+
                             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                                 block.copySelector.setHotspot(x, y);
                             }
