@@ -141,7 +141,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         } else if (messageObject.messageOwner.peer_id != null && messageObject.messageOwner.peer_id.chat_id != 0) {
             fromChat = getMessagesController().getChat(messageObject.messageOwner.peer_id.chat_id);
         }
-        if (messageObject.messageOwner.from_id.user_id != 0) {
+        if (messageObject.messageOwner.from_id != null && messageObject.messageOwner.from_id.user_id != 0) {
             fromUser = getMessagesController().getUser(messageObject.messageOwner.from_id.user_id);
         }
         filePath = messageObject.messageOwner.attachPath;
