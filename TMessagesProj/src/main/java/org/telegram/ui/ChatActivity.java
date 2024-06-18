@@ -8199,7 +8199,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 chatInviteRunnable = null;
                             }
                             showBottomOverlayProgress(true, true);
-                            getMessagesController().addUserToChat(currentChat.id, getUserConfig().getCurrentUser(), 0, null, ChatActivity.this, null);
+                            // 030: try fix bottom button being blank
+                            getMessagesController().addUserToChat(currentChat.id, getUserConfig().getCurrentUser(), 0, null, ChatActivity.this, new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateBottomOverlay();
+                                }
+                            });
                             NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.closeSearchByActiveAction);
 
                             if (hasReportSpam() && reportSpamButton.getTag(R.id.object_tag) != null) {
@@ -9715,7 +9721,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         tagSelector.animate().scaleY(1f).scaleX(1f).translationY(0).setDuration(420).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).start();
         updateSelectedMessageReactions();
         tagSelector.setTranslationY(contentPanTranslation + (actionBarSearchTags != null ? actionBarSearchTags.getCurrentHeight() : 0));
-//>>>>>>> 5dd649197 (update to 10.6.4 (4365)) // TODO: 030 mark - wtf is this
     }
 
     private void createSearchContainer() {
