@@ -110,6 +110,7 @@ public class MessagesStorage extends BaseController {
     public boolean showClearDatabaseAlert;
     private LongSparseIntArray dialogIsForum = new LongSparseIntArray();
 
+
     public static MessagesStorage getInstance(int num) {
         MessagesStorage localInstance = Instance.get(num);
         if (localInstance == null) {
@@ -15810,6 +15811,7 @@ public class MessagesStorage extends BaseController {
 
         // 030
         boolean autoArchiveAndMute = NekoConfig.autoArchiveAndMute.Bool();
+        ContactsController contactsController = ContactsController.getInstance(currentAccount);
         List<Long> toArchiveAndMute = null;
         if (autoArchiveAndMute) {
             toArchiveAndMute = new ArrayList<>();
@@ -15874,8 +15876,11 @@ public class MessagesStorage extends BaseController {
                         }
                     }
 
-                    // 030
-                    if (autoArchiveAndMute && !exists && dialog.id > 0 && !UserObject.isService(dialog.id)) {
+                    // 030 note: most fields are not initialized here
+                    if (autoArchiveAndMute && !exists && dialog.id > 0
+                            && !UserObject.isService(dialog.id)
+                            && !contactsController.isContact(dialog.id)) {
+                        // TODO: check if self msg?
                         toArchiveAndMute.add(dialog.id);
                     }
 
@@ -16105,8 +16110,10 @@ public class MessagesStorage extends BaseController {
             for (long did : toArchiveAndMute) {
                 ArrayList<Long> list = new ArrayList<>();
                 list.add(did);
-                getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
-                getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
+                AndroidUtilities.runOnUIThread(() -> {
+                    getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
+                    getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
+                });
             }
         }
     }
