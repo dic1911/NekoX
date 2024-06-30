@@ -12,6 +12,7 @@ import org.json.JSONObject;
 import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.FileLog;
+import org.telegram.messenger.UserConfig;
 import org.telegram.tgnet.SerializedData;
 import org.telegram.tgnet.TLRPC;
 
@@ -59,7 +60,6 @@ public class BillingUtilities {
         serializedData.cleanup();
         if (
             paymentPurpose instanceof TLRPC.TL_inputStorePaymentPremiumGiftCode ||
-            paymentPurpose instanceof TLRPC.TL_inputStorePaymentStars ||
             paymentPurpose instanceof TLRPC.TL_inputStorePaymentPremiumGiveaway
         ) {
             remPaymentPurpose = paymentPurpose;
@@ -70,4 +70,15 @@ public class BillingUtilities {
         return Pair.create(obfuscatedAccountId, obfuscatedData);
     }
 
+    private static AccountInstance findAccountById(long accountId) {
+        AccountInstance result = null;
+        for (int i = 0; i < UserConfig.MAX_ACCOUNT_COUNT; i++) {
+            AccountInstance acc = AccountInstance.getInstance(i);
+            if (acc.getUserConfig().getClientUserId() == accountId) {
+                result = acc;
+                break;
+            }
+        }
+        return result;
+    }
 }

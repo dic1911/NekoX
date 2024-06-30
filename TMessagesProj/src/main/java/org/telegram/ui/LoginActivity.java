@@ -9720,7 +9720,7 @@ public class LoginActivity extends BaseFragment implements NotificationCenter.No
             }
             actionBar = null;
         }
-        clearStoryViewers();
+        clearSheets();
         parentLayout = null;
     }
 }

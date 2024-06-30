@@ -19,6 +19,8 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BillingController;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.FileRefController;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
@@ -94,7 +96,7 @@ public class StarsController {
                     MessagesController.getInstance(currentAccount).putChats(r.chats, false);
 
                     if (transactions[ALL_TRANSACTIONS].isEmpty()) {
-                        for (TLRPC.TL_starsTransaction t : r.history) {
+                        for (TLRPC.StarsTransaction t : r.history) {
                             transactions[ALL_TRANSACTIONS].add(t);
                             transactions[t.stars > 0 ? INCOMING_TRANSACTIONS : OUTGOING_TRANSACTIONS].add(t);
                         }
@@ -155,6 +157,10 @@ public class StarsController {
 
     private boolean optionsLoading, optionsLoaded;
     private ArrayList<TLRPC.TL_starsTopupOption> options;
+    public ArrayList<TLRPC.TL_starsTopupOption> getOptionsCached() {
+        return options;
+    }
+
     public ArrayList<TLRPC.TL_starsTopupOption> getOptions() {
         // 030: fuck this shit
         if (options == null) options = new ArrayList<>();
@@ -174,7 +180,7 @@ public class StarsController {
     public static final int INCOMING_TRANSACTIONS = 1;
     public static final int OUTGOING_TRANSACTIONS = 2;
 
-    public final ArrayList<TLRPC.TL_starsTransaction>[] transactions = new ArrayList[] { new ArrayList<>(), new ArrayList<>(), new ArrayList<>() };
+    public final ArrayList<TLRPC.StarsTransaction>[] transactions = new ArrayList[] { new ArrayList<>(), new ArrayList<>(), new ArrayList<>() };
     public final boolean[] transactionsExist = new boolean[3];
     private final String[] offset = new String[3];
     private final boolean[] loading = new boolean[3];
@@ -261,13 +267,14 @@ public class StarsController {
         showNoSupportDialog(activity, getResourceProvider());
     }
 
-    public void pay(MessageObject messageObject, Runnable whenShown) {
+    public Runnable pay(MessageObject messageObject, Runnable whenShown) {
         // 030: fuck this shit
+        return null;
     }
 
     private boolean paymentFormOpened;
 
-    public void openPaymentForm(TLRPC.InputInvoice inputInvoice, TLRPC.TL_payments_paymentFormStars form, Runnable whenShown, Utilities.Callback<String> whenAllDone) {
+    public void openPaymentForm(MessageObject messageObject, TLRPC.InputInvoice inputInvoice, TLRPC.TL_payments_paymentFormStars form, Runnable whenShown, Utilities.Callback<String> whenAllDone) {
     }
 
     private void showNoSupportDialog(Context context, Theme.ResourcesProvider resourcesProvider) {
@@ -278,7 +285,14 @@ public class StarsController {
             .show();
     }
 
-    private void payAfterConfirmed(TLRPC.InputInvoice inputInvoice, TLRPC.TL_payments_paymentFormStars form, Utilities.Callback<Boolean> whenDone) {
+    private void payAfterConfirmed(MessageObject messageObject, TLRPC.InputInvoice inputInvoice, TLRPC.TL_payments_paymentFormStars form, Utilities.Callback<Boolean> whenDone) {
+    }
+
+    public void updateMediaPrice(MessageObject msg, long price, Runnable done) {
+        updateMediaPrice(msg, price, done, false);
+    }
+
+    private void updateMediaPrice(MessageObject msg, long price, Runnable done, boolean afterFileRef) {
     }
 
 }
