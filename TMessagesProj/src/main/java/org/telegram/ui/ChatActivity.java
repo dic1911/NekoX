@@ -37702,7 +37702,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 } else if (BuildVars.isHuaweiStoreApp()){
                     Browser.openUrl(getContext(), BuildVars.HUAWEI_STORE_URL);
                 } else {
-                    Browser.openUrl(getContext(), BuildVars.PLAYSTORE_APP_URL);
+                    // 030: open release channel instead
+                    // Browser.openUrl(getContext(), BuildVars.PLAYSTORE_APP_URL);
+                    presentFragment(of(-NekoXConfig.releaseChannel));
                 }
             } else if (type == 8) {
                 PollVotesAlert.showForPoll(ChatActivity.this, messageObject);
