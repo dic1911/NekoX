@@ -198,6 +198,7 @@ public class NekoConfig {
     public static ConfigItem increasedMaxPhotoResolution = addConfig("IncreasedMaxPhotoResolution", ConfigItem.configTypeBool, false);
     public static ConfigItem showSelfInsteadOfSavedMessages = addConfig("ShowSelfInsteadOfSavedMessages", ConfigItem.configTypeBool, false);
     public static ConfigItem closeWebViewWithoutConfirmation = addConfig("CloseWebViewWithoutConfirmation", ConfigItem.configTypeBool, false);
+    public static ConfigItem openWebViewTabWithoutBot = addConfig("OpenWebViewTabWithoutBot", ConfigItem.configTypeBool, false);
     public static ConfigItem disableCustomWallpaperUser = addConfig("DisableCustomWallpaperUser", ConfigItem.configTypeBool, false);
     public static ConfigItem disableCustomWallpaperChannel = addConfig("DisableCustomWallpaperChannel", ConfigItem.configTypeBool, false);
     public static ConfigItem fasterReconnectHack = addConfig("FasterReconnectHack", ConfigItem.configTypeBool, false);

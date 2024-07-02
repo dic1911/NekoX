@@ -200,6 +200,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell displayPersianCalendarByLatinRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.displayPersianCalendarByLatin));
     private final AbstractConfigCell showSelfInsteadOfSavedMessagesRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.showSelfInsteadOfSavedMessages));
     private final AbstractConfigCell closeWebViewWithoutConfirmationRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.closeWebViewWithoutConfirmation));
+    private final AbstractConfigCell openWebViewTabWithoutBotRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.openWebViewTabWithoutBot));
     private final AbstractConfigCell divider7 = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell headerAutoDownload = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("AutoDownload")));

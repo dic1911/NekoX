@@ -116,7 +116,8 @@ public class BottomSheetTabs extends FrameLayout {
                 }
             }
         };
-        if (tab.needsContext && (!(lastFragment instanceof ChatActivity) || ((ChatActivity) lastFragment).getDialogId() != tab.props.botId)) {
+        boolean needsContextOverride = tab.needsContext && !NekoConfig.openWebViewTabWithoutBot.Bool();
+        if (needsContextOverride && (!(lastFragment instanceof ChatActivity) || ((ChatActivity) lastFragment).getDialogId() != tab.props.botId)) {
             BaseFragment chatActivity = ChatActivity.of(tab.props.botId);
             lastFragment.presentFragment(chatActivity);
             AndroidUtilities.runOnUIThread(() -> {
