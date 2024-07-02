@@ -50,6 +50,8 @@ import java.io.CharArrayReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class BottomSheetTabs extends FrameLayout {
 
     private final Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
@@ -325,7 +327,7 @@ public class BottomSheetTabs extends FrameLayout {
             callback.run(true);
             return;
         }
-        if (!tab.confirmDismiss) {
+        if (!tab.confirmDismiss || NekoConfig.closeWebViewWithoutConfirmation.Bool()) {
             removeTab(tab, true);
             callback.run(true);
             return;

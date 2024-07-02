@@ -164,4 +164,5 @@
     <string name="IncreasedMaxPhotoResolution">Increased max photo resolution width (2560px)</string>
     <string name="AutoArchiveAndMute">Automatically archive and mute previously unknown PM</string>
     <string name="AutoArchiveAndMuteAbout">Side effect: This uses local database to check, and it\'s not 100% accurate, in other words, might have FALSE POSITIVE</string>
+    <string name="CloseWebViewWithoutConfirmation">Always close web app without confirmation</string>
 </resources>

@@ -74,6 +74,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class BotWebViewMenuContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
     private final static int POLL_PERIOD = 60000;
 
@@ -565,7 +567,7 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
     }
 
     public boolean onCheckDismissByUser() {
-        if (needCloseConfirmation) {
+        if (needCloseConfirmation && !NekoConfig.closeWebViewWithoutConfirmation.Bool()) {
             String botName = null;
             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(botId);
             if (user != null) {

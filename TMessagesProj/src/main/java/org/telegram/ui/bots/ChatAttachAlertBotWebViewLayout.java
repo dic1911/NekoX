@@ -61,6 +61,8 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.SimpleFloatPropertyCompat;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlertLayout implements NotificationCenter.NotificationCenterDelegate {
     private final static int POLL_PERIOD = 60000;
 
@@ -261,7 +263,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
     }
 
     public boolean onCheckDismissByUser() {
-        if (needCloseConfirmation) {
+        if (needCloseConfirmation && !NekoConfig.closeWebViewWithoutConfirmation.Bool()) {
             String botName = null;
             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(botId);
             if (user != null) {

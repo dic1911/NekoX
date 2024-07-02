@@ -88,6 +88,8 @@ import java.lang.annotation.RetentionPolicy;
 import java.util.List;
 import java.util.Locale;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class BotWebViewAttachedSheet implements NotificationCenter.NotificationCenterDelegate, BaseFragment.AttachedSheet {
     public final static int TYPE_WEB_VIEW_BUTTON = 0, TYPE_SIMPLE_WEB_VIEW_BUTTON = 1, TYPE_BOT_MENU_BUTTON = 2, TYPE_WEB_VIEW_BOT_APP = 3;
 
@@ -1337,7 +1339,7 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
     }
 
     public boolean onCheckDismissByUser() {
-        if (needCloseConfirmation) {
+        if (needCloseConfirmation && !NekoConfig.closeWebViewWithoutConfirmation.Bool()) {
             String botName = null;
             TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(botId);
             if (user != null) {
