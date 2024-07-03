@@ -101,6 +101,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public abstract class BotWebViewContainer extends FrameLayout implements NotificationCenter.NotificationCenterDelegate {
     private final static String DURGER_KING_USERNAME = "DurgerKingBot";
     private final static int REQUEST_CODE_WEB_VIEW_FILE = 3000, REQUEST_CODE_WEB_PERMISSION = 4000, REQUEST_CODE_QR_CAMERA_PERMISSION = 5000;
@@ -268,6 +270,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
         settings.setDomStorageEnabled(true);
         settings.setDatabaseEnabled(true);
         settings.setSupportMultipleWindows(true);
+        settings.setGeolocationEnabled(!NekoConfig.disableWebViewGeolocation.Bool());
 
         // Hackfix text on some Xiaomi devices
         settings.setTextSize(WebSettings.TextSize.NORMAL);
