@@ -166,4 +166,5 @@
     <string name="AutoArchiveAndMuteAbout">Side effect: This uses local database to check, and it\'s not 100% accurate, in other words, might have FALSE POSITIVE</string>
     <string name="CloseWebViewWithoutConfirmation">Always close web app without confirmation</string>
     <string name="OpenWebViewTabWithoutBot">Re-open web app tab without bot</string>
+    <string name="ShowBotWebViewSettings">Show bot webview settings</string>
 </resources>

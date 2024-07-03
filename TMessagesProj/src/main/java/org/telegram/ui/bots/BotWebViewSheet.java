@@ -880,7 +880,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         ActionBarMenuItem otherItem = menu.addItem(0, R.drawable.ic_ab_other);
         otherItem.addSubItem(R.id.menu_open_bot, R.drawable.msg_bot, LocaleController.getString(R.string.BotWebViewOpenBot));
         settingsItem = otherItem.addSubItem(R.id.menu_settings, R.drawable.msg_settings, LocaleController.getString(R.string.BotWebViewSettings));
-        settingsItem.setVisibility(View.GONE);
+        if (!NekoConfig.showBotWebViewSettings.Bool()) settingsItem.setVisibility(View.GONE);
         otherItem.addSubItem(R.id.menu_reload_page, R.drawable.msg_retry, LocaleController.getString(R.string.BotWebViewReloadPage));
         if (currentBot != null && MediaDataController.getInstance(currentAccount).canCreateAttachedMenuBotShortcut(currentBot.bot_id)) {
             otherItem.addSubItem(R.id.menu_add_to_home_screen_bot, R.drawable.msg_home, LocaleController.getString(R.string.AddShortcut));
@@ -889,6 +889,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
         if (currentBot != null && (currentBot.show_in_side_menu || currentBot.show_in_attach_menu)) {
             otherItem.addSubItem(R.id.menu_delete_bot, R.drawable.msg_delete, LocaleController.getString(R.string.BotWebViewDeleteBot));
         }
+
+        otherItem.addSubItem(R.id.menu_copy_url, R.drawable.msg_copy, LocaleController.getString(R.string.CopyLink));
 
         actionBar.setActionBarMenuOnItemClick(new ActionBar.ActionBarMenuOnItemClick() {
             @Override
@@ -928,6 +930,16 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
                 } else if (id == R.id.menu_collapse_bot) {
                     forceExpnaded = true;
                     dismiss(true, null);
+                } else if (id == R.id.menu_copy_url) {
+                    try {
+                        if (AndroidUtilities.addToClipboard(webViewContainer.getWebView().getUrl())) {
+                            AndroidUtilities.runOnUIThread(() -> BulletinFactory.of(fragment)
+                                    .createSimpleBulletin(R.raw.copy, LocaleController.getString(R.string.LinkCopied)).show(), 250);
+                        }
+                    } catch (Exception ex) {
+                        AndroidUtilities.runOnUIThread(() -> BulletinFactory.of(fragment)
+                                .createSimpleBulletin(R.raw.error, LocaleController.getString(R.string.ErrorOccurred)).show(), 250);
+                    }
                 }
             }
         });
