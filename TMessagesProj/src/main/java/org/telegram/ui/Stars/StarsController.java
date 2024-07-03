@@ -35,6 +35,7 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.Components.BulletinFactory;
+import org.telegram.ui.Components.FireworksOverlay;
 import org.telegram.ui.LaunchActivity;
 // import org.telegram.ui.PaymentFormActivity;
 import org.telegram.ui.bots.BotWebViewSheet;

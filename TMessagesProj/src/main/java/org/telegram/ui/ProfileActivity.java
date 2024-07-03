@@ -6417,7 +6417,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                                 obj = getMessagesController().getChat(chatId);
                             }
                             final String usernameStr = "@" + usernameObj.username;
-                            final String date = LocaleController.getInstance().formatterBoostExpired.format(new Date(info.purchase_date * 1000L));
+                            final String date = LocaleController.getInstance().getFormatterBoostExpired().format(new Date(info.purchase_date * 1000L));
                             final String cryptoAmount = BillingController.getInstance().formatCurrency(info.crypto_amount, info.crypto_currency);
                             final String amount = BillingController.getInstance().formatCurrency(info.amount, info.currency);
                             BulletinFactory.of(shareAlert.bulletinContainer2, resourcesProvider)
@@ -10944,7 +10944,23 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
                     }
                     if (finished[0]) {
-                        ShareUtil.shareFile(activity, zipFile);
+                        Uri uri;
+                        if (Build.VERSION.SDK_INT >= 24) {
+                            uri = FileProvider.getUriForFile(activity, ApplicationLoader.getApplicationId() + ".provider", zipFile);
+                        } else {
+                            uri = Uri.fromFile(zipFile);
+                        }
+
+                        Intent i = new Intent(Intent.ACTION_SEND);
+                        if (Build.VERSION.SDK_INT >= 24) {
+                            i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        }
+                        i.setType("message/rfc822");
+                        i.putExtra(Intent.EXTRA_EMAIL, "");
+                        i.putExtra(Intent.EXTRA_SUBJECT, "Logs from " + LocaleController.getInstance().getFormatterStats().format(System.currentTimeMillis()));
+                        i.putExtra(Intent.EXTRA_STREAM, uri);
+                        i.setClass(activity, LaunchActivity.class);
+                        activity.startActivity(i);
                     } else {
                         if (activity != null) {
                             Toast.makeText(activity, LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred), Toast.LENGTH_SHORT).show();

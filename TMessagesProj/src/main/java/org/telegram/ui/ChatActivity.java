@@ -250,7 +250,6 @@ import org.telegram.ui.Components.voip.VoIPHelper;
 import org.telegram.ui.Delegates.ChatActivityMemberRequestsDelegate;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
-import org.telegram.ui.Stories.SelfStoryViewsPage;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
 import org.telegram.ui.Stories.StoriesUtilities;
 import org.telegram.ui.Stories.recorder.HintView2;
@@ -13231,6 +13230,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         } else {
             MediaController.getInstance().setTextureView(videoTextureView, null, null, false);
         }
+        super.onRemoveFromParent();
     }
 
     protected void setIgnoreAttachOnPause(boolean value) {
@@ -15723,6 +15723,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     public static final int PROGRESS_BOT_BUTTON = 3;
     public static final int PROGRESS_GIFT = 4;
     public static final int PROGRESS_PAID_MEDIA = 5;
+    public static final int PROGRESS_FORWARD = 6;
 
     private int progressDialogAtMessageId;
     private int progressDialogAtMessageType;
@@ -33768,6 +33769,33 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         } : null;
     }
 
+    private Browser.Progress makeProgressForForward(ChatMessageCell cell) {
+        if (progressDialogCurrent != null) {
+            progressDialogCurrent.cancel(true);
+            progressDialogCurrent = null;
+        }
+        return progressDialogCurrent = cell != null && cell.getMessageObject() != null ? new Browser.Progress() {
+            @Override
+            public void init() {
+                progressDialogAtMessageId = cell.getMessageObject().getId();
+                progressDialogAtMessageType = PROGRESS_FORWARD;
+
+                cell.invalidate();
+            }
+
+            @Override
+            public void end(boolean replaced) {
+                if (!replaced) {
+                    AndroidUtilities.runOnUIThread(() -> {
+                        if (progressDialogAtMessageId == cell.getMessageObject().getId()) {
+                            resetProgressDialogLoading();
+                        }
+                    }, 240);
+                }
+            }
+        } : null;
+    }
+
     private Browser.Progress makeProgressForBotButton(ChatMessageCell cell, String url) {
         if (progressDialogCurrent != null) {
             progressDialogCurrent.cancel(true);
@@ -36207,7 +36235,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         @Override
-        public void didPressChannelAvatar(ChatMessageCell cell, TLRPC.Chat chat, int postId, float touchX, float touchY) {
+        public void didPressChannelAvatar(ChatMessageCell cell, TLRPC.Chat chat, int postId, float touchX, float touchY, boolean asForward) {
             if (chat == null) {
                 return;
             }
@@ -36215,7 +36243,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 processRowSelect(cell, true, touchX, touchY);
                 return;
             }
-            openChat(cell, chat, postId);
+            openChat(cell, chat, postId, asForward);
         }
 
         @Override
@@ -36311,7 +36339,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         @Override
-        public void didPressUserAvatar(ChatMessageCell cell, TLRPC.User user, float touchX, float touchY) {
+        public void didPressUserAvatar(ChatMessageCell cell, TLRPC.User user, float touchX, float touchY, boolean asForward) {
             if (actionBar.isActionModeShowed() || reportType >= 0) {
                 processRowSelect(cell, true, touchX, touchY);
                 return;
@@ -36423,7 +36451,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 break;
                             case OPEN_GROUP:
                             case OPEN_CHANNEL:
-                                openChat(cell, chat, 0);
+                                openChat(cell, chat, 0, false);
                                 break;
                         }
                     });
@@ -36475,7 +36503,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         }
 
-        private void openChat(ChatMessageCell cell, TLRPC.Chat chat, int postId) {
+        private void openChat(ChatMessageCell cell, TLRPC.Chat chat, int postId, boolean asForward) {
             if (currentChat != null && chat.id == currentChat.id) {
                 if (avatarContainer != null && postId == 0) {
                     avatarContainer.openProfile(false);
@@ -36488,8 +36516,26 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (postId != 0) {
                     args.putInt("message_id", postId);
                 }
-                if (getMessagesController().checkCanOpenChat(args, ChatActivity.this, cell.getMessageObject())) {
-                    presentFragment(new ChatActivity(args));
+                Browser.Progress progress = asForward ? makeProgressForForward(cell) : null;
+                if (getMessagesController().checkCanOpenChat(args, ChatActivity.this, cell.getMessageObject(), progress)) {
+                    ChatActivity chatActivity = new ChatActivity(args);
+                    if (progress != null && postId != 0) {
+                        progress.onCancel(getMessagesController().ensureMessagesLoaded(-chat.id, postId, new MessagesController.MessagesLoadedCallback() {
+                            @Override
+                            public void onMessagesLoaded(boolean fromCache) {
+                                progress.end();
+                                presentFragment(chatActivity);
+                            }
+                            @Override
+                            public void onError() {
+                                progress.end();
+                                presentFragment(chatActivity);
+                            }
+                        }));
+                        progress.init();
+                    } else {
+                        presentFragment(chatActivity);
+                    }
                 }
             }
         }
@@ -37138,7 +37184,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (!safe && !Browser.isInternalUri(uri, null)) {
                 AlertsCreator.showOpenUrlAlert(ChatActivity.this, url, true, true, true, !safe, progressDialogCurrent, themeDelegate);
             } else {
-                Browser.openUrl(getContext(), uri, true, true, false, progressDialogCurrent);
+                Browser.openUrl(getContext(), uri, true, true, false, progressDialogCurrent, null);
             }
         }
 
@@ -37820,7 +37866,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         return;
                     }
                 }
-                Browser.openUrl(getParentActivity(), Uri.parse(webPage.url), true, true, false, progressDialogCurrent);
+                Browser.openUrl(getParentActivity(), Uri.parse(webPage.url), true, true, false, progressDialogCurrent, null);
             } else {
                 if (messageObject.isSponsored()) {
                     logSponsoredClicked(messageObject);
@@ -37845,7 +37891,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 }
                             }
                         };
-                        Browser.openUrl(getContext(), Uri.parse(messageObject.sponsoredUrl), true, false, false, progressDialogCurrent);
+                        Browser.openUrl(getContext(), Uri.parse(messageObject.sponsoredUrl), true, false, false, progressDialogCurrent, null);
                     }
                 } else {
                     TLRPC.WebPage webPage = messageObject.getStoryMentionWebpage();
@@ -37889,7 +37935,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 }
                             }
                         };
-                        Browser.openUrl(getParentActivity(), Uri.parse(webPage.url), true, true, false, progressDialogCurrent);
+                        Browser.openUrl(getParentActivity(), Uri.parse(webPage.url), true, true, false, progressDialogCurrent, null);
                     }
                 }
             }
@@ -40796,17 +40842,20 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (getContext() == null || !ThanosEffect.supports() || chatListView == null || contentView == null) {
                 return null;
             }
-            chatListThanosEffect = new ThanosEffect(getContext(), () -> {
-                if (removingFromParent) {
+            final ThanosEffect[] thisThanosEffect = new ThanosEffect[1];
+            final ThanosEffect thanosEffect = new ThanosEffect(getContext(), () -> {
+                if (removingFromParent || thisThanosEffect[0] == null) {
                     return;
                 }
-                ThanosEffect thisThanosEffect = chatListThanosEffect;
-                if (thisThanosEffect != null) {
+                ThanosEffect effect = thisThanosEffect[0];
+                AndroidUtilities.removeFromParent(effect);
+                thisThanosEffect[0] = null;
+                if (chatListThanosEffect == effect) {
                     chatListThanosEffect = null;
-                    contentView.removeView(thisThanosEffect);
                 }
             });
-            contentView.addView(chatListThanosEffect, 1 + contentView.indexOfChild(chatListView), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
+            thisThanosEffect[0] = chatListThanosEffect = thanosEffect;
+            contentView.addView(thanosEffect, 1 + contentView.indexOfChild(chatListView), LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
         }
         return chatListThanosEffect;
     }
