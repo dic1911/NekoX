@@ -11,6 +11,7 @@ import android.graphics.Path;
 import android.graphics.RectF;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -76,7 +77,8 @@ public class BottomSheetTabs extends FrameLayout {
     }
 
     public void setTabSheetVisibility(boolean value) {
-        if (drawTabs == value) return;
+        // Log.d("030-tabs", String.format("draw was %s, wanted = %s", drawTabs, value));
+        // if (drawTabs == value) return;
         ArrayList<WebTabData> myTabs = getTabs();
         if (myTabs == null || myTabs.isEmpty()) {
             return;

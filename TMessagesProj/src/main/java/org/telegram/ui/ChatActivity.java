@@ -1078,6 +1078,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private boolean switchFromTopics;
     private boolean switchingFromTopics;
     private float switchingFromTopicsProgress;
+    private boolean forwarding = false;
 
     private final static int OPTION_RETRY = 0;
     private final static int OPTION_DELETE = 1;
@@ -3012,7 +3013,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
-        if (NekoConfig.hideWebViewTabOverlayInChat.Bool()) {
+        if (NekoConfig.hideWebViewTabOverlayInChat.Bool() && !forwarding) {
             BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
             BottomSheetTabs tabs = overlay.tabsView;
             if (tabs != null) tabs.setTabSheetVisibility(true);
@@ -3327,6 +3328,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     chatActivity.forbidForwardingWithDismiss = false;
                     chatActivity.messagePreviewParams = new MessagePreviewParams(chatActivity.currentEncryptedChat != null, chatActivity.getMessagesController().isChatNoForwards(chatActivity.currentChat));
                     chatActivity.messagePreviewParams.updateReply(chatActivity.replyingMessageObject, chatActivity.getGroup(messageObject.getGroupId()), chatActivity.getDialogId(), chatActivity.replyingQuote);
+                    chatActivity.forwarding = true;
                     Bundle args = new Bundle();
                     args.putBoolean("onlySelect", true);
                     args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
@@ -10488,6 +10490,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         if (ok) msgCount = 1;
                     }
 
+                    forwarding = true;
                     Bundle args = new Bundle();
                     args.putBoolean("onlySelect", true);
                     args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
@@ -11855,6 +11858,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         // 030: fix forward single album to groups with slow mode enabled
         int actualMessagesCount = onlyAlbum ? selectedAlbums.size() : canForwardMessagesCount;
+
+        forwarding = true;
 
         Bundle args = new Bundle();
         args.putBoolean("onlySelect", true);
@@ -31230,6 +31235,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 noForwardQuote = false; //fuck
                 forwardingMessage = selectedObject;
                 forwardingMessageGroup = selectedObjectGroup;
+                forwarding = true;
                 Bundle args = new Bundle();
                 args.putBoolean("onlySelect", true);
                 args.putInt("dialogsType", DialogsActivity.DIALOGS_TYPE_FORWARD);
@@ -31449,6 +31455,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             messageObject = group.captionMessage;
                         }
                     }
+                    forwarding = true;
                     replyingMessageObject = messageObject;
                     Bundle args = new Bundle();
                     args.putBoolean("onlySelect", true);
@@ -32110,6 +32117,17 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if ((messagePreviewParams == null && (!fragment.isQuote || replyingMessageObject == null) || fragment.isQuote && replyingMessageObject == null) && forwardingMessage == null && selectedMessagesIds[0].size() == 0 && selectedMessagesIds[1].size() == 0) {
             return false;
         }
+
+        // 030: hide tab overlay when fwd msgs
+        boolean hideTabWhenSharing = NekoConfig.hideWebViewTabOverlayWhenSharing.Bool();
+        boolean hideTabInChat = NekoConfig.hideWebViewTabOverlayInChat.Bool();
+        if (hideTabWhenSharing || hideTabInChat) {
+            BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+            BottomSheetTabs tabs = overlay.tabsView;
+            boolean visible = !hideTabInChat;
+            if (tabs != null) tabs.setTabSheetVisibility(visible);
+        }
+
         ArrayList<MessageObject> fmessages = new ArrayList<>();
         if (forwardingMessage != null) {
             if (forwardingMessageGroup != null) {
