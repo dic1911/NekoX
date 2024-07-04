@@ -760,7 +760,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                    if (isSwipeDisallowed || fullsize) {
+                    if (isSwipeDisallowed || fullsize || NekoConfig.preventPullDownWebview.Bool()) {
                         return false;
                     }
                     if (velocityY >= 700 && (webView == null || webView.getScrollY() == 0)) {
@@ -784,6 +784,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
 
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
+                    if (NekoConfig.preventPullDownWebview.Bool()) return false;
                     if (!isScrolling && !isSwipeDisallowed) {
                         if (isKeyboardVisible.provide(null) && swipeOffsetY == -offsetY + topActionBarOffsetY) {
                             isSwipeDisallowed = true;
@@ -1004,7 +1005,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
 
                 } else if (flingInProgress) {
                     flingInProgress = false;
-                } else {
+                } else if (!NekoConfig.preventPullDownWebview.Bool()) {
                     if (swipeOffsetY <= -swipeStickyRange) {
                         stickTo(-offsetY + topActionBarOffsetY);
                     } else if (swipeOffsetY > -swipeStickyRange && swipeOffsetY <= swipeStickyRange) {

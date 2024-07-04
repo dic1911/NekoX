@@ -243,9 +243,9 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
             setBackgroundColor(tab.backgroundColor, false);
         }
         setActionBarColor(!tab.overrideActionBarColor ? Theme.getColor(tab.actionBarColorKey < 0 ? Theme.key_windowBackgroundWhite : tab.actionBarColorKey, resourcesProvider) : tab.actionBarColor, tab.overrideActionBarColor, false);
-        showExpanded = tab.expanded;
+        showExpanded = tab.expanded || NekoConfig.preventPullDownWebview.Bool();
         showOffsetY = tab.expandedOffset;
-        fullsize = tab.fullsize;
+        fullsize = tab.fullsize || NekoConfig.preventPullDownWebview.Bool();
         needsContext = tab.needsContext;
         webViewContainer.setIsBackButtonVisible(backButtonShown = tab.backButton);
         if (backDrawable != null) {
