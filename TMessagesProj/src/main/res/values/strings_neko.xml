@@ -170,5 +170,5 @@
     <string name="DisableWebViewGeolocation">Disable geolocation for webview</string>
     <string name="HideWebViewTabOverlayWhenSharing">Hide webview tab overlay when sharing</string>
     <string name="HideWebViewTabOverlayInChat">Hide webview tab overlay when in chat</string>
-    <string name="PreventPullDownWebview">Prevent webview being pulled down &amp; close</string>
+    <string name="PreventPullDownWebview">Prevent webview being resized or closed when pulling down</string>
 </resources>
