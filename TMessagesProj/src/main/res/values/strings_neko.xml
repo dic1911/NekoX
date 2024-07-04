@@ -168,4 +168,6 @@
     <string name="OpenWebViewTabWithoutBot">Re-open web app tab without bot</string>
     <string name="ShowBotWebViewSettings">Show bot webview settings</string>
     <string name="DisableWebViewGeolocation">Disable geolocation for webview</string>
+    <string name="HideWebViewTabOverlayWhenSharing">Hide webview tab overlay when sharing</string>
+    <string name="HideWebViewTabOverlayInChat">Hide webview tab overlay when in chat</string>
 </resources>

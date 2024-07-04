@@ -58,7 +58,7 @@ import java.util.ArrayList;
 
 public class BottomSheetTabsOverlay extends FrameLayout {
 
-    private BottomSheetTabs tabsView;
+    public BottomSheetTabs tabsView;
 
     private BotWebViewAttachedSheet dismissingSheet;
     private BotWebViewSheet dismissingSheet2;

@@ -140,6 +140,8 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
+import org.telegram.ui.ActionBar.BottomSheetTabs;
+import org.telegram.ui.ActionBar.BottomSheetTabsOverlay;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.MenuDrawable;
 import org.telegram.ui.ActionBar.SimpleTextView;
@@ -288,6 +290,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     private int fragmentContextTopPadding;
 
     private boolean chatOpened;
+    private boolean tabsWasHidden = false;
 
     public MessagesStorage.TopicKey getOpenedDialogId() {
         return openedDialogId;
@@ -6782,6 +6785,20 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
     @Override
     public void onResume() {
         super.onResume();
+
+        BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+        BottomSheetTabs tabs = overlay.tabsView;
+        if (tabs != null) {
+            if (onlySelect) {
+                boolean hide = NekoConfig.hideWebViewTabOverlayWhenSharing.Bool();
+                tabs.setTabSheetVisibility(!hide);
+                if (hide) tabsWasHidden = true;
+            } else if (tabsWasHidden) {
+                tabs.setTabSheetVisibility(true);
+                tabsWasHidden = false;
+            }
+        }
+
         chatOpened = false;
         if (viewPages.length > 0 && viewPages[0] != null) {
             DialogCell cell = findArchiveDialogCell(viewPages[0]);
@@ -6996,6 +7013,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public boolean onBackPressed() {
+        if (NekoConfig.hideWebViewTabOverlayWhenSharing.Bool() && tabsWasHidden) {
+            BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+            BottomSheetTabs tabs = overlay.tabsView;
+            if (tabs != null) tabs.setTabSheetVisibility(true);
+        }
         if (closeSheet()) {
             return false;
         } else if (rightSlidingDialogContainer.hasFragment()) {

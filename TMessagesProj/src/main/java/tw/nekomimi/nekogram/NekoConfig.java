@@ -201,6 +201,8 @@ public class NekoConfig {
     public static ConfigItem openWebViewTabWithoutBot = addConfig("OpenWebViewTabWithoutBot", ConfigItem.configTypeBool, false);
     public static ConfigItem showBotWebViewSettings = addConfig("ShowBotWebViewSettings", ConfigItem.configTypeBool, false);
     public static ConfigItem disableWebViewGeolocation = addConfig("DisableWebViewGeolocation", ConfigItem.configTypeBool, false);
+    public static ConfigItem hideWebViewTabOverlayWhenSharing = addConfig("HideWebViewTabOverlayWhenSharing", ConfigItem.configTypeBool, true);
+    public static ConfigItem hideWebViewTabOverlayInChat = addConfig("HideWebViewTabOverlayInChat", ConfigItem.configTypeBool, true);
     public static ConfigItem disableCustomWallpaperUser = addConfig("DisableCustomWallpaperUser", ConfigItem.configTypeBool, false);
     public static ConfigItem disableCustomWallpaperChannel = addConfig("DisableCustomWallpaperChannel", ConfigItem.configTypeBool, false);
     public static ConfigItem fasterReconnectHack = addConfig("FasterReconnectHack", ConfigItem.configTypeBool, false);

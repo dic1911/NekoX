@@ -74,6 +74,7 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.Stories.StoryViewer;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Collections;
 import java.util.List;
@@ -180,7 +181,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
             int usableViewHeight = rootView.getHeight() - (rect.top != 0 ? AndroidUtilities.statusBarHeight : 0) - AndroidUtilities.getViewInset(rootView);
             boolean isKeyboardVisible = usableViewHeight - (rect.bottom - rect.top) > 0;
 
-            int bottomTabsHeight = isKeyboardVisible ? 0 : getBottomTabsHeight(false);
+            int bottomTabsHeight = (isKeyboardVisible || shouldHideTabs()) ? 0 : getBottomTabsHeight(false);
 
             for (int a = 0; a < count; a++) {
                 View child = getChildAt(a);
@@ -858,7 +859,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     public void clipBottomSheetTabs(Canvas canvas, boolean withShadow) {
         if (bottomSheetTabs == null)
             return;
-        final int bottomSheetHeight = isKeyboardVisible ? 0 : getBottomTabsHeight(true);
+        final int bottomSheetHeight = (isKeyboardVisible || shouldHideTabs()) ? 0 : getBottomTabsHeight(true);
         final int bottomRadius = Math.min(1, bottomSheetHeight / dp(60)) * dp(10);
         if (bottomSheetHeight <= 0)
             return;
@@ -2838,7 +2839,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     private boolean tabsEvents;
     @Override
     public boolean dispatchTouchEvent(MotionEvent ev) {
-        final boolean tabs = ev.getY() > getHeight() - getBottomTabsHeight(true);
+        final boolean tabs = !shouldHideTabs() && ev.getY() > getHeight() - getBottomTabsHeight(true);
         if (
             getLastFragment() != null &&
             getLastFragment().getLastSheet() != null &&
@@ -2893,6 +2894,10 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     private int bottomTabsHeight;
 
     public void updateBottomTabsVisibility(boolean animated) {
+        updateBottomTabsVisibility(animated, null);
+    }
+
+    public void updateBottomTabsVisibility(boolean animated, Boolean forceHide) {
         if (bottomSheetTabs == null) {
             return;
         }
@@ -2903,7 +2908,13 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
         }
         if (bottomTabsHeight == bottomSheetTabs.getExpandedHeight())
             return;
-        bottomTabsHeight = bottomSheetTabs.getExpandedHeight();
+
+        if (forceHide == null || !forceHide) {
+            bottomTabsHeight = bottomSheetTabs.getExpandedHeight();
+        } else if (forceHide && bottomTabsHeight > 0) {
+            bottomTabsHeight = 0;
+        }
+
         requestLayout();
         containerView.requestLayout();
         containerViewBack.requestLayout();
@@ -2932,12 +2943,17 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
 
     @Override
     public int getBottomTabsHeight(boolean animated) {
-        if (!main) return 0;
+        if (!main || shouldHideTabs()) return 0;
         if (animated) {
             return (int) bottomTabsProgress;
         } else {
             return bottomTabsHeight;
         }
+    }
+
+    private boolean shouldHideTabs() {
+        return (NekoConfig.hideWebViewTabOverlayInChat.Bool() || NekoConfig.hideWebViewTabOverlayWhenSharing.Bool())
+            && !LaunchActivity.instance.getBottomSheetTabsOverlay().tabsView.drawTabs;
     }
 
 }

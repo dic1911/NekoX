@@ -200,6 +200,8 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
+import org.telegram.ui.ActionBar.BottomSheetTabs;
+import org.telegram.ui.ActionBar.BottomSheetTabsOverlay;
 import org.telegram.ui.ActionBar.EmojiThemes;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.SimpleTextView;
@@ -3010,6 +3012,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
+        if (NekoConfig.hideWebViewTabOverlayInChat.Bool()) {
+            BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+            BottomSheetTabs tabs = overlay.tabsView;
+            if (tabs != null) tabs.setTabSheetVisibility(true);
+        }
         if (chatActivityEnterView != null) {
             chatActivityEnterView.onDestroy();
         }
@@ -27606,6 +27613,15 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             contentView.onResume();
         }
         checkChecksHint();
+
+        boolean hideTabWhenSharing = NekoConfig.hideWebViewTabOverlayWhenSharing.Bool();
+        boolean hideTabInChat = NekoConfig.hideWebViewTabOverlayInChat.Bool();
+        if (hideTabWhenSharing || hideTabInChat) {
+            BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+            BottomSheetTabs tabs = overlay.tabsView;
+            boolean visible = !hideTabInChat;
+            if (tabs != null) tabs.setTabSheetVisibility(visible);
+        }
 
         Bulletin.addDelegate(this, bulletinDelegate = new Bulletin.Delegate() {
             @Override

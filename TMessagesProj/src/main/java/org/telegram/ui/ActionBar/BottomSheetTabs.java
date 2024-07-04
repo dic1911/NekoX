@@ -75,6 +75,17 @@ public class BottomSheetTabs extends FrameLayout {
         updateMultipleTitle();
     }
 
+    public void setTabSheetVisibility(boolean value) {
+        if (drawTabs == value) return;
+        ArrayList<WebTabData> myTabs = getTabs();
+        if (myTabs == null || myTabs.isEmpty()) {
+            return;
+        }
+        drawTabs = value;
+        invalidate();
+        actionBarLayout.updateBottomTabsVisibility(false, !value);
+    }
+
     public void openTab(WebTabData tab) {
         BaseFragment lastFragment = LaunchActivity.getLastFragment();
         if (lastFragment == null || lastFragment.getParentActivity() == null) return;
@@ -396,7 +407,7 @@ public class BottomSheetTabs extends FrameLayout {
             }
             invalidate();
         }, 320);
-        actionBarLayout.updateBottomTabsVisibility(true);
+        actionBarLayout.updateBottomTabsVisibility(true); // 030 mark
         invalidate();
         return tabs.isEmpty();
     }
