@@ -176,6 +176,7 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
     private String buttonText;
     private boolean forceExpnaded;
 
+    public boolean forceExpanded = false;
     private boolean defaultFullsize = false;
     private Boolean fullsize = null;
     private boolean needsContext;
@@ -243,7 +244,7 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
             setBackgroundColor(tab.backgroundColor, false);
         }
         setActionBarColor(!tab.overrideActionBarColor ? Theme.getColor(tab.actionBarColorKey < 0 ? Theme.key_windowBackgroundWhite : tab.actionBarColorKey, resourcesProvider) : tab.actionBarColor, tab.overrideActionBarColor, false);
-        showExpanded = tab.expanded || NekoConfig.preventPullDownWebview.Bool();
+        showExpanded = tab.expanded || NekoConfig.preventPullDownWebview.Bool() || forceExpanded;
         showOffsetY = tab.expandedOffset;
         fullsize = tab.fullsize || NekoConfig.preventPullDownWebview.Bool();
         needsContext = tab.needsContext;
@@ -1280,12 +1281,17 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
                     swipeContainer.setSwipeOffsetAnimationDisallowed(false);
                 }
 
-                if (showExpanded || getFullSize()) {
+                if (forceExpanded || showExpanded || getFullSize()) {
                     if (instant) {
                         swipeContainer.setSwipeOffsetY(-swipeContainer.getOffsetY() + swipeContainer.getTopActionBarOffsetY());
                         locker.unlock();
                     } else {
                         swipeContainer.stickTo(-swipeContainer.getOffsetY() + swipeContainer.getTopActionBarOffsetY(), locker::unlock);
+                    }
+
+                    if (forceExpanded) {
+                        swipeContainer.forceExpanded = true;
+                        webViewContainer.expandWebView();
                     }
                 } else {
                     if (instant) {

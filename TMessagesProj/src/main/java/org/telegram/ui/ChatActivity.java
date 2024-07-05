@@ -12050,6 +12050,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             if (AndroidUtilities.isTablet()) {
                 BotWebViewSheet webViewSheet = new BotWebViewSheet(getContext(), getResourceProvider());
+                webViewSheet.forceExpanded = isOverridden;
                 webViewSheet.setDefaultFullsize(isOverridden);
                 webViewSheet.setNeedsContext(!isOverridden);
                 webViewSheet.setParentActivity(getParentActivity());
@@ -12057,6 +12058,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 webViewSheet.show();
             } else {
                 BotWebViewAttachedSheet webViewSheet = createBotViewer();
+                webViewSheet.forceExpanded = isOverridden;
                 webViewSheet.setDefaultFullsize(isOverridden);
                 webViewSheet.setNeedsContext(!isOverridden);
                 webViewSheet.setParentActivity(getParentActivity());

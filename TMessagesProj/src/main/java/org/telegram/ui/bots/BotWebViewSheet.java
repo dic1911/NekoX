@@ -151,6 +151,8 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
 
     private Boolean wasLightStatusBar;
 
+    public boolean forceExpanded = false;
+
     private WindowView windowView;
 
     private long lastSwipeTime;
@@ -1097,7 +1099,7 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             TLRPC.TL_webViewResultUrl resultUrl = (TLRPC.TL_webViewResultUrl) requestProps.response;
             queryId = resultUrl.query_id;
             url = resultUrl.url;
-            fullsize = resultUrl.fullsize;
+            fullsize = resultUrl.fullsize || NekoConfig.preventPullDownWebview.Bool();
         } else if (requestProps.response instanceof TLRPC.TL_appWebViewResultUrl) { // deprecated
             TLRPC.TL_appWebViewResultUrl result = (TLRPC.TL_appWebViewResultUrl) requestProps.response;
             queryId = 0;
@@ -1207,6 +1209,10 @@ public class BotWebViewSheet extends Dialog implements NotificationCenter.Notifi
             }
         });
         super.show();
+        if (forceExpanded) {
+            swipeContainer.forceExpanded = true;
+            webViewContainer.expandWebView();
+        }
     }
 
     public long getBotId() {

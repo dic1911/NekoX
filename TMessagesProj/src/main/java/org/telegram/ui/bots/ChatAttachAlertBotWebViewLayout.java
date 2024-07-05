@@ -12,6 +12,7 @@ import android.graphics.Paint;
 import android.os.Build;
 import android.os.Bundle;
 import android.text.TextPaint;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -738,6 +739,8 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
 
         private GenericProvider<Void, Boolean> isKeyboardVisible = obj -> false;
 
+        public boolean forceExpanded = false;
+
         private boolean fullsize;
         public boolean opened;
         public void setFullSize(boolean fullsize) {
@@ -764,7 +767,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
                         return false;
                     }
                     if (NekoConfig.preventPullDownWebview.Bool()) {
-                        stickTo(-getOffsetY() + getTopActionBarOffsetY());
+                        stickTo(-offsetY + topActionBarOffsetY);
                         return true;
                     }
                     if (velocityY >= 700 && (webView == null || webView.getScrollY() == 0)) {
@@ -789,7 +792,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
                     if (NekoConfig.preventPullDownWebview.Bool()) {
-                        stickTo(-getOffsetY() + getTopActionBarOffsetY());
+                        stickTo(-offsetY + topActionBarOffsetY);
                         return false;
                     }
                     if (!isScrolling && !isSwipeDisallowed) {
@@ -1037,7 +1040,7 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
         }
 
         public void stickTo(float offset, Runnable callback) {
-            if (fullsize) {
+            if (fullsize || NekoConfig.preventPullDownWebview.Bool() || forceExpanded) {
                 offset = -getOffsetY() + getTopActionBarOffsetY();
             }
             if (swipeOffsetY == offset || scrollAnimator != null && scrollAnimator.getSpring().getFinalPosition() == offset) {

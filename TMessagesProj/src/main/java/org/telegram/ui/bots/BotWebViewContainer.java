@@ -1772,6 +1772,11 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
 
     }
 
+    public void expandWebView() {
+        if (delegate == null) return;
+        delegate.onWebAppExpand();
+    }
+
     public static class WebViewProxy {
         public BotWebViewContainer container;
         public WebViewProxy(BotWebViewContainer container) {
