@@ -760,8 +760,12 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
             gestureDetector = new GestureDetectorCompat(context, new GestureDetector.SimpleOnGestureListener() {
                 @Override
                 public boolean onFling(MotionEvent e1, MotionEvent e2, float velocityX, float velocityY) {
-                    if (isSwipeDisallowed || fullsize || NekoConfig.preventPullDownWebview.Bool()) {
+                    if (isSwipeDisallowed || fullsize) {
                         return false;
+                    }
+                    if (NekoConfig.preventPullDownWebview.Bool()) {
+                        stickTo(-getOffsetY() + getTopActionBarOffsetY());
+                        return true;
                     }
                     if (velocityY >= 700 && (webView == null || webView.getScrollY() == 0)) {
                         flingInProgress = true;
@@ -784,7 +788,10 @@ public class ChatAttachAlertBotWebViewLayout extends ChatAttachAlert.AttachAlert
 
                 @Override
                 public boolean onScroll(MotionEvent e1, MotionEvent e2, float distanceX, float distanceY) {
-                    if (NekoConfig.preventPullDownWebview.Bool()) return false;
+                    if (NekoConfig.preventPullDownWebview.Bool()) {
+                        stickTo(-getOffsetY() + getTopActionBarOffsetY());
+                        return false;
+                    }
                     if (!isScrolling && !isSwipeDisallowed) {
                         if (isKeyboardVisible.provide(null) && swipeOffsetY == -offsetY + topActionBarOffsetY) {
                             isSwipeDisallowed = true;
