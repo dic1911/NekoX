@@ -12038,23 +12038,27 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private boolean approved;
-    public void processInlineBotWebView(TLRPC.TL_inlineBotWebView object) {
+    public void processInlineBotWebView(TLRPC.TL_inlineBotWebView object) { processInlineBotWebView(object, -1L); }
+    public void processInlineBotWebView(TLRPC.TL_inlineBotWebView object, long viaBotId) {
         final Runnable open = () -> {
-            final BotWebViewAttachedSheet.WebViewRequestProps props = BotWebViewAttachedSheet.WebViewRequestProps.of(currentAccount, currentUser != null ? currentUser.id : currentChat.id, mentionContainer.getAdapter().getFoundContextBot().id, object.text, object.url, BotWebViewSheet.TYPE_SIMPLE_WEB_VIEW_BUTTON, 0, false, null, false, null, null, BotWebViewSheet.FLAG_FROM_INLINE_SWITCH, false);
+            TLRPC.User bot = mentionContainer.getAdapter().getFoundContextBot();
+            long botId = bot == null ? viaBotId : bot.id;
+            boolean isOverridden = viaBotId != -1L;
+            final BotWebViewAttachedSheet.WebViewRequestProps props = BotWebViewAttachedSheet.WebViewRequestProps.of(currentAccount, currentUser != null ? currentUser.id : currentChat.id, botId, object.text, object.url, BotWebViewSheet.TYPE_SIMPLE_WEB_VIEW_BUTTON, 0, false, null, false, null, null, BotWebViewSheet.FLAG_FROM_INLINE_SWITCH, false);
             if (LaunchActivity.instance != null && LaunchActivity.instance.getBottomSheetTabs() != null && LaunchActivity.instance.getBottomSheetTabs().tryReopenTab(props) != null) {
                 return;
             }
             if (AndroidUtilities.isTablet()) {
                 BotWebViewSheet webViewSheet = new BotWebViewSheet(getContext(), getResourceProvider());
-                webViewSheet.setDefaultFullsize(false);
-                webViewSheet.setNeedsContext(true);
+                webViewSheet.setDefaultFullsize(isOverridden);
+                webViewSheet.setNeedsContext(!isOverridden);
                 webViewSheet.setParentActivity(getParentActivity());
                 webViewSheet.requestWebView(null, props);
                 webViewSheet.show();
             } else {
                 BotWebViewAttachedSheet webViewSheet = createBotViewer();
-                webViewSheet.setDefaultFullsize(false);
-                webViewSheet.setNeedsContext(true);
+                webViewSheet.setDefaultFullsize(isOverridden);
+                webViewSheet.setNeedsContext(!isOverridden);
                 webViewSheet.setParentActivity(getParentActivity());
                 webViewSheet.requestWebView(null, props);
                 webViewSheet.show();
@@ -33166,7 +33170,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             String username = UserObject.getPublicUsername(user);
             if (Build.VERSION.SDK_INT >= 21 && !AndroidUtilities.isTablet() && WebviewActivity.supportWebview()) {
                 if (parentLayout.getFragmentStack().get(parentLayout.getFragmentStack().size() - 1) == this) {
-                    presentFragment(new WebviewActivity(urlStr, user != null && !TextUtils.isEmpty(username) ? username : "", game.title, game.short_name, messageObject));
+                    // 030: different bot webview modes
+                    if (NekoConfig.useBotWebviewForGames.Bool()) {
+                        TLRPC.TL_inlineBotWebView obj = new TLRPC.TL_inlineBotWebView();
+                        obj.text = game.title;
+                        obj.url = urlStr;
+                        approved = true;
+                        processInlineBotWebView(obj, messageObject.messageOwner.via_bot_id);
+                    } else {
+                        presentFragment(new WebviewActivity(urlStr, user != null && !TextUtils.isEmpty(username) ? username : "", game.title, game.short_name, messageObject));
+                    }
                 }
             } else {
                 WebviewActivity.openGameInBrowser(urlStr, messageObject, getParentActivity(), game.short_name, user != null && username != null ? username : "");

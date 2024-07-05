@@ -171,4 +171,5 @@
     <string name="HideWebViewTabOverlayWhenSharing">Hide webview tab overlay when sharing</string>
     <string name="HideWebViewTabOverlayInChat">Hide webview tab overlay when in chat</string>
     <string name="PreventPullDownWebview">Prevent webview being resized or closed when pulling down</string>
+    <string name="UseBotWebviewForGames">Use bot webview for games and maybe other web apps</string>
 </resources>
