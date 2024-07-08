@@ -62,6 +62,7 @@ import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.URLSpan;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Property;
 import android.util.SparseArray;
@@ -15770,10 +15771,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 date = currentMessageObject.messageOwner.fwd_from.date;
             }
             timeString = LocaleController.formatSeenDate(date);
-        } else if (NekoConfig.appendOriginalTimestamp.Bool() && currentMessageObject.messageOwner.fwd_from != null && currentMessageObject.messageOwner.fwd_from.date != 0) {
-            isDisplayOriginalTimestamp = true;
-            timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
-            timeString += String.format(", %s: %s", getString(R.string.From), LocaleController.formatSeenDate(currentMessageObject.messageOwner.fwd_from.date));
         } else if (LocaleController.getInstance().getFormatterDay() != null && LocaleController.getInstance().getFormatterYear() != null) {
             timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
         } else {
@@ -16191,7 +16188,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         forwardedNameLayout[1] = null;
         replyPanelIsForward = false;
         forwardedNameWidth = 0;
+        String originalTimestamp = "";
         if (messageObject.isForwarded()) {
+            if (NekoConfig.appendOriginalTimestamp.Bool()) originalTimestamp = ", " + LocaleController.formatSeenDate(currentMessageObject.messageOwner.fwd_from.date);
             if (messageObject.messageOwner.fwd_from.from_id instanceof TLRPC.TL_peerChannel) {
                 currentForwardChannel = MessagesController.getInstance(currentAccount).getChat(messageObject.messageOwner.fwd_from.from_id.channel_id);
             } else if (messageObject.messageOwner.fwd_from.from_id instanceof TLRPC.TL_peerChat) {
@@ -16200,6 +16199,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 currentForwardUser = MessagesController.getInstance(currentAccount).getUser(messageObject.messageOwner.fwd_from.from_id.user_id);
             }
         }
+        int timestampWidth = (int) Math.ceil(Theme.chat_replyNamePaint.measureText(originalTimestamp));
         if (messageObject.type == MessageObject.TYPE_STORY || (drawForwardedName && messageObject.needDrawForwarded() && (currentPosition == null || currentPosition.minY == 0))) {
             if (messageObject.type != MessageObject.TYPE_STORY && messageObject.messageOwner.fwd_from.from_name != null) {
                 currentForwardName = messageObject.messageOwner.fwd_from.from_name;
@@ -16227,7 +16227,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         name = getString("ChannelPrivate", R.string.ChannelPrivate);
                         includeAvatar = false;
                     }
-                    lastLine = new SpannableStringBuilder((includeAvatar ? "A " : "") + name);
+                    lastLine = new SpannableStringBuilder((includeAvatar ? "A " : "") + name + originalTimestamp);
                     ((SpannableStringBuilder) lastLine).setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0, lastLine.length(), Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
                     if (includeAvatar) {
                         ((SpannableStringBuilder) lastLine).setSpan(forwardAvatar, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -16259,7 +16259,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (hasPsaHint) {
                         forwardedNameWidth -= AndroidUtilities.dp(36);
                     }
-                    CharSequence name = TextUtils.ellipsize((includeAvatar ? "A " : "") + currentForwardNameString.replace('\n', ' '), Theme.chat_replyNamePaint, forwardedNameWidth - viaWidth - dp(includeAvatar ? 17.33f : 0), TextUtils.TruncateAt.END);
+                    CharSequence name = TextUtils.ellipsize((includeAvatar ? "A " : "") + currentForwardNameString.replace('\n', ' ') + originalTimestamp, Theme.chat_replyNamePaint, forwardedNameWidth - viaWidth - dp(includeAvatar ? 17.33f : 0) + timestampWidth, TextUtils.TruncateAt.END);
                     String fromString = AndroidUtilities.removeDiacritics(name.toString());
 
                     SpannableStringBuilder stringBuilder;
@@ -16283,7 +16283,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     lastLine = Emoji.replaceEmoji(lastLine, Theme.chat_forwardNamePaint.getFontMetricsInt(), AndroidUtilities.dp(14), false);
                 } catch (Exception ignore) {
                 }
-                lastLine = TextUtils.ellipsize(lastLine, Theme.chat_forwardNamePaint, forwardedNameWidth, TextUtils.TruncateAt.END);
+                lastLine = TextUtils.ellipsize(lastLine, Theme.chat_forwardNamePaint, forwardedNameWidth + timestampWidth, TextUtils.TruncateAt.END);
                 try {
                     forwardedNameLayout[1] = new StaticLayout(lastLine, Theme.chat_forwardNamePaint, forwardedNameWidth + AndroidUtilities.dp(2), Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
                     lastLine = TextUtils.ellipsize(AndroidUtilities.replaceTags(forwardedString), Theme.chat_forwardNamePaint, forwardedNameWidth, TextUtils.TruncateAt.END);
@@ -16626,22 +16626,22 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         boolean includeAvatar = true;
                         if (currentForwardChannel != null) {
                             if (currentForwardUser != null) {
-                                currentForwardNameString = String.format("%s (%s)", currentForwardChannel.title, UserObject.getUserName(currentForwardUser));
+                                currentForwardNameString = String.format("%s (%s) %s", currentForwardChannel.title, UserObject.getUserName(currentForwardUser), originalTimestamp);
                                 forwardAvatar.setUser(currentForwardUser);
                             } else {
-                                currentForwardNameString = currentForwardChannel.title;
+                                currentForwardNameString = currentForwardChannel.title + " " + originalTimestamp;
                                 forwardAvatar.setChat(currentForwardChannel);
                             }
                         } else if (currentForwardUser != null) {
-                            currentForwardNameString = UserObject.getUserName(currentForwardUser);
+                            currentForwardNameString = UserObject.getUserName(currentForwardUser) + " " + originalTimestamp;
                             forwardAvatar.setUser(currentForwardUser);
                         } else {
-                            currentForwardNameString = currentForwardName;
+                            currentForwardNameString = currentForwardName + " " + originalTimestamp;;
                             includeAvatar = false;
                         }
                         name = getForwardedMessageText(messageObject);
                         CharSequence text = currentForwardNameString == null ? "" : currentForwardNameString.replace('\n', ' ');
-                        CharSequence ellipsizedText = TextUtils.ellipsize((includeAvatar ? "A " : "") + text, Theme.chat_replyNamePaint, maxWidth - dp(includeAvatar ? 17.33f : 0), TextUtils.TruncateAt.END);
+                        CharSequence ellipsizedText = TextUtils.ellipsize((includeAvatar ? "A " : "") + text, Theme.chat_replyNamePaint, maxWidth - dp(includeAvatar ? 17.33f : 0) + timestampWidth, TextUtils.TruncateAt.END);
                         SpannableStringBuilder stringBuilder = new SpannableStringBuilder(ellipsizedText);
                         if (includeAvatar && stringBuilder.length() > 1) {
                             stringBuilder.setSpan(forwardAvatar, 0, 1, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
@@ -16649,7 +16649,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         if (currentForwardName == null || messageObject.messageOwner.fwd_from.from_id != null) {
                             stringBuilder.setSpan(new TypefaceSpan(AndroidUtilities.bold()), 0,  ellipsizedText.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
                         }
-                        stringFinalText = TextUtils.ellipsize(stringBuilder, textPaint, maxWidth, TextUtils.TruncateAt.END);
+                        stringFinalText = TextUtils.ellipsize(stringBuilder, textPaint, maxWidth + timestampWidth, TextUtils.TruncateAt.END);
                         forwardNameCenterX = (int) Math.ceil(Theme.chat_replyNamePaint.measureText(ellipsizedText, 0, ellipsizedText.length())) / 2;
                     }
                 }

@@ -174,5 +174,4 @@
     <string name="UseBotWebviewForGames">Use bot webview for games and maybe other web apps</string>
     <string name="AppendOriginalTimestamp">Append original timestamp for forwarded messages</string>
     <string name="AlwaysShowDownloads">Always show downloads button</string>
-    <string name="AlwaysShowDownloadsDesc">View count and pinned indicator will be hidden where applicable to prevent text overflow</string>
 </resources>
