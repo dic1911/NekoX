@@ -103,6 +103,7 @@ import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.ChatObject;
 import org.telegram.messenger.ContactsController;
 import org.telegram.messenger.DialogObject;
+import org.telegram.messenger.DownloadController;
 import org.telegram.messenger.Emoji;
 import org.telegram.messenger.FileLoader;
 import org.telegram.messenger.FileLog;
@@ -291,6 +292,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private boolean chatOpened;
     private boolean tabsWasHidden = false;
+    private DownloadProgressIcon downloadIcon;
 
     public MessagesStorage.TopicKey getOpenedDialogId() {
         return openedDialogId;
@@ -3105,7 +3107,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             passcodeItem.setContentDescription(LocaleController.getString(R.string.AccDescrPasscodeLock));
 
             downloadsItem = menu.addItem(3, new ColorDrawable(Color.TRANSPARENT));
-            downloadsItem.addView(new DownloadProgressIcon(currentAccount, context));
+            downloadsItem.addView(downloadIcon = new DownloadProgressIcon(currentAccount, context));
             downloadsItem.setContentDescription(LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs));
             if (!NekoConfig.alwaysShowDownloads.Bool())
                 downloadsItem.setVisibility(View.GONE);
@@ -9986,6 +9988,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             downloadsItem.setVisibility(View.GONE);
             downloadsItemVisible = false;
         }
+
+        if (downloadsItemVisible && downloadIcon != null && DownloadController.getInstance(currentAccount).downloadingFiles.isEmpty()) {
+            downloadIcon.forceCompleted();
+        }
+
         SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("mainconfig", Activity.MODE_PRIVATE);
         String proxyAddress = preferences.getString("proxy_ip", "");
         boolean proxyEnabled;

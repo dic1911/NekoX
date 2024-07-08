@@ -204,6 +204,13 @@ public class DownloadProgressIcon extends View implements NotificationCenter.Not
         invalidate();
     }
 
+    public void forceCompleted() {
+        progress = 1f;
+        showCompletedIcon = true;
+        downloadCompleteDrawable.setCurrentFrame(0, false);
+        downloadCompleteDrawable.start();
+    }
+
     private void detachCurrentListeners() {
         for (int i = 0; i < currentListeners.size(); i++) {
             DownloadController.getInstance(currentAccount).removeLoadingFileObserver(currentListeners.get(i));
