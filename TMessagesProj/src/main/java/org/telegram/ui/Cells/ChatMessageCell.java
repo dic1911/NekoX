@@ -15768,6 +15768,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 date = currentMessageObject.messageOwner.fwd_from.date;
             }
             timeString = LocaleController.formatSeenDate(date);
+        } else if (NekoConfig.appendOriginalTimestamp.Bool() && currentMessageObject.messageOwner.fwd_from != null && currentMessageObject.messageOwner.fwd_from.date != 0) {
+            timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
+            timeString += String.format(", %s: %s", getString(R.string.From), LocaleController.formatSeenDate(currentMessageObject.messageOwner.fwd_from.date));
         } else if (LocaleController.getInstance().getFormatterDay() != null && LocaleController.getInstance().getFormatterYear() != null) {
             timeString = LocaleController.getInstance().getFormatterDay().format((long) (messageObject.messageOwner.date) * 1000);
         } else {
