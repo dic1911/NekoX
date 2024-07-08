@@ -3107,7 +3107,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             downloadsItem = menu.addItem(3, new ColorDrawable(Color.TRANSPARENT));
             downloadsItem.addView(new DownloadProgressIcon(currentAccount, context));
             downloadsItem.setContentDescription(LocaleController.getString("DownloadsTabs", R.string.DownloadsTabs));
-            downloadsItem.setVisibility(View.GONE);
+            if (!NekoConfig.alwaysShowDownloads.Bool())
+                downloadsItem.setVisibility(View.GONE);
 
             updatePasscodeButton();
             updateProxyButton(false, false);
@@ -9971,8 +9972,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (proxyDrawable == null || doneItem != null && doneItem.getVisibility() == View.VISIBLE) {
             return;
         }
-        boolean showDownloads = false;
-        for (int i = 0; i < getDownloadController().downloadingFiles.size(); i++) {
+        boolean showDownloads = downloadsItemVisible = NekoConfig.alwaysShowDownloads.Bool();
+        for (int i = 0; i < getDownloadController().downloadingFiles.size() && !showDownloads; i++) {
             if (getFileLoader().isLoadingFile(getDownloadController().downloadingFiles.get(i).getFileName())) {
                 showDownloads = true;
                 break;
@@ -10059,7 +10060,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (passcodeItem != null && passcodeItemVisible) {
                         passcodeItem.setVisibility(View.INVISIBLE);
                     }
-                    if (downloadsItem != null && downloadsItemVisible) {
+                    if (downloadsItem != null && downloadsItemVisible && !NekoConfig.alwaysShowDownloads.Bool()) {
                         downloadsItem.setVisibility(View.INVISIBLE);
                     }
                 } else {
