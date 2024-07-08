@@ -85,7 +85,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     }));
     private final AbstractConfigCell disableCustomWallpaperUserRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableCustomWallpaperUser));
     private final AbstractConfigCell disableCustomWallpaperChannelRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableCustomWallpaperChannel));
-    private final AbstractConfigCell appendOriginalTimestampRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.appendOriginalTimestamp));
+    private final AbstractConfigCell appendOriginalTimestampRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.appendOriginalTimestamp, LocaleController.getString("AlwaysShowDownloadsDesc")));
     private final AbstractConfigCell dividerChat = cellGroup.appendCell(new ConfigCellDivider());
 
     // Interactions
