@@ -176,4 +176,5 @@
     <string name="AlwaysShowDownloads">Always show downloads button</string>
     <string name="OpenAvatarInsteadOfExpand">Open avatar instead of expand inplace</string>
     <string name="OpenAvatarInsteadOfExpandDesc">Or long click on avatar before expand to open</string>
+    <string name="CustomTitleText">Custom title text</string>
 </resources>

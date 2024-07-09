@@ -3348,7 +3348,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                 statusDrawable.center = true;
-                actionBar.setTitle(LocaleController.getString("NekoX", R.string.NekoX), statusDrawable);
+                actionBar.setTitle(NekoConfig.customTitleText.String(), statusDrawable);
                 updateStatus(UserConfig.getInstance(currentAccount).getCurrentUser(), false);
             }
             if (folderId == 0) {
