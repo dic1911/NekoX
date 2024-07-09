@@ -37599,155 +37599,147 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 showDialog(alert);
             } else if (message.getInputStickerSet() != null) {
                 // In case we have a .webp file that is displayed as a sticker, but
-                            // that doesn't fit in 512x512, we assume it may be a regular large
-                            // .webp image and we allow to open it in media viewer.
-                            // Inspired by https://github.com/telegramdesktop/tdesktop/commit/baccec623d45dbfd1132d5f808192f0f3ad87647
-                            if (message.getInputStickerSet() == null) {
-                                int photoHeight = 0;
-                                int photoWidth = 0;
-                                TLRPC.Document document = message.getDocument();
-                                for (int a = 0, N = document.attributes.size(); a < N; a++) {
-                                    TLRPC.DocumentAttribute attribute = document.attributes.get(a);
-                                    if (attribute instanceof TLRPC.TL_documentAttributeImageSize) {
-                                        photoWidth = attribute.w;
-                                        photoHeight = attribute.h;
-                                        break;
-                                    }
-                                }
-                                if (photoWidth > 512 || photoHeight > 512) {
-                                    openPhotoViewerForMessage(cell, message);
-                                }
-                                return;
-                            }
-                            StickersAlert alert = new StickersAlert(getParentActivity(), ChatActivity.this, message.getInputStickerSet(), null, bottomOverlayChat.getVisibility() != View.VISIBLE && (currentChat == null || ChatObject.canSendStickers(currentChat)) ? chatActivityEnterView : null, themeDelegate);
-                            alert.setCalcMandatoryInsets(isKeyboardVisible());
-                            showDialog(alert);
-                        } else if (message.isVideo() || message.type == MessageObject.TYPE_PHOTO || message.type == MessageObject.TYPE_TEXT && !message.isWebpageDocument() || message.isGif()) {
-                            openPhotoViewerForMessage(cell, message);
-                        } else if (message.type == MessageObject.TYPE_VIDEO) {
-                            sendSecretMessageRead(message, true);
-                            try {
-                                File f = null;
-                                if (message.messageOwner.attachPath != null && message.messageOwner.attachPath.length() != 0) {
-                                    f = new File(message.messageOwner.attachPath);
-                                }
-                                if (f == null || !f.exists()) {
-                                    f = getFileLoader().getPathToMessage(message.messageOwner);
-                                }
-                                Intent intent = new Intent(Intent.ACTION_VIEW);
-                                if (Build.VERSION.SDK_INT >= 24) {
-                                    intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                                    intent.setDataAndType(FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", f), "video/mp4");
-                                } else {
-                                    intent.setDataAndType(Uri.fromFile(f), "video/mp4");
-                                }
-                                getParentActivity().startActivityForResult(intent, 500);
-                            } catch (Exception e) {
-                                FileLog.e(e);
-                                alertUserOpenError(message);
-                            }
-                        } else if (message.type == MessageObject.TYPE_GEO) {
-                            if (!AndroidUtilities.isMapsInstalled(ChatActivity.this)) {
-                                return;
-                            }
-                            if (message.isLiveLocation()) {
-                                LocationActivity fragment = new LocationActivity(currentChat == null || ChatObject.canSendMessages(currentChat) || currentChat.megagroup ? 2 : LocationActivity.LOCATION_TYPE_LIVE_VIEW);
-                                fragment.setDelegate(ChatActivity.this);
-                                fragment.setMessageObject(message);
-                                presentFragment(fragment);
-                            } else {
-                                LocationActivity fragment = new LocationActivity(currentEncryptedChat == null ? 3 : 0);
-                                fragment.setDelegate(ChatActivity.this);
-                                fragment.setMessageObject(message);
-                                presentFragment(fragment);
-                            }
-                        } else if (message.type == MessageObject.TYPE_FILE || message.type == MessageObject.TYPE_TEXT) {
-                            File locFile = null;
-                            if (message.messageOwner.attachPath != null && message.messageOwner.attachPath.length() != 0) {
-                                File f = new File(message.messageOwner.attachPath);
-                                if (f.exists()) {
-                                    locFile = f;
-                                }
-                            }
-                            if (locFile == null) {
-                                File f = getFileLoader().getPathToMessage(message.messageOwner);
-                                if (f.exists()) {
-                                    locFile = f;
-                                }
-                            }
-                            if (message.getDocumentName().toLowerCase().endsWith("attheme")) {
-                                Theme.ThemeInfo themeInfo = Theme.applyThemeFile(locFile, message.getDocumentName(), null, true);
-                                if (themeInfo != null) {
-                                    presentFragment(new ThemePreviewActivity(themeInfo));
-                                    return;
-                                } else {
-                                    scrollToPositionOnRecreate = -1;
-                                }
-                                boolean handled = false;
-                                if (message.canPreviewDocument()) {
-                                    PhotoViewer.getInstance().setParentActivity(getParentActivity());
-                                    PhotoViewer.getInstance().openPhoto(message, message.type != 0 ? dialog_id : 0, message.type != 0 ? mergeDialogId : 0, 0, photoViewerProvider, false);
-                                    handled = true;
-                                }
-                                if (!handled) {
-                                    try {
-                                        AndroidUtilities.openForView(message, getParentActivity());
-                                    } catch (Exception e) {
-                                        FileLog.e(e);
-                                        alertUserOpenError(message);
-                                    }
-                                }
-                            } else if (locFile == null || !locFile.isFile()) {
-
-                                AlertUtil.showToast("FILE_NOT_FOUND");
-
-                            } else if (message.getDocumentName().toLowerCase().endsWith(".nekox.json")) {
-
-                                File finalLocFile = locFile;
-                                AlertUtil.showConfirm(getParentActivity(),
-                                        LocaleController.getString("ImportProxyList", R.string.ImportProxyList),
-                                        R.drawable.baseline_security_24, LocaleController.getString("Import", R.string.Import),
-                                        false, () -> {
-//                                            String status = ProxyListActivity.processProxyListFile(getParentActivity(), finalLocFile);
-//                                            if (!StrUtil.isBlank(status)) {
-//                                                presentFragment(new ProxyListActivity(status));
-//                                            }
-                                            Toast.makeText(ChatActivity.this.getContext(), "This function is removed temporarily.", Toast.LENGTH_LONG).show();
-                                        });
-
-                            } else if (message.getDocumentName().toLowerCase().endsWith(".nekox-stickers.json")) {
-
-                                File finalLocFile = locFile;
-                                AlertUtil.showConfirm(getParentActivity(),
-                                        LocaleController.getString("ImportStickersList", R.string.ImportStickersList),
-                                        R.drawable.deproko_baseline_stickers_filled_24, LocaleController.getString("Import", R.string.Import), false, () -> {
-                                            presentFragment(new StickersActivity(finalLocFile));
-                                        });
-
-
-                            } else if (message.getDocumentName().toLowerCase().endsWith(".nekox-settings.json")) {
-
-                                File finalLocFile = locFile;
-                                NekoSettingsActivity.importSettings(getParentActivity(), finalLocFile);
-
-                            } else {
-                boolean handled = false;
-                if (message.canPreviewDocument()) {
-                    PhotoViewer.getInstance().setParentActivity(ChatActivity.this, themeDelegate);
-                    PhotoViewer.getInstance().openPhoto(message, ChatActivity.this, message.type != 0 ? dialog_id : 0, message.type != 0 ? mergeDialogId : 0, message.type != 0 ? getTopicId() : 0, photoViewerProvider);
-                    handled = true;
+                // that doesn't fit in 512x512, we assume it may be a regular large
+                // .webp image and we allow to open it in media viewer.
+                // Inspired by https://github.com/telegramdesktop/tdesktop/commit/baccec623d45dbfd1132d5f808192f0f3ad87647
+                if (message.getInputStickerSet() == null) {
+                    int photoHeight = 0;
+                    int photoWidth = 0;
+                    TLRPC.Document document = message.getDocument();
+                    for (int a = 0, N = document.attributes.size(); a < N; a++) {
+                        TLRPC.DocumentAttribute attribute = document.attributes.get(a);
+                        if (attribute instanceof TLRPC.TL_documentAttributeImageSize) {
+                            photoWidth = attribute.w;
+                            photoHeight = attribute.h;
+                            break;
+                        }
+                    }
+                    if (photoWidth > 512 || photoHeight > 512) {
+                        openPhotoViewerForMessage(cell, message);
+                    }
+                    return;
                 }
-                if (!handled) {
-                    try {
-                        AndroidUtilities.openForView(message, getParentActivity(), themeDelegate);
-                    } catch (Exception e) {
-                        FileLog.e(e);
-                        alertUserOpenError(message);
+                StickersAlert alert = new StickersAlert(getParentActivity(), ChatActivity.this, message.getInputStickerSet(), null, bottomOverlayChat.getVisibility() != View.VISIBLE && (currentChat == null || ChatObject.canSendStickers(currentChat)) ? chatActivityEnterView : null, themeDelegate);
+                alert.setCalcMandatoryInsets(isKeyboardVisible());
+                showDialog(alert);
+            } else if (message.isVideo() || message.type == MessageObject.TYPE_PHOTO || message.type == MessageObject.TYPE_TEXT && !message.isWebpageDocument() || message.isGif()) {
+                openPhotoViewerForMessage(cell, message);
+            } else if (message.type == MessageObject.TYPE_VIDEO) {
+                sendSecretMessageRead(message, true);
+                try {
+                    File f = null;
+                    if (message.messageOwner.attachPath != null && message.messageOwner.attachPath.length() != 0) {
+                        f = new File(message.messageOwner.attachPath);
+                    }
+                    if (f == null || !f.exists()) {
+                        f = getFileLoader().getPathToMessage(message.messageOwner);
+                    }
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    if (Build.VERSION.SDK_INT >= 24) {
+                        intent.setFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        intent.setDataAndType(FileProvider.getUriForFile(getParentActivity(), ApplicationLoader.getApplicationId() + ".provider", f), "video/mp4");
+                    } else {
+                        intent.setDataAndType(Uri.fromFile(f), "video/mp4");
+                    }
+                    getParentActivity().startActivityForResult(intent, 500);
+                } catch (Exception e) {
+                    FileLog.e(e);
+                    alertUserOpenError(message);
+                }
+            } else if (message.type == MessageObject.TYPE_GEO) {
+                if (!AndroidUtilities.isMapsInstalled(ChatActivity.this)) {
+                    return;
+                }
+                if (message.isLiveLocation()) {
+                    LocationActivity fragment = new LocationActivity(currentChat == null || ChatObject.canSendMessages(currentChat) || currentChat.megagroup ? 2 : LocationActivity.LOCATION_TYPE_LIVE_VIEW);
+                    fragment.setDelegate(ChatActivity.this);
+                    fragment.setMessageObject(message);
+                    presentFragment(fragment);
+                } else {
+                    LocationActivity fragment = new LocationActivity(currentEncryptedChat == null ? 3 : 0);
+                    fragment.setDelegate(ChatActivity.this);
+                    fragment.setMessageObject(message);
+                    presentFragment(fragment);
+                }
+            } else if (message.type == MessageObject.TYPE_FILE || message.type == MessageObject.TYPE_TEXT) {
+                File locFile = getFileLoader().getPathToMessage(message.messageOwner);
+                if (message.getDocumentName().toLowerCase().endsWith("attheme")) {
+                    Theme.ThemeInfo themeInfo = Theme.applyThemeFile(locFile, message.getDocumentName(), null, true);
+                    if (themeInfo != null) {
+                        presentFragment(new ThemePreviewActivity(themeInfo));
+                        return;
+                    } else {
+                        scrollToPositionOnRecreate = -1;
+                    }
+                    boolean handled = false;
+                    if (message.canPreviewDocument()) {
+                        PhotoViewer.getInstance().setParentActivity(getParentActivity());
+                        PhotoViewer.getInstance().openPhoto(message, message.type != 0 ? dialog_id : 0, message.type != 0 ? mergeDialogId : 0, 0, photoViewerProvider, false);
+                        handled = true;
+                    }
+                    if (!handled) {
+                        try {
+                            AndroidUtilities.openForView(message, getParentActivity());
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                            alertUserOpenError(message);
+                        }
+                    }
+                } else if (message.getDocumentName().toLowerCase().endsWith(".nekox.json")) {
+                    if (locFile == null || !locFile.isFile()) {
+                        AlertUtil.showToast("FILE_NOT_FOUND");
+                        return;
+                    }
+                    File finalLocFile = locFile;
+                    AlertUtil.showConfirm(getParentActivity(),
+                            LocaleController.getString("ImportProxyList", R.string.ImportProxyList),
+                            R.drawable.baseline_security_24, LocaleController.getString("Import", R.string.Import),
+                            false, () -> {
+//                              String status = ProxyListActivity.processProxyListFile(getParentActivity(), finalLocFile);
+//                              if (!StrUtil.isBlank(status)) {
+//                                  presentFragment(new ProxyListActivity(status));
+//                              }
+                                Toast.makeText(ChatActivity.this.getContext(), "This function is removed.", Toast.LENGTH_LONG).show();
+                            });
+
+                } else if (message.getDocumentName().toLowerCase().endsWith(".nekox-stickers.json")) {
+                    if (locFile == null || !locFile.isFile()) {
+                        AlertUtil.showToast("FILE_NOT_FOUND");
+                        return;
+                    }
+                    File finalLocFile = locFile;
+                    AlertUtil.showConfirm(getParentActivity(),
+                            LocaleController.getString("ImportStickersList", R.string.ImportStickersList),
+                            R.drawable.deproko_baseline_stickers_filled_24, LocaleController.getString("Import", R.string.Import), false, () -> {
+                                presentFragment(new StickersActivity(finalLocFile));
+                            });
+
+
+                } else if (message.getDocumentName().toLowerCase().endsWith(".nekox-settings.json")) {
+                    if (locFile == null || !locFile.isFile()) {
+                        AlertUtil.showToast("FILE_NOT_FOUND");
+                        return;
+                    }
+                    File finalLocFile = locFile;
+                    NekoSettingsActivity.importSettings(getParentActivity(), finalLocFile);
+
+                } else {
+                    boolean handled = false;
+                    if (message.canPreviewDocument()) {
+                        PhotoViewer.getInstance().setParentActivity(ChatActivity.this, themeDelegate);
+                        PhotoViewer.getInstance().openPhoto(message, ChatActivity.this, message.type != 0 ? dialog_id : 0, message.type != 0 ? mergeDialogId : 0, message.type != 0 ? getTopicId() : 0, photoViewerProvider);
+                        handled = true;
+                    }
+                    if (!handled) {
+                        try {
+                            AndroidUtilities.openForView(message, getParentActivity(), themeDelegate);
+                        } catch (Exception e) {
+                            FileLog.e(e);
+                            alertUserOpenError(message);
+                        }
                     }
                 }
             }
-        }
-
         }
         @Override
         public void didPressInstantButton(ChatMessageCell cell, int type) {
