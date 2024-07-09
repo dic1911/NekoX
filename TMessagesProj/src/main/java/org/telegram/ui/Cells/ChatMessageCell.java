@@ -228,8 +228,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     public ExpiredStoryView expiredStoryView;
     private boolean skipFrameUpdate;
 
-    private boolean isDisplayOriginalTimestamp = false;
-
     public ChannelRecommendationsCell channelRecommendationsCell;
 
     public RadialProgress2 getRadialProgress() {
@@ -11403,7 +11401,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 timeX += dp(14 + 4);
             }
 
-            if (!isDisplayOriginalTimestamp && (currentMessageObject.messageOwner.flags & TLRPC.MESSAGE_FLAG_HAS_VIEWS) != 0) {
+            if ((currentMessageObject.messageOwner.flags & TLRPC.MESSAGE_FLAG_HAS_VIEWS) != 0) {
                 viewsLayout = new StaticLayout(currentViewsString == null ? "" : currentViewsString, Theme.chat_timePaint, viewsTextWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
             } else {
                 viewsLayout = null;
@@ -15781,7 +15779,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 currentTimeString = timeString + ", ";
             } else if (messageObject.messageOwner.fwd_from != null && messageObject.messageOwner.fwd_from.imported) {
                 currentTimeString = " " + timeString;
-            } else if (!isDisplayOriginalTimestamp && signString.length() > 0) {
+            } else if (signString.length() > 0) {
                 currentTimeString = ", " + timeString;
             } else {
                 currentTimeString = timeString;
@@ -15874,11 +15872,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             SpannableStringBuilder currentTimeStringBuilder = new SpannableStringBuilder();
             if (messageObject.messageOwner.via_business_bot_id != 0) {
                 currentTimeStringBuilder.append(currentTimeString);
-                if (isDisplayOriginalTimestamp && signString.length() > 0) currentTimeStringBuilder.append(", ");
                 currentTimeStringBuilder.append(signString);
             } else {
                 currentTimeStringBuilder.append(signString);
-                if (isDisplayOriginalTimestamp && signString.length() > 0) currentTimeStringBuilder.append(", ");
                 currentTimeStringBuilder.append(currentTimeString);
             }
             currentTimeString = currentTimeStringBuilder;
@@ -16292,6 +16288,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     if (forwardBg == null) {
                         forwardBg = new ForwardBackground(this);
                     }
+//                    String orig = String.valueOf(lastLine);
+//                    String trimmed = TextUtils.ellipsize(orig, Theme.chat_forwardNamePaint, maxWidth, TextUtils.TruncateAt.END);
+                    forwardBg.setExtendedHeight(messageObject.isAnyKindOfSticker());
                     forwardBg.set(forwardedNameLayout, !currentMessageObject.isOutOwner() && !(drawNameLayout && nameLayout != null) && pinnedTop);
                     forwardedNameWidth = Math.max((int) Math.ceil(forwardedNameLayout[0].getLineWidth(0)), (int) Math.ceil(forwardedNameLayout[1].getLineWidth(0)));
                     if (hasPsaHint) {
@@ -17224,6 +17223,17 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
                 if (drawForwardedName) {
                     forwardHeight = AndroidUtilities.dp(4) + (int) Theme.chat_forwardNamePaint.getTextSize() * 2;
+                    if (NekoConfig.appendOriginalTimestamp.Bool()) {
+                        boolean ok = !currentMessageObject.isAnyKindOfSticker();
+                        if (!ok) {
+                            int lineCount = Math.max(forwardedNameLayout[0].getLineCount(), forwardedNameLayout[1].getLineCount());
+                            ok = lineCount > 1;
+                        }
+                        if (ok) {
+                            forwardNameY += dp(4);
+                            forwardHeight += dp(8);
+                        }
+                    }
                     replyStartY = forwardNameY + forwardHeight + AndroidUtilities.dp(6);
                 } else {
                     replyStartY = AndroidUtilities.dp(12);
@@ -18792,6 +18802,18 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
                 forwardNameY = AndroidUtilities.dp(12) + (drawTopic && topicButton != null ? topicButton.height() + AndroidUtilities.dp(14) : 0);
                 forwardHeight = AndroidUtilities.dp(4) + (int) Theme.chat_forwardNamePaint.getTextSize() * 2;
+
+                if (NekoConfig.appendOriginalTimestamp.Bool()) {
+                    boolean ok = !currentMessageObject.isAnyKindOfSticker();
+                    if (!ok) {
+                        int lineCount = Math.max(forwardedNameLayout[0].getLineCount(), forwardedNameLayout[1].getLineCount());
+                        ok = lineCount > 1;
+                    }
+                    if (ok) {
+                        forwardNameY += dp(4);
+                        forwardHeight += dp(8);
+                    }
+                }
 
                 int backWidth = forwardedNameWidthLocal + AndroidUtilities.dp(14);
                 if (hasReply) {
@@ -20701,7 +20723,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     private void drawViewsAndRepliesLayout(Canvas canvas, float layoutHeight, float alpha, float timeYOffset, float timeX, float progress, boolean drawSelectionBackground) {
-        if (isDisplayOriginalTimestamp) return;
         boolean useScale = progress != 1f;
         float scale = 0.5f + 0.5f * progress;
         alpha *= progress;
@@ -20856,8 +20877,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 Theme.chat_timePaint.setAlpha(timeAlpha);
             }
             transitionParams.lastTimeXViews = viewsX;
-        } else if (isDisplayOriginalTimestamp) {
-            offsetX += viewsTextWidth + AndroidUtilities.dp(10);
         }
         if (isPinned || transitionParams.animatePinned) {
             float pinnedX = (transitionParams.shouldAnimateTimeX ? this.timeX : timeX) + offsetX;
@@ -20896,7 +20915,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 }
             }
             float w;
-            if (transitionParams.animatePinned && !isDisplayOriginalTimestamp) {
+            if (transitionParams.animatePinned) {
                 if (isPinned) {
                     pinnedDrawable.setAlpha((int) (255 * alpha * transitionParams.animateChangeProgress));
                     w = setDrawableBounds(pinnedDrawable, pinnedX, timeY, Theme.chat_timePaint.getTextSize() + AndroidUtilities.dp(1));

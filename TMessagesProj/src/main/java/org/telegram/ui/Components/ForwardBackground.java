@@ -22,6 +22,7 @@ public class ForwardBackground {
     public final Rect bounds = new Rect();
     public final ButtonBounce bounce;
     private final RectF r = new RectF();
+    private boolean extendedHeight = false;
 
     public ForwardBackground(View view) {
         this.view = view;
@@ -31,8 +32,14 @@ public class ForwardBackground {
     private int rippleDrawableColor;
     private Drawable rippleDrawable;
 
+    public void setExtendedHeight(boolean val) {
+        extendedHeight = val;
+    }
+
     public void set(StaticLayout[] layout, boolean topLeftRad) {
-        final int h = dp(4) + (int) Theme.chat_forwardNamePaint.getTextSize() * 2;
+        int lineCount = Math.max(layout[0].getLineCount(), layout[1].getLineCount());
+        extendedHeight &= (lineCount > 1);
+        final int h = (int) Math.ceil(dp(4) + Theme.chat_forwardNamePaint.getTextSize() * (extendedHeight ? 3.2F : 2F));
 
         float pinnedR = Math.max(0, Math.min(6, SharedConfig.bubbleRadius) - 1);
         float R = Math.min(9, SharedConfig.bubbleRadius);
