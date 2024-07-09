@@ -34,6 +34,7 @@ import android.text.Spanned;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
+import android.util.Log;
 import android.util.LongSparseArray;
 import android.util.SparseArray;
 import android.util.TypedValue;
@@ -69,6 +70,7 @@ import androidx.recyclerview.widget.DefaultItemAnimator;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import org.h2.store.fs.FileUtils;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.BotWebViewVibrationEffect;
 import org.telegram.messenger.BuildVars;
@@ -1458,6 +1460,13 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
         builder.setTitle(LocaleController.getString("ClearCache", R.string.ClearCache));
         builder.setMessage(LocaleController.getString("ClearCacheForChats", R.string.ClearCacheForChats));
         builder.setPositiveButton(LocaleController.getString("Clear", R.string.Clear), (di, which) -> {
+            // 030: remove "Telegram" leftover dirs
+            String[] paths = EnvUtil.getAvailableDirectories();
+            for (String path : paths) {
+                String target = path + "/Telegram";
+                FileUtils.deleteRecursive(target, true);
+            }
+
             DialogFileEntities mergedEntities = cacheModel.removeSelectedFiles();
             if (mergedEntities.totalSize > 0) {
                 cleanupDialogFiles(mergedEntities, null, null);
@@ -2093,6 +2102,13 @@ public class CacheControlActivity extends BaseFragment implements NotificationCe
                     showDialog(bottomSheet);
                 }
             }, 150);
+
+            // 030: remove "Telegram" leftover dirs
+            String[] paths = EnvUtil.getAvailableDirectories();
+            for (String path : paths) {
+                String target = path + "/Telegram";
+                FileUtils.deleteRecursive(target, true);
+            }
 
             cleanupFolders(
                 (progressValue, next) -> {
