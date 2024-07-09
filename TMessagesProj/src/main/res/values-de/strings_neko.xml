@@ -25,7 +25,7 @@
     <string name="TransparentStatusBar">Transparente Statusleiste</string>
     <string name="EnableResidentNotification">Ständig bleibende Benachrichtigung anzeigen</string>
     <string name="DisableResidentNotification">Ständig bleibende Benachrichtigung deaktivieren</string>
-    <string name="NekogramRunning">Nekogram läuft</string>
+    <string name="NekogramRunning">NekogramX läuft</string>
     <string name="EventType">Seitenleistensymbole einstellen</string>
     <string name="ChristmasHat">Weihnachtsmütze jeden Tag anzeigen</string>
     <string name="ActionBarDecoration">Titelleiste dekorieren</string>

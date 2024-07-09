@@ -28,7 +28,7 @@
     <string name="TransparentStatusBar">Transparent status bar</string>
     <string name="EnableResidentNotification">Show a resident notification</string>
     <string name="DisableResidentNotification">Disable resident notification</string>
-    <string name="NekogramRunning">Nekogram is running</string>
+    <string name="NekogramRunning">NekogramX is running</string>
     <string name="EventType">Sidebar icon set</string>
     <string name="ChristmasHat">Show santa hat every day</string>
     <string name="ActionBarDecoration">Title bar decoration</string>

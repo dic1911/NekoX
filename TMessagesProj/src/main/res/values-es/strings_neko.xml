@@ -25,7 +25,7 @@
     <string name="TransparentStatusBar">Barra de estado transparente</string>
     <string name="EnableResidentNotification">Mostrar una notificación permanente</string>
     <string name="DisableResidentNotification">Desactivar notificación permanente</string>
-    <string name="NekogramRunning">Nekogram está en funcionamiento</string>
+    <string name="NekogramRunning">NekogramX está en funcionamiento</string>
     <string name="EventType">Grupo de iconos de la barra lateral</string>
     <string name="ChristmasHat">Mostrar el sombrero de navidad cada día</string>
     <string name="ActionBarDecoration">Decoración de la barra de título</string>

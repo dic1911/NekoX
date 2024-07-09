@@ -60,7 +60,7 @@
     <string name="Prpr">Peropero</string>
     <string name="EnableResidentNotification">Afficher une notification permanente</string>
     <string name="DisableResidentNotification">Désactiver la notification permanente</string>
-    <string name="NekogramRunning">Nekogram est en cours d\'éxécution</string>
+    <string name="NekogramRunning">NekogramX est en cours d\'éxécution</string>
     <string name="ChristmasHat">Afficher le bonnet de noël tous les jours</string>
     <string name="ActionBarDecoration">Décoration de la barre de titre</string>
     <string name="TransparentStatusBar">Barre de notifications transparente</string>

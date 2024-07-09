@@ -79,7 +79,7 @@
     <string name="Connection">Anslutning</string>
     <string name="AddToSavedMessages">Spara Meddelande</string>
     <string name="CreateMention">Skapa Omnämning</string>
-    <string name="NekogramRunning">Nekogram kör</string>
+    <string name="NekogramRunning">NekogramX kör</string>
     <string name="ChristmasHat">Visa julbockens hatt varje dag</string>
     <string name="Nya">Mjau!</string>
     <string name="TestBackendOn">Detta konto kommer att ansluta till testbackend.</string>

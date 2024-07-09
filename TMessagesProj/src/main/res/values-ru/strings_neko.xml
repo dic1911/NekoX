@@ -25,7 +25,7 @@
     <string name="TransparentStatusBar">Прозрачная полоска статуса</string>
     <string name="EnableResidentNotification">Отображать постоянное уведомление</string>
     <string name="DisableResidentNotification">Скрыть постоянное уведомление</string>
-    <string name="NekogramRunning">Nekogram запущен</string>
+    <string name="NekogramRunning">NekogramX запущен</string>
     <string name="EventType">Набор значков бокового меню</string>
     <string name="ChristmasHat">Рождественский колпак в заголовке</string>
     <string name="ActionBarDecoration">Оформление заголовка</string>
