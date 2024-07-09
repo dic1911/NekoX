@@ -4903,7 +4903,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 return;
             }
-            if (expandAvatar()) {
+            if (!NekoConfig.openAvatarInsteadOfExpand.Bool() && expandAvatar()) {
                 return;
             }
             openAvatar();
@@ -5139,6 +5139,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     getOrCreateStoryViewer().open(context, userInfo.stories, provider);
                 } else if (chatInfo != null && chatInfo.stories != null && !chatInfo.stories.stories.isEmpty()) {
                     getOrCreateStoryViewer().open(context, chatInfo.stories, provider);
+                } else if (NekoConfig.openAvatarInsteadOfExpand.Bool()) {
+                    openAvatar();
                 } else {
                     expandAvatar();
                 }

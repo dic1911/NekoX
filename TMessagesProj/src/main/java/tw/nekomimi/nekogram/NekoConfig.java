@@ -211,6 +211,7 @@ public class NekoConfig {
     public static ConfigItem autoArchiveAndMute = addConfig("AutoArchiveAndMute", ConfigItem.configTypeBool, false);
     public static ConfigItem appendOriginalTimestamp = addConfig("AppendOriginalTimestamp", ConfigItem.configTypeBool, false);
     public static ConfigItem alwaysShowDownloads = addConfig("AlwaysShowDownloads", ConfigItem.configTypeBool, false);
+    public static ConfigItem openAvatarInsteadOfExpand = addConfig("OpenAvatarInsteadOfExpand", ConfigItem.configTypeBool, false);
 
     static {
         loadConfig(false);
