@@ -292,6 +292,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     private boolean chatOpened;
     private boolean tabsWasHidden = false;
+    private boolean forceHideTabs = false;
     private DownloadProgressIcon downloadIcon;
 
     public MessagesStorage.TopicKey getOpenedDialogId() {
@@ -1104,6 +1105,14 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 layoutParams.height = ActionBar.getCurrentActionBarHeight();
             }
 
+            // 030: NPE workaround
+            if (actionBar.getLayoutParams() == null) {
+                forceHideTabs = true;
+                LayoutParams layoutParams = (LayoutParams) getLayoutParams();
+                layoutParams.topMargin = -ActionBar.getCurrentActionBarHeight();
+                actionBar.setLayoutParams(layoutParams);
+            }
+
             measureChildWithMargins(actionBar, widthMeasureSpec, 0, heightMeasureSpec, 0);
 
             int keyboardSize = measureKeyboardHeight();
@@ -1128,7 +1137,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                             viewPages[a].setTranslationY(0);
                         }
                     }
-                    if (NekoConfig.showTabsOnForward.Bool() || !onlySelect) {
+                    if (!forceHideTabs && (NekoConfig.showTabsOnForward.Bool() || !onlySelect)) {
                         actionBar.setTranslationY(0);
                         if (topBulletin != null) {
                             topBulletin.updatePosition();
@@ -2095,7 +2104,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             } else if (pos == RecyclerView.NO_POSITION && firstLayout) {
                 parentPage.layoutManager.scrollToPositionWithOffset(parentPage.dialogsType == DIALOGS_TYPE_DEFAULT && hasHiddenArchive() ? 1 : 0, (int) scrollYOffset);
             }
-            if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || NekoConfig.showTabsOnForward.Bool()) {
+            if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (!forceHideTabs && NekoConfig.showTabsOnForward.Bool())) {
                 ignoreLayout = true;
                 if (hasStories || (filterTabsView != null && filterTabsView.getVisibility() == VISIBLE)) {
                     t = ActionBar.getCurrentActionBarHeight() + (actionBar.getOccupyStatusBar() ? AndroidUtilities.statusBarHeight : 0);
@@ -2735,6 +2744,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             canSelectTopics = arguments.getBoolean("canSelectTopics", false);
             cantSendToChannels = arguments.getBoolean("cantSendToChannels", false);
             initialDialogsType = arguments.getInt("dialogsType", DIALOGS_TYPE_DEFAULT);
+            forceHideTabs |= (initialDialogsType == DIALOGS_TYPE_ADD_USERS_TO);
             isQuote = arguments.getBoolean("quote", false);
             isReplyTo = arguments.getBoolean("reply_to", false);
             selectAlertString = arguments.getString("selectAlertString");
@@ -3355,7 +3365,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 actionBar.setSupportsHolidayImage(true);
             }
         }
-        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (folderId == 0 && NekoConfig.showTabsOnForward.Bool())) {
+        Log.d("030-tabs", String.format("createView - hide: %s, type: %d", forceHideTabs, initialDialogsType));
+        if (!forceHideTabs && (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (folderId == 0 && NekoConfig.showTabsOnForward.Bool()))) {
             actionBar.setAddToContainer(false);
             actionBar.setCastShadows(false);
             actionBar.setClipContent(true);
@@ -3372,8 +3383,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
 
         if (
-                ((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) &&
-                        folderId == 0 && TextUtils.isEmpty(searchString)) || (folderId == 0 && NekoConfig.showTabsOnForward.Bool())
+                !forceHideTabs &&
+                (((initialDialogsType == DIALOGS_TYPE_DEFAULT && !onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD) &&
+                        folderId == 0 && TextUtils.isEmpty(searchString)) || (folderId == 0 && NekoConfig.showTabsOnForward.Bool()))
         ) {
             filterTabsView = new FilterTabsView(context) {
                 @Override
@@ -5179,7 +5191,8 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             MessagesController.getInstance(currentAccount).getSavedReactionTags(0);
         }
 
-        if (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (NekoConfig.showTabsOnForward.Bool() && (initialDialogsType == DIALOGS_TYPE_START_ATTACH_BOT || initialDialogsType == DIALOGS_TYPE_BOT_SHARE))) {
+        if (!forceHideTabs && (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (NekoConfig.showTabsOnForward.Bool() &&
+                (initialDialogsType == DIALOGS_TYPE_START_ATTACH_BOT || initialDialogsType == DIALOGS_TYPE_BOT_SHARE)))) {
             final FrameLayout.LayoutParams layoutParams = LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT);
             if (inPreviewMode && Build.VERSION.SDK_INT >= 21) {
                 layoutParams.topMargin = AndroidUtilities.statusBarHeight;
@@ -12425,7 +12438,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
 
     @Override
     public boolean isSwipeBackEnabled(MotionEvent event) {
-        return !((initialDialogsType == DIALOGS_TYPE_FORWARD && NekoConfig.showTabsOnForward.Bool()) && viewPages[0].selectedType != filterTabsView.getFirstTabId());
+        return !(initialDialogsType == DIALOGS_TYPE_FORWARD && viewPages[0].selectedType != filterTabsView.getFirstTabId()) || forceHideTabs;
     }
 
     public void setShowSearch(String query, int i) {
