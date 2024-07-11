@@ -59,7 +59,7 @@ fun MessageObject.translateFinished(locale: Locale): Int {
 
             val answer = db.query(it.text.text) ?: return 0
 
-            it.translatedText = it.text.text + " | " + answer
+            it.translatedText = answer + " | " + it.text.text
 
         }
 
@@ -228,7 +228,8 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
 
                         }
 
-                        it.translatedText = answer + " | " + it.text
+                        val result = if (it is TLRPC.PollAnswer) it.text.text else it.text
+                        it.translatedText = "$answer | $result"
 
                     }
 
