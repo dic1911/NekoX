@@ -7,8 +7,6 @@ import android.content.SharedPreferences;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.LocaleController;
-import org.telegram.messenger.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -215,6 +213,8 @@ public class NekoConfig {
     public static ConfigItem alwaysShowDownloads = addConfig("AlwaysShowDownloads", ConfigItem.configTypeBool, false);
     public static ConfigItem openAvatarInsteadOfExpand = addConfig("OpenAvatarInsteadOfExpand", ConfigItem.configTypeBool, false);
     public static ConfigItem customTitleText = addConfig("CustomTitleText", configTypeString, "Nekogram X");
+    public static ConfigItem forceAllowChooseBrowser = addConfig("ForceAllowChooseBrowser", configTypeBool, false);
+    public static ConfigItem patchAndCleanupLinks = addConfig("PatchAndCleanupLinks", configTypeBool, false);
 
     static {
         loadConfig(false);

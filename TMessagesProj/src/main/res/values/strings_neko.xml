@@ -177,4 +177,9 @@
     <string name="OpenAvatarInsteadOfExpand">Open avatar instead of expand inplace when tapped</string>
     <string name="OpenAvatarInsteadOfExpandDesc">Or long click on avatar before expand to open</string>
     <string name="CustomTitleText">Custom title text</string>
+    <string name="Links">Links</string>
+    <string name="ForceAllowChooseBrowser">Force allow choose browser when opening links</string>
+    <string name="ForceAllowChooseBrowserDesc">Only work for URLs without "open by default" apps set</string>
+    <string name="PatchAndCleanupLinks">Clean up URLs in chat</string>
+    <string name="PatchAndCleanupLinksDesc">Such as replace all Twitter-related domains to twitter.com and some of the tracking queries</string>
 </resources>

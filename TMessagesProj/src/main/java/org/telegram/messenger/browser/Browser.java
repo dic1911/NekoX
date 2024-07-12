@@ -55,6 +55,9 @@ import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 
+import tw.nekomimi.nekogram.NekoConfig;
+import tw.nekomimi.nekogram.utils.UrlUtil;
+
 public class Browser {
 
     private static WeakReference<CustomTabsSession> customTabsCurrentSession;
@@ -260,7 +263,10 @@ public class Browser {
             tryTelegraph = false;
             _allowCustom = false;
         }
-        final boolean allowCustom = _allowCustom;
+        final boolean allowCustom = _allowCustom || NekoConfig.forceAllowChooseBrowser.Bool();
+        if (!internalUri && NekoConfig.patchAndCleanupLinks.Bool()) {
+            uri = UrlUtil.cleanUrl(uri);
+        }
         if (tryTelegraph) {
             try {
                 String host = AndroidUtilities.getHostAuthority(uri);
