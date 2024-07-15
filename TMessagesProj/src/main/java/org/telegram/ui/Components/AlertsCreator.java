@@ -141,6 +141,7 @@ import kotlin.Unit;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.utils.AlertUtil;
+import tw.nekomimi.nekogram.utils.UrlUtil;
 import tw.nekomimi.nekogram.utils.VibrateUtil;
 
 public class AlertsCreator {
@@ -1204,20 +1205,29 @@ public class AlertsCreator {
             return;
         }
         long inlineReturn = (fragment instanceof ChatActivity) ? ((ChatActivity) fragment).getInlineReturn() : 0;
+        Uri uri = null;
+        try {
+            uri = Uri.parse(url);
+            if (NekoConfig.patchAndCleanupLinks.Bool()) {
+                uri = UrlUtil.cleanUrl(uri);
+            }
+        } catch (Exception e) {
+            FileLog.e(e, false);
+        }
+
         if (Browser.isInternalUrl(url, null) || !ask) {
-            Browser.openUrl(fragment.getParentActivity(), Uri.parse(url), inlineReturn == 0, tryTelegraph, forceNotInternalForApps && checkInternalBotApp(url), progress, null);
+            Browser.openUrl(fragment.getParentActivity(), uri, inlineReturn == 0, tryTelegraph, forceNotInternalForApps && checkInternalBotApp(url), progress, null);
         } else {
             String urlFinal;
             if (punycode) {
                 try {
-                    Uri uri = Uri.parse(url);
                     urlFinal = Browser.replaceHostname(uri, IDN.toUnicode(uri.getHost(), IDN.ALLOW_UNASSIGNED));
                 } catch (Exception e) {
                     FileLog.e(e, false);
-                    urlFinal = url;
+                    urlFinal = uri != null ? uri.toString() : url;
                 }
             } else {
-                urlFinal = url;
+                urlFinal = uri != null ? uri.toString() : url;
             }
             Runnable open = () -> Browser.openUrl(fragment.getParentActivity(), Uri.parse(url), inlineReturn == 0, tryTelegraph, progress);
             AlertDialog.Builder builder = new AlertDialog.Builder(fragment.getParentActivity(), resourcesProvider);

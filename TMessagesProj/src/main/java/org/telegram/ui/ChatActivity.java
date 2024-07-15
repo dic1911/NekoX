@@ -306,6 +306,7 @@ import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.PGPUtil;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
 import tw.nekomimi.nekogram.utils.TelegramUtil;
+import tw.nekomimi.nekogram.utils.UrlUtil;
 
 @SuppressWarnings("unchecked")
 public class ChatActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, LocationActivity.LocationActivityDelegate, ChatAttachAlertDocumentLayout.DocumentSelectActivityDelegate, ChatActivityInterface, FloatingDebugProvider, InstantCameraView.Delegate {
@@ -33475,6 +33476,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (getParentActivity() == null) {
             return;
         }
+
+        if (NekoConfig.patchAndCleanupLinks.Bool()) {
+            try {
+                url = UrlUtil.cleanUrl(url);
+            } catch (Exception e) {
+                FileLog.e(e, false);
+            }
+        }
+
+        final String finalUrl = url;
         AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity(), themeDelegate);
         builder.setTitle(LocaleController.getString("OpenUrlTitle", R.string.OpenUrlTitle));
         String format = LocaleController.getString("OpenUrlAlert2", R.string.OpenUrlAlert2);
@@ -33527,7 +33538,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         builder.setView(linearLayout);
         builder.setPositiveButton(LocaleController.getString("Open", R.string.Open), (dialogInterface, i) -> {
             if (!cells[0].isChecked()) {
-                Browser.openUrl(getParentActivity(), url, false);
+                Browser.openUrl(getParentActivity(), finalUrl, false);
             } else {
                 final AlertDialog[] progressDialog = new AlertDialog[]{new AlertDialog(getParentActivity(), AlertDialog.ALERT_TYPE_SPINNER, themeDelegate)};
                 TLRPC.TL_messages_acceptUrlAuth req = new TLRPC.TL_messages_acceptUrlAuth();
@@ -33555,7 +33566,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         TLRPC.TL_urlAuthResultAccepted res = (TLRPC.TL_urlAuthResultAccepted) response;
                         Browser.openUrl(getParentActivity(), res.url, false);
                     } else if (response instanceof TLRPC.TL_urlAuthResultDefault) {
-                        Browser.openUrl(getParentActivity(), url, false);
+                        Browser.openUrl(getParentActivity(), finalUrl, false);
                     } else if (buttonReq.url != null) {
                         AlertsCreator.showOpenUrlAlert(ChatActivity.this, buttonReq.url, false, ask, themeDelegate);
                     }
