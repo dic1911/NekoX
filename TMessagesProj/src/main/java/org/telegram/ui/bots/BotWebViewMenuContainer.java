@@ -60,6 +60,7 @@ import org.telegram.ui.ActionBar.BottomSheetTabs;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.ChatActivityEnterView;
 import org.telegram.ui.Components.ChatAvatarContainer;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -256,6 +257,8 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
                 addToHomeScreenItem.setVisibility(View.GONE);
             }
             botMenuItem.addSubItem(R.id.menu_tos_bot, R.drawable.menu_intro, LocaleController.getString(R.string.BotWebViewToS));
+
+            botMenuItem.addSubItem(R.id.menu_copy_url, R.drawable.msg_copy, LocaleController.getString(R.string.CopyLink));
         }
     }
 
@@ -674,6 +677,16 @@ public class BotWebViewMenuContainer extends FrameLayout implements Notification
                                 MediaDataController.getInstance(currentAccount).installShortcut(botId, MediaDataController.SHORTCUT_TYPE_ATTACHED_BOT);
                             } else if (id == R.id.menu_tos_bot) {
                                 Browser.openUrl(getContext(), LocaleController.getString(R.string.BotWebViewToSLink));
+                            } else if (id == R.id.menu_copy_url) {
+                                try {
+                                    if (AndroidUtilities.addToClipboard(webViewContainer.getWebView().getUrl())) {
+                                        AndroidUtilities.runOnUIThread(() -> BulletinFactory.of(parentEnterView.getParentFragment())
+                                                .createSimpleBulletin(R.raw.copy, LocaleController.getString(R.string.LinkCopied)).show(), 250);
+                                    }
+                                } catch (Exception ex) {
+                                    AndroidUtilities.runOnUIThread(() -> BulletinFactory.of(parentEnterView.getParentFragment())
+                                            .createSimpleBulletin(R.raw.error, LocaleController.getString(R.string.ErrorOccurred)).show(), 250);
+                                }
                             }
                         }
                     });
