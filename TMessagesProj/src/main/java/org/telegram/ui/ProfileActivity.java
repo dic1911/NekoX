@@ -731,7 +731,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 object.size = -1;
                 object.radius = avatarImage.getImageReceiver().getRoundRadius(true);
                 object.scale = avatarContainer.getScaleX();
-                object.canEdit = userId == getUserConfig().clientUserId;
+                object.canEdit = userId == getUserConfig().clientUserId || ChatObject.canChangeChatInfo(currentChat);
                 return object;
             }
             return null;
