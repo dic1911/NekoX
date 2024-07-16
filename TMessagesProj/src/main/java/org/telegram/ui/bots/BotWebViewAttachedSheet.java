@@ -67,6 +67,7 @@ import org.telegram.ui.ActionBar.AlertDialog;
 import org.telegram.ui.ActionBar.BackDrawable;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheetTabs;
+import org.telegram.ui.ActionBar.BottomSheetTabsOverlay;
 import org.telegram.ui.ActionBar.INavigationLayout;
 import org.telegram.ui.ActionBar.Theme;
 import org.telegram.ui.ChatActivity;
@@ -993,7 +994,12 @@ public class BotWebViewAttachedSheet implements NotificationCenter.NotificationC
                     if (parentActivity instanceof LaunchActivity) {
                         ((LaunchActivity) parentActivity).presentFragment(new ChatActivity(bundle));
                     }
-                    dismiss();
+                    dismiss(true, null);
+                    if (NekoConfig.hideWebViewTabOverlayInChat.Bool()) {
+                        BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
+                        BottomSheetTabs tabs = overlay.tabsView;
+                        if (tabs != null) tabs.setTabSheetVisibility(false);
+                    }
                 } else if (id == R.id.menu_tos_bot) {
                     Browser.openUrl(getContext(), LocaleController.getString(R.string.BotWebViewToSLink));
                 } else if (id == R.id.menu_reload_page) {
