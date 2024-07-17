@@ -37,6 +37,7 @@ object UrlUtil {
 
     @JvmStatic
     fun cleanUrl(src: Uri): Uri {
+        if (!src.scheme!!.startsWith("http")) return src
         if (isTwitter(src.host.toString()) || isTwitterPreview(src.host.toString())) {
             var host = src.host
             if (NekoConfig.patchAndCleanupLinks.Bool()) {
