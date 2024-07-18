@@ -3947,9 +3947,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         botCommandsMenuButton = new BotCommandsMenuView(getContext());
         botCommandsMenuButton.setOnClickListener(view -> {
             boolean open = !botCommandsMenuButton.isOpened();
-            botCommandsMenuButton.setOpened(open);
+            if (!NekoConfig.preventPullDownWebview.Bool()) botCommandsMenuButton.setOpened(open);
             try {
-                performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
+                if (!NekoConfig.disableVibration.Bool())
+                    performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             } catch (Exception ignore) {
             }
             if (hasBotWebView()) {
@@ -4020,7 +4021,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     private void openWebViewMenu() {
-        createBotWebViewMenuContainer();
+        boolean preventPulldown = NekoConfig.preventPullDownWebview.Bool();
+        if (!preventPulldown) createBotWebViewMenuContainer();
         Runnable onRequestWebView = () -> {
             AndroidUtilities.hideKeyboard(this);
             BotWebViewAttachedSheet.WebViewRequestProps props = BotWebViewAttachedSheet.WebViewRequestProps.of(currentAccount, dialog_id, dialog_id, botMenuWebViewTitle, botMenuWebViewUrl, BotWebViewSheet.TYPE_BOT_MENU_BUTTON, 0, false, null, false, null, null, 0, false);
@@ -4030,19 +4032,28 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
                 return;
             }
-            if (AndroidUtilities.isTablet()) {
+
+            if (!preventPulldown) {
+                if (AndroidUtilities.isTablet()) {
+                    BotWebViewSheet webViewSheet = new BotWebViewSheet(getContext(), resourcesProvider);
+                    webViewSheet.setDefaultFullsize(false);
+                    webViewSheet.setNeedsContext(true);
+                    webViewSheet.setParentActivity(parentActivity);
+                    webViewSheet.requestWebView(null, props);
+                    webViewSheet.show();
+
+                    if (botCommandsMenuButton != null) {
+                        botCommandsMenuButton.setOpened(false);
+                    }
+                } else {
+                    botWebViewMenuContainer.show(currentAccount, dialog_id, botMenuWebViewUrl);
+                }
+            } else {
+                // 030 mark: use sheet to avoid action bar glitch
                 BotWebViewSheet webViewSheet = new BotWebViewSheet(getContext(), resourcesProvider);
-                webViewSheet.setDefaultFullsize(false);
-                webViewSheet.setNeedsContext(true);
                 webViewSheet.setParentActivity(parentActivity);
                 webViewSheet.requestWebView(null, props);
                 webViewSheet.show();
-
-                if (botCommandsMenuButton != null) {
-                    botCommandsMenuButton.setOpened(false);
-                }
-            } else {
-                botWebViewMenuContainer.show(currentAccount, dialog_id, botMenuWebViewUrl);
             }
         };
 
