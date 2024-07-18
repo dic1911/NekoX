@@ -95,7 +95,7 @@
     <string name="FilterMenu">Фильтры чатов</string>
     <string name="DisableProxyWhenVpnEnabled">Отключать прокси если включен VPN</string>
     <string name="UseProxyItem">Настройки прокси в боковом меню</string>
-    <string name="HideProxyByDefault">Скрыть 🛡️, если прокси не настроен</string>
+    <string name="HideProxyByDefault">Скрыть настройки прокси в боковом меню по умолчанию</string>
     <string name="SkipOpenLinkConfirm">Открывать ссылки без подтверждения</string>
     <string name="DeleteAllInChat">Удалить все сообщения</string>
     <string name="DeleteAllInChatAlert">Внимание! Это **удалит все сообщения** в этом чате для **всех**.</string>
@@ -283,4 +283,16 @@
     <string name="ConfirmSettings">Подтверждение</string>
     <string name="InteractionSettings">Взаимодействие</string>
     <string name="nekoxPremiumGiftRemoved">Вы не можете подарить Premium в NekoX.</string>
+    <string name="DisableCustomWallpaperChannel">Отключить обои канала</string>
+    <string name="DisableCustomWallpaperUser">Отключить обои пользователя</string>
+    <string name="disableReactionsWhenSelecting">Спрятать реакции при выделении</string>
+    <string name="doubleTapAndReactions">Двойное нажатие</string>
+    <string name="doubleTapDisable">Нет действия</string>
+    <string name="doubleTapSendReaction">Отправить реакцию</string>
+    <string name="doubleTapShowReactionsMenu">Открыть меню реакций</string>
+    <string name="FasterReconnectHack">Более быстрое переподключение с помощью включения/выключения прокси</string>
+    <string name="FasterReconnectHackAbout">Работает только с хорошим соединением.</string>
+    <string name="ReactionSettings">Реакции</string>
+    <string name="ShowSelfInsteadOfSavedMessages">Чат с собой вместо \'Избранного\'</string>
+    <string name="UnsupportedProxy">Неподдерживаемый прокси</string>
 </resources>
