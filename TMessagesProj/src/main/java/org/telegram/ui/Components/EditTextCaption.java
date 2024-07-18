@@ -236,7 +236,7 @@ public class EditTextCaption extends EditTextBoldCursor {
                 @Override
                 public void onFailed(boolean unsupported, @NotNull String message) {
                     status.dismiss();
-                    AlertUtil.showTransFailedDialog(getContext(), unsupported, message, () -> {
+                    AlertUtil.showTransFailedDialog(getContext(), unsupported, message, null, () -> {
                         status = AlertUtil.showProgress(getContext());
                         status.show();
                         Translator.translate(text, this);

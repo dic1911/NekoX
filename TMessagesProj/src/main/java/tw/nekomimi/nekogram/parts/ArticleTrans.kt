@@ -139,7 +139,7 @@ fun ArticleViewer.doTransLATE() {
                                 transMenu.setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate)
 
                                 AlertUtil.showTransFailedDialog(parentActivity, it is UnsupportedOperationException, it.message
-                                        ?: it.javaClass.simpleName, Runnable {
+                                        ?: it.javaClass.simpleName, null, Runnable {
                                     doTransLATE()
                                 })
 

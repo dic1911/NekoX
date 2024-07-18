@@ -3382,7 +3382,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             @Override
             public void onFailed(boolean unsupported, @NotNull String message) {
                 status.dismiss();
-                AlertUtil.showTransFailedDialog(ctx, unsupported, message, () -> {
+                AlertUtil.showTransFailedDialog(ctx, unsupported, message, null, () -> {
                     status = AlertUtil.showProgress(ctx);
                     status.show();
                     Translator.translate(origin, this);

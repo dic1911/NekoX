@@ -5790,7 +5790,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             @Override
             public void onFailed(boolean unsupported, @NotNull String message) {
                 status.dismiss();
-                AlertUtil.showTransFailedDialog(parentActivity, unsupported, message, () -> {
+                AlertUtil.showTransFailedDialog(parentActivity, unsupported, message, null, () -> {
                     status = AlertUtil.showProgress(parentActivity);
                     status.show();
                     Translator.translate(origin, this);

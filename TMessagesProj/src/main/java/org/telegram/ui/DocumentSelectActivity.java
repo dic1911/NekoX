@@ -870,7 +870,7 @@ public class DocumentSelectActivity extends BaseFragment {
             @Override
             public void onFailed(boolean unsupported, @NotNull String message) {
                 status.dismiss();
-                AlertUtil.showTransFailedDialog(getParentActivity(), unsupported, message, () -> {
+                AlertUtil.showTransFailedDialog(getParentActivity(), unsupported, message, null, () -> {
                     status = AlertUtil.showProgress(getParentActivity());
                     status.show();
                     Translator.translate(origin, this);

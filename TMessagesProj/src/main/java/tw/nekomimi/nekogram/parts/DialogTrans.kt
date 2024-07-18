@@ -1,6 +1,7 @@
 package tw.nekomimi.nekogram.parts
 
 import android.content.Context
+import android.util.Log
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -59,13 +60,14 @@ fun startTrans(ctx: Context, text: String) {
             }
 
         }.onFailure {
+            Log.e("nx-trans", "error occurred when translating", it)
 
             dialog.uDismiss()
 
             if (!canceled.get()) {
 
                 AlertUtil.showTransFailedDialog(ctx, it is UnsupportedOperationException, it.message
-                        ?: it.javaClass.simpleName) {
+                        ?: it.javaClass.simpleName, it) {
 
                     startTrans(ctx, text)
 

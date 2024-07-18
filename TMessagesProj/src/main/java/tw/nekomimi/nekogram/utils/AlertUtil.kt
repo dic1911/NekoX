@@ -3,6 +3,7 @@ package tw.nekomimi.nekogram.utils
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.util.Log
 import android.widget.LinearLayout
 import android.widget.Toast
 import org.telegram.messenger.AndroidUtilities
@@ -216,8 +217,12 @@ object AlertUtil {
 
     @JvmStatic
     @JvmOverloads
-    fun showTransFailedDialog(ctx: Context, noRetry: Boolean, message: String, retryRunnable: Runnable) = UIUtil.runOnUIThread(Runnable {
-
+    fun showTransFailedDialog(ctx: Context, noRetry: Boolean, message: String, exception: Throwable?, retryRunnable: Runnable) = UIUtil.runOnUIThread(Runnable {
+        if (exception != null) {
+            Log.e("nx-trans-failed", "exception occurred..", exception)
+        } else {
+            Log.e("nx-trans-failed", "error occurred, $message")
+        }
         ctx.setTheme(R.style.Theme_TMessages)
 
         val builder = AlertDialog.Builder(ctx)
