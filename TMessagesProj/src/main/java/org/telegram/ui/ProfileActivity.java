@@ -3239,7 +3239,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
             @Override
             protected int getInitialTab() {
-                return TAB_STORIES;
+                return NekoConfig.showSharedMediaOnOpeningProfile.Bool() ? TAB_PHOTOVIDEO : TAB_STORIES;
             }
 
             @Override

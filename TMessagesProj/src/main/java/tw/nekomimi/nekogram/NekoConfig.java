@@ -215,6 +215,7 @@ public class NekoConfig {
     public static ConfigItem customTitleText = addConfig("CustomTitleText", configTypeString, "Nekogram X");
     public static ConfigItem forceAllowChooseBrowser = addConfig("ForceAllowChooseBrowser", configTypeBool, false);
     public static ConfigItem patchAndCleanupLinks = addConfig("PatchAndCleanupLinks", configTypeBool, false);
+    public static ConfigItem showSharedMediaOnOpeningProfile = addConfig("ShowSharedMediaOnOpeningProfile", configTypeBool, false);
 
     static {
         loadConfig(false);

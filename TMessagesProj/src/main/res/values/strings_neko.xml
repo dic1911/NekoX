@@ -182,4 +182,5 @@
     <string name="ForceAllowChooseBrowserDesc">Only work for URLs without "open by default" apps set</string>
     <string name="PatchAndCleanupLinks">Clean up URLs in chat</string>
     <string name="PatchAndCleanupLinksDesc">Such as replace all Twitter-related domains to twitter.com and some of the tracking queries</string>
+    <string name="ShowSharedMediaOnOpeningProfile">Show shared media on opening profile instead of stories</string>
 </resources>
