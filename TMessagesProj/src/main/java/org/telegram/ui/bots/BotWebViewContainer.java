@@ -58,6 +58,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.json.JSONTokener;
+import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BotWebViewVibrationEffect;
@@ -323,6 +324,11 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             webView.clearFocus();
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             imm.hideSoftInputFromWindow(getWindowToken(), InputMethodManager.HIDE_NOT_ALWAYS);
+        }
+
+        if (NekoConfig.confirmOpenLinkInWebView.Bool()) {
+            AlertsCreator.showOpenUrlAlert(parentActivity, uri.toString(), resourcesProvider);
+            return;
         }
 
         Browser.openUrl(getContext(), uri, true, tryInstantView, false, null, browser);

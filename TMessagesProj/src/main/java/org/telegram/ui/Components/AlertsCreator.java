@@ -1264,6 +1264,56 @@ public class AlertsCreator {
         }
     }
 
+    public static void showOpenUrlAlert(Activity activity, String url, Theme.ResourcesProvider resourcesProvider) {
+        if (activity == null) {
+            return;
+        }
+        Uri uri = null;
+        try {
+            uri = Uri.parse(url);
+            if (NekoConfig.patchAndCleanupLinks.Bool()) {
+                uri = UrlUtil.cleanUrl(uri);
+            }
+        } catch (Exception e) {
+            FileLog.e(e, false);
+        }
+
+        String urlFinal = uri != null ? uri.toString() : url;
+        Runnable open = () -> Browser.openUrl(activity, Uri.parse(url), true, false, null);
+        AlertDialog.Builder builder = new AlertDialog.Builder(activity, resourcesProvider);
+        builder.setTitle(LocaleController.getString("OpenUrlTitle", R.string.OpenUrlTitle));
+        AlertDialog[] dialog = new AlertDialog[1];
+        SpannableString link = new SpannableString(urlFinal);
+        link.setSpan(new URLSpan(urlFinal) {
+            @Override
+            public void onClick(View widget) {
+                open.run();
+                if (dialog[0] != null) {
+                    dialog[0].dismiss();
+                }
+            }
+        }, 0, link.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
+        SpannableStringBuilder stringBuilder = new SpannableStringBuilder(LocaleController.getString("OpenUrlAlert2", R.string.OpenUrlAlert2));
+        int index = stringBuilder.toString().indexOf("%1$s");
+        if (index >= 0) {
+            stringBuilder.replace(index, index + 4, link);
+        }
+        builder.setMessage(stringBuilder);
+        builder.setMessageTextViewClickable(false);
+        builder.setPositiveButton(LocaleController.getString("Open", R.string.Open), (dialogInterface, i) -> open.run());
+        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.setNeutralButton(LocaleController.getString("Copy", R.string.Copy), (dialogInterface, i) -> {
+            try {
+                AndroidUtilities.addToClipboard(url);
+                Toast.makeText(activity, LocaleController.getString("LinkCopied", R.string.LinkCopied), Toast.LENGTH_SHORT).show();
+            } catch (Exception e) {
+                FileLog.e(e);
+            }
+        });
+        dialog[0] = builder.create();
+        dialog[0].show();
+    }
+
     private static boolean checkInternalBotApp(String url) {
         String path = Uri.parse(url).getPath();
         return path.matches("^/\\w*/[^\\d]*(?:\\?startapp=.*?|)$");

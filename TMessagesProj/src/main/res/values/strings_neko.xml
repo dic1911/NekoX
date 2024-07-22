@@ -183,4 +183,5 @@
     <string name="PatchAndCleanupLinks">Clean up URLs in chat</string>
     <string name="PatchAndCleanupLinksDesc">Such as replace all Twitter-related domains to twitter.com and some of the tracking queries</string>
     <string name="ShowSharedMediaOnOpeningProfile">Show shared media on opening profile instead of stories</string>
+    <string name="ConfirmOpenLinkInWebView">Confirm before opening external links from WebView</string>
 </resources>

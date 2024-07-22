@@ -213,6 +213,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell hideWebViewTabOverlayInChatRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.hideWebViewTabOverlayInChat));
     private final AbstractConfigCell preventPullDownWebviewRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.preventPullDownWebview));
     private final AbstractConfigCell useBotWebviewForGamesRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.useBotWebviewForGames));
+    private final AbstractConfigCell confirmOpenLinkInWebViewRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.confirmOpenLinkInWebView));
     // private final AbstractConfigCell showBotWebViewSettingsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.showBotWebViewSettings)); // this currently has no use
     private final AbstractConfigCell divider8 = cellGroup.appendCell(new ConfigCellDivider());
 
