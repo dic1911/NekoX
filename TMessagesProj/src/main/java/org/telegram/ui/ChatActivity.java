@@ -18237,10 +18237,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 ActionBarMenuItem tagItem = actionBar.createActionMode().getItem(tag_message);
                 ActionBarMenuItem shareItem = actionBar.createActionMode().getItem(share);
 
-                ActionBarMenuSubItem saveToDownloadsItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(save_to);
-                ActionBarMenuSubItem saveMessageItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_savemessage);
-                ActionBarMenuSubItem forwardNoQuoteItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_forward_noquote);
-                ActionBarMenuSubItem starItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(star);
+                ActionBarMenuSubItem forwardNoQuoteItem = null, saveMessageItem = null, saveToDownloadsItem = null, starItem = null;
+                if (actionModeOtherItem != null) {
+                    saveToDownloadsItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(save_to);
+                    saveMessageItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_savemessage);
+                    forwardNoQuoteItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(nkbtn_forward_noquote);
+                    starItem = (ActionBarMenuSubItem) actionModeOtherItem.getSubItem(star);
+                }
 
                 boolean noforwards = (getMessagesController().isChatNoForwardsWithOverride(currentChat) && hasSelectedNoforwardsMessage());
                 boolean canForward = chatMode != MODE_SCHEDULED && cantForwardMessagesCount == 0 && !noforwards;
