@@ -18528,7 +18528,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
                 if (translateItem != null)
                     translateItem.setVisibility(selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() > 0);
-                actionModeOtherItem.setSubItemVisibility(nkbtn_sharemessage, selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() > 0);
 
                 boolean allowPin = false;
                 if (currentChat != null) {
@@ -18546,7 +18545,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         }
                     }
                 }
-                actionModeOtherItem.setSubItemVisibility(nkbtn_unpin, allowPin);
+                if (actionModeOtherItem != null) {
+                    actionModeOtherItem.setSubItemVisibility(nkbtn_sharemessage, selectedMessagesCanCopyIds[0].size() + selectedMessagesCanCopyIds[1].size() > 0);
+                    actionModeOtherItem.setSubItemVisibility(nkbtn_unpin, allowPin);
+                }
 
                 if (shareItem != null) {
                     boolean show = selectedCount == 1 && !noforwards;
