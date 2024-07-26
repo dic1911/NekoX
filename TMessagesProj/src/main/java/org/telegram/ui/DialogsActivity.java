@@ -3355,6 +3355,11 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
             }
             if (folderId != 0) {
                 actionBar.setTitle(LocaleController.getString("ArchivedChats", R.string.ArchivedChats));
+
+                // 030: force all buttons to be available when needed
+                if (getActionBar().getActionMode() == null) {
+                    createActionMode(null);
+                }
             } else {
                 statusDrawable = new AnimatedEmojiDrawable.SwapAnimatedEmojiDrawable(null, dp(26));
                 statusDrawable.center = true;
@@ -9692,8 +9697,10 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 removeFromFolderItem.setVisibility(View.VISIBLE);
             }
         }
+
         if (addToFolderItem != null) {
-            if (filterTabsView != null && filterTabsView.getVisibility() == View.VISIBLE && filterTabsView.currentTabIsDefault() && !FiltersListBottomSheet.getCanAddDialogFilters(this, selectedDialogs).isEmpty()) {
+            // if (filterTabsView != null && !FiltersListBottomSheet.getCanAddDialogFilters(this, selectedDialogs).isEmpty()) {
+            if (getMessagesController().getDialogFilters().size() > 1) {
                 addToFolderItem.setVisibility(View.VISIBLE);
             } else {
                 addToFolderItem.setVisibility(View.GONE);
