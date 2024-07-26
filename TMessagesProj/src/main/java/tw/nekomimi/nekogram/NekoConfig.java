@@ -217,6 +217,8 @@ public class NekoConfig {
     public static ConfigItem forceAllowChooseBrowser = addConfig("ForceAllowChooseBrowser", configTypeBool, false);
     public static ConfigItem patchAndCleanupLinks = addConfig("PatchAndCleanupLinks", configTypeBool, false);
     public static ConfigItem showSharedMediaOnOpeningProfile = addConfig("ShowSharedMediaOnOpeningProfile", configTypeBool, false);
+    public static ConfigItem disableAddBirthdayReminder = addConfig("DisableAddBirthdayReminder", configTypeBool, false);
+    public static ConfigItem disableBirthdayReminder = addConfig("DisableBirthdayReminder", configTypeBool, false);
 
     static {
         loadConfig(false);
