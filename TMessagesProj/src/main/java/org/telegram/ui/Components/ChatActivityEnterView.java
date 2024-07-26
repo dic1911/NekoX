@@ -3236,6 +3236,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         checkChannelRights();
 
         createMessageEditText();
+        if (NekoConfig.alwaysShowBotCommandButton.Bool()) {
+            createBotButton();
+            botButton.setVisibility(VISIBLE);
+        }
     }
 
     private void createCaptionLimitView() {
@@ -3324,17 +3328,18 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
     private void createBotButton() {
         if (botButton != null) {
+            if (NekoConfig.alwaysHideBotCommandButton.Bool()) botButton.setVisibility(View.GONE);
             return;
         }
         botButton = new ImageView(getContext());
         botButton.setImageDrawable(botButtonDrawable = new ReplaceableIconDrawable(getContext()));
         botButtonDrawable.setColorFilter(new PorterDuffColorFilter(getThemedColor(Theme.key_chat_messagePanelIcons), PorterDuff.Mode.SRC_IN));
-        botButtonDrawable.setIcon(R.drawable.input_bot2, false);
+        botButtonDrawable.setIcon(NekoConfig.alwaysShowBotCommandButton.Bool() ? R.drawable.input_bot1 : R.drawable.input_bot2, false);
         botButton.setScaleType(ImageView.ScaleType.CENTER);
         if (Build.VERSION.SDK_INT >= 21) {
             botButton.setBackgroundDrawable(Theme.createSelectorDrawable(getThemedColor(Theme.key_listSelector)));
         }
-        botButton.setVisibility(GONE);
+        if (!NekoConfig.alwaysShowBotCommandButton.Bool()) botButton.setVisibility(GONE);
         AndroidUtilities.updateViewVisibilityAnimated(botButton, false, 0.1f, false);
         attachLayout.addView(botButton, 0, LayoutHelper.createLinear(48, 48));
         botButton.setOnClickListener(v -> {
@@ -3355,7 +3360,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 } else if (isPopupShowing() && currentPopupContentType == POPUP_CONTENT_BOT_KEYBOARD) {
                     showPopup(0, POPUP_CONTENT_BOT_KEYBOARD);
                 }
-            } else if (hasBotCommands || hasQuickReplies) {
+            } else if (NekoConfig.alwaysShowBotCommandButton.Bool() || hasBotCommands || hasQuickReplies) {
                 setFieldText("/");
                 if (messageEditText != null) {
                     messageEditText.requestFocus();
@@ -6764,7 +6769,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         isInInput = use;
 
         if (duration == 0 && botButton != null) {
-            if (use) {
+            if (use && !NekoConfig.alwaysShowBotCommandButton.Bool()) {
                 botButton.setVisibility(View.GONE);
             } else if (checkBotButton()) {
                 updateBotButton(true);
@@ -7953,7 +7958,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         @Override
                         public void onAnimationEnd(Animator animation) {
                             if (animation.equals(runningAnimation)) {
-                                if (NekoConfig.useChatAttachMediaMenu.Bool() && botButton != null) {
+                                if ((!NekoConfig.alwaysShowBotCommandButton.Bool() && NekoConfig.useChatAttachMediaMenu.Bool()) && botButton != null) {
                                     botButton.setVisibility(View.GONE);
                                     updateFieldRight(1);
                                 }
@@ -10455,16 +10460,16 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     botButton.setContentDescription(getString("AccDescrBotKeyboard", R.string.AccDescrBotKeyboard));
                 }
             } else {
-                if (!canShowBotsMenu) {
+                if (!canShowBotsMenu && !NekoConfig.alwaysHideBotCommandButton.Bool()) {
                     createBotButton();
                     botButtonDrawable.setIcon(R.drawable.input_bot1, true);
                     botButton.setContentDescription(LocaleController.getString("AccDescrBotCommands", R.string.AccDescrBotCommands));
                     botButton.setVisibility(VISIBLE);
-                } else if (botButton != null) {
+                } else if (botButton != null && !NekoConfig.alwaysShowBotCommandButton.Bool()) {
                     botButton.setVisibility(GONE);
                 }
             }
-        } else if (botButton != null) {
+        } else if (botButton != null && !NekoConfig.alwaysShowBotCommandButton.Bool()) {
             botButton.setVisibility(GONE);
         }
         if (canShowBotsMenu) {
@@ -10502,7 +10507,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
     private boolean checkBotButton() {
         if (botButton == null) {
-            return false;
+            if (!NekoConfig.alwaysShowBotCommandButton.Bool()) return false;
+            createBotButton();
         }
         boolean canShowBotsMenu = hasBotCommands && dialog_id > 0;
 //        if (canShowBotsMenu && ) {
@@ -10530,7 +10536,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             }
         }
-        return false;
+        return NekoConfig.alwaysShowBotCommandButton.Bool();
 
     }
 
@@ -12291,6 +12297,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     botMenuButtonType = BotMenuButtonType.NO_BUTTON;
                 }
 
+                if (NekoConfig.alwaysShowBotCommandButton.Bool()) createBotButton();
                 updateBotButton(false);
             }
         } else if (id == NotificationCenter.didUpdatePremiumGiftFieldIcon) {

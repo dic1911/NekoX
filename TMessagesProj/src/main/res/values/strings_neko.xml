@@ -186,4 +186,6 @@
     <string name="ConfirmOpenLinkInWebView">Confirm before opening external links from WebView</string>
     <string name="DisableAddBirthdayReminder">Disable the reminder to set birthday</string>
     <string name="DisableBirthdayReminder">Disable the reminder of your contacts\' birthday</string>
+    <string name="AlwaysShowBotCommandButton">Always show bot command button</string>
+    <string name="AlwaysHideBotCommandButton">Always hide bot command button</string>
 </resources>

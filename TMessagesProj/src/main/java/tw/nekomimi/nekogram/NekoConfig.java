@@ -219,6 +219,8 @@ public class NekoConfig {
     public static ConfigItem showSharedMediaOnOpeningProfile = addConfig("ShowSharedMediaOnOpeningProfile", configTypeBool, false);
     public static ConfigItem disableAddBirthdayReminder = addConfig("DisableAddBirthdayReminder", configTypeBool, false);
     public static ConfigItem disableBirthdayReminder = addConfig("DisableBirthdayReminder", configTypeBool, false);
+    public static ConfigItem alwaysHideBotCommandButton = addConfig("AlwaysHideBotCommandButton", configTypeBool, false);
+    public static ConfigItem alwaysShowBotCommandButton = addConfig("AlwaysShowBotCommandButton", configTypeBool, false);
 
     static {
         loadConfig(false);

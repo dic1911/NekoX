@@ -86,6 +86,8 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     private final AbstractConfigCell disableCustomWallpaperUserRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableCustomWallpaperUser));
     private final AbstractConfigCell disableCustomWallpaperChannelRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableCustomWallpaperChannel));
     private final AbstractConfigCell appendOriginalTimestampRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.appendOriginalTimestamp));
+    private final AbstractConfigCell alwaysShowBotCommandButtonRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.alwaysShowBotCommandButton));
+    private final AbstractConfigCell alwaysHideBotCommandButtonRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.alwaysHideBotCommandButton));
     private final AbstractConfigCell dividerChat = cellGroup.appendCell(new ConfigCellDivider());
 
     // Interactions
