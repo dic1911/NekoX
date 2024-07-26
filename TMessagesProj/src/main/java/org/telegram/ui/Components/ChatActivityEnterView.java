@@ -3946,14 +3946,15 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
         botCommandsMenuButton = new BotCommandsMenuView(getContext());
         botCommandsMenuButton.setOnClickListener(view -> {
+            boolean hasBotWebView = hasBotWebView();
             boolean open = !botCommandsMenuButton.isOpened();
-            if (!NekoConfig.preventPullDownWebview.Bool()) botCommandsMenuButton.setOpened(open);
+            if (!hasBotWebView || !NekoConfig.preventPullDownWebview.Bool()) botCommandsMenuButton.setOpened(open);
             try {
                 if (!NekoConfig.disableVibration.Bool())
                     performHapticFeedback(HapticFeedbackConstants.KEYBOARD_TAP, HapticFeedbackConstants.FLAG_IGNORE_GLOBAL_SETTING);
             } catch (Exception ignore) {
             }
-            if (hasBotWebView()) {
+            if (hasBotWebView) {
                 if (open) {
                     if (emojiViewVisible || botKeyboardViewVisible) {
                         AndroidUtilities.runOnUIThread(this::openWebViewMenu, 275);
