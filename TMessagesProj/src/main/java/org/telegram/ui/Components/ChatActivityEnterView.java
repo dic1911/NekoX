@@ -3236,7 +3236,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         checkChannelRights();
 
         createMessageEditText();
-        if (NekoConfig.alwaysShowBotCommandButton.Bool()) {
+        if (attachLayout != null && NekoConfig.alwaysShowBotCommandButton.Bool()) {
             createBotButton();
             botButton.setVisibility(VISIBLE);
         }
@@ -3327,6 +3327,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
     }
 
     private void createBotButton() {
+        if (attachLayout == null) return;
         if (botButton != null) {
             if (NekoConfig.alwaysHideBotCommandButton.Bool()) botButton.setVisibility(View.GONE);
             return;
