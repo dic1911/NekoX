@@ -73,8 +73,6 @@ public class TextCheckCell extends FrameLayout {
     ImageView imageView;
     private boolean isRTL;
 
-    private static int minHeight = 100; // 030: for workaround
-
     public static final Property<TextCheckCell, Float> ANIMATION_PROGRESS = new AnimationProperties.FloatProperty<TextCheckCell>("animationProgress") {
         @Override
         public void setValue(TextCheckCell object, float value) {
@@ -164,7 +162,6 @@ public class TextCheckCell extends FrameLayout {
 
         String desc = valueTextView.getText().toString().trim();
         int viewHeight = textView.getMeasuredHeight();
-        if (viewHeight < minHeight) minHeight = viewHeight;
         if (desc.isEmpty() || viewHeight < (textView.getTextSize() * 2) || viewHeight >= AndroidUtilities.ydpi) {
             return;
         }
