@@ -239,6 +239,9 @@ public class AndroidUtilities {
     public final static String TYPEFACE_MERRIWEATHER_BOLD = "fonts/mw_bold.ttf";
     public final static String TYPEFACE_COURIER_NEW_BOLD = "fonts/courier_new_bold.ttf";
 
+    // for workaround
+    public static float xdpi, ydpi;
+
     private static Typeface mediumTypeface;
     public static Typeface bold() {
         if (mediumTypeface == null) {
@@ -2485,6 +2488,11 @@ public class AndroidUtilities {
                 roundMessageInset = dp(2);
             }
             fillStatusBarHeight(context, true);
+
+            // 030: for workaround
+            xdpi = displayMetrics.xdpi;
+            ydpi = displayMetrics.ydpi;
+
             if (BuildVars.LOGS_ENABLED) {
                 FileLog.e("density = " + density + " display size = " + displaySize.x + " " + displaySize.y + " " + displayMetrics.xdpi + "x" + displayMetrics.ydpi + ", screen layout: " + configuration.screenLayout + ", statusbar height: " + statusBarHeight + ", navbar height: " + navigationBarHeight);
             }

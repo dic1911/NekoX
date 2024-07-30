@@ -23,6 +23,7 @@ import android.graphics.Typeface;
 import android.graphics.drawable.Drawable;
 import android.graphics.drawable.ColorDrawable;
 import android.text.TextUtils;
+import android.util.Log;
 import android.util.Property;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -71,6 +72,8 @@ public class TextCheckCell extends FrameLayout {
     private Theme.ResourcesProvider resourcesProvider;
     ImageView imageView;
     private boolean isRTL;
+
+    private static int minHeight = 100; // 030: for workaround
 
     public static final Property<TextCheckCell, Float> ANIMATION_PROGRESS = new AnimationProperties.FloatProperty<TextCheckCell>("animationProgress") {
         @Override
@@ -154,16 +157,24 @@ public class TextCheckCell extends FrameLayout {
             super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(dp(valueTextView.getVisibility() == VISIBLE ? 64 : height) + (needDivider ? 3 : 0), MeasureSpec.EXACTLY));
         }
 
-        int viewHeight = textView.getMeasuredHeight();
-        if (valueTextView != null && valueTextView.getVisibility() == View.VISIBLE && viewHeight > 59) {
-            int topPadding = 35 + viewHeight - 42 - dp(16); // orig - 16 (unknown)
-            viewHeight += topPadding - 42 + valueTextView.getMeasuredHeight();
-            height = viewHeight;
+        // workaround long text height
+        if (getVisibility() != View.VISIBLE || textView.getVisibility() != View.VISIBLE
+                || valueTextView.getVisibility() != View.VISIBLE || valueTextView.getMeasuredHeight() == 0)
+            return;
 
-            removeView(valueTextView);
-            addView(valueTextView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP, LocaleController.isRTL ? 70 : padding, topPadding, LocaleController.isRTL ? padding : 70, 0));
-            super.onMeasure(MeasureSpec.makeMeasureSpec(MeasureSpec.getSize(widthMeasureSpec), MeasureSpec.EXACTLY), MeasureSpec.makeMeasureSpec(0, MeasureSpec.UNSPECIFIED));
+        String desc = valueTextView.getText().toString().trim();
+        int viewHeight = textView.getMeasuredHeight();
+        if (viewHeight < minHeight) minHeight = viewHeight;
+        if (desc.isEmpty() || viewHeight < (textView.getTextSize() * 2) || viewHeight >= AndroidUtilities.ydpi) {
+            return;
         }
+        textView.setSingleLine(true);
+        textView.setEllipsize(TextUtils.TruncateAt.END);
+        // somehow truncated text moves itself....
+        removeView(textView);
+        addView(textView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT,
+                (LocaleController.isRTL ? Gravity.RIGHT : Gravity.LEFT) | Gravity.TOP,
+                LocaleController.isRTL ? 70 : padding, -dp(0.5F), LocaleController.isRTL ? padding : 70, 0));
     }
 
     @Override
