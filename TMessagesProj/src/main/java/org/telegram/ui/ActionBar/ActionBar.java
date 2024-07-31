@@ -574,6 +574,7 @@ public class ActionBar extends FrameLayout {
     }
 
     public ImageView getBackButton() {
+        if (backButtonImageView == null) createBackButtonImage(); // prevent NPE
         return backButtonImageView;
     }
 
