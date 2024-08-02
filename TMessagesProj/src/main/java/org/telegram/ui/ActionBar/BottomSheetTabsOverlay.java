@@ -120,7 +120,7 @@ public class BottomSheetTabsOverlay extends FrameLayout {
 
     @Override
     public boolean dispatchTouchEvent(MotionEvent event) {
-        if (AndroidUtilities.isTablet() && event.getAction() == MotionEvent.ACTION_DOWN && !tabsViewBounds.contains(event.getX(), event.getY())) {
+        if (!tabsView.drawTabs || AndroidUtilities.isTablet() && event.getAction() == MotionEvent.ACTION_DOWN && !tabsViewBounds.contains(event.getX(), event.getY())) {
             return false;
         }
         boolean r = false;

@@ -59,6 +59,7 @@ public class BottomSheetTabs extends FrameLayout {
         setNavigationBarColor(Theme.getColor(Theme.key_windowBackgroundGray));
 
         setOnClickListener(v -> {
+            if (!drawTabs) return;
             final ArrayList<WebTabData> tabs = getTabs();
 
             final int count = tabs.size();
