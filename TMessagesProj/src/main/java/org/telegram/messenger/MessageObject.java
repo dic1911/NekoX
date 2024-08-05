@@ -8479,7 +8479,9 @@ public class MessageObject {
         if (SharedConfig.streamMkv && !isVideo && "video/x-matroska".equals(document.mime_type)) {
             isVideo = true;
         }
-        return isVideo && !isAnimated;
+        boolean ret = isVideo && !isAnimated; // || (NekoConfig.takeGIFasVideo.Bool() && document.mime_type.startsWith("video/"));
+        if (ret || !NekoConfig.takeGIFasVideo.Bool()) return ret;
+        return isGifDocument(document);
     }
 
     public TLRPC.Document getDocument() {
@@ -8587,6 +8589,7 @@ public class MessageObject {
         if (getMedia(message) != null && isVideoSticker(getMedia(message).document)) {
             return false;
         }
+
         if (getMedia(message) instanceof TLRPC.TL_messageMediaWebPage) {
             return isVideoDocument(getMedia(message).webpage.document);
         }

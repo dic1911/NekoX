@@ -10486,6 +10486,13 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             if (!messageObject.needDrawBluredPreview()) {
                 updatePlayingMessageProgress();
                 String str;
+
+                if (NekoConfig.takeGIFasVideo.Bool() && MessageObject.isGifDocument(documentAttach)) {
+                    str = getString("AttachGif", R.string.AttachGif);
+                    infoWidth = (int) Math.ceil(Theme.chat_infoPaint.measureText(str));
+                    infoLayout = new StaticLayout(str, Theme.chat_infoPaint, infoWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
+                }
+
                 str = String.format("%s", AndroidUtilities.formatFileSize(documentAttach.size));
                 docTitleWidth = (int) Math.ceil(Theme.chat_infoPaint.measureText(str));
                 docTitleLayout = new StaticLayout(str, Theme.chat_infoPaint, docTitleWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
