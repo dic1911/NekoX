@@ -2620,7 +2620,7 @@ public class LocationActivity extends BaseFragment implements NotificationCenter
         int date = getConnectionsManager().getCurrentTime();
         for (int a = 0; a < messages.size(); a++) {
             TLRPC.Message message = messages.get(a);
-            if (message.date + message.media.period > date) {
+            if (message.date + message.media.period > date || message.media.period == 0x7FFFFFFF) {
                 if (firstFocus) {
                     GeoPoint latLng = new GeoPoint(message.media.geo.lat, message.media.geo._long);
                     geoPoints.add(latLng);
