@@ -281,7 +281,7 @@ public class Emoji {
     }
 
     public static abstract class EmojiDrawable extends Drawable {
-        boolean fullSize = false;
+        public boolean fullSize = false;
         int placeholderColor = 0x10000000;
 
         public boolean isLoaded() {
@@ -292,7 +292,7 @@ public class Emoji {
 
     public static class SimpleEmojiDrawable extends EmojiDrawable {
         private DrawableInfo info;
-        private boolean fullSize = false;
+        public boolean fullSize = false;
         private static final Paint paint = new Paint(Paint.FILTER_BITMAP_FLAG);
         private static final Rect rect = new Rect();
         private static final TextPaint textPaint = new TextPaint(Paint.ANTI_ALIAS_FLAG);

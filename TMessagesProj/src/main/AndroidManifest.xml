@@ -137,8 +137,10 @@
         android:requestLegacyExternalStorage="true"
         android:hasFragileUserData="true"
         android:preserveLegacyExternalStorage="true"
-	android:allowAudioPlaybackCapture="true"
-	tools:node="merge" >
+        android:allowAudioPlaybackCapture="true"
+        android:usesCleartextTraffic="true"
+        tools:node="merge" >
+        <!-- usesCleartextTraffic for browser supporting opening http:// links -->
 
         <activity-alias
             android:enabled="true"
@@ -470,6 +472,12 @@
                 <data android:host="telegram.dog" android:scheme="https" />
                 <data android:host="t.me" android:scheme="http" />
                 <data android:host="t.me" android:scheme="https" />
+            </intent-filter>
+            <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:priority="1">
+                <action android:name="android.intent.action.VIEW"/>
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tonsite" />
             </intent-filter>
             <intent-filter android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher" android:priority="1" android:enabled="${is_full_version}">
                 <action android:name="android.intent.action.VIEW" />

@@ -22,6 +22,8 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.concurrent.CountDownLatch;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class PushListenerController {
     public static final int PUSH_TYPE_FIREBASE = 2,
         PUSH_TYPE_HUAWEI = 13;
@@ -1229,6 +1231,7 @@ public class PushListenerController {
                                     FileLog.d(tag + " received message notification " + loc_key + " for dialogId = " + dialogId + " mid = " + msg_id);
                                 }
                                 if (messageText != null) {
+                                    long fromId = 0;
                                     TLRPC.TL_message messageOwner = new TLRPC.TL_message();
                                     if (loc_key.startsWith("REACT_STORY") && msg_id > 0) {
                                         msg_id = -msg_id;
@@ -1258,12 +1261,15 @@ public class PushListenerController {
                                     if (chat_from_group_id != 0) {
                                         messageOwner.from_id = new TLRPC.TL_peerChat();
                                         messageOwner.from_id.chat_id = chat_id;
+                                        fromId = chat_id;
                                     } else if (chat_from_broadcast_id != 0) {
                                         messageOwner.from_id = new TLRPC.TL_peerChannel();
                                         messageOwner.from_id.channel_id = chat_from_broadcast_id;
+                                        fromId = chat_from_broadcast_id;
                                     } else if (chat_from_id != 0) {
                                         messageOwner.from_id = new TLRPC.TL_peerUser();
                                         messageOwner.from_id.user_id = chat_from_id;
+                                        fromId = chat_from_id;
                                     } else {
                                         messageOwner.from_id = messageOwner.peer_id;
                                     }
@@ -1285,7 +1291,8 @@ public class PushListenerController {
                                     ArrayList<MessageObject> arrayList = new ArrayList<>();
                                     arrayList.add(messageObject);
                                     canRelease = false;
-                                    NotificationsController.getInstance(currentAccount).processNewMessages(arrayList, true, true, countDownLatch);
+                                    if (!NekoConfig.autoArchiveAndMute.Bool() || MessagesStorage.getInstance(currentAccount).getChatSync(fromId) != null)
+                                        NotificationsController.getInstance(currentAccount).processNewMessages(arrayList, true, true, countDownLatch);
                                 }
                             }
                         }
