@@ -1482,6 +1482,7 @@ public abstract class TextSelectionHelper<Cell extends TextSelectionHelper.Selec
                     }
                     selectionStart = 0;
                     selectionEnd = text.length();
+                    onOffsetChanged();
                     hideActions();
                     invalidate();
                     AndroidUtilities.cancelRunOnUIThread(showActionsRunnable);
