@@ -188,4 +188,5 @@
     <string name="DisableBirthdayReminder">Disable the reminder of your contacts\' birthday</string>
     <string name="AlwaysShowBotCommandButton">Always show bot command button</string>
     <string name="AlwaysHideBotCommandButton">Always hide bot command button</string>
+    <string name="AlwaysDisableSafeBrowsingInWebView">Never use Google Safe Browsing</string>
 </resources>

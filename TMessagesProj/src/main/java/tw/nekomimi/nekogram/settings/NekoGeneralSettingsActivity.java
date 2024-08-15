@@ -208,6 +208,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell divider7 = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell header8 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("ChannelBots")));
+    private final AbstractConfigCell alwaysDisableSafeBrowsingInWebViewRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.alwaysDisableSafeBrowsingInWebView));
     private final AbstractConfigCell closeWebViewWithoutConfirmationRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.closeWebViewWithoutConfirmation));
     private final AbstractConfigCell openWebViewTabWithoutBotRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.openWebViewTabWithoutBot));
     private final AbstractConfigCell disableWebViewGeolocationRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableWebViewGeolocation));

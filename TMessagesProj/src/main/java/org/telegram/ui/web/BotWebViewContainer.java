@@ -343,6 +343,7 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
         }
         webView.setContainers(this, webViewScrollListener);
         webView.setCloseListener(onCloseListener);
+        boolean disableSafeBrowsing = NekoConfig.alwaysDisableSafeBrowsingInWebView.Bool();
         WebSettings settings = webView.getSettings();
         settings.setJavaScriptEnabled(true);
         settings.setGeolocationEnabled(!NekoConfig.disableWebViewGeolocation.Bool());
@@ -364,8 +365,12 @@ public abstract class BotWebViewContainer extends FrameLayout implements Notific
             settings.setUseWideViewPort(true);
             settings.setLoadWithOverviewMode(true);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                settings.setSafeBrowsingEnabled(true);
+                settings.setSafeBrowsingEnabled(!disableSafeBrowsing);
             }
+        }
+
+        if (disableSafeBrowsing && Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            settings.setSafeBrowsingEnabled(false);
         }
 
         try {
