@@ -4600,11 +4600,11 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
 
         textSelectionHelper = new TextSelectionHelper.ArticleTextSelectionHelper();
         textSelectionHelper.setParentView(pages[0].listView);
-        if (MessagesController.getInstance(currentAccount).getTranslateController().isContextTranslateEnabled()) {
-            textSelectionHelper.setOnTranslate((text, fromLang, toLang, onAlertDismiss) -> {
-                TranslateAlert2.showAlert(parentActivity, parentFragment, currentAccount, fromLang, toLang, text, null, false, null, onAlertDismiss);
-            });
-        }
+//        if (MessagesController.getInstance(currentAccount).getTranslateController().isContextTranslateEnabled()) {
+        textSelectionHelper.setOnTranslate((text, fromLang, toLang, onAlertDismiss) -> {
+            TranslateAlert2.showAlert(parentActivity, parentFragment, currentAccount, fromLang, toLang, text, null, false, null, onAlertDismiss);
+        });
+//        }
         textSelectionHelper.layoutManager = pages[0].layoutManager;
         textSelectionHelper.setCallback(new TextSelectionHelper.Callback() {
             @Override
