@@ -117,12 +117,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     // Reaction
     private final AbstractConfigCell headerReaction = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("ReactionSettings", R.string.ReactionSettings)));
     private final AbstractConfigCell reactionsRow = cellGroup.appendCell(new ConfigCellSelectBox(LocaleController.getString("DoubleTapAndReactions", R.string.doubleTapAndReactions),
-            NekoConfig.reactions,
-            new String[]{
-                    LocaleController.getString("doubleTapSendReaction", R.string.doubleTapSendReaction),
-                    LocaleController.getString("doubleTapShowReactionsMenu", R.string.doubleTapShowReactionsMenu),
-                    LocaleController.getString("doubleTapDisable", R.string.doubleTapDisable),
-            }, null));
+            NekoConfig.reactions, NekoConfig.reactionsOptions, null));
     private final AbstractConfigCell disableReactionsWhenSelectingRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableReactionsWhenSelecting));
     private final AbstractConfigCell ignoreAllReactionsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.ignoreAllReactions));
     private final AbstractConfigCell dividerReaction = cellGroup.appendCell(new ConfigCellDivider());

@@ -1780,12 +1780,26 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (!(view instanceof ChatMessageCell) || getParentActivity() == null || isSecretChat() || isInScheduleMode() || isInPreviewMode() || chatMode == MODE_QUICK_REPLIES) {
                 return;
             }
-            if (NekoConfig.reactions.Int() == 2) return;
+            int actionType = NekoConfig.reactions.Int();
+            if (actionType == 2) return;
+
+            ChatMessageCell cell = (ChatMessageCell) view;
+
+            if (actionType > 1) {
+                selectedObject = cell.getMessageObject();
+                selectedObjectGroup = getValidGroupedMessage(selectedObject);
+                switch (actionType) {
+                    case 3: nkbtn_onclick(nkbtn_translate); break;
+                    case 4: processSelectedOption(OPTION_REPLY); break;
+                    case 5: nkbtn_onclick(nkbtn_savemessage); break;
+                }
+                return;
+            }
             if (NekoConfig.reactions.Int() == 1) {
                 createMenu(view, true, false, x, y, true, false, true);
                 return;
             }
-            ChatMessageCell cell = (ChatMessageCell) view;
+
             MessageObject primaryMessage = cell.getPrimaryMessageObject();
             if (primaryMessage.isSecretMedia() || primaryMessage.isExpiredStory() || primaryMessage.type == MessageObject.TYPE_JOINED_CHANNEL) {
                 return;

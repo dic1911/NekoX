@@ -779,6 +779,7 @@ public class LocaleController {
 
         });
 
+        new Thread(NekoConfig::initStrings).start();
     }
 
     public static String getLanguageFlag(String countryCode) {

@@ -1,5 +1,7 @@
 package tw.nekomimi.nekogram;
 
+import static org.telegram.messenger.LocaleController.getString;
+
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
@@ -7,6 +9,8 @@ import android.content.SharedPreferences;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
+import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.R;
 
 import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
@@ -173,7 +177,10 @@ public class NekoConfig {
     public static ConfigItem rememberAllBackMessages = addConfig("rememberAllBackMessages", configTypeBool, false);
     public static ConfigItem hideSendAsChannel = addConfig("hideSendAsChannel", configTypeBool, false);
     public static ConfigItem showSpoilersDirectly = addConfig("showSpoilersDirectly", configTypeBool, false);
+
     public static ConfigItem reactions = addConfig("reactions", configTypeInt, 0);
+    public static String[] reactionsOptions = null;
+
     public static ConfigItem disableReactionsWhenSelecting = addConfig("disableReactionsWhenSelecting", configTypeBool, true);
     public static ConfigItem showBottomActionsWhenSelecting = addConfig("showBottomActionsWhenSelecting", configTypeBool, false);
 
@@ -506,6 +513,17 @@ public class NekoConfig {
 
     public static boolean fixDriftingForGoogleMaps() {
         return BuildVars.isGServicesCompiled && !useOSMDroidMap.Bool() && mapDriftingFixForGoogleMaps.Bool();
+    }
+
+    public static void initStrings() {
+        reactionsOptions = new String[]{
+            getString("doubleTapSendReaction", R.string.doubleTapSendReaction),
+            getString("doubleTapShowReactionsMenu", R.string.doubleTapShowReactionsMenu),
+            getString("doubleTapDisable", R.string.doubleTapDisable),
+            getString("Translate", R.string.Translate),
+            getString("Reply", R.string.Reply),
+            getString("AddToSavedMessages", R.string.AddToSavedMessages),
+        };
     }
 
 }
