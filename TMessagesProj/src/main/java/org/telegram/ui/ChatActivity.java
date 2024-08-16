@@ -1789,7 +1789,22 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 selectedObject = cell.getMessageObject();
                 selectedObjectGroup = getValidGroupedMessage(selectedObject);
                 switch (actionType) {
-                    case 3: nkbtn_onclick(nkbtn_translate); break;
+                    case 3: {
+                        boolean hasText = StrUtil.isNotBlank(selectedObject.messageOwner.message);
+                        if (selectedObjectGroup != null) {
+                            for (MessageObject object : selectedObjectGroup.messages) {
+                                if (StrUtil.isNotBlank(object.messageOwner.message)) {
+                                    hasText = true;
+                                    break;
+                                }
+                            }
+                        }
+                        if (hasText)
+                            nkbtn_onclick(nkbtn_translate);
+                        else
+                            BulletinFactory.of(ChatActivity.this).createSimpleBulletin(R.raw.error, getString(R.string.NoTextToTranslate)).show();
+                        break;
+                    }
                     case 4: processSelectedOption(OPTION_REPLY); break;
                     case 5: nkbtn_onclick(nkbtn_savemessage); break;
                 }
@@ -40898,9 +40913,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         return true;
                     };
                     TLRPC.InputPeer inputPeer = selectedObject != null && (selectedObject.isPoll() || selectedObject.isVoiceTranscriptionOpen() || selectedObject.isSponsored()) ? null : getMessagesController().getInputPeer(dialog_id);
-                    TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], "und", toLang, finalMessageText, selectedObject.messageOwner.entities, false, onLinkPress, () -> dimBehindView(false));
+                    TranslateAlert2 alert = TranslateAlert2.showAlert(getParentActivity(), this, currentAccount, inputPeer, messageIdToTranslate[0], "und", toLang, finalMessageText,
+                            selectedObject.messageOwner.entities, false, onLinkPress, null);
                     alert.setDimBehind(true);
-                    closeMenu(false);
                 } else {
                     MessageTransKt.translateMessages(this);
                 }
