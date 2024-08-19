@@ -6301,7 +6301,7 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
                     BaseFragment fragment = layersActionBarLayout.getFragmentStack().get(layersActionBarLayout.getFragmentStack().size() - 1);
                     fragment.onActivityResultFragment(requestCode, resultCode, data);
                 }
-            } else if (layersActionBarLayout.getFragmentStack().size() != 0) {
+            } else if (layersActionBarLayout != null && layersActionBarLayout.getFragmentStack().size() != 0) {
                 BaseFragment fragment = layersActionBarLayout.getFragmentStack().get(layersActionBarLayout.getFragmentStack().size() - 1);
                 fragment.onActivityResultFragment(requestCode, resultCode, data);
             }
