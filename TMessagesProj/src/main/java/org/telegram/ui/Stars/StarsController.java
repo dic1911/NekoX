@@ -19,13 +19,10 @@ import androidx.annotation.Nullable;
 // import com.android.billingclient.api.QueryProductDetailsParams;
 
 import org.json.JSONObject;
-import org.telegram.messenger.AccountInstance;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
-import org.telegram.messenger.BillingController;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.DialogObject;
-import org.telegram.messenger.FileRefController;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessageObject;
 import org.telegram.messenger.MessagesController;
@@ -48,9 +45,9 @@ import org.telegram.ui.LaunchActivity;
 import org.telegram.ui.bots.BotWebViewSheet;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
+
+import tw.nekomimi.nekogram.NekoConfig;
 
 public class StarsController {
 
@@ -977,6 +974,10 @@ public class StarsController {
 
             final long totalStars = amount;
             if (starsController.balanceAvailable() && starsController.getBalance() < totalStars) {
+                if (NekoConfig.removePremiumAnnoyance.Bool()) {
+                    BulletinFactory.of(chatActivity).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.NoStarsForReaction)).show(true);
+                    return;
+                }
                 cancelled = true;
 
                 messageObject.addPaidReactions((int) -amount, wasChosen, isAnonymous());
@@ -1018,6 +1019,10 @@ public class StarsController {
                     NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.didUpdateReactions, messageObject.getDialogId(), messageObject.getId(), messageObject.messageOwner.reactions);
 
                     if ("BALANCE_TOO_LOW".equals(error.text)) {
+                        if (NekoConfig.removePremiumAnnoyance.Bool()) {
+                            BulletinFactory.of(chatActivity).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.NoStarsForReaction)).show(true);
+                            return;
+                        }
                         String name;
                         if (message.did >= 0) {
                             TLRPC.User user = chatActivity.getMessagesController().getUser(message.did);
@@ -1069,6 +1074,12 @@ public class StarsController {
         final Context context = getContext(chatActivity);
         if (context == null) return null;
         if (checkBalance && s.balanceAvailable() && s.getBalance() <= 0) {
+            if (NekoConfig.removePremiumAnnoyance.Bool()) {
+                currentPendingReactions = new PendingPaidReactions(key, messageObject, chatActivity, ConnectionsManager.getInstance(currentAccount).getCurrentTime(), affect);;
+                currentPendingReactions.add(amount, affect);
+                currentPendingReactions.anonymous = true;
+                return currentPendingReactions;
+            }
             final long dialogId = chatActivity.getDialogId();
             String name;
             if (dialogId >= 0) {

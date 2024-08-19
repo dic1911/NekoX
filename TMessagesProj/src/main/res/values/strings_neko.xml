@@ -190,4 +190,7 @@
     <string name="AlwaysHideBotCommandButton">Always hide bot command button</string>
     <string name="AlwaysDisableSafeBrowsingInWebView">Never use Google Safe Browsing</string>
     <string name="NoTextToTranslate">No text to translate for this message :(</string>
+    <string name="RemovePremiumAnnoyance">Remove some more premium promoting annoyance</string>
+    <string name="RemovePremiumAnnoyanceDesc">And blocks premium preview from being shown</string>
+    <string name="NoStarsForReaction">No (enough) stars in your account, but you could still enjoy the visual effect :)</string>
 </resources>

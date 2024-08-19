@@ -575,6 +575,7 @@ public class MediaDataController extends BaseController {
 
     public void loadPremiumPromo(boolean cache) {
         isLoadingPremiumPromo = true;
+        if (NekoConfig.removePremiumAnnoyance.Bool()) return;
         if (cache) {
             getMessagesStorage().getStorageQueue().postRunnable(() -> {
                 SQLiteCursor c = null;
@@ -614,6 +615,7 @@ public class MediaDataController extends BaseController {
     }
 
     public void processLoadedPremiumPromo(TLRPC.TL_help_premiumPromo premiumPromo, int date, boolean cache) {
+        if (NekoConfig.removePremiumAnnoyance.Bool()) return;
         this.premiumPromo = premiumPromo;
         premiumPromoUpdateDate = date;
         getMessagesController().putUsers(premiumPromo.users, cache);

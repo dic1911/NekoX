@@ -2,6 +2,7 @@ package org.telegram.ui.Stars;
 
 import static org.telegram.messenger.AndroidUtilities.dp;
 import static org.telegram.messenger.AndroidUtilities.scaleRect;
+import static org.telegram.messenger.LocaleController.getString;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -26,6 +27,7 @@ import org.telegram.ui.Cells.ChatMessageCell;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.AnimatedFloat;
 import org.telegram.ui.Components.AnimatedTextView;
+import org.telegram.ui.Components.BulletinFactory;
 import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.RLottieDrawable;
 import org.telegram.ui.Components.Reactions.ReactionsLayoutInBubble;
@@ -33,6 +35,8 @@ import org.telegram.ui.GradientClip;
 import org.telegram.ui.LaunchActivity;
 
 import java.util.ArrayList;
+
+import tw.nekomimi.nekogram.NekoConfig;
 
 public class StarReactionsOverlay extends View {
 
@@ -77,6 +81,10 @@ public class StarReactionsOverlay extends View {
                 final StarsController starsController = StarsController.getInstance(chatActivity.getCurrentAccount());
                 final long totalStars = starsController.getPendingPaidReactions(msg);
                 if (starsController.balanceAvailable() && starsController.getBalance() < totalStars) {
+                    if (NekoConfig.removePremiumAnnoyance.Bool()) {
+                        BulletinFactory.of(chatActivity).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.NoStarsForReaction)).show(true);
+                        return;
+                    }
                     StarsController.getInstance(chatActivity.getCurrentAccount()).undoPaidReaction();
                     final long dialogId = chatActivity.getDialogId();
                     String name;

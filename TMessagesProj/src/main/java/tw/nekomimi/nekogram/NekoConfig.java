@@ -229,6 +229,7 @@ public class NekoConfig {
     public static ConfigItem alwaysHideBotCommandButton = addConfig("AlwaysHideBotCommandButton", configTypeBool, false);
     public static ConfigItem alwaysShowBotCommandButton = addConfig("AlwaysShowBotCommandButton", configTypeBool, false);
     public static ConfigItem alwaysDisableSafeBrowsingInWebView = addConfig("AlwaysDisableSafeBrowsingInWebView", configTypeBool, false);
+    public static ConfigItem removePremiumAnnoyance = addConfig("RemovePremiumAnnoyance", configTypeBool, false);
 
     static {
         loadConfig(false);
