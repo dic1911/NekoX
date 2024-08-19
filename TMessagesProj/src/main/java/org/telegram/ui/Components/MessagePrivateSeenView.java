@@ -65,7 +65,17 @@ public class MessagePrivateSeenView extends FrameLayout {
 
     private final int messageDiff;
 
+    // 030 custom
+    public static final int CUSTOM_TYPE_EDITED = 1;
+    public static final int CUSTOM_TYPE_FORWARDED = 2;
+    public int customType = 0;
+    private MessageObject message;
+
     public MessagePrivateSeenView(Context context, @NonNull MessageObject messageObject, Runnable dismiss, Theme.ResourcesProvider resourcesProvider) {
+        this(context, messageObject, dismiss, resourcesProvider, 0);
+    }
+
+    public MessagePrivateSeenView(Context context, @NonNull MessageObject messageObject, Runnable dismiss, Theme.ResourcesProvider resourcesProvider, int type) {
         super(context);
 
         currentAccount = messageObject.currentAccount;
@@ -75,10 +85,14 @@ public class MessagePrivateSeenView extends FrameLayout {
 
         dialogId = messageObject.getDialogId();
         messageId = messageObject.getId();
+        message = messageObject;
+        customType = type;
 
         ImageView iconView = new ImageView(context);
         addView(iconView, LayoutHelper.createFrame(24, 24, Gravity.LEFT | Gravity.CENTER_VERTICAL, 11, 0, 0, 0));
-        Drawable drawable = ContextCompat.getDrawable(context, messageObject.isVoice() ? R.drawable.msg_played : R.drawable.msg_seen).mutate();
+        Drawable drawable = null;
+        if (customType == 0) drawable = ContextCompat.getDrawable(context, messageObject.isVoice() ? R.drawable.msg_played : R.drawable.msg_seen).mutate();
+        else drawable = ContextCompat.getDrawable(context, customType == CUSTOM_TYPE_EDITED ? R.drawable.msg_edit : R.drawable.msg_forward).mutate();
         drawable.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_actionBarDefaultSubmenuItemIcon, resourcesProvider), PorterDuff.Mode.MULTIPLY));
         iconView.setImageDrawable(drawable);
 
@@ -115,6 +129,17 @@ public class MessagePrivateSeenView extends FrameLayout {
         valueLayout.setAlpha(0f);
         loadingView.setAlpha(1f);
         premiumTextView.setVisibility(View.VISIBLE);
+
+        if (customType != 0) {
+            premiumTextView.setVisibility(View.GONE);
+            valueLayout.animate().alpha(1f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(320).start();
+            loadingView.animate().alpha(0f).setInterpolator(CubicBezierInterpolator.EASE_OUT_QUINT).setDuration(320).start();
+            if (customType == CUSTOM_TYPE_EDITED)
+                valueTextView.setText(LocaleController.formatSeenDate(message.messageOwner.edit_date));
+            else
+                valueTextView.setText(LocaleController.formatSeenDate(message.messageOwner.fwd_from.date));
+            return;
+        }
 
         TLRPC.TL_messages_getOutboxReadDate req = new TLRPC.TL_messages_getOutboxReadDate();
         req.peer = MessagesController.getInstance(currentAccount).getInputPeer(dialogId);

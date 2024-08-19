@@ -29620,6 +29620,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             boolean showMessageSeen = !isReactionsViewAvailable && !isInScheduleMode() && currentChat != null && message.isOutOwner() && message.isSent() && !message.isEditing() && !message.isSending() && !message.isSendError() && !message.isContentUnread() && !message.isUnread() && (ConnectionsManager.getInstance(currentAccount).getCurrentTime() - message.messageOwner.date < getMessagesController().chatReadMarkExpirePeriod) && (ChatObject.isMegagroup(currentChat) || !ChatObject.isChannel(currentChat)) && chatInfo != null && chatInfo.participants_count <= getMessagesController().chatReadMarkSizeThreshold && !(message.messageOwner.action instanceof TLRPC.TL_messageActionChatJoinedByRequest) && (v instanceof ChatMessageCell);
             boolean showPrivateMessageSeen = !isReactionsViewAvailable && currentChat == null && currentEncryptedChat == null && (currentUser != null && !UserObject.isUserSelf(currentUser) && !UserObject.isReplyUser(currentUser) && !UserObject.isAnonymous(currentUser) && !currentUser.bot && !UserObject.isService(currentUser.id)) && (userInfo == null || !userInfo.read_dates_private) && !isInScheduleMode() && message.isOutOwner() && message.isSent() && !message.isEditing() && !message.isSending() && !message.isSendError() && !message.isContentUnread() && !message.isUnread() && (ConnectionsManager.getInstance(currentAccount).getCurrentTime() - message.messageOwner.date < getMessagesController().pmReadDateExpirePeriod) && !(message.messageOwner.action instanceof TLRPC.TL_messageActionChatJoinedByRequest) && (v instanceof ChatMessageCell);
             boolean showSponsorInfo = selectedObject != null && selectedObject.isSponsored() && (selectedObject.sponsoredInfo != null || selectedObject.sponsoredAdditionalInfo != null || selectedObject.sponsoredUrl != null && !selectedObject.sponsoredUrl.startsWith("https://" + getMessagesController().linkPrefix));
+            boolean showEditTimestamp = NekoConfig.showEditTimeInPopupMenu.Bool() && message.messageOwner.edit_date != 0;
+            boolean showForwardTimestamp = NekoConfig.showForwardTimeInPopupMenu.Bool() && message.isForwarded();
             if (chatMode == MODE_SAVED) {
                 showMessageSeen = false;
             }
@@ -29972,6 +29974,20 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         closeMenu(true);
                     }, themeDelegate);
                     popupLayout.addView(messagePrivateSeenView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 36));
+                    addGap = true;
+                }
+                if (showEditTimestamp) {
+                    MessagePrivateSeenView editedTimestampView = new MessagePrivateSeenView(getContext(), message, () -> {
+                        closeMenu(true);
+                    }, themeDelegate, MessagePrivateSeenView.CUSTOM_TYPE_EDITED);
+                    popupLayout.addView(editedTimestampView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 36));
+                    addGap = true;
+                }
+                if (showForwardTimestamp) {
+                    MessagePrivateSeenView editedTimestampView = new MessagePrivateSeenView(getContext(), message, () -> {
+                        closeMenu(true);
+                    }, themeDelegate, MessagePrivateSeenView.CUSTOM_TYPE_FORWARDED);
+                    popupLayout.addView(editedTimestampView, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 36));
                     addGap = true;
                 }
                 boolean showRateTranscription = selectedObject != null && selectedObject.isVoice() && selectedObject.messageOwner != null && getUserConfig().isPremium() && !TextUtils.isEmpty(selectedObject.messageOwner.voiceTranscription) && selectedObject.messageOwner != null && !selectedObject.messageOwner.voiceTranscriptionRated && selectedObject.messageOwner.voiceTranscriptionId != 0 && selectedObject.messageOwner.voiceTranscriptionOpen;

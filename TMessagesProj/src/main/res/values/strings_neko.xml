@@ -193,4 +193,6 @@
     <string name="RemovePremiumAnnoyance">Remove some more premium promoting annoyance</string>
     <string name="RemovePremiumAnnoyanceDesc">And blocks premium preview from being shown</string>
     <string name="NoStarsForReaction">No (enough) stars in your account, but you could still enjoy the visual effect :)</string>
+    <string name="ShowEditTimestampInPopupMenu">Show edit timestamp in popup menu</string>
+    <string name="ShowForwardTimestampInPopupMenu">Show forward timestamp in popup menu</string>
 </resources>
