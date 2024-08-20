@@ -972,6 +972,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private int scrimPopupX, scrimPopupY;
     private ActionBarMenuSubItem[] scrimPopupWindowItems;
     private ActionBarMenuSubItem menuDeleteItem;
+    private ActionBarMenuSubItem menuNekoTranslateItem;
     private Runnable updateDeleteItemRunnable = new Runnable() {
         @Override
         public void run() {
@@ -9696,7 +9697,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 actionModeOtherItem.addSubItem(save_to, R.drawable.msg_download, LocaleController.getString(R.string.SaveToMusic));
             }
 
-            actionModeOtherItem.addSubItem(nkbtn_translate, R.drawable.ic_translate, LocaleController.getString(R.string.Translate));
+            menuNekoTranslateItem = actionModeOtherItem.addSubItem(nkbtn_translate, R.drawable.ic_translate, LocaleController.getString(R.string.Translate));
             if (NekoConfig.showShareMessages.Bool())
                 actionModeOtherItem.addSubItem(nkbtn_sharemessage, R.drawable.baseline_share_24, LocaleController.getString(R.string.ShareMessages));
             actionModeOtherItem.addSubItem(nkbtn_unpin, R.drawable.deproko_baseline_pin_undo_24, LocaleController.getString(R.string.UnpinMessage));
@@ -9716,6 +9717,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (doShrinkActionBarItems) {
                 actionMode.getItem(nkactionbarbtn_reply).setVisibility(View.GONE);
             }
+            updateNekoXActionModeTitle();
             // NekoX - end
         } else {
             actionModeViews.add(actionMode.addItemWithWidth(star, R.drawable.msg_fave, AndroidUtilities.dp(54), LocaleController.getString(R.string.AddToFavorites)));
@@ -18656,6 +18658,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
         }
         updateSelectedMessageReactions();
+        updateNekoXActionModeTitle();
     }
 
     private void updateSelectedMessageReactions() {
@@ -18737,6 +18740,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (selectedMessagesCountTextView != null && (selectedMessagesIds[0].size() != 0 || selectedMessagesIds[1].size() != 0)) {
                 selectedMessagesCountTextView.setNumber(selectedMessagesIds[0].size() + selectedMessagesIds[1].size(), true);
             }
+            updateNekoXActionModeTitle();
         } else {
             int size = selectedMessagesIds[0].size() + selectedMessagesIds[1].size();
             if (size == 0) {
@@ -18748,6 +18752,23 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 bottomOverlayChatText.setAlpha(1.0f);
                 bottomOverlayChatText.setEnabled(true);
             }
+        }
+    }
+
+    private void updateNekoXActionModeTitle() {
+        if (menuNekoTranslateItem != null && menuNekoTranslateItem.getVisibility() == View.VISIBLE) {
+            boolean showUndoTranslate = true;
+            for (int i = 0; i < 2; ++i) {
+                int size = selectedMessagesIds[i].size();
+                for (int j = 0; j < size; ++j) {
+                    MessageObject obj = selectedMessagesIds[i].get(selectedMessagesIds[i].keyAt(j));
+                    if (obj != null && !obj.messageOwner.translated) {
+                        showUndoTranslate = false;
+                        break;
+                    }
+                }
+            }
+            menuNekoTranslateItem.setText(showUndoTranslate ? getString("UndoTranslate") : getString("Translate"));
         }
     }
 
