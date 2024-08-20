@@ -32261,19 +32261,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private int processSelectedOptionLongClick(ActionBarMenuSubItem cell, int option) {
         switch (option) {
             case nkbtn_translate: {
-                ChatMessageCell messageCell = null;
-                int count = chatListView.getChildCount();
-                for (int a = 0; a < count; a++) {
-                    View child = chatListView.getChildAt(a);
-                    if (child instanceof ChatMessageCell) {
-                        ChatMessageCell c = (ChatMessageCell) child;
-                        if (c.getMessageObject() == selectedObject) {
-                            messageCell = c;
-                            break;
-                        }
-                    }
-                }
-
                 if (selectedObject.messageOwner.translated) {
                     return 0;
                 }
@@ -40920,7 +40907,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 break;
             }
             case nkbtn_translate: {
-                if (NekoConfig.useTelegramTranslateInChat.Bool() && !selectedObject.isPoll()) {
+                if (NekoConfig.useTelegramTranslateInChat.Bool() && !selectedObject.isPoll() && !selectedObject.messageOwner.translated) {
                     String toLang = LocaleController.getInstance().getCurrentLocale().getLanguage();
                     int[] messageIdToTranslate = new int[] { selectedObject.getId() };
                     final CharSequence finalMessageText = getMessageCaption(selectedObject, selectedObjectGroup, messageIdToTranslate);
