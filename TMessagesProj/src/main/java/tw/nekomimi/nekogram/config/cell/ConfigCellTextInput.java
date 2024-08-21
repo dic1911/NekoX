@@ -23,15 +23,23 @@ public class ConfigCellTextInput extends AbstractConfigCell {
     private final ConfigItem bindConfig;
     private final String hint;
     private final String title;
-    private final Runnable onClickCustom;
+    private final Runnable callback, onClickCustom;
     private final Function<String, String> inputChecker;
 
+    public ConfigCellTextInput(String customTitle, ConfigItem bind, String hint) {
+        this(customTitle, bind, hint, null, null);
+    }
+
     public ConfigCellTextInput(String customTitle, ConfigItem bind, String hint, Runnable customOnClick) {
-        this(customTitle, bind, hint, customOnClick, null);
+        this(customTitle, bind, hint, customOnClick, null, null);
+    }
+
+    public ConfigCellTextInput(String customTitle, ConfigItem bind, String hint, Runnable customOnClick, Runnable callback) {
+        this(customTitle, bind, hint, customOnClick, callback, null);
     }
 
     // default: customTitle=null customOnClick=null
-    public ConfigCellTextInput(String customTitle, ConfigItem bind, String hint, Runnable customOnClick, Function<String, String> inputChecker) {
+    public ConfigCellTextInput(String customTitle, ConfigItem bind, String hint, Runnable customOnClick, Runnable callback, Function<String, String> inputChecker) {
         this.bindConfig = bind;
         if (hint == null) {
             this.hint = "";
@@ -43,6 +51,7 @@ public class ConfigCellTextInput extends AbstractConfigCell {
         } else {
             title = customTitle;
         }
+        this.callback = callback;
         this.onClickCustom = customOnClick;
         this.inputChecker = inputChecker;
     }
@@ -88,8 +97,12 @@ public class ConfigCellTextInput extends AbstractConfigCell {
 
         builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (d, v) -> {
             String newV = editText.getText().toString();
-            if (this.inputChecker != null)
+            if (this.inputChecker != null) {
                 newV = this.inputChecker.apply(newV);
+                if (callback != null) callback.run();
+            } else if (callback != null) {
+                callback.run();
+            }
             bindConfig.setConfigString(newV);
 
             //refresh
