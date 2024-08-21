@@ -1753,7 +1753,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         @Override
         public boolean hasDoubleTap(View view, int position) {
-            if (view instanceof ChatMessageCell && NekoConfig.reactions.Int() == 1){
+            int actionType = NekoConfig.reactions.Int();
+            if (view instanceof ChatMessageCell && actionType == 1){
                 ChatMessageCell cell = (ChatMessageCell) view;
                 return !cell.getMessageObject().isSending() && !cell.getMessageObject().isEditing() && cell.getMessageObject().type != 16 && !actionBar.isActionModeShowed() && !isSecretChat() && !isInScheduleMode();
             }
@@ -1765,7 +1766,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 return false;
             }
             if (NekoConfig.reactions.Int() == 2) return false;
-            boolean available = dialog_id >= 0;
+            boolean available = dialog_id >= 0 || actionType > 2;
             if (!available && chatInfo != null) {
                 available = ChatObject.reactionIsAvailable(chatInfo, reaction == null ? reactionStringSetting : reaction.reaction);
             }
