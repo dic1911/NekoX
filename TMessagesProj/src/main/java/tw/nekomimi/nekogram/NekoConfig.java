@@ -16,6 +16,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.util.ArrayList;
 import android.util.Base64;
+import android.util.Log;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -177,6 +178,9 @@ public class NekoConfig {
     public static ConfigItem rememberAllBackMessages = addConfig("rememberAllBackMessages", configTypeBool, false);
     public static ConfigItem hideSendAsChannel = addConfig("hideSendAsChannel", configTypeBool, false);
     public static ConfigItem showSpoilersDirectly = addConfig("showSpoilersDirectly", configTypeBool, false);
+
+    public static ConfigItem alwaysUseSpoilerForMedia = addConfig("AlwaysUseSpoilerForMedia", configTypeString, "");
+    public static ArrayList<Long> alwaysUseSpoilerForMediaChats = new ArrayList<>();
 
     public static ConfigItem reactions = addConfig("reactions", configTypeInt, 0);
     public static String[] reactionsOptions = null;
@@ -527,6 +531,23 @@ public class NekoConfig {
             getString("Reply", R.string.Reply),
             getString("AddToSavedMessages", R.string.AddToSavedMessages),
         };
+    }
+
+    public static void updateUseSpoilerMediaChatList() {
+        String[] chatIds = alwaysUseSpoilerForMedia.String().split(",");
+        alwaysUseSpoilerForMediaChats = new ArrayList<>();
+        for (String chatId : chatIds) {
+            try {
+                alwaysUseSpoilerForMediaChats.add(Long.parseLong(chatId));
+            } catch (Exception ex) {
+                Log.e("nx-spoiler", String.format("failed to parse '%s' to long", chatId));
+            }
+        }
+    }
+
+    public static void init() {
+        initStrings();
+        updateUseSpoilerMediaChatList();
     }
 
 }

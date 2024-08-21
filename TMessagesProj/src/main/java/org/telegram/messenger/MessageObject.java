@@ -500,7 +500,8 @@ public class MessageObject {
     }
 
     public boolean hasMediaSpoilers() {
-        return !isRepostPreview && (messageOwner.media != null && messageOwner.media.spoiler || needDrawBluredPreview()) || isHiddenSensitive();
+        boolean hasMedia = messageOwner.media != null;
+        return (hasMedia && NekoConfig.alwaysUseSpoilerForMediaChats.contains(messageOwner.dialog_id)) || !isRepostPreview && (hasMedia && messageOwner.media.spoiler || needDrawBluredPreview()) || isHiddenSensitive();
     }
 
     public Boolean isSensitiveCached;

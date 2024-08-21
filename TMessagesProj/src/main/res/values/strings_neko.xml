@@ -195,4 +195,6 @@
     <string name="NoStarsForReaction">No (enough) stars in your account, but you could still enjoy the visual effect :)</string>
     <string name="ShowEditTimestampInPopupMenu">Show edit timestamp in popup menu</string>
     <string name="ShowForwardTimestampInPopupMenu">Show forward timestamp in popup menu</string>
+    <string name="AlwaysUseSpoilerForMedia">Always use spoiler for media in specified chats</string>
+    <string name="AlwaysUseSpoilerForMediaDesc">Split chat IDs with comma, ex: chat_id1,chat_id2…</string>
 </resources>
