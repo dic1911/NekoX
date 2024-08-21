@@ -263,6 +263,7 @@ public class MessageObject {
     public boolean previewForward;
 
     public boolean notime;
+    public boolean edited;
 
     public int getChatMode() {
         if (scheduled) {
