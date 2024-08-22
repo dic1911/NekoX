@@ -1,10 +1,12 @@
 package tw.nekomimi.nekogram.transtale.source
 
+import android.os.Build
 import cn.hutool.core.lang.UUID
 import cn.hutool.http.HttpUtil
 import org.json.JSONObject
 import tw.nekomimi.nekogram.transtale.Translator
 import tw.nekomimi.nekogram.utils.applyUserAgent
+import java.net.URLEncoder
 
 object YandexTranslator : Translator {
 
@@ -14,11 +16,19 @@ object YandexTranslator : Translator {
 
         val uuid2 = UUID.fastUUID().toString(true)
 
-        val response = HttpUtil.createPost("https://translate.yandex.net/api/v1/tr.json/translate?srv=android&uuid=$uuid&id=$uuid2-9-0")
-                .applyUserAgent()
+        var req = HttpUtil.createPost("https://translate.yandex.net/api/v1/tr.json/translate?srv=android&uuid=$uuid&id=$uuid2-9-0")
+            .applyUserAgent()
+
+        req = if (Build.VERSION.SDK_INT > 25) {
+            req
                 .form("text", query)
                 .form("lang", if (from == "auto") to else "$from-$to")
-                .execute()
+        } else {
+            // .form would cause NoClassDefFoundError in ConverterRegistry
+            req.body("lang=${if (from == "auto") to else "$from-$to"}&text=${URLEncoder.encode(query)}")
+        }
+
+        val response = req.execute()
 
         if (response.status != 200) {
 
