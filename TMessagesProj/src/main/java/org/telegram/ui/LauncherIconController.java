@@ -3,11 +3,14 @@ package org.telegram.ui;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.os.Build;
 
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.R;
 
 public class LauncherIconController {
+    private static final boolean adaptiveIconSupported = Build.VERSION.SDK_INT > 32;
+
     public static void tryFixLauncherIconIfNeeded() {
         for (LauncherIcon icon : LauncherIcon.values()) {
             if (isEnabled(icon)) {
@@ -36,7 +39,7 @@ public class LauncherIconController {
     public enum LauncherIcon {
         DEFAULT("DefaultIcon", R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.string.AppIconDefault),
         COLORED("ColoredIcon", R.mipmap.ic_launcher, R.mipmap.ic_launcher, R.string.AppIconColored),
-        OLD_CLASSIC("ClassicIcon", R.drawable.ic_launcher_classic_foreground, R.mipmap.ic_launcher_classic, R.string.AppIconColoredClassic),
+        OLD_CLASSIC("ClassicIcon", R.drawable.ic_launcher_classic_foreground, adaptiveIconSupported ? R.mipmap.ic_launcher_classic : R.drawable.ic_launcher_classic_foreground, R.string.AppIconColoredClassic),
         THEMED_CLASSIC("ThemedClassicIcon", R.color.ic_launcher_background, R.drawable.icon_preview_neko_classic, R.string.AppIconThemedClassic),
         THEMED_XEYE("ThemedXEyeIcon", R.color.ic_launcher_background, R.drawable.icon_preview_neko_xeye_foreground, R.string.AppIconThemedXEye),
         NEKO_AQUA("NekoAquaIcon", R.drawable.icon_4_background_sa, R.drawable.icon_preview_neko_xeye_foreground, R.string.AppIconAqua),
