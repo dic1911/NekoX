@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
@@ -22,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 
+import cn.hutool.core.util.StrUtil;
 import tw.nekomimi.nekogram.config.ConfigItem;
 
 import static tw.nekomimi.nekogram.config.ConfigItem.*;
@@ -534,8 +536,11 @@ public class NekoConfig {
     }
 
     public static void updateUseSpoilerMediaChatList() {
-        String[] chatIds = alwaysUseSpoilerForMedia.String().split(",");
-        alwaysUseSpoilerForMediaChats = new ArrayList<>();
+        alwaysUseSpoilerForMediaChats.clear();
+        String str = alwaysUseSpoilerForMedia.String();
+        if ((str = StrUtil.trim(str)).isEmpty()) return;
+
+        String[] chatIds = str.split(",");
         for (String chatId : chatIds) {
             try {
                 alwaysUseSpoilerForMediaChats.add(Long.parseLong(chatId));
