@@ -130,6 +130,8 @@ public class NekoConfig {
     public static ConfigItem translateInputLang = addConfig("TransInputToLang", configTypeString, "en");
     public static ConfigItem useTelegramTranslateInChat = addConfig("useTelegramTranslateInChat", configTypeBool, false);
     public static ConfigItem googleCloudTranslateKey = addConfig("GoogleCloudTransKey", configTypeString, "");
+    public static ConfigItem preferredTranslateTargetLang = addConfig("PreferredTranslateTargetLangTitle", configTypeString, "");
+    public static ArrayList<String> preferredTranslateTargetLangList = new ArrayList<>();
 
 
     public static ConfigItem disableNotificationBubbles = addConfig("disableNotificationBubbles", configTypeBool, false);
@@ -550,9 +552,25 @@ public class NekoConfig {
         }
     }
 
+    public static void updatePreferredTranslateTargetLangList() {
+        AndroidUtilities.runOnUIThread(() -> {
+            preferredTranslateTargetLangList.clear();
+            String str = preferredTranslateTargetLang.String();
+            if ((str = StrUtil.trim(str)).isEmpty()) return;
+
+            String[] languages = str.split(",");
+            if (languages.length == 0 || languages[0].trim().isEmpty()) return;
+            for (String lang : languages) {
+                lang = StrUtil.trim(lang).toLowerCase();
+                preferredTranslateTargetLangList.add(lang);
+            }
+        }, 1000);
+    }
+
     public static void init() {
         initStrings();
         updateUseSpoilerMediaChatList();
+        updatePreferredTranslateTargetLangList();
     }
 
 }

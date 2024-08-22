@@ -150,6 +150,8 @@ interface Translator {
                     .map { it.pluralLangCode }
                     .toSet()
                     .filter { !it.lowercase().contains("duang") }
+                    .filter { NekoConfig.preferredTranslateTargetLangList.isEmpty() ||
+                                NekoConfig.preferredTranslateTargetLangList.contains(it.lowercase()) }
                     .map { it.code2Locale })
                     .toTypedArray()
 

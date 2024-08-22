@@ -101,6 +101,10 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell googleCloudTranslateKeyRow = cellGroup.appendCell(new ConfigCellTextDetail(NekoConfig.googleCloudTranslateKey, (view, position) -> {
         customDialog_BottomInputString(position, NekoConfig.googleCloudTranslateKey, LocaleController.getString("GoogleCloudTransKeyNotice"), "Key");
     }, LocaleController.getString("UsernameEmpty", R.string.UsernameEmpty)));
+    private final AbstractConfigCell preferredTranslateTargetLangRow = cellGroup.appendCell(
+            new ConfigCellTextInput(LocaleController.getString("PreferredTranslateTargetLang"),
+                    NekoConfig.preferredTranslateTargetLang, LocaleController.getString("PreferredTranslateTargetLangExample"),
+                    null, NekoConfig::updatePreferredTranslateTargetLangList));
     private final AbstractConfigCell dividerTranslation = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell headerMap = cellGroup.appendCell(new ConfigCellHeader("Map"));
