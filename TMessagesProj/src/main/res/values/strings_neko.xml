@@ -200,4 +200,6 @@
     <string name="PreferredTranslateTargetLang">Only show certain translate target languages in selector</string>
     <string name="PreferredTranslateTargetLangExample">Ex. en, ja, zh_tw</string>
     <string name="PreferredTranslateTargetLangTitle">Preferred Languages</string>
+    <string name="CustomSearchEngine">Custom search engine</string>
+    <string name="CustomSearchEngineError">Custom search engine is not valid URI string!</string>
 </resources>

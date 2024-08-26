@@ -240,6 +240,7 @@ public class NekoConfig {
     public static ConfigItem removePremiumAnnoyance = addConfig("RemovePremiumAnnoyance", configTypeBool, false);
     public static ConfigItem showEditTimeInPopupMenu = addConfig("ShowEditTimestampInPopupMenu", configTypeBool, false);
     public static ConfigItem showForwardTimeInPopupMenu = addConfig("ShowForwardTimestampInPopupMenu", configTypeBool, false);
+    public static ConfigItem customSearchEngine = addConfig("CustomSearchEngine", configTypeString, "https://www.startpage.com/sp/search?query=");
 
     static {
         loadConfig(false);

@@ -55,6 +55,7 @@ import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.RecyclerListView;
 import org.telegram.ui.Components.SeekBarView;
 import org.telegram.ui.Components.UndoView;
+import org.telegram.ui.web.SearchEngine;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
@@ -209,6 +210,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell showSharedMediaOnOpeningProfileRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.showSharedMediaOnOpeningProfile));
     private final AbstractConfigCell disableSetBirthdayReminderRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableAddBirthdayReminder));
     private final AbstractConfigCell disableBirthdayReminderRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableBirthdayReminder));
+    private final AbstractConfigCell customSearchEngineRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.customSearchEngine, null, null, SearchEngine::refreshSearchEngines));
     private final AbstractConfigCell divider7 = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell header8 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("ChannelBots")));

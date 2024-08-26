@@ -2,19 +2,27 @@ package org.telegram.ui.web;
 
 import static org.telegram.messenger.LocaleController.getString;
 
+import android.net.Uri;
 import android.text.TextUtils;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.FileLog;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.Utilities;
+import org.telegram.ui.LaunchActivity;
 
+import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+
+import cn.hutool.core.util.StrUtil;
+import tw.nekomimi.nekogram.NekoConfig;
 
 /*
  * You can add your own search engines of preference with extending custom langpack with such keys:
@@ -106,6 +114,19 @@ public class SearchEngine {
                 final String privacy_policy_url = nullable(getString("SearchEngine" + i + "PrivacyPolicyURL"));
                 searchEngines.add(new SearchEngine(name, search_url, autocomplete_url, privacy_policy_url));
             }
+            String customSearchEngineUrl = NekoConfig.customSearchEngine.String();
+            if (!StrUtil.isEmpty(customSearchEngineUrl)) {
+                try {
+                    Uri u = Uri.parse(customSearchEngineUrl);
+                    String host = u.getHost();
+                    if (host == null) throw new Exception("Invalid URI");
+                    searchEngines.add(new SearchEngine(host, customSearchEngineUrl, null, null));
+                } catch (Exception ex) {
+                    AndroidUtilities.runOnUIThread(() -> {
+                        Toast.makeText(LaunchActivity.instance, getString("CustomSearchEngineError"), Toast.LENGTH_SHORT).show();
+                    });
+                }
+            }
         }
         return searchEngines;
     }
@@ -119,6 +140,11 @@ public class SearchEngine {
         final ArrayList<SearchEngine> searchEngines = getSearchEngines();
         final int index = Utilities.clamp(SharedConfig.searchEngineType, searchEngines.size() - 1, 0);
         return searchEngines.get(index);
+    }
+
+    public static void refreshSearchEngines() {
+        searchEngines = null;
+        getSearchEngines();
     }
 
 }
