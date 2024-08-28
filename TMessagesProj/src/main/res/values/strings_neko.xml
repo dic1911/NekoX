@@ -202,4 +202,11 @@
     <string name="PreferredTranslateTargetLangTitle">Preferred Languages</string>
     <string name="CustomSearchEngine">Custom search engine</string>
     <string name="CustomSearchEngineError">Custom search engine is not valid URI string!</string>
+    <string name="OverrideSettings">Override global main settings (DO NOT USE UNLESS YOU KNOW WHAT YOU\'RE DOING!!)</string>
+    <string name="OverrideSettingBoolean">Override boolean value</string>
+    <string name="OverrideSettingInteger">Override integer value</string>
+    <string name="OverrideSettingString">Override string value</string>
+    <string name="OverrideSettingLong">Override long value</string>
+    <string name="OverrideSettingFloat">Override float value</string>
+    <string name="OverrideSettingHint">&lt;key&gt; &lt;value&gt;</string>
 </resources>

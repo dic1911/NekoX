@@ -11,6 +11,7 @@ import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
 import org.telegram.messenger.LocaleController;
+import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 
 import java.io.ByteArrayInputStream;
@@ -241,6 +242,11 @@ public class NekoConfig {
     public static ConfigItem showEditTimeInPopupMenu = addConfig("ShowEditTimestampInPopupMenu", configTypeBool, false);
     public static ConfigItem showForwardTimeInPopupMenu = addConfig("ShowForwardTimestampInPopupMenu", configTypeBool, false);
     public static ConfigItem customSearchEngine = addConfig("CustomSearchEngine", configTypeString, "https://www.startpage.com/sp/search?query=");
+    public static ConfigItem overrideSettingBoolean = addConfig("OverrideSettingBoolean", configTypeString, "");
+    public static ConfigItem overrideSettingInteger = addConfig("OverrideSettingInteger", configTypeString, "");
+    public static ConfigItem overrideSettingString = addConfig("OverrideSettingString", configTypeString, "");
+    public static ConfigItem overrideSettingLong = addConfig("OverrideSettingLong", configTypeString, "");
+    public static ConfigItem overrideSettingFloat = addConfig("OverrideSettingFloat", configTypeString, "");
 
     static {
         loadConfig(false);
@@ -566,6 +572,57 @@ public class NekoConfig {
                 preferredTranslateTargetLangList.add(lang);
             }
         }, 1000);
+    }
+
+    public static void applyOverriddenValue() {
+        int type = 0;
+        String target = null;
+        ConfigItem[] checklist = new ConfigItem[] {
+                overrideSettingBoolean,
+                overrideSettingInteger,
+                overrideSettingString,
+                overrideSettingLong,
+                overrideSettingFloat
+        };
+        for (int i = 0; i < checklist.length; ++i) {
+            String s = checklist[i].String().trim();
+            if (!StrUtil.isEmpty(s)) {
+                target = s;
+                type = i;
+                break;
+            }
+        }
+        if (target == null) return;
+        Log.d("030-override", String.format("%d %s", type, target));
+        String[] input = target.split(" ");
+        if (input.length != 2) return;
+
+        SharedPreferences.Editor edit = MessagesController.getGlobalMainSettings().edit();
+        try {
+            switch (type) {
+                case 0:
+                    edit.putBoolean(input[0], Boolean.parseBoolean(input[1])).commit();
+                    break;
+                case 1:
+                    edit.putInt(input[0], Integer.parseInt(input[1])).commit();
+                    break;
+                case 2:
+                    edit.putString(input[0], input[1]).commit();
+                    break;
+                case 3:
+                    edit.putLong(input[0], Long.parseLong(input[1])).commit();
+                    break;
+                case 4:
+                    edit.putFloat(input[0], Float.parseFloat(input[1])).commit();
+            }
+        } catch (Exception ex) {
+            Log.e("030-override", "error parsing input", ex);
+        }
+
+        final int ftype = type;
+        AndroidUtilities.runOnUIThread(() -> {
+            checklist[ftype].setConfigString("");
+        }, 100);
     }
 
     public static void init() {

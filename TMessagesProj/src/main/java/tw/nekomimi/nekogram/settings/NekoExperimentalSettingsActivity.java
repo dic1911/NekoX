@@ -91,6 +91,14 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
     private final AbstractConfigCell removePremiumAnnoyanceRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.removePremiumAnnoyance, LocaleController.getString("RemovePremiumAnnoyanceDesc")));
     private final AbstractConfigCell divider0 = cellGroup.appendCell(new ConfigCellDivider());
 
+    private final AbstractConfigCell header2 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("OverrideSettings")));
+    private final AbstractConfigCell overrideSettingBooleanRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingBoolean, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingIntegerRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingInteger, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingStringRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingString, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingLongRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingLong, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingFloatRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingFloat, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell divider1 = cellGroup.appendCell(new ConfigCellDivider());
+
     private UndoView tooltip;
 
     @Override
