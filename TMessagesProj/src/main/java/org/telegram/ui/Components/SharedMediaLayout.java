@@ -6704,9 +6704,13 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
             if (longPress) {
                 BottomBuilder builder = new BottomBuilder(profileActivity.getParentActivity());
                 builder.addTitle(urlFinal);
-                builder.addItems(
-                        new String[]{getString("Open", R.string.Open), getString("Copy", R.string.Copy), getString("ShareQRCode", R.string.ShareQRCode)},
-                        new int[]{R.drawable.baseline_open_in_browser_24, R.drawable.baseline_content_copy_24, R.drawable.wallet_qr}, (which, text, __) -> {
+                boolean hasQueries = urlFinal.contains("?");
+                String[] buttonStrings = hasQueries ?
+                        new String[] {getString("Open", R.string.Open), getString("Copy", R.string.Copy), getString("ShareQRCode", R.string.ShareQRCode), getString(R.string.BlacklistUrlQueryAdd)} :
+                        new String[] {getString("Open", R.string.Open), getString("Copy", R.string.Copy), getString("ShareQRCode", R.string.ShareQRCode)};
+                int[] iconIds = hasQueries ? new int[]{R.drawable.baseline_open_in_browser_24, R.drawable.baseline_content_copy_24, R.drawable.wallet_qr, R.drawable.msg_block} :
+                        new int[]{R.drawable.baseline_open_in_browser_24, R.drawable.baseline_content_copy_24, R.drawable.wallet_qr};
+                builder.addItems(buttonStrings, iconIds, (which, text, __) -> {
                             if (which == 0 || which == 2) {
                                 if (which == 0) {
                                     openUrl(urlFinal);
@@ -6722,6 +6726,8 @@ public class SharedMediaLayout extends FrameLayout implements NotificationCenter
                                 }
                                 AndroidUtilities.addToClipboard(url1);
                                 AlertUtil.showToast(LocaleController.getString("LinkCopied", R.string.LinkCopied));
+                            } else if (which == 3) {
+                                new BlacklistUrlQueryBottomSheet(profileActivity, urlFinal).show();
                             }
                             return Unit.INSTANCE;
                         });

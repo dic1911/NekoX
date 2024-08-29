@@ -142,6 +142,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     private final AbstractConfigCell headerLinks = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("Links")));
     private final AbstractConfigCell forceAllowChooseBrowserRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.forceAllowChooseBrowser, LocaleController.getString("ForceAllowChooseBrowserDesc")));
     private final AbstractConfigCell patchAndCleanupLinksRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.patchAndCleanupLinks, LocaleController.getString("PatchAndCleanupLinksDesc")));
+    private final AbstractConfigCell customGetQueryBlacklistRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.customGetQueryBlacklist, null, null, NekoConfig::applyCustomGetQueryBlacklist));
     private final AbstractConfigCell dividerLinks = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell ignoreBlockedRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.ignoreBlocked, LocaleController.getString("IgnoreBlockedAbout")));

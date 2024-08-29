@@ -70,6 +70,8 @@ object UrlUtil {
             }
             if (block) continue
 
+            if (NekoConfig.customGetQueryBlacklistData.contains(q)) continue
+
             out.appendQueryParameter(q, src.getQueryParameter(q))
         }
 

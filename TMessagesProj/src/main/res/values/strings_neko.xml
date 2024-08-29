@@ -209,4 +209,8 @@
     <string name="OverrideSettingLong">Override long value</string>
     <string name="OverrideSettingFloat">Override float value</string>
     <string name="OverrideSettingHint">&lt;key&gt; &lt;value&gt;</string>
+    <string name="BlacklistUrlQueryAdd">Blacklist query</string>
+    <string name="BlacklistUrlQueryTitle">Blacklist specified GET query/queries</string>
+    <string name="Blacklist">Blacklist</string>
+    <string name="BlacklistedQuery">Blacklisted selected query/queries</string>
 </resources>

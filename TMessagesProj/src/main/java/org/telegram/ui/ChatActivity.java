@@ -34262,20 +34262,37 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 } catch (Exception e) {
                     FileLog.e(e);
                 }
+                boolean hasQueries = formattedUrl.contains("?");
                 builder.addTitle(formattedUrl);
                 builder.addItems(
-                        new String[]{
-                                LocaleController.getString("Open", R.string.Open),
-                                LocaleController.getString("Copy", R.string.Copy),
-                                LocaleController.getString("ShareQRCode", R.string.ShareQRCode),
-                                LocaleController.getString("ShareMessages", R.string.ShareMessages)
-                        },
-                        new int[]{
-                                R.drawable.baseline_open_in_browser_24,
-                                R.drawable.baseline_content_copy_24,
-                                R.drawable.wallet_qr,
-                                R.drawable.baseline_share_24
-                        },
+                        hasQueries ?
+                            new String[]{
+                                    LocaleController.getString("Open", R.string.Open),
+                                    LocaleController.getString("Copy", R.string.Copy),
+                                    LocaleController.getString("ShareQRCode", R.string.ShareQRCode),
+                                    LocaleController.getString("ShareMessages", R.string.ShareMessages),
+                                    LocaleController.getString("BlacklistUrlQueryAdd", R.string.BlacklistUrlQueryAdd)
+                            } :
+                            new String[]{
+                                    LocaleController.getString("Open", R.string.Open),
+                                    LocaleController.getString("Copy", R.string.Copy),
+                                    LocaleController.getString("ShareQRCode", R.string.ShareQRCode),
+                                    LocaleController.getString("ShareMessages", R.string.ShareMessages)
+                            },
+                        hasQueries ?
+                            new int[]{
+                                    R.drawable.baseline_open_in_browser_24,
+                                    R.drawable.baseline_content_copy_24,
+                                    R.drawable.wallet_qr,
+                                    R.drawable.baseline_share_24,
+                                    R.drawable.msg_block
+                            } :
+                            new int[]{
+                                    R.drawable.baseline_open_in_browser_24,
+                                    R.drawable.baseline_content_copy_24,
+                                    R.drawable.wallet_qr,
+                                    R.drawable.baseline_share_24
+                            },
                         (which, text, __) -> {
                             if (which == 0) {
                                 processExternalUrl(1, urlFinal, url, finalCell, false, false);
@@ -34297,7 +34314,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                     createUndoView();
                         if (undoView == null) {
                             return Unit.INSTANCE;
-                        }if (mail) {
+                        }
+                        if (mail) {
                                         undoView.showWithAction(0, UndoView.ACTION_EMAIL_COPIED, null);
                                     } else if (tel) {
                                         undoView.showWithAction(0, UndoView.ACTION_PHONE_COPIED, null);
@@ -34316,6 +34334,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             } else if (which == 2) {
                                 // QRCode
                                 ProxyUtil.showQrDialog(getParentActivity(), urlFinal);
+                            } else if (which == 4) {
+                                new BlacklistUrlQueryBottomSheet(this, urlFinal).show();
                             }
                             return Unit.INSTANCE;
                         });

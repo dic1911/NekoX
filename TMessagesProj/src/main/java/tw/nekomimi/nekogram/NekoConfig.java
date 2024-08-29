@@ -20,6 +20,8 @@ import java.util.ArrayList;
 import android.util.Base64;
 import android.util.Log;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -247,6 +249,9 @@ public class NekoConfig {
     public static ConfigItem overrideSettingString = addConfig("OverrideSettingString", configTypeString, "");
     public static ConfigItem overrideSettingLong = addConfig("OverrideSettingLong", configTypeString, "");
     public static ConfigItem overrideSettingFloat = addConfig("OverrideSettingFloat", configTypeString, "");
+
+    public static ConfigItem customGetQueryBlacklist = addConfig("BlacklistUrlQueryTitle", configTypeString, "");
+    public static ArrayList<String> customGetQueryBlacklistData = new ArrayList<>();
 
     static {
         loadConfig(false);
@@ -625,10 +630,26 @@ public class NekoConfig {
         }, 100);
     }
 
+    public static void applyCustomGetQueryBlacklist() {
+        String[] queries = customGetQueryBlacklist.String().split(",");
+        customGetQueryBlacklistData.clear();
+        for (String q : queries) {
+            customGetQueryBlacklistData.add(q.trim());
+        }
+    }
+
+    public static void replaceCustomGetQueryBlacklist(Collection<String> newList) {
+        customGetQueryBlacklistData.clear();
+        customGetQueryBlacklistData.addAll(newList);
+        String str = Arrays.toString(customGetQueryBlacklistData.toArray()).replace(" ", "");
+        customGetQueryBlacklist.setConfigString(str.substring(1, str.length() - 1));
+    }
+
     public static void init() {
         initStrings();
         updateUseSpoilerMediaChatList();
         updatePreferredTranslateTargetLangList();
+        applyCustomGetQueryBlacklist();
     }
 
 }
