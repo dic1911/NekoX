@@ -192,13 +192,21 @@ public class BlacklistUrlQueryBottomSheet extends BottomSheetWithRecyclerListVie
             return;
         }
 
-        Set<String> queryKeys = uri.getQueryParameterNames();
-        if (checks == null) checks = new boolean[queryKeys.size()];
+        Set<String> queryKeys = uri.getQueryParameterNames(), existingKeys = getCurrentBlacklistedStrings();
         for (String q : queryKeys) {
+            if (existingKeys.contains(q)) continue;
             Action a = new Action(queries.size(), q);
             queries.add(a);
             fillAction(items, a);
         }
+        if (queries.isEmpty()) {
+            AndroidUtilities.runOnUIThread(() -> {
+                dismiss();
+                BulletinFactory.of(getBaseFragment()).createSimpleBulletin(R.raw.info, getString(R.string.BlacklistedQueryAllAdded)).show();
+            }, 100);
+            return;
+        }
+        if (checks == null) checks = new boolean[items.size()];
         for (int i = 0; i < checks.length; ++i) {
             items.get(i).setChecked(checks[i]);
         }
@@ -210,15 +218,20 @@ public class BlacklistUrlQueryBottomSheet extends BottomSheetWithRecyclerListVie
         adapter.update(false);
     }
 
+    private Set<String> getCurrentBlacklistedStrings() {
+        Set<String> blacklistSet = new HashSet<>();
+        String oldBlacklistString = NekoConfig.customGetQueryBlacklist.String();
+        if (!oldBlacklistString.trim().isEmpty()) {
+            blacklistSet.addAll(Arrays.asList(oldBlacklistString.split(",")));
+        }
+        return blacklistSet;
+    }
+
     private void proceed() {
         dismiss();
 
         StringBuilder sb = new StringBuilder();
-        Set<String> newBlacklistSet = new HashSet<>();
-        String oldBlacklistString = NekoConfig.customGetQueryBlacklist.String();
-        if (!oldBlacklistString.trim().isEmpty()) {
-            newBlacklistSet.addAll(Arrays.asList(oldBlacklistString.split(",")));
-        }
+        Set<String> newBlacklistSet = getCurrentBlacklistedStrings();
 
         for (int i = 0; i < checks.length; ++i) {
             String q = queries.get(i).query.trim();
