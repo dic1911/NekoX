@@ -10010,7 +10010,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         searchOtherButton.setAlpha(0f);
         searchContainer.addView(searchOtherButton, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT, Gravity.FILL));
 
+        int searchButtonCount = 0;
         if (currentChat != null && (!ChatObject.isChannel(currentChat) || currentChat.megagroup) && chatMode != MODE_SEARCH) {
+            ++searchButtonCount;
             searchUserButton = new ImageView(getContext());
             searchUserButton.setScaleType(ImageView.ScaleType.CENTER);
             searchUserButton.setImageResource(R.drawable.msg_usersearch);
@@ -10038,6 +10040,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
 
         if (chatMode != MODE_SEARCH) {
+            ++searchButtonCount;
             searchCalendarButton = new ImageView(getContext());
             searchCalendarButton.setScaleType(ImageView.ScaleType.CENTER);
             searchCalendarButton.setImageResource(R.drawable.msg_calendar);
@@ -10065,7 +10068,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             searchFilterButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_searchPanelIcons), PorterDuff.Mode.SRC_IN));
             searchFilterButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
             searchFilterButton.setContentDescription(getString(R.string.SearchByMessageType));
-            searchContainer.addView(searchFilterButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * 2, 0, 48 * 3, 0));
+            searchContainer.addView(searchFilterButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * (searchButtonCount++), 0, 48 * 3, 0));
             searchFilterButton.setOnClickListener(view -> {
                 PopupBuilder builder = new PopupBuilder(searchFilterButton);
                 builder.setItems(new String[] {
@@ -10095,7 +10098,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             searchGoToBeginningButton.setImageResource(R.drawable.baseline_arrow_upward_24);
             searchGoToBeginningButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_searchPanelIcons), PorterDuff.Mode.SRC_IN));
             searchGoToBeginningButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
-            searchContainer.addView(searchGoToBeginningButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * 3, 0, 48 * 3, 0));
+            searchContainer.addView(searchGoToBeginningButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * searchButtonCount, 0, 48 * 3, 0));
             searchGoToBeginningButton.setOnClickListener(view -> {
                 scrollToMessageId(1, 0, false, 0, true, 0);
             });
