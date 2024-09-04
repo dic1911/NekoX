@@ -34,6 +34,7 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.URLSpan;
 import android.text.util.Linkify;
+import android.util.Log;
 import android.util.Pair;
 import android.util.SparseArray;
 import android.widget.Toast;
@@ -3772,7 +3773,10 @@ public class MediaDataController extends BaseController {
                     req.saved_reaction.add(reaction.toTLReaction());
                     req.flags |= 8;
                 }
-                req.filter = new TLRPC.TL_inputMessagesFilterEmpty();
+
+                TLRPC.MessagesFilter filter = getMessageFilter();
+                if (filter != null) req.filter = filter;
+                else req.filter = new TLRPC.TL_inputMessagesFilterEmpty();
                 mergeReqId = getConnectionsManager().sendRequest(req, (response, error) -> AndroidUtilities.runOnUIThread(() -> {
                     if (lastMergeDialogId == mergeDialogId) {
                         mergeReqId = 0;
@@ -3857,7 +3861,11 @@ public class MediaDataController extends BaseController {
             req.saved_reaction.add(reaction.toTLReaction());
             req.flags |= 8;
         }
-        req.filter = new TLRPC.TL_inputMessagesFilterEmpty();
+
+        TLRPC.MessagesFilter filter = getMessageFilter();
+        if (filter != null) req.filter = filter;
+        else req.filter = new TLRPC.TL_inputMessagesFilterEmpty();
+
         lastSearchQuery = query;
         long queryWithDialogFinal = queryWithDialog;
         String finalQuery = query;
@@ -9489,6 +9497,38 @@ public class MediaDataController extends BaseController {
     public DraftVoice getDraftVoice(long dialog_id, long topic_id) {
         loadDraftVoiceMessages();
         return draftVoices.get(Objects.hash(dialog_id, topic_id));
+    }
+
+    private TLRPC.MessagesFilter getMessageFilter() {
+        Log.d("030-fl", String.format("filter type = %d", ChatActivity.searchFilterType));
+        switch (ChatActivity.searchFilterType) {
+            case ChatActivity.SEARCH_FILTER_PHOTOS:
+                return new TLRPC.TL_inputMessagesFilterPhotos();
+            case ChatActivity.SEARCH_FILTER_VIDEOS:
+                return new TLRPC.TL_inputMessagesFilterVideo();
+            case ChatActivity.SEARCH_FILTER_GIFS:
+                return new TLRPC.TL_inputMessagesFilterGif();
+            case ChatActivity.SEARCH_FILTER_DOCUMENTS:
+                return new TLRPC.TL_inputMessagesFilterDocument();
+            case ChatActivity.SEARCH_FILTER_MUSIC:
+                return new TLRPC.TL_inputMessagesFilterMusic();
+            case ChatActivity.SEARCH_FILTER_LINKS:
+                return new TLRPC.TL_inputMessagesFilterUrl();
+            case ChatActivity.SEARCH_FILTER_MENTIONS:
+                return new TLRPC.TL_inputMessagesFilterMyMentions();
+            case ChatActivity.SEARCH_FILTER_CONTACTS:
+                return new TLRPC.TL_inputMessagesFilterContacts();
+            case ChatActivity.SEARCH_FILTER_VOICE:
+                return new TLRPC.TL_inputMessagesFilterVoice();
+            case ChatActivity.SEARCH_FILTER_CALLS:
+                return new TLRPC.TL_inputMessagesFilterPhoneCalls();
+            case ChatActivity.SEARCH_FILTER_ROUND_VIDEOS:
+                return new TLRPC.TL_inputMessagesFilterRoundVideo();
+            case ChatActivity.SEARCH_FILTER_GEO:
+                return new TLRPC.TL_inputMessagesFilterGeo();
+        }
+        Log.d("030-fl", "filter not set");
+        return null;
     }
 
     public static class DraftVoice {

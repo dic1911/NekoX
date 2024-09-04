@@ -302,6 +302,7 @@ import cn.hutool.core.util.StrUtil;
 import kotlin.Unit;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.ui.MessageDetailsActivity;
+import tw.nekomimi.nekogram.ui.PopupBuilder;
 import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
@@ -574,6 +575,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private BlurredFrameLayout searchContainer;
     private ImageView searchCalendarButton;
     private ImageView searchUserButton;
+    private ImageView searchFilterButton;
     private ImageView searchGoToBeginningButton;
     private AnimatedTextView searchCountText;
     private AnimatedTextView searchExpandList;
@@ -643,6 +645,21 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     public static final int SEARCH_MY_MESSAGES = 1;
     public static final int SEARCH_PUBLIC_POSTS = 2;
     private int searchType;
+
+    public static final int SEARCH_FILTER_NONE = 0;
+    public static final int SEARCH_FILTER_PHOTOS = 1;
+    public static final int SEARCH_FILTER_VIDEOS = 2;
+    public static final int SEARCH_FILTER_GIFS = 3;
+    public static final int SEARCH_FILTER_DOCUMENTS = 4;
+    public static final int SEARCH_FILTER_MUSIC = 5;
+    public static final int SEARCH_FILTER_LINKS = 6;
+    public static final int SEARCH_FILTER_MENTIONS = 7;
+    public static final int SEARCH_FILTER_CONTACTS = 8;
+    public static final int SEARCH_FILTER_VOICE = 9;
+    public static final int SEARCH_FILTER_CALLS = 10;
+    public static final int SEARCH_FILTER_ROUND_VIDEOS = 11;
+    public static final int SEARCH_FILTER_GEO = 12;
+    public static int searchFilterType = SEARCH_FILTER_NONE;
 
     public TLRPC.TL_businessChatLink businessLink = null;
 
@@ -3071,6 +3088,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     @Override
     public void onFragmentDestroy() {
         super.onFragmentDestroy();
+        searchFilterType = SEARCH_FILTER_NONE;
         if (NekoConfig.hideWebViewTabOverlayInChat.Bool() && !forwarding) {
             BottomSheetTabsOverlay overlay = LaunchActivity.instance.getBottomSheetTabsOverlay();
             BottomSheetTabs tabs = overlay.tabsView;
@@ -8863,6 +8881,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     public void clearSearch() {
+        searchFilterType = SEARCH_FILTER_NONE;
         if (searchItemListener != null) {
             searchItemListener.onSearchCollapse();
         }
@@ -9902,6 +9921,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             return;
         }
 
+        searchFilterType = SEARCH_FILTER_NONE;
+
         searchContainer = new BlurredFrameLayout(getContext(), contentView) {
             private Rect blurBounds = new Rect();
             @Override
@@ -9953,7 +9974,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         searchCountText.setTypeface(AndroidUtilities.bold());
         searchCountText.setTextColor(getThemedColor(Theme.key_chat_searchPanelText));
         searchCountText.setGravity(Gravity.LEFT);
-        searchContainer.addView(searchCountText, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 30, Gravity.CENTER_VERTICAL, 0, -1, 97.33f, 0));
+        searchContainer.addView(searchCountText, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, 30, Gravity.CENTER_VERTICAL | Gravity.CENTER_HORIZONTAL, 0, -1, 97.33f, 0));
         contentView.addView(searchContainer, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, searchContainerHeight, Gravity.BOTTOM));
         if (hashtagHistoryView != null) {
             hashtagHistoryView.bringToFront();
@@ -10004,6 +10025,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 }
                 searchCalendarButton.setVisibility(View.GONE);
                 searchUserButton.setVisibility(View.GONE);
+                searchFilterButton.setVisibility(View.GONE);
+                searchGoToBeginningButton.setVisibility(View.GONE);
                 searchingForUser = true;
                 searchingUserMessages = null;
                 searchingChatMessages = null;
@@ -10036,13 +10059,46 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             });
             searchCalendarButton.setContentDescription(LocaleController.getString("JumpToDate", R.string.JumpToDate));
 
+
+            // 030 mark: add button for setting various filters
+            searchFilterButton = new ImageView(getContext());
+            searchFilterButton.setScaleType(ImageView.ScaleType.CENTER);
+            searchFilterButton.setImageResource(R.drawable.menu_tag_filter);
+            searchFilterButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_searchPanelIcons), PorterDuff.Mode.SRC_IN));
+            searchFilterButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
+            searchFilterButton.setContentDescription(getString(R.string.SearchByMessageType));
+            searchContainer.addView(searchFilterButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * 2, 0, 48 * 3, 0));
+            searchFilterButton.setOnClickListener(view -> {
+                PopupBuilder builder = new PopupBuilder(searchFilterButton);
+                builder.setItems(new String[] {
+                        getString(R.string.None),
+                        getString(R.string.AttachPhoto),
+                        getString(R.string.AttachVideo),
+                        getString(R.string.GifsTab2),
+                        getString(R.string.SharedFilesTab2),
+                        getString(R.string.SharedMusicTab2),
+                        getString(R.string.SharedLinksTab2),
+                        getString(R.string.Mention),
+                        getString(R.string.Contacts),
+                        getString(R.string.SharedVoiceTab2),
+                        getString(R.string.Calls),
+                        getString(R.string.AttachRound),
+                        getString(R.string.AttachLocation),
+                }, (i, cs) -> {
+                    searchFilterType = i;
+                    getMediaDataController().searchMessagesInChat(searchingQuery, dialog_id, mergeDialogId, classGuid, 0, threadMessageId, searchingUserMessages, searchingChatMessages, searchingReaction);
+                    return Unit.INSTANCE;
+                });
+                builder.show();
+            });
+
             // NekoX: go to the first message
             searchGoToBeginningButton = new ImageView(getContext());
             searchGoToBeginningButton.setScaleType(ImageView.ScaleType.CENTER);
             searchGoToBeginningButton.setImageResource(R.drawable.baseline_arrow_upward_24);
             searchGoToBeginningButton.setColorFilter(new PorterDuffColorFilter(Theme.getColor(Theme.key_chat_searchPanelIcons), PorterDuff.Mode.SRC_IN));
             searchGoToBeginningButton.setBackgroundDrawable(Theme.createSelectorDrawable(Theme.getColor(Theme.key_actionBarActionModeDefaultSelector), 1));
-            searchContainer.addView(searchGoToBeginningButton, LayoutHelper.createFrame(48, 48, Gravity.RIGHT | Gravity.TOP, 0, 0, 48 * 2, 0));
+            searchContainer.addView(searchGoToBeginningButton, LayoutHelper.createFrame(48, 48, Gravity.LEFT | Gravity.TOP, 48 * 3, 0, 48 * 3, 0));
             searchGoToBeginningButton.setOnClickListener(view -> {
                 scrollToMessageId(1, 0, false, 0, true, 0);
             });
@@ -33101,6 +33157,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (searchUserButton != null) {
                 searchUserButton.setVisibility(View.GONE);
             }
+            if (searchFilterButton != null) {
+                searchFilterButton.setVisibility(View.GONE);
+            }
+            if (searchGoToBeginningButton != null) {
+                searchGoToBeginningButton.setVisibility(View.GONE);
+            }
         }
         if (searchItem != null) {
             preventReopenSearchWithText = true;
@@ -35869,6 +35931,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 actionBarSearchTags.clear();
             }
             searchingReaction = null;
+            searchFilterType = SEARCH_FILTER_NONE;
             updateSearchUpDownButtonVisibility(true);
             updatePagedownButtonVisibility(true);
             setFilterMessages(false);
@@ -35877,6 +35940,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         @Override
         public void onSearchCollapse() {
             searching = false;
+            searchFilterType = SEARCH_FILTER_NONE;
             updatePagedownButtonVisibility(true);
             updateSearchUpDownButtonVisibility(true);
             if (searchCalendarButton != null) {
@@ -35884,6 +35948,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             }
             if (searchUserButton != null) {
                 searchUserButton.setVisibility(View.VISIBLE);
+            }
+            if (searchFilterButton != null) {
+                searchFilterButton.setVisibility(View.VISIBLE);
+            }
+            if (searchGoToBeginningButton != null) {
+                searchGoToBeginningButton.setVisibility(View.VISIBLE);
             }
             if (searchingForUser) {
                 mentionContainer.getAdapter().searchUsernameOrHashtag(null, 0, null, false, true);
