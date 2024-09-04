@@ -2514,6 +2514,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.didUpdatePremiumGiftFieldIcon);
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
 
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.outgoingMessageTranslated);
+
         parentActivity = context;
         parentFragment = fragment;
         if (fragment != null) {
@@ -4600,7 +4602,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     }
                 }
                 if (sendWithoutSoundButtonValue) {
-                    ActionBarMenuSubItem sendWithoutSoundButton = new ActionBarMenuSubItem(getContext(), !scheduleButtonValue, true, resourcesProvider);
+                    // ActionBarMenuSubItem sendWithoutSoundButton = new ActionBarMenuSubItem(getContext(), !scheduleButtonValue, true, resourcesProvider);
+                    ActionBarMenuSubItem sendWithoutSoundButton = new ActionBarMenuSubItem(getContext(), !scheduleButtonValue, false, resourcesProvider);
                     sendWithoutSoundButton.setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.input_notify_off);
                     sendWithoutSoundButton.setMinimumWidth(dp(196));
                     sendWithoutSoundButton.setOnClickListener(v -> {
@@ -4611,6 +4614,32 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     });
                     sendPopupLayout.addView(sendWithoutSoundButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
                 }
+
+                // 030
+                ActionBarMenuSubItem transBeforeSendButton = new ActionBarMenuSubItem(getContext(), false, true, resourcesProvider);
+                transBeforeSendButton.setTextAndIcon(getString(R.string.TranslateBeforeSend), R.drawable.ic_translate);
+                transBeforeSendButton.setMinimumWidth(dp(196));
+                transBeforeSendButton.setOnClickListener(v -> {
+                    if (messageEditText == null) {
+                        BulletinFactory.of(parentFragment).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
+                        return;
+                    }
+                    Locale toDefault = TranslatorKt.getCode2Locale("en");
+                    Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)));
+                });
+                transBeforeSendButton.setOnLongClickListener(v -> {
+                    Translator.showTargetLangSelect(v, true, (locale) -> {
+                        if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
+                            menuPopupWindow.dismiss();
+                        }
+                        Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale));
+                        TranslateDb.saveChatLanguage(dialog_id, locale);
+                        return Unit.INSTANCE;
+                    });
+                    return true;
+                });
+                sendPopupLayout.addView(transBeforeSendButton, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, 48));
+
                 sendPopupLayout.setupRadialSelectors(getThemedColor(Theme.key_dialogButtonSelector));
 
                 sendPopupWindow = new ActionBarPopupWindow(sendPopupLayout, LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT) {
@@ -4838,6 +4867,27 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
             });
         }
+
+        // 030
+        options.add(R.drawable.ic_translate, null, getString(R.string.TranslateBeforeSend),
+                Theme.key_actionBarDefaultSubmenuItemIcon, Theme.key_actionBarDefaultSubmenuItem, () -> {
+            if (messageEditText == null) {
+                BulletinFactory.of(parentFragment).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
+                return;
+            }
+            Locale toDefault = TranslatorKt.getCode2Locale("en");
+            Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)));
+        }, () -> {
+            Translator.showTargetLangSelect(messageSendPreview.getOptionsView().getLongClickedView(), true, (locale) -> {
+                if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
+                    menuPopupWindow.dismiss();
+                }
+                Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale));
+                TranslateDb.saveChatLanguage(dialog_id, locale);
+                return Unit.INSTANCE;
+            });
+        });
+
         options.setupSelectors();
         if (sendWhenOnlineButton != null) {
             TLRPC.User user = parentFragment == null ? null : parentFragment.getCurrentUser();
@@ -6355,6 +6405,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.updateBotMenuButton);
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.didUpdatePremiumGiftFieldIcon);
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
+
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.outgoingMessageTranslated);
+
         if (emojiView != null) {
             emojiView.onDestroy();
         }
@@ -6519,6 +6572,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.featuredStickersDidLoad);
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messageReceivedByServer2);
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.sendingMessagesChanged);
+            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.outgoingMessageTranslated);
             currentAccount = account;
             accountInstance = AccountInstance.getInstance(currentAccount);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recordStarted);
@@ -6536,6 +6590,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.featuredStickersDidLoad);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.messageReceivedByServer2);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.sendingMessagesChanged);
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.outgoingMessageTranslated);
         }
 
         sendPlainEnabled = true;
@@ -12322,6 +12377,26 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
         } else if (id == NotificationCenter.didUpdatePremiumGiftFieldIcon) {
             updateGiftButton(true);
+        } else if (id == NotificationCenter.outgoingMessageTranslated) {
+            CharSequence translated = (CharSequence) args[0];
+            if (parentFragment.chatAttachAlert != null && parentFragment.chatAttachAlert.hasSelectedItem()) {
+                if (PhotoViewer.getInstance().waitingForTranslation) {
+                    PhotoViewer.getInstance().waitingForTranslation = false;
+                    PhotoViewer.getInstance().closePhoto(true, false);
+                }
+                parentFragment.chatAttachAlert.sendTranslated(translated);
+                parentFragment.finishPreviewFragment();
+            } else {
+                setFieldText(translated);
+                sendMessageInternal(false, 0, false);
+                if (messageSendPreview != null) {
+                    messageSendPreview.dismiss(true);
+                    messageSendPreview = null;
+                } else {
+                    AndroidUtilities.cancelRunOnUIThread(dismissSendPreview);
+                    AndroidUtilities.runOnUIThread(dismissSendPreview, 500);
+                }
+            }
         }
     }
 

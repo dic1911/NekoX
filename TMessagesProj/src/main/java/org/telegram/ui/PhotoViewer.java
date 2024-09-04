@@ -302,6 +302,7 @@ import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
 import tw.nekomimi.nekogram.transtale.TranslateDb;
 import tw.nekomimi.nekogram.transtale.Translator;
+import tw.nekomimi.nekogram.transtale.TranslatorKt;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
@@ -345,6 +346,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
     private TextSelectionHelper.SimpleTextSelectionHelper textSelectionHelper;
     private boolean firstFrameRendered;
     private Paint surfaceBlackoutPaint;
+
+    public boolean waitingForTranslation = false;
 
     public TextureView getVideoTextureView() {
         return videoTextureView;
@@ -6601,8 +6604,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
             final boolean canEdit = placeProvider != null && placeProvider.canEdit(currentIndex);
             final boolean canReplace = placeProvider != null && placeProvider.canReplace(currentIndex);
-            final int[] order = {4, 3, 2, 0, 1, 4};
-            for (int i = 0; i < 5; i++) {
+            final int[] order = {4, 3, 2, 0, 1, 5};
+            for (int i = 0; i < 6; i++) {
                 final int a = order[i];
                 if (a != 2 && a != 3 && canEdit && canReplace) {
                     continue;
@@ -6642,7 +6645,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 } else if (a == 4 && (isCurrentVideo || captionEdit.hasTimer())) {
                     continue;
                 }
-                ActionBarMenuSubItem cell = new ActionBarMenuSubItem(parentActivity, a == 0, a == 3, resourcesProvider);
+                ActionBarMenuSubItem cell = new ActionBarMenuSubItem(parentActivity, a == 0, a == 5, resourcesProvider);
                 if (a == 0) {
                     if (UserObject.isUserSelf(user)) {
                         cell.setTextAndIcon(getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
@@ -6661,6 +6664,8 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                     } else {
                         cell.setTextAndIcon(getString(R.string.SendAsFile), R.drawable.msg_sendfile);
                     }
+                } else if (a == 5) {
+                    cell.setTextAndIcon(getString(R.string.TranslateBeforeSend), R.drawable.ic_translate);
                 }
                 cell.setMinimumWidth(dp(196));
                 cell.setColors(0xffffffff, 0xffffffff);
@@ -6687,6 +6692,11 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         sendPressed(true, 0);
                     } else if (a == 4) {
                         sendPressed(true, 0, false, true, false);
+                    } else if (a == 5) {
+                        waitingForTranslation = true;
+                        Locale toDefault = TranslatorKt.getCode2Locale("en");
+                        Translator.translateByOfficialAPI(currentAccount, applyCaption(),
+                            TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(parentChatActivity.getDialogId(), toDefault)));
                     }
                 });
                 // 030: nuked to fix build
@@ -7240,7 +7250,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 //    }
 
 
-    private void sendPressed(boolean notify, int scheduleDate) {
+    public void sendPressed(boolean notify, int scheduleDate) {
         sendPressed(notify, scheduleDate, false, false, false);
     }
 

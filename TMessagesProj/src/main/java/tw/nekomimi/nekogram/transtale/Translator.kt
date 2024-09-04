@@ -1,18 +1,27 @@
 package tw.nekomimi.nekogram.transtale
 
+import android.text.SpannableStringBuilder
+import android.util.Log
 import android.view.View
+import android.widget.FrameLayout
 import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.StrUtil
-import cn.hutool.http.HttpRequest
 import org.apache.commons.lang3.LocaleUtils
+import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.LocaleController
+import org.telegram.messenger.MessageObject
+import org.telegram.messenger.NotificationCenter
 import org.telegram.messenger.R
-import org.telegram.messenger.SharedConfig
+import org.telegram.tgnet.ConnectionsManager
+import org.telegram.tgnet.TLObject
+import org.telegram.tgnet.TLRPC
+import org.telegram.ui.Components.Bulletin
+import org.telegram.ui.Components.TranslateAlert2
 import tw.nekomimi.nekogram.NekoConfig
-import tw.nekomimi.nekogram.ui.PopupBuilder
 import tw.nekomimi.nekogram.cc.CCConverter
 import tw.nekomimi.nekogram.cc.CCTarget
 import tw.nekomimi.nekogram.transtale.source.*
+import tw.nekomimi.nekogram.ui.PopupBuilder
 import tw.nekomimi.nekogram.utils.UIUtil
 import tw.nekomimi.nekogram.utils.receive
 import tw.nekomimi.nekogram.utils.receiveLazy
@@ -277,6 +286,74 @@ interface Translator {
 
         }
 
+        var transReqId: Int? = null
+
+        @JvmStatic
+        fun translateByOfficialAPI(currentAccount: Int, text: CharSequence?) {
+            translateByOfficialAPI(currentAccount, text, "en")
+        }
+
+        @JvmStatic
+        fun translateByOfficialAPI(currentAccount: Int, text: CharSequence?, targetLang: String) {
+            if (transReqId != null) {
+                ConnectionsManager.getInstance(currentAccount).cancelRequest(transReqId!!, true)
+                transReqId = null
+            }
+            val req: TLRPC.TL_messages_translateText = TLRPC.TL_messages_translateText()
+            val textWithEntities: TLRPC.TL_textWithEntities = TLRPC.TL_textWithEntities()
+            textWithEntities.text = text?.toString() ?: ""
+            req.flags = req.flags or 2
+            req.text.add(textWithEntities)
+            var lang = "en" // 030: tmp
+            if (lang != null) {
+                lang = lang.split("_".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()[0]
+            }
+            if ("nb" == lang) {
+                lang = "no"
+            }
+            req.to_lang = targetLang
+            transReqId = ConnectionsManager.getInstance(currentAccount).sendRequest(
+                req
+            ) { res: TLObject?, err: TLRPC.TL_error? ->
+                AndroidUtilities.runOnUIThread {
+                    transReqId = null
+                    if (res != null && (res is TLRPC.TL_messages_translateResult &&
+                            !(res as TLRPC.TL_messages_translateResult).result.isEmpty()) &&
+                            (res as TLRPC.TL_messages_translateResult).result.get(0) != null &&
+                            ((res as TLRPC.TL_messages_translateResult).result.get(0).text != null)
+                    ) {
+                        val processedText: TLRPC.TL_textWithEntities = TranslateAlert2.preprocess(
+                            textWithEntities, (res as TLRPC.TL_messages_translateResult).result.get(0))
+                        val translated: CharSequence? = SpannableStringBuilder.valueOf(processedText.text)
+                        MessageObject.addEntitiesToText(
+                            translated,
+                            processedText.entities,
+                            false,
+                            true,
+                            false,
+                            false
+                        )
+                        NotificationCenter.getInstance(currentAccount).postNotificationName(
+                            NotificationCenter.outgoingMessageTranslated, translated)
+                    } else {
+                        Log.d("030-tx", "response exists? ${res != null}")
+                        var errMsg = "NULL"
+                        if (err != null) {
+                            errMsg = "${err.code} - ${err.text}"
+                            Log.e("030-tx", errMsg)
+                        }
+                        NotificationCenter.getGlobalInstance().postNotificationName(
+                            NotificationCenter.showBulletin,
+                            Bulletin.TYPE_ERROR_SUBTITLE,
+                            LocaleController.getString(
+                                "TranslationFailedAlert2",
+                                R.string.TranslationFailedAlert2
+                            ), errMsg
+                        )
+                    }
+                }
+            }
+        }
     }
 
 }

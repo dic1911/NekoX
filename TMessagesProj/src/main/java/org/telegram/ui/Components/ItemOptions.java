@@ -225,6 +225,10 @@ public class ItemOptions {
     }
 
     public ItemOptions add(int iconResId, Drawable iconDrawable, CharSequence text, int iconColorKey, int textColorKey, Runnable onClickListener) {
+        return add(iconResId, iconDrawable, text, iconColorKey, textColorKey, onClickListener, null);
+    }
+
+    public ItemOptions add(int iconResId, Drawable iconDrawable, CharSequence text, int iconColorKey, int textColorKey, Runnable onClickListener, Runnable onLongClickListener) {
         if (context == null) {
             return this;
         }
@@ -246,6 +250,17 @@ public class ItemOptions {
             }
             dismiss();
         });
+
+
+        subItem.setOnLongClickListener(view2 -> {
+            longClickedOnItem = (ActionBarMenuSubItem) view2;
+            if (onLongClickListener != null) {
+                onLongClickListener.run();
+            }
+            dismiss();
+            return true;
+        });
+
         if (minWidthDp > 0) {
             subItem.setMinimumWidth(dp(minWidthDp));
             addView(subItem, LayoutHelper.createLinear(minWidthDp, LayoutHelper.WRAP_CONTENT));
@@ -833,6 +848,12 @@ public class ItemOptions {
     public ItemOptions setViewAdditionalOffsets(int left, int top, int right, int bottom) {
         viewAdditionalOffsets.set(left, top, right, bottom);
         return this;
+    }
+
+    // 030
+    private ActionBarMenuSubItem longClickedOnItem = null;
+    public ActionBarMenuSubItem getLongClickedView() {
+        return longClickedOnItem;
     }
 
     public class DimView extends View {

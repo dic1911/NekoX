@@ -141,9 +141,11 @@ import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import kotlin.Unit;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.transtale.TranslateDb;
 import tw.nekomimi.nekogram.transtale.Translator;
+import tw.nekomimi.nekogram.transtale.TranslatorKt;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import java.util.Objects;
 
@@ -3156,6 +3158,37 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                 }
                 messageSendPreview.setStars(amount);
             }
+
+            final ChatActivity finalChatActivity = (parentFragment instanceof ChatActivity) ? (ChatActivity) parentFragment : chatActivity;
+            options.add(R.drawable.ic_translate, null, getString(R.string.TranslateBeforeSend),
+                    Theme.key_actionBarDefaultSubmenuItemIcon, Theme.key_actionBarDefaultSubmenuItem, () -> {
+                        CharSequence text = commentTextView.getText();
+                        if (text == null || text.length() == 0) {
+                            sendTranslated(null);
+                            return;
+                        }
+
+                        if (commentTextView == null) {
+                            BulletinFactory.of(parentFragment).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
+                            return;
+                        }
+                        Locale toDefault = TranslatorKt.getCode2Locale("en");
+                        Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(),
+                                TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(finalChatActivity.getDialogId(), toDefault)));
+                    }, () -> {
+                        CharSequence text = commentTextView.getText();
+                        if (text == null || text.length() == 0) {
+                            sendTranslated(null);
+                            return;
+                        }
+
+                        Translator.showTargetLangSelect(messageSendPreview.getOptionsView().getLongClickedView(), true, (locale) -> {
+                            Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(), TranslatorKt.getLocale2code(locale));
+                            if (finalChatActivity != null) TranslateDb.saveChatLanguage(finalChatActivity.getDialogId(), locale);
+                            return Unit.INSTANCE;
+                        });
+                    });
+
             options.setupSelectors();
             messageSendPreview.setItemOptions(options);
 
@@ -5342,5 +5375,26 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             mentionContainer.getAdapter().setNeedUsernames(false);
         }
         mentionContainer.getAdapter().setNeedBotContext(false);
+    }
+
+    public boolean hasSelectedItem() {
+        return currentAttachLayout.getSelectedItemsCount() > 0;
+    }
+
+    public void sendTranslated(CharSequence translated) {
+        if (translated != null) commentTextView.setText(translated);
+        if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+            sendPressed(true, 0, 0, isCaptionAbove());
+        } else {
+            currentAttachLayout.sendSelectedItems(true, 0, 0, isCaptionAbove());
+            allowPassConfirmationAlert = true;
+        }
+        AndroidUtilities.runOnUIThread(() -> {
+            if (messageSendPreview != null) {
+                messageSendPreview.dismiss(true);
+            }
+            dismiss();
+            dismissInternal();
+        });
     }
 }

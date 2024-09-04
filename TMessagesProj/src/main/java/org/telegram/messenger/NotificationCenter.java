@@ -345,6 +345,7 @@ public class NotificationCenter {
     public static final int onReceivedChannelDifference = totalEvents++;
     public static final int storiesReadUpdated = totalEvents++;
     public static final int nearEarEvent = totalEvents++;
+    public static final int outgoingMessageTranslated = totalEvents++;
 
     public static boolean alreadyLogged;
 

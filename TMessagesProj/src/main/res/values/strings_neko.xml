@@ -214,4 +214,5 @@
     <string name="Blacklist">Blacklist</string>
     <string name="BlacklistedQuery">Blacklisted selected query/queries</string>
     <string name="BlacklistedQueryAllAdded">All queries in current link are already blacklisted.</string>
+    <string name="TranslateBeforeSend">Translate before send</string>
 </resources>

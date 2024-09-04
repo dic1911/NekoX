@@ -124,6 +124,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
     private ChatActivityEnterView.SendButton anchorSendButton;
     private ChatActivityEnterView.SendButton sendButton;
     private int sendButtonWidth, sendButtonRight;
+    private ItemOptions options;
     private View optionsView;
     private EmojiAnimationsOverlay effectOverlay;
 
@@ -1223,6 +1224,7 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
     }
 
     public void setItemOptions(ItemOptions options) {
+        this.options = options;
         optionsView = options.getLayout();
         containerView.addView(optionsView, LayoutHelper.createFrame(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT));
     }
@@ -1871,6 +1873,10 @@ public class MessageSendPreview extends Dialog implements NotificationCenter.Not
         canvas.drawRoundRect(AndroidUtilities.rectTmp, buttonHeight / 2f, buttonHeight / 2f, buttonBgPaint);
         buttonText.draw(canvas, cx - buttonWidth / 2f + dp(14), cy, 0xFFFFFFFF, 1f);
         canvas.restore();
+    }
+
+    public ItemOptions getOptionsView() {
+        return options;
     }
 
 }
