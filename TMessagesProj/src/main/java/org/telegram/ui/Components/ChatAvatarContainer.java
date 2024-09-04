@@ -262,6 +262,9 @@ public class ChatAvatarContainer extends FrameLayout implements NotificationCent
         titleTextView.setCanHideRightDrawable(false);
         titleTextView.setRightDrawableOutside(true);
         titleTextView.setPadding(0, AndroidUtilities.dp(6), 0, AndroidUtilities.dp(12));
+        if (NekoConfig.marqueeForLongChatTitles.Bool()) {
+            titleTextView.setScrollNonFitText(true);
+        }
         addView(titleTextView);
 
         if (useAnimatedSubtitle()) {

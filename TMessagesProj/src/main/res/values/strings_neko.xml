@@ -216,4 +216,5 @@
     <string name="BlacklistedQueryAllAdded">All queries in current link are already blacklisted.</string>
     <string name="TranslateBeforeSend">Translate before send</string>
     <string name="SearchByMessageType">Search by message type</string>
+    <string name="MarqueeForLongChatTitles">Use Marquee for long chat titles</string>
 </resources>
