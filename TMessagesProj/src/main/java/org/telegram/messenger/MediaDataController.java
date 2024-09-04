@@ -9520,8 +9520,6 @@ public class MediaDataController extends BaseController {
                 return new TLRPC.TL_inputMessagesFilterContacts();
             case ChatActivity.SEARCH_FILTER_VOICE:
                 return new TLRPC.TL_inputMessagesFilterVoice();
-            case ChatActivity.SEARCH_FILTER_CALLS:
-                return new TLRPC.TL_inputMessagesFilterPhoneCalls();
             case ChatActivity.SEARCH_FILTER_ROUND_VIDEOS:
                 return new TLRPC.TL_inputMessagesFilterRoundVideo();
             case ChatActivity.SEARCH_FILTER_GEO:

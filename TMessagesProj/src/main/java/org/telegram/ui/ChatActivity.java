@@ -656,9 +656,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     public static final int SEARCH_FILTER_MENTIONS = 7;
     public static final int SEARCH_FILTER_CONTACTS = 8;
     public static final int SEARCH_FILTER_VOICE = 9;
-    public static final int SEARCH_FILTER_CALLS = 10;
-    public static final int SEARCH_FILTER_ROUND_VIDEOS = 11;
-    public static final int SEARCH_FILTER_GEO = 12;
+    public static final int SEARCH_FILTER_ROUND_VIDEOS = 10;
+    public static final int SEARCH_FILTER_GEO = 11;
     public static int searchFilterType = SEARCH_FILTER_NONE;
 
     public TLRPC.TL_businessChatLink businessLink = null;
@@ -10060,7 +10059,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             searchCalendarButton.setContentDescription(LocaleController.getString("JumpToDate", R.string.JumpToDate));
 
 
-            // 030 mark: add button for setting various filters
             searchFilterButton = new ImageView(getContext());
             searchFilterButton.setScaleType(ImageView.ScaleType.CENTER);
             searchFilterButton.setImageResource(R.drawable.menu_tag_filter);
@@ -10081,7 +10079,6 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         getString(R.string.Mention),
                         getString(R.string.Contacts),
                         getString(R.string.SharedVoiceTab2),
-                        getString(R.string.Calls),
                         getString(R.string.AttachRound),
                         getString(R.string.AttachLocation),
                 }, (i, cs) -> {
