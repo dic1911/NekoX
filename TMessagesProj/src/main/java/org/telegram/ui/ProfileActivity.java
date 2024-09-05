@@ -261,6 +261,7 @@ import org.telegram.ui.Components.ShareAlert;
 import org.telegram.ui.Components.SharedMediaLayout;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.StickerEmptyView;
+import org.telegram.ui.Components.StorageDiagramView;
 import org.telegram.ui.Components.TimerDrawable;
 import org.telegram.ui.Components.TranslateAlert2;
 import org.telegram.ui.Components.TypefaceSpan;
@@ -271,6 +272,7 @@ import org.telegram.ui.Stars.BotStarsActivity;
 import org.telegram.ui.Stars.BotStarsController;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
+import org.telegram.ui.Storage.CacheModel;
 import org.telegram.ui.Stories.ProfileStoriesView;
 import org.telegram.ui.Stories.StoriesController;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
@@ -561,6 +563,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int copy_link_profile = 42;
     private final static int set_username = 43;
     private final static int bot_privacy = 44;
+
+    private final static int clear_cache = 1001;
 
     private Rect rect = new Rect();
 
@@ -2736,6 +2740,11 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 //                        args.putLong("user_id", userId);
 //                        presentFragment(new QrActivity(args));
 //                    }
+                } else if (id == clear_cache) {
+                    Bundle args = new Bundle();
+                    args.putLong("dialog_id", userId != 0 ? dialogId : -chatId);
+                    CacheControlActivity fragment = new CacheControlActivity(args);
+                    presentFragment(fragment);
                 }
             }
         });
@@ -10452,6 +10461,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
         if (selfUser && !myProfile) {
             otherItem.addSubItem(logout, R.drawable.msg_leave, LocaleController.getString("LogOut", R.string.LogOut));
+        } else {
+            otherItem.addSubItem(clear_cache, R.drawable.msg_delete, LocaleController.getString(R.string.ClearCache));
         }
         if (!isPulledDown) {
             otherItem.hideSubItem(gallery_menu_save);
