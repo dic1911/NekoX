@@ -2602,6 +2602,11 @@ public class MediaController implements AudioManager.OnAudioFocusChangeListener,
     }
 
     private void playNextMessageWithoutOrder(boolean byStop) {
+        if (byStop && NekoConfig.dontAutoPlayNextMessage.Bool()) {
+            pauseMessage(playingMessageObject);
+            return;
+        }
+
         ArrayList<MessageObject> currentPlayList = SharedConfig.shuffleMusic ? shuffledPlaylist : playlist;
 
         if (byStop && (SharedConfig.repeatMode == 2 || SharedConfig.repeatMode == 1 && currentPlayList.size() == 1) && !forceLoopCurrentPlaylist) {
