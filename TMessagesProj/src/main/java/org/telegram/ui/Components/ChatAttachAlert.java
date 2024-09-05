@@ -124,7 +124,6 @@ import org.telegram.ui.PhotoPickerActivity;
 import org.telegram.ui.PhotoPickerSearchActivity;
 import org.telegram.ui.PhotoViewer;
 import org.telegram.ui.PremiumPreviewFragment;
-import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
 import org.telegram.ui.Stories.recorder.StoryEntry;
 import org.telegram.ui.WebAppDisclaimerAlert;
@@ -3160,11 +3159,11 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
             }
 
             final ChatActivity finalChatActivity = (parentFragment instanceof ChatActivity) ? (ChatActivity) parentFragment : chatActivity;
-            options.add(R.drawable.ic_translate, null, getString(R.string.TranslateBeforeSend),
+            options.add(R.drawable.ic_translate, null, getString(NekoConfig.dontSendRightAfterTranslated.Bool() ? R.string.Translate : R.string.TranslateBeforeSend),
                     Theme.key_actionBarDefaultSubmenuItemIcon, Theme.key_actionBarDefaultSubmenuItem, () -> {
                         CharSequence text = commentTextView.getText();
                         if (text == null || text.length() == 0) {
-                            sendTranslated(null);
+                            handleTranslatedMessage(null, false);
                             return;
                         }
 
@@ -3175,16 +3174,24 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                         Locale toDefault = TranslatorKt.getCode2Locale("en");
                         Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(),
                                 TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(finalChatActivity.getDialogId(), toDefault)));
+                        if (messageSendPreview != null) {
+                            messageSendPreview.dismiss(true);
+                            messageSendPreview = null;
+                        }
                     }, () -> {
                         CharSequence text = commentTextView.getText();
                         if (text == null || text.length() == 0) {
-                            sendTranslated(null);
+                            handleTranslatedMessage(null, false);
                             return;
                         }
 
                         Translator.showTargetLangSelect(messageSendPreview.getOptionsView().getLongClickedView(), true, (locale) -> {
                             Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(), TranslatorKt.getLocale2code(locale));
                             if (finalChatActivity != null) TranslateDb.saveChatLanguage(finalChatActivity.getDialogId(), locale);
+                            if (messageSendPreview != null) {
+                                messageSendPreview.dismiss(true);
+                                messageSendPreview = null;
+                            }
                             return Unit.INSTANCE;
                         });
                     });
@@ -5381,18 +5388,24 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
         return currentAttachLayout.getSelectedItemsCount() > 0;
     }
 
-    public void sendTranslated(CharSequence translated) {
+    public void handleTranslatedMessage(CharSequence translated, final boolean dontSend) {
         if (translated != null) commentTextView.setText(translated);
-        if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
-            sendPressed(true, 0, 0, isCaptionAbove());
+        if (!dontSend) {
+            if (currentAttachLayout == photoLayout || currentAttachLayout == photoPreviewLayout) {
+                sendPressed(true, 0, 0, isCaptionAbove());
+            } else {
+                currentAttachLayout.sendSelectedItems(true, 0, 0, isCaptionAbove());
+                allowPassConfirmationAlert = true;
+            }
         } else {
-            currentAttachLayout.sendSelectedItems(true, 0, 0, isCaptionAbove());
-            allowPassConfirmationAlert = true;
+            showCommentTextView(true, true);
+            writeButton.setAlpha(1.0f);
         }
         AndroidUtilities.runOnUIThread(() -> {
             if (messageSendPreview != null) {
                 messageSendPreview.dismiss(true);
             }
+            if (dontSend) return;
             dismiss();
             dismissInternal();
         });

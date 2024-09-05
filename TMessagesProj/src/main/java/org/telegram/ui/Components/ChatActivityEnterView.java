@@ -170,8 +170,6 @@ import org.telegram.ui.Cells.TextCheckCell;
 import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.Premium.GiftPremiumBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
-import org.telegram.ui.Components.Premium.boosts.BoostRepository;
-import org.telegram.ui.Components.Premium.boosts.PremiumPreviewGiftToUsersBottomSheet;
 import org.telegram.ui.ContentPreviewViewer;
 import org.telegram.ui.DialogsActivity;
 import org.telegram.ui.GroupStickersActivity;
@@ -219,8 +217,6 @@ import tw.nekomimi.nekogram.transtale.TranslatorKt;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.PGPUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 public class ChatActivityEnterView extends BlurredFrameLayout implements NotificationCenter.NotificationCenterDelegate, SizeNotifierFrameLayout.SizeNotifierFrameLayoutDelegate, StickersAlert.StickersAlertDelegate, SuggestEmojiView.AnchorViewDelegate {
 
@@ -4617,7 +4613,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
                 // 030
                 ActionBarMenuSubItem transBeforeSendButton = new ActionBarMenuSubItem(getContext(), false, true, resourcesProvider);
-                transBeforeSendButton.setTextAndIcon(getString(R.string.TranslateBeforeSend), R.drawable.ic_translate);
+                transBeforeSendButton.setTextAndIcon(getString(NekoConfig.dontSendRightAfterTranslated.Bool() ? R.string.Translate : R.string.TranslateBeforeSend), R.drawable.ic_translate);
                 transBeforeSendButton.setMinimumWidth(dp(196));
                 transBeforeSendButton.setOnClickListener(v -> {
                     if (messageEditText == null) {
@@ -4869,7 +4865,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
 
         // 030
-        options.add(R.drawable.ic_translate, null, getString(R.string.TranslateBeforeSend),
+        options.add(R.drawable.ic_translate, null, getString(NekoConfig.dontSendRightAfterTranslated.Bool() ? R.string.Translate : R.string.TranslateBeforeSend),
                 Theme.key_actionBarDefaultSubmenuItemIcon, Theme.key_actionBarDefaultSubmenuItem, () -> {
             if (messageEditText == null) {
                 BulletinFactory.of(parentFragment).createErrorBulletin(LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2)).show();
@@ -12378,24 +12374,26 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         } else if (id == NotificationCenter.didUpdatePremiumGiftFieldIcon) {
             updateGiftButton(true);
         } else if (id == NotificationCenter.outgoingMessageTranslated) {
+            boolean dontSend = NekoConfig.dontSendRightAfterTranslated.Bool();
             CharSequence translated = (CharSequence) args[0];
             if (parentFragment.chatAttachAlert != null && parentFragment.chatAttachAlert.hasSelectedItem()) {
-                if (PhotoViewer.getInstance().waitingForTranslation) {
-                    PhotoViewer.getInstance().waitingForTranslation = false;
-                    PhotoViewer.getInstance().closePhoto(true, false);
+                PhotoViewer viewer = PhotoViewer.getInstance();
+                parentFragment.chatAttachAlert.commentTextView.setText(translated);
+                if (viewer.waitingForTranslation) {
+                    viewer.waitingForTranslation = false;
+                    if (dontSend) viewer.setCaption(translated);
+                    else viewer.closePhoto(true, false);
                 }
-                parentFragment.chatAttachAlert.sendTranslated(translated);
                 parentFragment.finishPreviewFragment();
+                parentFragment.chatAttachAlert.handleTranslatedMessage(translated, dontSend);
             } else {
-                setFieldText(translated);
-                sendMessageInternal(false, 0, false);
+                setFieldText(translated, false, true);
                 if (messageSendPreview != null) {
-                    messageSendPreview.dismiss(true);
+                    messageSendPreview.dismiss(!dontSend);
                     messageSendPreview = null;
-                } else {
-                    AndroidUtilities.cancelRunOnUIThread(dismissSendPreview);
-                    AndroidUtilities.runOnUIThread(dismissSendPreview, 500);
                 }
+                if (dontSend) return;
+                sendMessageInternal(true, 0, false);
             }
         }
     }

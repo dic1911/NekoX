@@ -107,6 +107,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     private final AbstractConfigCell disableRemoteEmojiInteractionsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableRemoteEmojiInteractions));
     private final AbstractConfigCell rememberAllBackMessagesRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.rememberAllBackMessages));
     private final AbstractConfigCell confirmToSendCommandByClickRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.confirmToSendCommandByClick));
+    private final AbstractConfigCell dontSendRightAfterTranslatedRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.dontSendRightAfterTranslated));
     private final AbstractConfigCell dividerInteractions = cellGroup.appendCell(new ConfigCellDivider());
 
     // Sticker

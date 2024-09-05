@@ -250,6 +250,7 @@ public class NekoConfig {
     public static ConfigItem overrideSettingLong = addConfig("OverrideSettingLong", configTypeString, "");
     public static ConfigItem overrideSettingFloat = addConfig("OverrideSettingFloat", configTypeString, "");
     public static ConfigItem marqueeForLongChatTitles = addConfig("MarqueeForLongChatTitles", configTypeBool, true);
+    public static ConfigItem dontSendRightAfterTranslated = addConfig("DontSendRightAfterTranslated", configTypeBool, true);
 
     public static ConfigItem customGetQueryBlacklist = addConfig("BlacklistUrlQueryTitle", configTypeString, "");
     public static ArrayList<String> customGetQueryBlacklistData = new ArrayList<>();

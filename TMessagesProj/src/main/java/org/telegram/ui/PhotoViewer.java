@@ -6665,7 +6665,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                         cell.setTextAndIcon(getString(R.string.SendAsFile), R.drawable.msg_sendfile);
                     }
                 } else if (a == 5) {
-                    cell.setTextAndIcon(getString(R.string.TranslateBeforeSend), R.drawable.ic_translate);
+                    cell.setTextAndIcon(getString(NekoConfig.dontSendRightAfterTranslated.Bool() ? R.string.Translate : R.string.TranslateBeforeSend), R.drawable.ic_translate);
                 }
                 cell.setMinimumWidth(dp(196));
                 cell.setColors(0xffffffff, 0xffffffff);
