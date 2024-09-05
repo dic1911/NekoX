@@ -10780,9 +10780,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (translateItem == null) {
             return;
         }
+        boolean allowed = NekoConfig.autoTranslate.Bool();
         // boolean hidden = getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId());
         boolean translatable = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId());
-        translateItem.setVisibility(translatable ? View.VISIBLE : View.GONE);
+        translateItem.setVisibility(allowed && translatable ? View.VISIBLE : View.GONE);
     }
 
     private Animator infoTopViewAnimator;
@@ -27280,7 +27281,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 );
             }
         }
-        if (showTranslate) {
+        if (showTranslate && getMessagesController().getTranslateController().isTranslatingDialog(getDialogId())) {
             createTranslateButton();
             if (translateButton != null) {
                 translateButton.updateText();
