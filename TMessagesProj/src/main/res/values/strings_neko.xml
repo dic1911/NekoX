@@ -218,4 +218,5 @@
     <string name="SearchByMessageType">Search by message type</string>
     <string name="MarqueeForLongChatTitles">Use Marquee for long chat titles</string>
     <string name="DontSendRightAfterTranslated">Do not send right after message gets translated</string>
+    <string name="HideOriginalTextAfterTranslate">Hide original text after translate</string>
 </resources>

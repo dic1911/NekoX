@@ -48,19 +48,21 @@ fun MessageObject.translateFinished(locale: Locale): Int {
 
     val db = TranslateDb.forLocale(locale)
 
+    val hideOriginalText = NekoConfig.hideOriginalTextAfterTranslate.Bool()
+
     if (isPoll) {
 
         val pool = (messageOwner.media as TLRPC.TL_messageMediaPoll).poll
 
         val question = db.query(pool.question.text) ?: return 0
 
-        pool.translatedQuestion = pool.question.text + "\n\n--------\n\n" + question
+        pool.translatedQuestion = if (hideOriginalText) question else (pool.question.text + "\n\n--------\n\n" + question)
 
         pool.answers.forEach {
 
             val answer = db.query(it.text.text) ?: return 0
 
-            it.translatedText = answer + " | " + it.text.text
+            it.translatedText = if (hideOriginalText) answer else (answer + " | " + it.text.text)
 
         }
 
@@ -69,7 +71,7 @@ fun MessageObject.translateFinished(locale: Locale): Int {
         val text = db.query(messageOwner.message.takeIf { !it.isNullOrBlank() } ?: return 1)
                 ?: return 0
 
-        messageOwner.translatedMessage = messageOwner.message + "\n\n--------\n\n" + text
+        messageOwner.translatedMessage = if (hideOriginalText) text else messageOwner.message + "\n\n--------\n\n" + text
 
     }
 
@@ -156,6 +158,7 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
             deferreds.add(async(transPool) trans@{
 
                 val db = TranslateDb.forLocale(target)
+                val hideOriginalText = NekoConfig.hideOriginalTextAfterTranslate.Bool()
 
                 if (selectedObject.isPoll) {
 
@@ -195,7 +198,7 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
 
                     }
 
-                    pool.translatedQuestion = pool.question.text + "\n\n--------\n\n" + question
+                    pool.translatedQuestion = if (hideOriginalText) question else (pool.question.text + "\n\n--------\n\n" + question)
 
                     pool.answers.forEach {
 
@@ -233,7 +236,7 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
                         }
 
                         val result = if (it is TLRPC.PollAnswer) it.text.text else it.text
-                        it.translatedText = "$answer | $result"
+                        it.translatedText = if (hideOriginalText) "$result" else "$answer | $result"
 
                     }
 
@@ -271,7 +274,7 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
 
                     }
 
-                    selectedObject.messageOwner.translatedMessage = selectedObject.messageOwner.message + "\n\n--------\n\n" + text
+                    selectedObject.messageOwner.translatedMessage = if (NekoConfig.hideOriginalTextAfterTranslate.Bool()) text else (selectedObject.messageOwner.message + "\n\n--------\n\n" + text)
 
                 }
 
