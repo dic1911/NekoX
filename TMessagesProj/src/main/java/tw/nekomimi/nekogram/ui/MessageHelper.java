@@ -718,4 +718,22 @@ public class MessageHelper extends BaseController {
         } catch (java.lang.Exception ignored) {
         }
     }
+
+    public String getMessagePlainText(MessageObject messageObject) {
+        String message;
+        if (messageObject.isPoll()) {
+            TLRPC.Poll poll = ((TLRPC.TL_messageMediaPoll) messageObject.messageOwner.media).poll;
+            StringBuilder pollText = new StringBuilder(poll.question.text).append("\n");
+            for (TLRPC.PollAnswer answer : poll.answers) {
+                pollText.append("\n\uD83D\uDD18 ");
+                pollText.append(answer.text.text);
+            }
+            message = pollText.toString();
+        } else if (messageObject.isVoiceTranscriptionOpen()) {
+            message = messageObject.messageOwner.voiceTranscription;
+        } else {
+            message = messageObject.messageOwner.message;
+        }
+        return message;
+    }
 }

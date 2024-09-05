@@ -3375,6 +3375,7 @@ public class MessageObject {
     }
 
     public boolean translated = false;
+    public boolean translating = false;
     public boolean updateTranslation(boolean force) {
         boolean replyUpdated = replyMessageObject != null && replyMessageObject.updateTranslation(force);
         TranslateController translateController = MessagesController.getInstance(currentAccount).getTranslateController();

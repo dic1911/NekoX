@@ -252,6 +252,7 @@ public class NekoConfig {
     public static ConfigItem marqueeForLongChatTitles = addConfig("MarqueeForLongChatTitles", configTypeBool, true);
     public static ConfigItem dontSendRightAfterTranslated = addConfig("DontSendRightAfterTranslated", configTypeBool, true);
     public static ConfigItem hideOriginalTextAfterTranslate = addConfig("HideOriginalTextAfterTranslate", configTypeBool, false);
+    public static ConfigItem autoTranslate = addConfig("AutomaticTranslation", configTypeBool, true);
 
     public static ConfigItem customGetQueryBlacklist = addConfig("BlacklistUrlQueryTitle", configTypeString, "");
     public static ArrayList<String> customGetQueryBlacklistData = new ArrayList<>();

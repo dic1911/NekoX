@@ -9611,7 +9611,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         translateButton = new TranslateButton(getContext(), this, themeDelegate) {
             @Override
             protected void onButtonClick() {
-                if (getUserConfig().isPremium()) {
+                if (true || getUserConfig().isPremium()) {
                     getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId());
                 } else {
                     MessagesController.getNotificationsSettings(currentAccount).edit().putInt("dialog_show_translate_count" + getDialogId(), 14).commit();
@@ -10780,7 +10780,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (translateItem == null) {
             return;
         }
-        translateItem.setVisibility(getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) && getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) ? View.VISIBLE : View.GONE);
+        // boolean hidden = getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId());
+        boolean translatable = getMessagesController().getTranslateController().isDialogTranslatable(getDialogId());
+        translateItem.setVisibility(translatable ? View.VISIBLE : View.GONE);
     }
 
     private Animator infoTopViewAnimator;
@@ -27215,6 +27217,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
     }
 
+    private boolean hideTranslatePanel = true;
     private boolean shownRestartTopic, shownTranslateTopic;
     private void updateTopPanel(boolean animated) {
         if (chatMode != 0) {
@@ -27246,6 +27249,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         TLRPC.EmojiStatus showEmojiStatusReport = currentUser != null && (showReport || showBlock) && (currentUser.emoji_status instanceof TLRPC.TL_emojiStatus || currentUser.emoji_status instanceof TLRPC.TL_emojiStatusUntil && ((TLRPC.TL_emojiStatusUntil) currentUser.emoji_status).until > (int) (System.currentTimeMillis() / 1000)) ? currentUser.emoji_status : null;
         boolean showRestartTopic = !isInPreviewMode() && forumTopic != null && forumTopic.closed && !forumTopic.hidden && ChatObject.canManageTopic(currentAccount, currentChat, forumTopic);
         boolean showTranslate = (
+            true ||
             getUserConfig().isPremium() ?
                 getMessagesController().getTranslateController().isDialogTranslatable(getDialogId()) && !getMessagesController().getTranslateController().isTranslateDialogHidden(getDialogId()) :
                 !getMessagesController().premiumFeaturesBlocked() && preferences.getInt("dialog_show_translate_count" + did, 5) <= 0

@@ -30,6 +30,8 @@ import java.util.Locale;
 import java.util.Objects;
 import java.util.Set;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class TranslateController extends BaseController {
 
     public static final String UNKNOWN_LANGUAGE = "und";
@@ -66,7 +68,7 @@ public class TranslateController extends BaseController {
     }
 
     public boolean isFeatureAvailable() {
-        return isChatTranslateEnabled() && UserConfig.getInstance(currentAccount).isPremium();
+        return NekoConfig.autoTranslate.Bool() || isChatTranslateEnabled() || UserConfig.getInstance(currentAccount).isPremium();
     }
 
     private Boolean chatTranslateEnabled;
@@ -630,6 +632,18 @@ public class TranslateController extends BaseController {
     private ArrayList<Integer> pendingLanguageChecks = new ArrayList<>();
     private void checkLanguage(MessageObject messageObject) {
         // NekoX: remove Language Detector
+        if (!isTranslatable(messageObject) || messageObject.messageOwner == null || TextUtils.isEmpty(messageObject.messageOwner.message)) {
+            return;
+        }
+
+        final long dialogId = messageObject.getDialogId();
+        if (isDialogTranslatable(dialogId)) {
+            return;
+        }
+
+        messageObject.messageOwner.originalLanguage = "auto"; // "und" ??
+        getMessagesStorage().updateMessageCustomParams(dialogId, messageObject.messageOwner);
+        checkDialogTranslatable(messageObject);
     }
 
     private void checkDialogTranslatable(MessageObject messageObject) {
