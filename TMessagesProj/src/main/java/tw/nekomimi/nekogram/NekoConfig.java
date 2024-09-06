@@ -253,6 +253,7 @@ public class NekoConfig {
     public static ConfigItem dontSendRightAfterTranslated = addConfig("DontSendRightAfterTranslated", configTypeBool, true);
     public static ConfigItem hideOriginalTextAfterTranslate = addConfig("HideOriginalTextAfterTranslate", configTypeBool, false);
     public static ConfigItem autoTranslate = addConfig("AutomaticTranslation", configTypeBool, false);
+    public static ConfigItem useCustomProviderForAutoTranslate = addConfig("UseCustomProviderForAutoTranslate", configTypeBool, true);
     public static ConfigItem dontAutoPlayNextMessage = addConfig("DontAutoPlayNextMessage", configTypeBool, false);
     public static ConfigItem chatListFontSizeFollowChat = addConfig("ChatListFontSizeFollowChat", configTypeBool, false);
 

@@ -9,6 +9,7 @@ import android.view.inputmethod.InputMethodInfo;
 import android.view.inputmethod.InputMethodManager;
 import android.view.inputmethod.InputMethodSubtype;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import org.telegram.tgnet.TLRPC;
@@ -31,6 +32,8 @@ import java.util.Objects;
 import java.util.Set;
 
 import tw.nekomimi.nekogram.NekoConfig;
+import tw.nekomimi.nekogram.transtale.Translator;
+import tw.nekomimi.nekogram.transtale.TranslatorKt;
 
 public class TranslateController extends BaseController {
 
@@ -519,6 +522,50 @@ public class TranslateController extends BaseController {
             final MessageObject finalMessageObject = messageObject;
             if (finalMessageObject.messageOwner.translatedText == null || !language.equals(finalMessageObject.messageOwner.translatedToLanguage)) {
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslating, finalMessageObject);
+                if (NekoConfig.useCustomProviderForAutoTranslate.Bool() && NekoConfig.translationProvider.Int() != Translator.providerTelegram) {
+                    Translator.translate(TranslatorKt.getCode2Locale(language), finalMessageObject.messageOwner.message, new Translator.Companion.TranslateCallBack() {
+                        @Override
+                        public void onSuccess(@NonNull String translation) {
+                            // Log.e("030-tx", String.format("result: %s", translation));
+                            TLRPC.TL_textWithEntities textObj = new TLRPC.TL_textWithEntities();
+                            textObj.text = translation;
+                            finalMessageObject.messageOwner.translatedToLanguage = language;
+                            finalMessageObject.messageOwner.translatedText = textObj;
+                            if (keepReply) {
+                                keepReplyMessage(finalMessageObject);
+                            }
+                            getMessagesStorage().updateMessageCustomParams(dialogId, finalMessageObject.messageOwner);
+                            ArrayList<MessageObject> dialogMessages = messagesController.dialogMessage.get(dialogId);
+                            if (dialogMessages != null) {
+                                for (int i = 0; i < dialogMessages.size(); ++i) {
+                                    MessageObject dialogMessage = dialogMessages.get(i);
+                                    if (dialogMessage != null && dialogMessage.getId() == finalMessageObject.getId()) {
+                                        dialogMessage.messageOwner.translatedToLanguage = language;
+                                        dialogMessage.messageOwner.translatedText = textObj;
+                                        if (dialogMessage.updateTranslation()) {
+                                            NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.updateInterfaces, 0);
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+                        @Override
+                        public void onFailed(boolean unsupported, @NonNull String message) {
+                            Log.e("030-tx", String.format("unsupported: %s, msg: %s", unsupported, message));
+                            try {
+                                NotificationCenter.getGlobalInstance().postNotificationName(
+                                        NotificationCenter.showBulletin, Bulletin.TYPE_ERROR_SUBTITLE,
+                                        LocaleController.getString("TranslationFailedAlert2", R.string.TranslationFailedAlert2), message);
+                            } catch (Exception ex) {
+                                Log.e("030-tx", "failed to show error", ex);
+                            }
+                        }
+                    });
+
+                    return;
+                }
                 pushToTranslate(finalMessageObject, language, (id, text, lang) -> {
                     if (finalMessageObject.getId() != id) {
                         FileLog.e("wtf, asked to translate " + finalMessageObject.getId() + " but got " + id + "!");

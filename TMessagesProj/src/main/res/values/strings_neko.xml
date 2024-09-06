@@ -221,4 +221,5 @@
     <string name="HideOriginalTextAfterTranslate">Hide original text after translate</string>
     <string name="DontAutoPlayNextMessage">Do not auto play next audio message</string>
     <string name="ChatListFontSizeFollowChat">Use message font size in chat list</string>
+    <string name="UseCustomProviderForAutoTranslate">Use custom translation provider for auto translate</string>
 </resources>
