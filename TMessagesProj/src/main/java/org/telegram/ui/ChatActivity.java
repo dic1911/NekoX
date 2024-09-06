@@ -27281,8 +27281,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 );
             }
         }
-        if (showTranslate && getMessagesController().getTranslateController().isTranslatingDialog(getDialogId())) {
-            createTranslateButton();
+        if (showTranslate) {
+            if (getMessagesController().getTranslateController().isTranslatingDialog(getDialogId())) {
+                createTranslateButton();
+            }
             if (translateButton != null) {
                 translateButton.updateText();
             }
