@@ -1710,7 +1710,7 @@ public class NotificationsController extends BaseController {
         }
         lastBadgeCount = count;
         NotificationBadge.applyCount(count);
-        NotificationCenter.getGlobalInstance().postNotificationName(NotificationCenter.notificationsCountUpdated, currentAccount);
+        NotificationCenter.getGlobalInstance().postNotificationNameOnUIThread(NotificationCenter.notificationsCountUpdated, currentAccount);
     }
 
     private String getShortStringForMessage(MessageObject messageObject, String[] userName, boolean[] preview) {
