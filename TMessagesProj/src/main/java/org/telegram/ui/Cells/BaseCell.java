@@ -80,6 +80,10 @@ public abstract class BaseCell extends ViewGroup implements SizeNotifierFrameLay
         setDrawableBounds(drawable, x, y, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
     }
 
+    public static void setDrawableBounds(Drawable drawable, int x, int y, float scale) {
+        setDrawableBounds(drawable, x, y, (int) (drawable.getIntrinsicWidth() * scale), (int) (drawable.getIntrinsicHeight() * scale));
+    }
+
     public static void setDrawableBounds(Drawable drawable, float x, float y) {
         setDrawableBounds(drawable, (int) x, (int) y, drawable.getIntrinsicWidth(), drawable.getIntrinsicHeight());
     }

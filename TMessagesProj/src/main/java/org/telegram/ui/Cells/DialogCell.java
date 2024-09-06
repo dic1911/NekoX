@@ -2012,6 +2012,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 nameLeft += w;
             }
         }
+        float oldTextSize = Theme.dialogs_namePaint[paintIndex].getTextSize();
+        float desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 2) : oldTextSize;
+        if (oldTextSize != desiredSize) {
+            Theme.dialogs_namePaint[paintIndex].setTextSize(dp(SharedConfig.fontSize));
+        }
         try {
             int ellipsizeWidth = nameWidth - dp(12);
             if (ellipsizeWidth < 0) {
@@ -2214,6 +2219,13 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
             drawCount = false;
             drawMention = false;
+        }
+
+        oldTextSize = Theme.dialogs_messagePaint[paintIndex].getTextSize();
+        desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize) : oldTextSize;
+        if (oldTextSize != desiredSize) {
+            Theme.dialogs_messagePaint[paintIndex].setTextSize(desiredSize);
+            Theme.dialogs_messageNamePaint.setTextSize(desiredSize);
         }
 
         if (checkMessage) {
@@ -3277,6 +3289,8 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             return;
         }
 
+        boolean chatListFontSizeFollowChat = NekoConfig.chatListFontSizeFollowChat.Bool();
+
         if (clipProgress != 0.0f && Build.VERSION.SDK_INT != 24) {
             canvas.save();
             canvas.clipRect(0, topClip * clipProgress, getMeasuredWidth(), getMeasuredHeight() - (int) (bottomClip * clipProgress));
@@ -3845,8 +3859,19 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     muteY -= dp(isForumCell() ? 8 : 9);
                 }
-                setDrawableBounds(Theme.dialogs_muteDrawable, muteX, muteY);
-                setDrawableBounds(Theme.dialogs_unmuteDrawable, muteX, muteY);
+
+                if (chatListFontSizeFollowChat) {
+                    if (SharedConfig.fontSize != 15) {
+                        float diff = dp(15 - SharedConfig.fontSize);
+                        muteY -= (int) (SharedConfig.fontSize < 15 ? diff * 1.5 : diff * 0.3);
+                    }
+                    setDrawableBounds(Theme.dialogs_muteDrawable, (int) muteX, (int) muteY, SharedConfig.fontSize <= 15 ? 1 : ((float) SharedConfig.fontSize / 15));
+                    setDrawableBounds(Theme.dialogs_unmuteDrawable, (int) muteX, (int) muteY, SharedConfig.fontSize <= 15 ? 1 : ((float) SharedConfig.fontSize / 15));
+                } else {
+                    setDrawableBounds(Theme.dialogs_muteDrawable, muteX, muteY);
+                    setDrawableBounds(Theme.dialogs_unmuteDrawable, muteX, muteY);
+                }
+
                 if (dialogMutedProgress != 1f) {
                     canvas.save();
                     canvas.scale(dialogMutedProgress, dialogMutedProgress, Theme.dialogs_muteDrawable.getBounds().centerX(), Theme.dialogs_muteDrawable.getBounds().centerY());
@@ -3873,8 +3898,19 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
                 }
-                setDrawableBounds(Theme.dialogs_verifiedDrawable, nameMuteLeft - dp(1), y);
-                setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - dp(1), y);
+
+                if (chatListFontSizeFollowChat) {
+                    if (SharedConfig.fontSize != 15) {
+                        float diff = dp(15 - SharedConfig.fontSize);
+                        y -= (int) (SharedConfig.fontSize < 15 ? diff * 1.5 : diff * 0.3);
+                    }
+                    setDrawableBounds(Theme.dialogs_verifiedDrawable, (int) nameMuteLeft - dp(1), (int) y, SharedConfig.fontSize <= 15 ? 1 : ((float) SharedConfig.fontSize / 15));
+                    setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, (int) nameMuteLeft - dp(1), (int) y, SharedConfig.fontSize <= 15 ? 1 : ((float) SharedConfig.fontSize / 15));
+                } else {
+                    setDrawableBounds(Theme.dialogs_verifiedDrawable, nameMuteLeft - dp(1), y);
+                    setDrawableBounds(Theme.dialogs_verifiedCheckDrawable, nameMuteLeft - dp(1), y);
+                }
+
                 Theme.dialogs_verifiedDrawable.draw(canvas);
                 Theme.dialogs_verifiedCheckDrawable.draw(canvas);
             } else if (drawPremium) {
@@ -3901,7 +3937,16 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
                 if ((!(useForceThreeLines || SharedConfig.useThreeLinesLayout) || isForumCell()) && hasTags()) {
                     y -= dp(9);
                 }
-                setDrawableBounds((drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable), nameMuteLeft, y);
+
+                if (chatListFontSizeFollowChat) {
+                    if (SharedConfig.fontSize != 15) {
+                        float diff = dp(15 - SharedConfig.fontSize);
+                        y -= (int) (SharedConfig.fontSize < 15 ? diff * 1.5 : diff * 0.3);
+                    }
+                    setDrawableBounds((drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable), (int) nameMuteLeft, (int) y, (float) SharedConfig.fontSize / 15);
+                } else {
+                    setDrawableBounds((drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable), (int) nameMuteLeft, (int) y);
+                }
                 (drawScam == 1 ? Theme.dialogs_scamDrawable : Theme.dialogs_fakeDrawable).draw(canvas);
             }
 
