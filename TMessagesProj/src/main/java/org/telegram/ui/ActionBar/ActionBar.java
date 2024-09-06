@@ -55,6 +55,7 @@ import org.telegram.messenger.NotificationCenter;
 import org.telegram.messenger.R;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.ui.Adapters.FiltersView;
+import org.telegram.ui.ChatActivity;
 import org.telegram.ui.Components.AnimatedEmojiDrawable;
 import org.telegram.ui.Components.BackupImageView;
 import org.telegram.ui.Components.CubicBezierInterpolator;
@@ -192,6 +193,8 @@ public class ActionBar extends FrameLayout {
         backButtonImageView.setScaleType(ImageView.ScaleType.CENTER);
         backButtonImageView.setBackgroundDrawable(Theme.createSelectorDrawable(itemsBackgroundColor));
         backButtonImageView.setPadding(dp(1), 0, 0, 0);
+        if (NekoConfig.unreadBadgeOnBackButton.Bool() && parentFragment instanceof ChatActivity)
+            ((ChatActivity) parentFragment).didReceivedNotification(NotificationCenter.dialogsUnreadCounterChanged, 0);
         addView(backButtonImageView, LayoutHelper.createFrame(54, 54, Gravity.LEFT | Gravity.TOP));
 
         backButtonImageView.setOnClickListener(v -> {

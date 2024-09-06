@@ -2788,6 +2788,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             getNotificationCenter().addObserver(this, NotificationCenter.hashtagSearchUpdated);
         }
 
+        if (NekoConfig.unreadBadgeOnBackButton.Bool()) {
+            getNotificationCenter().addObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
+            NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.notificationsCountUpdated);
+        }
+
         if (actionBarSearchTags != null) {
             actionBarSearchTags.attach();
         }
@@ -3215,6 +3220,11 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         }
         if (chatMode == MODE_SEARCH) {
             getNotificationCenter().removeObserver(this, NotificationCenter.hashtagSearchUpdated);
+        }
+
+        if (NekoConfig.unreadBadgeOnBackButton.Bool()) {
+            getNotificationCenter().removeObserver(this, NotificationCenter.dialogsUnreadCounterChanged);
+            NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.notificationsCountUpdated);
         }
 
         if (actionBarSearchTags != null) {
@@ -23185,6 +23195,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             MessageObject messageObject = messagesDict[0].get(mid);
             if (messageObject != null) {
                 messageObject.setMyPaidReactionAnonymous(anonymous);
+            }
+        } else if (id == NotificationCenter.dialogsUnreadCounterChanged || id == NotificationCenter.notificationsCountUpdated) {
+            if (actionBar != null) { // Nekomura
+                actionBar.unreadBadgeSetCount(getNotificationsController().getTotalUnreadCount());
             }
         }
     }
