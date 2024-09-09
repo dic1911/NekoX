@@ -2479,19 +2479,20 @@ public class ImageLoader {
                 FileLog.d("external storage = " + path);
 
                 File publicMediaDir = null;
+                String appName = LocaleController.getString(R.string.AppNameShort);
                 if (Build.VERSION.SDK_INT >= 30) {
                     File newPath;
                     try {
                         if (ApplicationLoader.applicationContext.getExternalMediaDirs().length > 0) {
                             publicMediaDir = getPublicStorageDir();
-                            publicMediaDir = new File(publicMediaDir, "NekoX");
+                            publicMediaDir = new File(publicMediaDir, appName);
                             publicMediaDir.mkdirs();
                         }
                     } catch (Exception e) {
                         FileLog.e(e);
                     }
                     newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-                    telegramPath = new File(newPath, "NekoX");
+                    telegramPath = new File(newPath, appName);
                 } else {
                     boolean isSdCard = !TextUtils.isEmpty(SharedConfig.storageCacheDir) && path.getAbsolutePath().startsWith(SharedConfig.storageCacheDir);
                     if (!isSdCard) {
@@ -2500,7 +2501,7 @@ public class ImageLoader {
                             path = ApplicationLoader.applicationContext.getExternalFilesDir(null);
                         }
                     }
-                    telegramPath = new File(path, "NekoX");
+                    telegramPath = new File(path, appName);
                 }
                 telegramPath.mkdirs();
 
@@ -2510,7 +2511,7 @@ public class ImageLoader {
                         File dir = dirs.get(a);
                         if (dir != null && !TextUtils.isEmpty(SharedConfig.storageCacheDir) && dir.getAbsolutePath().startsWith(SharedConfig.storageCacheDir)) {
                             path = dir;
-                            telegramPath = new File(path, "NekoX");
+                            telegramPath = new File(path, appName);
                             telegramPath.mkdirs();
                             break;
                         }

@@ -7,6 +7,8 @@ import android.os.storage.StorageManager
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.ApplicationLoader
 import org.telegram.messenger.FileLog
+import org.telegram.messenger.LocaleController
+import org.telegram.messenger.R
 import tw.nekomimi.nekogram.NekoConfig
 import java.io.File
 import java.util.*
@@ -41,7 +43,7 @@ object EnvUtil {
             }
 
             if (Build.VERSION.SDK_INT < 30) {
-                add(Environment.getExternalStoragePublicDirectory("NekoX"))
+                add(Environment.getExternalStoragePublicDirectory(LocaleController.getString(R.string.AppNameShort)))
             }
 
         }.map { it.path }.toTypedArray()

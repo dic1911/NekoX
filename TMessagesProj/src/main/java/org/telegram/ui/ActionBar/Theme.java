@@ -4581,15 +4581,16 @@ public class Theme {
         themes.add(currentDayTheme = defaultTheme = themeInfo);
         themesDict.put("Blue", themeInfo);
 
+        String appName = LocaleController.getString(R.string.AppNameShort);
         themeInfo = new ThemeInfo();
-        themeInfo.name = "NekoX";
+        themeInfo.name = appName;
         themeInfo.assetName = "indigo.attheme";
         themeInfo.previewBackgroundColor = -657931;
         themeInfo.previewInColor = Color.parseColor("#c0ffffff");
         themeInfo.previewOutColor = Color.parseColor("#3f51b5");
         themeInfo.sortIndex = 0;
         themes.add(themeInfo);
-        themesDict.put("NekoX", themeInfo);
+        themesDict.put(appName, themeInfo);
 
         themeInfo = new ThemeInfo();
         themeInfo.name = "Dark Blue";

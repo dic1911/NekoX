@@ -21,6 +21,7 @@ import android.os.Build;
 import android.os.SystemClock;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.webkit.WebView;
 
 import androidx.annotation.IntDef;
@@ -682,6 +683,11 @@ public class SharedConfig {
     public static ProxyInfo currentProxy;
 
     public static void saveConfig() {
+        // ensure cache path in NekoConfig and storageCacheDir matches
+        if (!storageCacheDir.equals(NekoConfig.cachePath.String())) {
+            Log.d("030-path", String.format("cache overridden from '%s' to '%s'", storageCacheDir, NekoConfig.cachePath.String()));
+            storageCacheDir = NekoConfig.cachePath.String();
+        }
         synchronized (sync) {
             try {
                 SharedPreferences preferences = ApplicationLoader.applicationContext.getSharedPreferences("userconfing", Context.MODE_PRIVATE);
@@ -795,6 +801,11 @@ public class SharedConfig {
             String authKeyString = preferences.getString("pushAuthKey", null);
             if (!TextUtils.isEmpty(authKeyString)) {
                 pushAuthKey = Base64.decode(authKeyString, Base64.DEFAULT);
+            }
+
+            if (!storageCacheDir.equals(NekoConfig.cachePath.String())) {
+                Log.d("030-path", String.format("cache overridden from '%s' to '%s'", storageCacheDir, NekoConfig.cachePath.String()));
+                storageCacheDir = NekoConfig.cachePath.String();
             }
 
             if (passcodeHash.length() > 0 && lastPauseTime == 0) {

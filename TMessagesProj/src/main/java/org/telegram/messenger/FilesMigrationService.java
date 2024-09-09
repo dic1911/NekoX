@@ -22,6 +22,7 @@ import android.widget.TextView;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+import org.telegram.messenger.LocaleController;
 import org.telegram.ui.ActionBar.BaseFragment;
 import org.telegram.ui.ActionBar.BottomSheet;
 import org.telegram.ui.ActionBar.Theme;
@@ -96,9 +97,10 @@ public class FilesMigrationService extends Service {
             }
         }
 
+        String appName = LocaleController.getString(R.string.AppNameShort);
         File newPath = ApplicationLoader.applicationContext.getExternalFilesDir(null);
-        File telegramPath = new File(newPath, "NekoX");
-        File oldPath = new File(path, "NekoX");
+        File telegramPath = new File(newPath, appName);
+        File oldPath = new File(path, appName);
 
         totalFilesCount = getFilesCount(oldPath);
 
@@ -204,7 +206,7 @@ public class FilesMigrationService extends Service {
                     }
                 }
             }
-            File oldDirectory = new File(path, "NekoX");
+            File oldDirectory = new File(path, LocaleController.getString(R.string.AppNameShort));
             hasOldFolder = oldDirectory.exists();
         }
         if (hasOldFolder) {
