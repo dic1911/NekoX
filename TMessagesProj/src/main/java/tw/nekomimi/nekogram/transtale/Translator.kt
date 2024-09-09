@@ -3,7 +3,6 @@ package tw.nekomimi.nekogram.transtale
 import android.text.SpannableStringBuilder
 import android.util.Log
 import android.view.View
-import android.widget.FrameLayout
 import cn.hutool.core.util.ArrayUtil
 import cn.hutool.core.util.StrUtil
 import org.apache.commons.lang3.LocaleUtils
@@ -15,6 +14,7 @@ import org.telegram.messenger.R
 import org.telegram.tgnet.ConnectionsManager
 import org.telegram.tgnet.TLObject
 import org.telegram.tgnet.TLRPC
+import org.telegram.ui.ChatActivity
 import org.telegram.ui.Components.Bulletin
 import org.telegram.ui.Components.TranslateAlert2
 import tw.nekomimi.nekogram.NekoConfig
@@ -289,19 +289,108 @@ interface Translator {
         var transReqId: Int? = null
 
         @JvmStatic
-        fun translateByOfficialAPI(currentAccount: Int, text: CharSequence?) {
-            translateByOfficialAPI(currentAccount, text, "en")
+        fun translateMessageBeforeSent(currentAccount: Int, text: CharSequence?) {
+            translateMessageBeforeSent(currentAccount, text, "en")
         }
 
         @JvmStatic
-        fun translateByOfficialAPI(currentAccount: Int, text: CharSequence?, targetLang: String) {
+        fun translateMessageBeforeSent(currentAccount: Int, text: CharSequence?, targetLang: String) {
+            translateMessageBeforeSent(currentAccount, text, "en", true, null)
+        }
+
+        @JvmStatic
+        fun translateMessageBeforeSent(currentAccount: Int, text: CharSequence?, targetLang: String, isSelfOutgoingMessage: Boolean, maybeChatActivity: ChatActivity?) {
             if (transReqId != null) {
                 ConnectionsManager.getInstance(currentAccount).cancelRequest(transReqId!!, true)
                 transReqId = null
             }
+
+            var msgCount = 0
+            var localIsSelfOutgoing = isSelfOutgoingMessage
+            if (!isSelfOutgoingMessage) {
+                val chatActivity = maybeChatActivity!!
+                if (chatActivity.messagePreviewParams == null) {
+                    Log.d("030-tx", "not forwarding, fix state")
+                    localIsSelfOutgoing = true
+                } else {
+                    msgCount = chatActivity.messagePreviewParams.forwardMessages.messages.size
+
+                    val target = ArrayList<MessageObject>()
+                    chatActivity.messagePreviewParams.forwardMessages.getSelectedMessages(target)
+                    target.forEach {
+                        var isMsgText = false
+                        var text = it.caption
+                        if (text == null || text.trim().isBlank()) {
+                            isMsgText = true
+                            text = it.messageText
+                        }
+
+                        if (text.isNullOrBlank()) return@forEach
+
+                        doTranslateWithOfficialApi(currentAccount, text, targetLang, { result ->
+                            // Log.d("030-tx", "fwd: $text -> $result")
+                            --msgCount
+                            if (isMsgText) it.messageText = result
+                            else it.caption = result
+                        }, {
+                            // Log.d("030-tx", "fwd: $text -> <FAILED>")
+                            --msgCount
+                        })
+                    }
+                }
+            }
+
+            val notiType = if (localIsSelfOutgoing) NotificationCenter.outgoingMessageTranslated
+                            else NotificationCenter.forwardingMessageTranslated
+
+            var result = "" as CharSequence
+
+            val t = Thread {
+                // wait until everything is translated
+                while (msgCount > 0) {
+                    // Log.d("030-tx", "wait...")
+                    Thread.sleep(100)
+                }
+                // Log.d("030-tx", "ok")
+                AndroidUtilities.runOnUIThread {
+                    NotificationCenter.getInstance(currentAccount).postNotificationName(notiType, result)
+                }
+            }
+
+            if (text.isNullOrBlank()) {
+                t.start()
+                return
+            }
+
+            doTranslateWithOfficialApi(currentAccount, text, targetLang, {
+                result = it
+                t.start()
+            }, {
+                if (localIsSelfOutgoing) {
+                    Log.d("030-tx", "showing err toast")
+                    AndroidUtilities.runOnUIThread {
+                        NotificationCenter.getGlobalInstance().postNotificationName(
+                            NotificationCenter.showBulletin,
+                            Bulletin.TYPE_ERROR_SUBTITLE,
+                            LocaleController.getString(
+                                "TranslationFailedAlert2",
+                                R.string.TranslationFailedAlert2
+                            ), it.replaceFirst(Regex(" "), "")
+                        )
+                    }
+                }
+                result = it
+                t.start()
+            })
+
+        }
+
+        @JvmStatic
+        fun doTranslateWithOfficialApi(currentAccount: Int, text: CharSequence?, targetLang: String, onSuccess: ((CharSequence) -> Unit)?, onFailure: ((CharSequence) -> Unit)?) {
+            if (text.isNullOrBlank()) return
             val req: TLRPC.TL_messages_translateText = TLRPC.TL_messages_translateText()
             val textWithEntities: TLRPC.TL_textWithEntities = TLRPC.TL_textWithEntities()
-            textWithEntities.text = text?.toString() ?: ""
+            textWithEntities.text = text.toString()
             req.flags = req.flags or 2
             req.text.add(textWithEntities)
             var lang = "en" // 030: tmp
@@ -318,9 +407,9 @@ interface Translator {
                 AndroidUtilities.runOnUIThread {
                     transReqId = null
                     if (res != null && (res is TLRPC.TL_messages_translateResult &&
-                            !(res as TLRPC.TL_messages_translateResult).result.isEmpty()) &&
-                            (res as TLRPC.TL_messages_translateResult).result.get(0) != null &&
-                            ((res as TLRPC.TL_messages_translateResult).result.get(0).text != null)
+                                !(res as TLRPC.TL_messages_translateResult).result.isEmpty()) &&
+                        (res as TLRPC.TL_messages_translateResult).result.get(0) != null &&
+                        ((res as TLRPC.TL_messages_translateResult).result.get(0).text != null)
                     ) {
                         val processedText: TLRPC.TL_textWithEntities = TranslateAlert2.preprocess(
                             textWithEntities, (res as TLRPC.TL_messages_translateResult).result.get(0))
@@ -333,23 +422,25 @@ interface Translator {
                             false,
                             false
                         )
-                        NotificationCenter.getInstance(currentAccount).postNotificationName(
-                            NotificationCenter.outgoingMessageTranslated, translated)
+
+                        if (translated != null) {
+                            if (onSuccess != null) {
+                                onSuccess(translated)
+                            }
+                        } else {
+                            throw NullPointerException("null translated string")
+                        }
                     } else {
                         Log.d("030-tx", "response exists? ${res != null}")
-                        var errMsg = "NULL"
+                        var errMsg = " NULL"
                         if (err != null) {
-                            errMsg = "${err.code} - ${err.text}"
+                            errMsg = " ${err.code} - ${err.text}"
                             Log.e("030-tx", errMsg)
                         }
-                        NotificationCenter.getGlobalInstance().postNotificationName(
-                            NotificationCenter.showBulletin,
-                            Bulletin.TYPE_ERROR_SUBTITLE,
-                            LocaleController.getString(
-                                "TranslationFailedAlert2",
-                                R.string.TranslationFailedAlert2
-                            ), errMsg
-                        )
+
+                        if (onFailure != null) {
+                            onFailure(errMsg)
+                        }
                     }
                 }
             }

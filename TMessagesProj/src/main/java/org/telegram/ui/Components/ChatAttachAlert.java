@@ -3172,7 +3172,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                             return;
                         }
                         Locale toDefault = TranslatorKt.getCode2Locale("en");
-                        Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(),
+                        Translator.translateMessageBeforeSent(currentAccount, commentTextView.getText(),
                                 TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(finalChatActivity.getDialogId(), toDefault)));
                         if (messageSendPreview != null) {
                             messageSendPreview.dismiss(true);
@@ -3186,7 +3186,7 @@ public class ChatAttachAlert extends BottomSheet implements NotificationCenter.N
                         }
 
                         Translator.showTargetLangSelect(messageSendPreview.getOptionsView().getLongClickedView(), true, (locale) -> {
-                            Translator.translateByOfficialAPI(currentAccount, commentTextView.getText(), TranslatorKt.getLocale2code(locale));
+                            Translator.translateMessageBeforeSent(currentAccount, commentTextView.getText(), TranslatorKt.getLocale2code(locale));
                             if (finalChatActivity != null) TranslateDb.saveChatLanguage(finalChatActivity.getDialogId(), locale);
                             if (messageSendPreview != null) {
                                 messageSendPreview.dismiss(true);

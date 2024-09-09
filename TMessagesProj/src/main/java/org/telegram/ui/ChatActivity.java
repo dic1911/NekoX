@@ -14264,7 +14264,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         showFieldPanel(show, null, null, null, webPage, true, 0, null, cancel, true);
     }
 
+    public ArrayList<MessageObject> currentForwardingMessageObjects = null;
     public void showFieldPanelForForward(boolean show, ArrayList<MessageObject> messageObjectsToForward) {
+        currentForwardingMessageObjects = messageObjectsToForward;
         showFieldPanel(show, null, null, messageObjectsToForward, null, true, 0, null, false, true);
     }
 
@@ -28669,7 +28671,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         return createMenu(v, single, listView, x, y, true, longpress, false);
     }
 
-    private CharSequence getMessageCaption(MessageObject messageObject, MessageObject.GroupedMessages group) {
+    public CharSequence getMessageCaption(MessageObject messageObject, MessageObject.GroupedMessages group) {
         return getMessageCaption(messageObject, group, null);
     }
 
@@ -41966,5 +41968,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
     public float getClipBottom() {
         return fragmentView.getBottom() - chatListView.getBottom() + ((fragmentTransition == null || (fromPullingDownTransition && !toPullingDownTransition)) && !isInsideContainer ? blurredViewBottomOffset : 0);
+    }
+
+    public boolean isForwarding() {
+        return forwarding || forwardingMessage != null ||
+                (messagePreviewParams != null && messagePreviewParams.forwardMessages != null &&
+                    !messagePreviewParams.forwardMessages.messages.isEmpty()) ||
+                (forwardingMessageGroup != null && forwardingMessageGroup.messages != null &&
+                    !forwardingMessageGroup.messages.isEmpty());
     }
 }

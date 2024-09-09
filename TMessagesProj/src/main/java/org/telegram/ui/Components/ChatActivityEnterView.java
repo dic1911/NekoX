@@ -67,6 +67,7 @@ import android.text.TextPaint;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.text.style.ImageSpan;
+import android.util.Log;
 import android.util.Property;
 import android.util.TypedValue;
 import android.view.ActionMode;
@@ -2511,6 +2512,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         NotificationCenter.getGlobalInstance().addObserver(this, NotificationCenter.emojiLoaded);
 
         NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.outgoingMessageTranslated);
+        NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.forwardingMessageTranslated);
 
         parentActivity = context;
         parentFragment = fragment;
@@ -4621,14 +4623,14 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         return;
                     }
                     Locale toDefault = TranslatorKt.getCode2Locale("en");
-                    Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)));
+                    Translator.translateMessageBeforeSent(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)), !parentFragment.isForwarding(), parentFragment);
                 });
                 transBeforeSendButton.setOnLongClickListener(v -> {
                     Translator.showTargetLangSelect(v, true, (locale) -> {
                         if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
                             menuPopupWindow.dismiss();
                         }
-                        Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale));
+                        Translator.translateMessageBeforeSent(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale), !parentFragment.isForwarding(), parentFragment);
                         TranslateDb.saveChatLanguage(dialog_id, locale);
                         return Unit.INSTANCE;
                     });
@@ -4872,13 +4874,13 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 return;
             }
             Locale toDefault = TranslatorKt.getCode2Locale("en");
-            Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)));
+            Translator.translateMessageBeforeSent(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(TranslateDb.getChatLanguage(dialog_id, toDefault)), !parentFragment.isForwarding(), parentFragment);
         }, () -> {
             Translator.showTargetLangSelect(messageSendPreview.getOptionsView().getLongClickedView(), true, (locale) -> {
                 if (menuPopupWindow != null && menuPopupWindow.isShowing()) {
                     menuPopupWindow.dismiss();
                 }
-                Translator.translateByOfficialAPI(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale));
+                Translator.translateMessageBeforeSent(currentAccount, messageEditText.lastText, TranslatorKt.getLocale2code(locale), !parentFragment.isForwarding(), parentFragment);
                 TranslateDb.saveChatLanguage(dialog_id, locale);
                 return Unit.INSTANCE;
             });
@@ -6403,6 +6405,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         NotificationCenter.getGlobalInstance().removeObserver(this, NotificationCenter.emojiLoaded);
 
         NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.outgoingMessageTranslated);
+        NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.forwardingMessageTranslated);
 
         if (emojiView != null) {
             emojiView.onDestroy();
@@ -6569,6 +6572,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.messageReceivedByServer2);
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.sendingMessagesChanged);
             NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.outgoingMessageTranslated);
+            NotificationCenter.getInstance(currentAccount).removeObserver(this, NotificationCenter.forwardingMessageTranslated);
             currentAccount = account;
             accountInstance = AccountInstance.getInstance(currentAccount);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.recordStarted);
@@ -6587,6 +6591,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.messageReceivedByServer2);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.sendingMessagesChanged);
             NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.outgoingMessageTranslated);
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.forwardingMessageTranslated);
         }
 
         sendPlainEnabled = true;
@@ -12374,9 +12379,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         } else if (id == NotificationCenter.didUpdatePremiumGiftFieldIcon) {
             updateGiftButton(true);
         } else if (id == NotificationCenter.outgoingMessageTranslated) {
+            Log.d("030-tx", "NotificationCenter.outgoingMessageTranslated");
             boolean dontSend = NekoConfig.dontSendRightAfterTranslated.Bool();
             CharSequence translated = (CharSequence) args[0];
             if (parentFragment.chatAttachAlert != null && parentFragment.chatAttachAlert.hasSelectedItem()) {
+                // media selector opened
                 PhotoViewer viewer = PhotoViewer.getInstance();
                 parentFragment.chatAttachAlert.commentTextView.setText(translated);
                 if (viewer.waitingForTranslation) {
@@ -12387,6 +12394,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 parentFragment.finishPreviewFragment();
                 parentFragment.chatAttachAlert.handleTranslatedMessage(translated, dontSend);
             } else {
+                // normal text msg
                 setFieldText(translated, false, true);
                 if (messageSendPreview != null) {
                     messageSendPreview.dismiss(!dontSend);
@@ -12395,6 +12403,57 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (dontSend) return;
                 sendMessageInternal(true, 0, false);
             }
+        } else if (id == NotificationCenter.forwardingMessageTranslated) {
+            if (sendPopupWindow != null) sendPopupWindow.dismiss();
+
+            for (MessageObject obj : parentFragment.messagePreviewParams.forwardMessages.messages) {
+                CharSequence text = obj.caption != null ? obj.caption : "";
+                if (text.length() == 0) text = obj.messageText;
+                if (!obj.isAnyKindOfSticker() && obj.getDocument() == null && text != null && text.length() > 0) {
+                    SendMessagesHelper.SendMessageParams params =
+                            SendMessagesHelper.SendMessageParams.of(text.toString(), dialog_id,
+                                    null, null, null, true, null,
+                                    null, null, true, 0, null, false);
+                    if (obj.isDocument()) {
+                        TLRPC.Document doc = obj.getDocument();
+                        TLRPC.TL_document document = new TLRPC.TL_document();
+                        document.id = doc.id;
+                        document.mime_type = obj.isSticker() ? "image/webp" : "video/webm";
+                        document.access_hash = doc.access_hash;
+                        document.file_reference = (doc.file_reference != null ? doc.file_reference : new byte[0]);
+                        params.document = document;
+                    }
+                    parentFragment.getSendMessagesHelper().sendMessage(params);
+                } else if (obj.isDocument() || obj.getDocument() != null) {
+                    SendMessagesHelper.SendMessageParams params = new SendMessagesHelper.SendMessageParams();
+                    if (text != null && text.length() > 0) params.caption = text.toString();
+                    params.peer = dialog_id;
+                    params.replyToMsg = obj.replyMessageObject;
+                    params.replyToTopMsg = getThreadMessage();
+                    TLRPC.Document doc = obj.getDocument();
+                    TLRPC.TL_document document = new TLRPC.TL_document();
+                    document.id = doc.id;
+                    document.mime_type = obj.isSticker() ? "image/webp" : "video/webm";
+                    document.access_hash = doc.access_hash;
+                    document.file_reference = (doc.file_reference != null ? doc.file_reference : new byte[0]);
+                    params.document = document;
+                    SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+                }
+            }
+            if (args.length == 0) return;
+            CharSequence translated = (CharSequence) args[0];
+            AndroidUtilities.runOnUIThread(() -> {
+                parentFragment.messagePreviewParams = null;
+                parentFragment.hideFieldPanel(true);
+                setFieldText(translated, false, true);
+                if (messageSendPreview != null) {
+                    messageSendPreview.dismiss(true);
+                    messageSendPreview = null;
+                }
+            }, 30);
+
+            if (translated == null || translated.length() == 0) return;
+            sendMessageInternal(true, 0, false);
         }
     }
 
