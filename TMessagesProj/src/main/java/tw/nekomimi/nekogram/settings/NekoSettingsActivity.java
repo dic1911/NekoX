@@ -177,7 +177,7 @@ public class NekoSettingsActivity extends BaseFragment {
             } else if (position == channelRow) {
                 MessagesController.getInstance(currentAccount).openByUserName("nekox_broken", this, 1);
             } else if (position == translationRow) {
-                Browser.openUrl(getParentActivity(), "https://hosted.weblate.org/engage/nekox/");
+                Browser.openUrl(getParentActivity(), "https://hosted.weblate.org/engage/nekox_030/");
             } else if (position == fdroidRow) {
                 Browser.openUrl(getParentActivity(), "https://f-droid.org/packages/nekox.messenger");
             } else if (position == googlePlayRow) {
