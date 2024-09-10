@@ -171,7 +171,7 @@ public class AboutLinkCell extends FrameLayout {
         showMoreTextView.setLines(1);
         showMoreTextView.setMaxLines(1);
         showMoreTextView.setSingleLine(true);
-        showMoreTextView.setText(LocaleController.getString("DescriptionMore", R.string.DescriptionMore));
+        showMoreTextView.setText(LocaleController.getString(R.string.DescriptionMore));
         showMoreTextView.setOnClickListener(e -> {
             updateCollapse(true, true);
         });
@@ -414,7 +414,7 @@ public class AboutLinkCell extends FrameLayout {
                 ClickableSpan pressedLinkFinal = (ClickableSpan) pressedLink.getSpan();
                 BottomBuilder builder = new BottomBuilder(parentFragment.getParentActivity());
                 builder.addTitle(url);
-                builder.addItems(new String[]{LocaleController.getString("Open", R.string.Open), LocaleController.getString("Copy", R.string.Copy)},
+                builder.addItems(new String[]{LocaleController.getString(R.string.Open), LocaleController.getString(R.string.Copy)},
                         new int[]{R.drawable.msg_openin, R.drawable.msg_copy},
                         (which, __, ___) -> {
                             if (which == 0) {
@@ -423,14 +423,11 @@ public class AboutLinkCell extends FrameLayout {
                                 AndroidUtilities.addToClipboard(url);
                                 if (AndroidUtilities.shouldShowClipboardToast()) {
                                     if (url.startsWith("@")) {
-                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy,
-                                                LocaleController.getString("UsernameCopied", R.string.UsernameCopied)).show();
+                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy, LocaleController.getString(R.string.UsernameCopied)).show();
                                     } else if (url.startsWith("#") || url.startsWith("$")) {
-                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy,
-                                                LocaleController.getString("HashtagCopied", R.string.HashtagCopied)).show();
+                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy, LocaleController.getString(R.string.HashtagCopied)).show();
                                     } else {
-                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy,
-                                                LocaleController.getString("LinkCopied", R.string.LinkCopied)).show();
+                                        BulletinFactory.of(parentFragment).createSimpleBulletin(R.raw.copy, LocaleController.getString(R.string.LinkCopied)).show();
                                     }
                                 }
                             }

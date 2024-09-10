@@ -117,7 +117,7 @@ public class DialogObject {
         if (dialog instanceof TLRPC.User) {
             TLRPC.User user = (TLRPC.User) dialog;
             if (UserObject.isReplyUser(user)) {
-                title = LocaleController.getString("RepliesTitle", R.string.RepliesTitle);
+                title = LocaleController.getString(R.string.RepliesTitle);
                 if (avatarDrawable != null) {
                     avatarDrawable.setAvatarType(AvatarDrawable.AVATAR_TYPE_REPLIES);
                 }

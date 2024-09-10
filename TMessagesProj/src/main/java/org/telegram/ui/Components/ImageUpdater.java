@@ -255,7 +255,7 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
         } else if (type == TYPE_SUGGEST_PHOTO_FOR_USER) {
             builder.setTitle(LocaleController.formatString("SuggestPhotoFor", R.string.SuggestPhotoFor, user.first_name), true);
         } else {
-            builder.setTitle(LocaleController.getString("ChoosePhoto", R.string.ChoosePhoto), true);
+            builder.setTitle(LocaleController.getString(R.string.ChoosePhoto), true);
         }
 
         ArrayList<CharSequence> items = new ArrayList<>();
@@ -263,32 +263,32 @@ public class ImageUpdater implements NotificationCenter.NotificationCenterDelega
         ArrayList<Integer> ids = new ArrayList<>();
 
         if (hasAvatar && parentFragment instanceof ProfileActivity) {
-            items.add(LocaleController.getString("Open", R.string.Open));
+            items.add(LocaleController.getString(R.string.Open));
             icons.add(R.drawable.baseline_visibility_24);
             ids.add(ID_OPEN_AVATAR);
         }
 
-        items.add(LocaleController.getString("UploadImage", R.string.UploadImage));
+        items.add(LocaleController.getString(R.string.UploadImage));
         icons.add(R.drawable.baseline_image_24);
         ids.add(ID_UPLOAD_FROM_GALLERY);
 
-        items.add(LocaleController.getString("ChooseTakePhoto", R.string.ChooseTakePhoto));
+        items.add(LocaleController.getString(R.string.ChooseTakePhoto));
         icons.add(R.drawable.baseline_camera_alt_24);
         ids.add(ID_TAKE_PHOTO);
 
         if (canSelectVideo) {
-            items.add(LocaleController.getString("ChooseRecordVideo", R.string.ChooseRecordVideo));
+            items.add(LocaleController.getString(R.string.ChooseRecordVideo));
             icons.add(R.drawable.baseline_videocam_24);
             ids.add(ID_RECORD_VIDEO);
         }
 
         if (searchAvailable) {
-            items.add(LocaleController.getString("ChooseFromSearch", R.string.ChooseFromSearch));
+            items.add(LocaleController.getString(R.string.ChooseFromSearch));
             icons.add(R.drawable.baseline_search_24);
             ids.add(ID_SEARCH_WEB);
         }
         if (hasAvatar) {
-            items.add(LocaleController.getString("DeletePhoto", R.string.DeletePhoto));
+            items.add(LocaleController.getString(R.string.DeletePhoto));
             icons.add(R.drawable.baseline_delete_24);
             ids.add(ID_REMOVE_PHOTO);
         }

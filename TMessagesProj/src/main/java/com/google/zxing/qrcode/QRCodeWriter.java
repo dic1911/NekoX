@@ -16,6 +16,8 @@
 
 package com.google.zxing.qrcode;
 
+import static org.telegram.messenger.AndroidUtilities.readRes;
+
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
@@ -426,8 +428,7 @@ public final class QRCodeWriter {
             }
         }
 
-        String svg = RLottieDrawable.readRes(null, R.raw.qr_logo);
-        Bitmap icon = SvgHelper.getBitmap(svg, imageSize, imageSize, false);
+        Bitmap icon = SvgHelper.getBitmap(readRes(R.raw.qr_logo), imageSize, imageSize, false);
         canvas.drawBitmap(icon, imageX, imageX, null);
         icon.recycle();
 

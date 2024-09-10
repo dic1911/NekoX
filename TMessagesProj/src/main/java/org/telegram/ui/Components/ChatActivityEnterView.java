@@ -4048,27 +4048,30 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     webViewSheet.setDefaultFullsize(false);
                     webViewSheet.setNeedsContext(true);
                     webViewSheet.setParentActivity(parentActivity);
-                    webViewSheet.requestWebView(null, props);
+                    webViewSheet.requestWebView(parentFragment, props);
                     webViewSheet.show();
 
-                    if (botCommandsMenuButton != null) {
-                        botCommandsMenuButton.setOpened(false);
-                    }
-                } else {
-                    Browser.Progress progress = new Browser.Progress();
-                    progress.onEnd(() -> {
+                    AndroidUtilities.runOnUIThread(() -> {
                         if (botCommandsMenuButton != null) {
                             botCommandsMenuButton.setOpened(false);
                         }
                     });
+                } else {
+                    Browser.Progress progress = new Browser.Progress();
+                    progress.onEnd(() -> {
+                        AndroidUtilities.runOnUIThread(() -> {
+                            if (botCommandsMenuButton != null) {
+                                botCommandsMenuButton.setOpened(false);
+                            }
+                        });
+                    });
                     Browser.openAsInternalIntent(getContext(), botMenuWebViewUrl, false, progress);
                 }
             } else {
-                // 030 mark: use sheet to avoid action bar glitch
                 BotWebViewSheet sheet = new BotWebViewSheet(getContext(), resourcesProvider);
                 sheet.setNeedsContext(false);
-                sheet.setParentActivity(parentFragment.getParentActivity());
-                sheet.requestWebView(null, props);
+                sheet.setParentActivity(parentActivity);
+                sheet.requestWebView(parentFragment, props);
                 sheet.show();
 
                 if (botCommandsMenuButton != null) {
@@ -4568,9 +4571,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (scheduleButtonValue) {
                     actionScheduleButton = new ActionBarMenuSubItem(getContext(), true, !sendWithoutSoundButtonValue, resourcesProvider);
                     if (self) {
-                        actionScheduleButton.setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.msg_calendar2);
+                        actionScheduleButton.setTextAndIcon(LocaleController.getString(R.string.SetReminder), R.drawable.msg_calendar2);
                     } else {
-                        actionScheduleButton.setTextAndIcon(LocaleController.getString("ScheduleMessage", R.string.ScheduleMessage), R.drawable.msg_calendar2);
+                        actionScheduleButton.setTextAndIcon(LocaleController.getString(R.string.ScheduleMessage), R.drawable.msg_calendar2);
                     }
                     actionScheduleButton.setMinimumWidth(dp(196));
                     actionScheduleButton.setOnClickListener(v -> {
@@ -4588,7 +4591,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     SharedConfig.removeScheduledHint();
                     if (!self && dialog_id > 0) {
                         sendWhenOnlineButton = new ActionBarMenuSubItem(getContext(), true, !sendWithoutSoundButtonValue, resourcesProvider);
-                        sendWhenOnlineButton.setTextAndIcon(LocaleController.getString("SendWhenOnline", R.string.SendWhenOnline), R.drawable.msg_online);
+                        sendWhenOnlineButton.setTextAndIcon(LocaleController.getString(R.string.SendWhenOnline), R.drawable.msg_online);
                         sendWhenOnlineButton.setMinimumWidth(dp(196));
                         sendWhenOnlineButton.setOnClickListener(v -> {
                             if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
@@ -4602,7 +4605,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (sendWithoutSoundButtonValue) {
                     // ActionBarMenuSubItem sendWithoutSoundButton = new ActionBarMenuSubItem(getContext(), !scheduleButtonValue, true, resourcesProvider);
                     ActionBarMenuSubItem sendWithoutSoundButton = new ActionBarMenuSubItem(getContext(), !scheduleButtonValue, false, resourcesProvider);
-                    sendWithoutSoundButton.setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.input_notify_off);
+                    sendWithoutSoundButton.setTextAndIcon(LocaleController.getString(R.string.SendWithoutSound), R.drawable.input_notify_off);
                     sendWithoutSoundButton.setMinimumWidth(dp(196));
                     sendWithoutSoundButton.setOnClickListener(v -> {
                         if (sendPopupWindow != null && sendPopupWindow.isShowing()) {
@@ -6742,7 +6745,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 TLRPC.Chat chat = accountInstance.getMessagesController().getChat(-dialog_id);
                 TLRPC.ChatFull chatFull = accountInstance.getMessagesController().getChatFull(-dialog_id);
                 isChannel = ChatObject.isChannelAndNotMegaGroup(chat);
-                anonymously = isChannel ? chat != null && !chat.signatures && !chat.signature_profiles : ChatObject.getSendAsPeerId(chat, chatFull) == -dialog_id;
+                anonymously = !isChannel && ChatObject.getSendAsPeerId(chat, chatFull) == -dialog_id;
             }
             if (anonymously) {
                 messageEditText.setHintText(getString("SendAnonymously", R.string.SendAnonymously));
@@ -8325,6 +8328,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             animators.add(ObjectAnimator.ofFloat(scheduledButton, View.ALPHA, 1.0f));
                             animators.add(ObjectAnimator.ofFloat(scheduledButton, View.SCALE_X, 1.0f));
                             animators.add(ObjectAnimator.ofFloat(scheduledButton, View.TRANSLATION_X, giftButton != null && giftButton.getVisibility() == VISIBLE ? -dp(48) : 0));
+                            if (notifyButton != null && notifyButton.getVisibility() == View.VISIBLE) {
+                                notifyButton.setVisibility(View.GONE);
+                            }
                         } else {
                             scheduledButton.setAlpha(1.0f);
                             scheduledButton.setScaleX(1.0f);
@@ -10596,7 +10602,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             if (botReplyMarkup != null) {
                 if (isPopupShowing() && currentPopupContentType == 1) {
                     botButtonDrawable.setIcon(R.drawable.baseline_keyboard_24, true);
-                    botButton.setContentDescription(LocaleController.getString("AccDescrShowKeyboard", R.string.AccDescrShowKeyboard));
+                    botButton.setContentDescription(LocaleController.getString(R.string.AccDescrShowKeyboard));
                 } else {
                     botButtonDrawable.setIcon(R.drawable.deproko_baseline_bots_24, true);
                     botButton.setContentDescription(LocaleController.getString("AccDescrBotKeyboard", R.string.AccDescrBotKeyboard));
@@ -10780,14 +10786,14 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     if (AndroidUtilities.isTablet()) {
                         BotWebViewSheet webViewSheet = new BotWebViewSheet(getContext(), resourcesProvider);
                         webViewSheet.setParentActivity(parentActivity);
-                        webViewSheet.requestWebView(null, props);
+                        webViewSheet.requestWebView(parentFragment, props);
                         webViewSheet.show();
                     } else {
                         BotWebViewAttachedSheet webViewSheet = parentFragment.createBotViewer();
                         webViewSheet.setDefaultFullsize(false);
                         webViewSheet.setNeedsContext(true);
                         webViewSheet.setParentActivity(parentActivity);
-                        webViewSheet.requestWebView(null, props);
+                        webViewSheet.requestWebView(parentFragment, props);
                         webViewSheet.show();
                     }
                 }
@@ -10859,7 +10865,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 }
 
                 DialogsActivity fragment = new DialogsActivity(args);
-                fragment.setDelegate((fragment1, dids, message, param, topicsFragment) -> {
+                fragment.setDelegate((fragment1, dids, message, param, notify, scheduleDate, topicsFragment) -> {
                     long uid = messageObject.messageOwner.from_id.user_id;
                     if (messageObject.messageOwner.via_bot_id != 0) {
                         uid = messageObject.messageOwner.via_bot_id;
@@ -10940,7 +10946,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     FileLog.e(e);
                 }
                 DialogsActivity fragment = new DialogsActivity(args);
-                fragment.setDelegate((dialogFragment, dids, message, param, topicsFragment) -> {
+                fragment.setDelegate((dialogFragment, dids, message, param, notify, scheduleDate, topicsFragment) -> {
                     if (dids != null && !dids.isEmpty()) {
                         TLRPC.TL_messages_sendBotRequestedPeer req = new TLRPC.TL_messages_sendBotRequestedPeer();
                         req.peer = MessagesController.getInstance(currentAccount).getInputPeer(messageObject.messageOwner.peer_id);

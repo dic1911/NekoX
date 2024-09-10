@@ -13,9 +13,8 @@ import android.content.pm.PackageManager;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.Keep;
 import androidx.annotation.Nullable;
-import androidx.recyclerview.widget.RecyclerView;
-
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
@@ -60,7 +59,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
     private boolean accountsShown;
     public DrawerProfileCell profileCell;
     private SideMenultItemAnimator itemAnimator;
-    private boolean hasGps;
 
     public DrawerLayoutAdapter(Context context, SideMenultItemAnimator animator, DrawerLayoutContainer drawerLayoutContainer) {
         mContext = context;
@@ -69,11 +67,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
         accountsShown = MessagesController.getGlobalMainSettings().getBoolean("accountsShown", true);
         Theme.createCommonDialogResources(context);
         resetItems();
-        try {
-            hasGps = ApplicationLoader.applicationContext.getPackageManager().hasSystemFeature(PackageManager.FEATURE_LOCATION_GPS);
-        } catch (Throwable e) {
-            hasGps = false;
-        }
     }
 
     private int getAccountRowsCount() {
@@ -299,7 +292,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
         int eventType = Theme.getEventType();;
         int inviteIcon;
         int helpIcon;
-        int peopleNearbyIcon;
         if (eventType == 0) {
 //            newGroupIcon = R.drawable.msg_groups_ny;
             //newSecretIcon = R.drawable.msg_secret_ny;
@@ -310,7 +302,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
 //            settingsIcon = R.drawable.msg_settings_ny;
 //            inviteIcon = R.drawable.msg_invite_ny;
 //            helpIcon = R.drawable.msg_help_ny;
-            peopleNearbyIcon = R.drawable.msg_nearby_ny;
         } else if (eventType == 1) {
             newGroupIcon = R.drawable.msg_groups_14;
             //newSecretIcon = R.drawable.msg_secret_14;
@@ -321,7 +312,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             settingsIcon = R.drawable.msg_settings_14;
             inviteIcon = R.drawable.msg_secret_ny;
             helpIcon = R.drawable.msg_help;
-            peopleNearbyIcon = R.drawable.msg_secret_14;
         } else if (eventType == 2) {
             newGroupIcon = R.drawable.msg_groups_hw;
             //newSecretIcon = R.drawable.msg_secret_hw;
@@ -332,7 +322,6 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             settingsIcon = R.drawable.msg_settings_hw;
             inviteIcon = R.drawable.msg_invite_hw;
             helpIcon = R.drawable.msg_help_hw;
-            peopleNearbyIcon = R.drawable.msg_secret_hw;
         } else {
             newGroupIcon = R.drawable.msg_groups;
             //newSecretIcon = R.drawable.msg_secret;
@@ -343,16 +332,15 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             settingsIcon = R.drawable.msg_settings_old;
             inviteIcon = R.drawable.msg_invite;
             helpIcon = R.drawable.msg_help;
-            peopleNearbyIcon = R.drawable.msg_nearby;
         }
         UserConfig me = UserConfig.getInstance(UserConfig.selectedAccount);
         boolean showDivider = false;
         items.add(new Item(16, LocaleController.getString(R.string.MyProfile), R.drawable.left_status_profile));
         if (me != null && me.isPremium()) {
             if (me.getEmojiStatus() != null) {
-                items.add(new Item(15, LocaleController.getString("ChangeEmojiStatus", R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
+                items.add(new Item(15, LocaleController.getString(R.string.ChangeEmojiStatus), R.drawable.msg_status_edit));
             } else {
-                items.add(new Item(15, LocaleController.getString("SetEmojiStatus", R.string.SetEmojiStatus), R.drawable.msg_status_set));
+                items.add(new Item(15, LocaleController.getString(R.string.SetEmojiStatus), R.drawable.msg_status_set));
             }
             showDivider = true;
         }
@@ -379,24 +367,24 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
         if (showDivider) {
             items.add(null); // divider
         }
-        items.add(new Item(2, LocaleController.getString("NewGroup", R.string.NewGroup), newGroupIcon));
-//        items.add(new Item(3, LocaleController.getString("NewSecretChat", R.string.NewSecretChat), newSecretIcon));
-//        items.add(new Item(4, LocaleController.getString("NewChannel", R.string.NewChannel), newChannelIcon));
-        items.add(new Item(6, LocaleController.getString("Contacts", R.string.Contacts), contactsIcon));
-        items.add(new Item(11, LocaleController.getString("SavedMessages", R.string.SavedMessages), savedIcon));
-        items.add(new Item(8, LocaleController.getString("Settings", R.string.Settings), settingsIcon));
-        items.add(new Item(10, LocaleController.getString("Calls", R.string.Calls), callsIcon));
+        items.add(new Item(2, LocaleController.getString(R.string.NewGroup), newGroupIcon));
+//        items.add(new Item(3, LocaleController.getString(R.string.NewSecretChat), newSecretIcon));
+//        items.add(new Item(4, LocaleController.getString(R.string.NewChannel), newChannelIcon));
+        items.add(new Item(6, LocaleController.getString(R.string.Contacts), contactsIcon));
+        items.add(new Item(10, LocaleController.getString(R.string.Calls), callsIcon));
+        items.add(new Item(11, LocaleController.getString(R.string.SavedMessages), savedIcon));
+        items.add(new Item(8, LocaleController.getString(R.string.Settings), settingsIcon));
         if (NekoConfig.useProxyItem.Bool() && (!NekoConfig.hideProxyByDefault.Bool() || SharedConfig.isProxyEnabled())) {
-            items.add(new CheckItem(13, LocaleController.getString("Proxy", R.string.Proxy), R.drawable.baseline_security_24, SharedConfig::isProxyEnabled, () -> {
+            items.add(new CheckItem(13, LocaleController.getString(R.string.Proxy), R.drawable.baseline_security_24, SharedConfig::isProxyEnabled, () -> {
                 SharedConfig.setProxyEnable(!SharedConfig.isProxyEnabled());
                 return true;
             }));
         }
         if (NekoXConfig.disableStatusUpdate && !UserConfig.getInstance(UserConfig.selectedAccount).getCurrentUser().bot) {
             boolean online = MessagesController.getInstance(UserConfig.selectedAccount).isOnline();
-            String message = online ? StrUtil.upperFirst(LocaleController.getString("Online", R.string.Online)) : LocaleController.getString("VoipOfflineTitle", R.string.VoipOfflineTitle);
+            String message = online ? StrUtil.upperFirst(LocaleController.getString(R.string.Online)) : LocaleController.getString(R.string.VoipOfflineTitle);
             if (NekoXConfig.keepOnlineStatus) {
-                message += " (" + LocaleController.getString("Locked", R.string.Locked) + ")";
+                message += " (" + LocaleController.getString(R.string.Locked) + ")";
             }
             items.add(new CheckItem(14, message, R.drawable.baseline_visibility_24, () -> online, () -> {
                 MessagesController controller = MessagesController.getInstance(UserConfig.selectedAccount);
@@ -488,11 +476,13 @@ public class DrawerLayoutAdapter extends RecyclerListView.SelectionAdapter imple
             actionCell.setError(error);
         }
 
+        @Keep
         public Item onClick(View.OnClickListener listener) {
             this.listener = listener;
             return this;
         }
 
+        @Keep
         public Item withError() {
             this.error = true;
             return this;

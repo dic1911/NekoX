@@ -1,6 +1,6 @@
 package tw.nekomimi.nekogram.utils
 
-import org.openintents.openpgp.IOpenPgpService2
+//import org.openintents.openpgp.IOpenPgpService2
 import org.openintents.openpgp.util.OpenPgpApi
 import org.openintents.openpgp.util.OpenPgpServiceConnection
 import org.telegram.messenger.ApplicationLoader
@@ -46,7 +46,8 @@ object PGPUtil {
 
             serviceConnection.bindToService(object : OpenPgpServiceConnection.OnBound {
 
-                override fun onBound(service: IOpenPgpService2) {
+//                override fun onBound(service: IOpenPgpService2) {
+                override fun onBound(service: Any?) {
 
                     api = OpenPgpApi(ApplicationLoader.applicationContext, service)
 

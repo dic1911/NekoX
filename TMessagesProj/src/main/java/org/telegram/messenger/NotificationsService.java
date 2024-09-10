@@ -61,6 +61,7 @@ public class NotificationsService extends Service {
         if (preferences.getBoolean("pushService", true)) {
             Intent intent = new Intent("org.telegram.start");
             try {
+                intent.setPackage(getPackageName());
                 sendBroadcast(intent);
             } catch (Exception ex) {
                 // 辣鷄miui 就你事最多.jpg
