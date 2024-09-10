@@ -803,7 +803,7 @@ public class SharedConfig {
                 pushAuthKey = Base64.decode(authKeyString, Base64.DEFAULT);
             }
 
-            if (!storageCacheDir.equals(NekoConfig.cachePath.String())) {
+            if (storageCacheDir != null && !storageCacheDir.equals(NekoConfig.cachePath.String())) {
                 Log.d("030-path", String.format("cache overridden from '%s' to '%s'", storageCacheDir, NekoConfig.cachePath.String()));
                 storageCacheDir = NekoConfig.cachePath.String();
             }
