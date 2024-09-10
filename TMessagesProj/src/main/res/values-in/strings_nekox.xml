@@ -279,4 +279,23 @@
     <string name="channelAlias">Alias saluran</string>
     <string name="channelAliasDetails">Wajibkan pengguna saluran label diaktifkan.</string>
     <string name="labelChannelUserDetails">jika pengirim pesan adalah channel, Itu akan ditandai sebagai \"Channel\"</string>
+    <string name="StickerSettings">Stiker</string>
+    <string name="ConfirmSettings">Konfirmasi</string>
+    <string name="nekoxPremiumGiftRemoved">Hadiah Premium dihapus di NekoX.</string>
+    <string name="doubleTapShowReactionsMenu">Tampilkan menu reaksi</string>
+    <string name="doubleTapSendReaction">Kirim Reaksi</string>
+    <string name="doubleTapDisable">Nonaktifkan</string>
+    <string name="disableReactionsWhenSelecting">Sembunyikan reaksi saat memilih</string>
+    <string name="ShowSelfInsteadOfSavedMessages">Tampilkan sebagai diri sendiri, bukan Pesan Tersimpan</string>
+    <string name="FasterReconnectHack">Koneksi ulang lebih cepat dengan mengaktifkan/menonaktifkan proxy</string>
+    <string name="FasterReconnectHackAbout">Peretasan ini hanya berfungsi pada lingkungan jaringan yang baik.</string>
+    <string name="NekoXSingPlugin">kotak-bernyanyi</string>
+    <string name="InteractionSettings">Interaksi</string>
+    <string name="ReactionSettings">Reaksi</string>
+    <string name="doubleTapAndReactions">Ketuk dua kali</string>
+    <string name="UnsupportedProxy">Proksi Tidak Didukung</string>
+    <string name="NekoXSingPluginNotFound">Tidak Ditemukan</string>
+    <string name="NekoXSingPluginPresents">Ditemukan</string>
+    <string name="DisableCustomWallpaperUser">Nonaktifkan wallpaper khusus pengguna</string>
+    <string name="DisableCustomWallpaperChannel">Nonaktifkan wallpaper khusus saluran</string>
 </resources>
