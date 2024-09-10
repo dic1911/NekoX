@@ -60,6 +60,7 @@ public class BottomSheetTabs extends FrameLayout {
 
     private final Paint backgroundPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
     public boolean drawTabs = true;
+    public boolean doNotDismiss = false;
 
     private final ActionBarLayout actionBarLayout;
 
@@ -157,9 +158,11 @@ public class BottomSheetTabs extends FrameLayout {
         boolean needsContextOverride = tab.needsContext && !NekoConfig.openWebViewTabWithoutBot.Bool();
         open.run(lastFragment);
         if (needsContextOverride && (!(lastFragment instanceof ChatActivity) || ((ChatActivity) lastFragment).getDialogId() != tab.props.botId)) {
+            doNotDismiss = true;
             BaseFragment chatActivity = ChatActivity.of(tab.props.botId);
             AndroidUtilities.runOnUIThread(() -> {
                 lastFragment.presentFragment(chatActivity);
+                doNotDismiss = false;
             }, 220);
         }
     }

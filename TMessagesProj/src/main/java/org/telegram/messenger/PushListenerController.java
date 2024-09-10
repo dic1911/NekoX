@@ -1320,6 +1320,7 @@ public class PushListenerController {
                                     ArrayList<MessageObject> arrayList = new ArrayList<>();
                                     arrayList.add(messageObject);
                                     canRelease = false;
+                                    FileLog.d("PushListenerController push notification to NotificationsController of " + messageOwner.dialog_id);
                                     if (!NekoConfig.autoArchiveAndMute.Bool() || MessagesStorage.getInstance(currentAccount).getChatSync(fromId) != null)
                                         NotificationsController.getInstance(currentAccount).processNewMessages(arrayList, true, true, countDownLatch);
                                 }

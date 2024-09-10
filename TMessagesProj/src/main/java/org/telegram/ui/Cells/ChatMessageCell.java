@@ -304,7 +304,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 } else {
                     currentPhoto = null;
                 }
-                if (currentChat.signature_profiles) {
+                if (currentChat.signature_profiles && messageObject.getDialogId() != UserObject.REPLY_BOT) {
                     long did = DialogObject.getPeerDialogId(messageObject.messageOwner.from_id);
                     if (did >= 0) {
                         TLRPC.User user = MessagesController.getInstance(messageObject.currentAccount).getUser(did);
@@ -9544,7 +9544,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                 botButtonsByPosition.clear();
                 botButtonsLayout = null;
             }
-            if (!messageObject.isRestrictedMessage && !messageObject.isRepostPreview && currentPosition == null && (messageObject.messageOwner.reply_markup instanceof TLRPC.TL_replyInlineMarkup) && !messageObject.hasExtendedMedia()) {
+            if (!messageObject.isRestrictedMessage && !messageObject.isRepostPreview && (currentPosition == null || currentMessagesGroup != null && currentMessagesGroup.isDocuments && currentPosition.last) && (messageObject.messageOwner.reply_markup instanceof TLRPC.TL_replyInlineMarkup) && !messageObject.hasExtendedMedia()) {
                 int rows;
 
                 if (messageObject.messageOwner.reply_markup instanceof TLRPC.TL_replyInlineMarkup) {
@@ -17008,7 +17008,7 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (currentUser != null) {
             return UserObject.getUserName(currentUser);
         } else if (currentChat != null) {
-            if (currentMessageObject != null && currentChat.signature_profiles) {
+            if (currentMessageObject != null && (currentMessageObject.getDialogId() != UserObject.REPLY_BOT) && currentChat.signature_profiles) {
                 long did = DialogObject.getPeerDialogId(currentMessageObject.messageOwner.from_id);
                 if (did >= 0) {
                     TLRPC.User user = MessagesController.getInstance(currentAccount).getUser(did);

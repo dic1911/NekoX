@@ -21,7 +21,6 @@ import android.os.Build;
 import android.telephony.TelephonyManager;
 import android.text.TextUtils;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.util.Xml;
 import android.view.Gravity;
 
@@ -36,13 +35,10 @@ import org.telegram.tgnet.TLRPC;
 import org.telegram.ui.RestrictedLanguagesSelectActivity;
 import org.xmlpull.v1.XmlPullParser;
 
-import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -1582,6 +1578,14 @@ public class LocaleController {
 
     public static String formatPluralStringComma(String key, int plural) {
         return formatPluralStringComma(key, plural, ',');
+    }
+
+    public static String formatPluralStringSpaced(String key, int plural) {
+        return formatPluralStringComma(key, plural, ' ');
+    }
+
+    public static String formatPluralStringSpaced(String key, int plural, Object... args) {
+        return formatPluralStringComma(key, plural, ' ', args);
     }
 
     public static String formatPluralStringComma(String key, int plural, Object... args) {
