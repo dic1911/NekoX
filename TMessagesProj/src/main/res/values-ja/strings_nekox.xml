@@ -238,4 +238,10 @@
     <string name="VersionUpdateNotNow">今ではありません</string>
     <string name="AutoLockImmediately">すぐに</string>
     <string name="PinSticker">ピン</string>
+    <string name="EnableStickerPinTip">この機能は開発中です。 クラウドへの同期は動作しませんの場合があります.</string>
+    <string name="WsPayload">ペイロード</string>
+    <string name="ShareMessages">シェア</string>
+    <string name="EnableStickerPin">ピン留めステッカーを有効にする</string>
+    <string name="EnableStickerPinAbout">ピンステッカーは、新しいステッカーを追加してもクラウドと同期します。
+\nお気に入りのステッカーとパックのダイナミックオーダーを無効にする。</string>
 </resources>
