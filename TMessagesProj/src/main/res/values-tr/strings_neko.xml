@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Görüntülü veya sesli mesaj gönderirken onay iste</string>
     <string name="AskBeforeCalling">Aramadan önce sor</string>
     <string name="ConfirmCall">Aramayı onayla</string>
-    <string name="CallTo">**%1$s** aransın mı\?</string>
+    <string name="CallTo">**%1$s** aransın mı?</string>
     <string name="DisableNumberRounding">Sayı yuvarlamayı devre dışı bırak</string>
     <string name="Categories">Kategoriler</string>
     <string name="OfficialChannel">Resmi kanal</string>
