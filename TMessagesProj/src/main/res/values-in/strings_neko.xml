@@ -194,4 +194,5 @@
     <string name="AlwaysDisableSafeBrowsingInWebView">Jangan pernah menggunakan Google Safe Browsing</string>
     <string name="DisableBirthdayReminder">Nonaktifkan pengingat ulang tahun kontak Anda</string>
     <string name="RemovePremiumAnnoyanceDesc">Dan memblokir pratinjau premium agar tidak ditampilkan</string>
+    <string name="ShowEditTimestampInPopupMenu">Tampilkan stempel waktu edit di menu popup</string>
 </resources>
