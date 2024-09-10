@@ -283,4 +283,19 @@
     <string name="StickerSettings">Çıkartma</string>
     <string name="ConfirmSettings">Doğrulama</string>
     <string name="nekoxPremiumGiftRemoved">Premium hediyeleri NekoX\'ten kaldırıldı.</string>
+    <string name="UnsupportedProxy">Desteklenmeyen Vekil Sunucu</string>
+    <string name="NekoXSingPluginPresents">Bulundu</string>
+    <string name="doubleTapShowReactionsMenu">Tepkiler menüsünü göster</string>
+    <string name="doubleTapSendReaction">Tepki gönder</string>
+    <string name="disableReactionsWhenSelecting">Seçerken tepkileri gizle</string>
+    <string name="DisableCustomWallpaperUser">Kullanıcı kişisel duvar kağıdını devre dışı bırak</string>
+    <string name="DisableCustomWallpaperChannel">Kanal kişisel duvar kağıdını devre dışı bırak</string>
+    <string name="FasterReconnectHack">Vekil sunucuyu kapatıp açarak hızlı bağlan</string>
+    <string name="NekoXSingPlugin">sing-box</string>
+    <string name="NekoXSingPluginNotFound">Bulunamadı</string>
+    <string name="FasterReconnectHackAbout">Bu hile sadece iyi bir ağ ile çalışır.</string>
+    <string name="ReactionSettings">Tepki</string>
+    <string name="doubleTapAndReactions">Çift tıkla</string>
+    <string name="ShowSelfInsteadOfSavedMessages">Kayıtlı Mesajlar yerine \"siz\" olarak göster</string>
+    <string name="doubleTapDisable">Devre dışı bırak</string>
 </resources>
