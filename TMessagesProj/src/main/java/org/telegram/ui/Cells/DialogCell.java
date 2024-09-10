@@ -1916,6 +1916,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
 
         int timeWidth;
         if (drawTime) {
+            float oldTextSize = Theme.dialogs_timePaint.getTextSize();
+            float desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 1) : oldTextSize;
+            if (oldTextSize != desiredSize) {
+                Theme.dialogs_timePaint.setTextSize(desiredSize);
+            }
             timeWidth = (int) Math.ceil(Theme.dialogs_timePaint.measureText(timeString));
             timeLayout = new StaticLayout(timeString, Theme.dialogs_timePaint, timeWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, 0.0f, false);
             if (!LocaleController.isRTL) {
@@ -2015,7 +2020,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         float oldTextSize = Theme.dialogs_namePaint[paintIndex].getTextSize();
         float desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 2) : oldTextSize;
         if (oldTextSize != desiredSize) {
-            Theme.dialogs_namePaint[paintIndex].setTextSize(dp(SharedConfig.fontSize));
+            Theme.dialogs_namePaint[paintIndex].setTextSize(desiredSize);
         }
         try {
             int ellipsizeWidth = nameWidth - dp(12);
@@ -2142,6 +2147,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
             }
         } else if (countString != null || mentionString != null || drawReactionMention) {
             if (countString != null) {
+                oldTextSize = Theme.dialogs_countTextPaint.getTextSize();
+                desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 1) : oldTextSize;
+                if (oldTextSize != desiredSize) {
+                    Theme.dialogs_countTextPaint.setTextSize(desiredSize);
+                }
                 countWidth = Math.max(dp(12), (int) Math.ceil(Theme.dialogs_countTextPaint.measureText(countString)));
                 countLayout = new StaticLayout(countString, Theme.dialogs_countTextPaint, countWidth, Layout.Alignment.ALIGN_CENTER, 1.0f, 0.0f, false);
                 int w = countWidth + dp(18);
@@ -2222,7 +2232,7 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         }
 
         oldTextSize = Theme.dialogs_messagePaint[paintIndex].getTextSize();
-        desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize) : oldTextSize;
+        desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 1) : oldTextSize;
         if (oldTextSize != desiredSize) {
             Theme.dialogs_messagePaint[paintIndex].setTextSize(desiredSize);
             Theme.dialogs_messageNamePaint.setTextSize(desiredSize);
@@ -2314,6 +2324,11 @@ public class DialogCell extends BaseCell implements StoriesListPlaceProvider.Ava
         animatedEmojiStack3 = AnimatedEmojiSpan.update(AnimatedEmojiDrawable.CACHE_TYPE_MESSAGES, this, animatedEmojiStack3, buttonLayout);
 
         try {
+            oldTextSize = Theme.dialogs_messagePrintingPaint[paintIndex].getTextSize();
+            desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 1) : oldTextSize;
+            if (oldTextSize != desiredSize) {
+                Theme.dialogs_messagePrintingPaint[paintIndex].setTextSize(desiredSize);
+            }
             if (!TextUtils.isEmpty(typingString)) {
                 if ((useForceThreeLines || SharedConfig.useThreeLinesLayout) && !hasTags()) {
                     typingLayout = StaticLayoutEx.createStaticLayout(typingString, Theme.dialogs_messagePrintingPaint[paintIndex], messageWidth, Layout.Alignment.ALIGN_NORMAL, 1.0f, dp(1), false, TextUtils.TruncateAt.END, messageWidth, typingString != null ? 1 : 2);

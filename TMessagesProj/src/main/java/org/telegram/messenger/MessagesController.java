@@ -10151,8 +10151,16 @@ public class MessagesController extends BaseController implements NotificationCe
                     if (paint == null) {
                         paint = new Paint();
                         paint.setTypeface(AndroidUtilities.bold());
-                        paint.setTextSize(AndroidUtilities.dp(14));
+                        int size = NekoConfig.chatListFontSizeFollowChat.Bool() ? (SharedConfig.fontSize + 2) : 14;
+                        paint.setTextSize(AndroidUtilities.dp(size));
+                    } else {
+                        float oldTextSize = paint.getTextSize();
+                        float desiredSize = NekoConfig.chatListFontSizeFollowChat.Bool() ? dp(SharedConfig.fontSize + 2) : oldTextSize;
+                        if (oldTextSize != desiredSize) {
+                            paint.setTextSize(dp(SharedConfig.fontSize));
+                        }
                     }
+
                     text = Emoji.replaceEmoji(text, paint.getFontMetricsInt(), false);
                     newPrintingStrings.put(threadId, text);
                     newPrintingStringsTypes.put(threadId, type);
