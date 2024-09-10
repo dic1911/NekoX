@@ -191,14 +191,14 @@
     <string name="AlwaysHideBotCommandButton">"Ocultar siempre el botón de comando del bot"</string>
     <string name="AlwaysDisableSafeBrowsingInWebView">"Nunca utilizar la Navegación Segura de Google"</string>
     <string name="NoTextToTranslate">"No hay texto para traducir para este mensaje :("</string>
-    <string name="RemovePremiumAnnoyance">"Elimina algunas molestias más relacionadas con la promoción de premium"</string>
+    <string name="RemovePremiumAnnoyance">"Elimina varías premium"</string>
     <string name="RemovePremiumAnnoyanceDesc">"Y bloquea la vista previa premium para que no se muestre"</string>
     <string name="NoStarsForReaction">"No hay (suficientes) estrellas en tu cuenta, pero aún puedes disfrutar del efecto visual :)"</string>
     <string name="ShowEditTimestampInPopupMenu">"Mostrar marca de tiempo de edición en el menú emergente"</string>
     <string name="ShowForwardTimestampInPopupMenu">"Mostrar marca de tiempo de reenvío en el menú emergente"</string>
     <string name="AlwaysUseSpoilerForMedia">"Utilizar siempre spoilers para los medios en chats específicos"</string>
     <string name="AlwaysUseSpoilerForMediaDesc">"Dividir los ID de chat con coma, por ejemplo: chat_id1,chat_id2…"</string>
-    <string name="PreferredTranslateTargetLang">"Mostrar solo ciertos idiomas de destino de traducción en el selector"</string>
+    <string name="PreferredTranslateTargetLang">"Mostrar solamente algunos idiomas para traducir en el selector"</string>
     <string name="PreferredTranslateTargetLangExample">"Por ejemplo: en, ja, zh_tw"</string>
     <string name="PreferredTranslateTargetLangTitle">"Idiomas preferidos"</string>
     <string name="CustomSearchEngine">"Motor de búsqueda personalizado"</string>
@@ -218,4 +218,10 @@
     <string name="TranslateBeforeSend">"Traducir antes de enviar"</string>
     <string name="SearchByMessageType">"Búsqueda por tipo de mensaje"</string>
     <string name="MarqueeForLongChatTitles">"Utilizar Marquee para los títulos largos del chat"</string>
+    <string name="DontSendRightAfterTranslated">No enviar justo después de que el mensaje se haya traducido</string>
+    <string name="HideOriginalTextAfterTranslate">Esconder texto original después de traducir</string>
+    <string name="DontAutoPlayNextMessage">No reproducir automáticamente el siguiente audio</string>
+    <string name="ChatListFontSizeFollowChat">Usar el tamaño de la fuente del mensaje en la lista de chat</string>
+    <string name="UseCustomProviderForAutoTranslate">Usar traductor personalizado para traducción automática</string>
+    <string name="DontShareNumberWhenAddContactByDefault">No compartir número al agregar contactos por defecto</string>
 </resources>
