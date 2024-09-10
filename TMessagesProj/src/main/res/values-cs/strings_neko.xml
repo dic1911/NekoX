@@ -45,7 +45,7 @@
     <string name="OfficialChannel">Oficiální kanál</string>
     <string name="Categories">Kategorie</string>
     <string name="DisableNumberRounding">Zakázat zaokrouhlování čísel</string>
-    <string name="CallTo">Volat na **%1$s**\?</string>
+    <string name="CallTo">Volat na **%1$s**?</string>
     <string name="ConfirmCall">Potvrdit volání</string>
     <string name="AskBeforeCalling">Zeptat se před zavoláním</string>
     <string name="ConfirmAVMessage">Potvrdit odeslání video / hlasové zprávy</string>

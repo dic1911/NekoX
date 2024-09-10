@@ -41,7 +41,7 @@
     <string name="ConfirmAVMessage">Bekreft forsendelse av video/lydmelding</string>
     <string name="AskBeforeCalling">Spør før anrop</string>
     <string name="ConfirmCall">Bekreft anrop</string>
-    <string name="CallTo">Ring **%1$s**\?</string>
+    <string name="CallTo">Ring **%1$s**?</string>
     <string name="Categories">Kategorier</string>
     <string name="OfficialChannel">Offisiell kanal</string>
     <string name="About">Om</string>

@@ -23,7 +23,7 @@
     <string name="NoQuoteForward">无引用转发</string>
     <string name="Repeat">复读</string>
     <string name="AddToSavedMessages">保存消息</string>
-    <string name="CreateMention">创建\@</string>
+    <string name="CreateMention">创建@</string>
     <string name="ForceTabletMode">强制启用平板模式</string>
     <string name="Prpr">ペロペロ</string>
     <string name="TransparentStatusBar">使用完全透明的状态栏</string>

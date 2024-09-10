@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Подтверждать отправку голосовых и видеосообщений</string>
     <string name="AskBeforeCalling">Подтверждение звонков</string>
     <string name="ConfirmCall">Подтверждение звонка</string>
-    <string name="CallTo">Позвонить **%1$s**\?</string>
+    <string name="CallTo">Позвонить **%1$s**?</string>
     <string name="DisableNumberRounding">Не округлять числа</string>
     <string name="Categories">Настройки</string>
     <string name="OfficialChannel">Официальный канал</string>

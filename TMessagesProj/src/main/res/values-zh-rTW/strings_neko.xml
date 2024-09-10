@@ -19,7 +19,7 @@
     <string name="NoQuoteForward">無引用轉發</string>
     <string name="Repeat">復讀</string>
     <string name="AddToSavedMessages">儲存訊息</string>
-    <string name="CreateMention">建立\@</string>
+    <string name="CreateMention">建立@</string>
     <string name="ForceTabletMode">強制啟用平板模式</string>
     <string name="Prpr">ペロペロ</string>
     <string name="TransparentStatusBar">使用完全透明的狀態列</string>

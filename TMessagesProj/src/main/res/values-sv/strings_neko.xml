@@ -38,7 +38,7 @@
     <string name="CheckAllAdministrated">Lägg till administrerad</string>
     <string name="HideAllTab">Göm \"Alla Chattar\" fliken</string>
     <string name="TabTitleTypeTip">Emoticons är molnsynkroniserade av Telegram.</string>
-    <string name="CallTo">Ring samtal till **%1$s**\?</string>
+    <string name="CallTo">Ring samtal till **%1$s**?</string>
     <string name="AskBeforeCalling">Fråga före samtal</string>
     <string name="AutoPauseVideo">Auto-pausa video</string>
     <string name="NekoSettings">Neko Inställningar</string>

@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Підтвердити надсилання відео/голосового повідомлення</string>
     <string name="AskBeforeCalling">Запитувати перед викликом</string>
     <string name="ConfirmCall">Підтвердити дзвінок</string>
-    <string name="CallTo">Зателефонувати **%1$s**\?</string>
+    <string name="CallTo">Зателефонувати **%1$s**?</string>
     <string name="DisableNumberRounding">Вимкнути округлення чисел</string>
     <string name="Categories">Категорії</string>
     <string name="OfficialChannel">Офіційний канал новин</string>

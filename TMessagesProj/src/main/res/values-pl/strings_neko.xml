@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Potwierdź wysłanie wiadomości wideo lub głosowej</string>
     <string name="AskBeforeCalling">Zapytaj przed połączeniem</string>
     <string name="ConfirmCall">Potwierdź połączenie</string>
-    <string name="CallTo">Zadzwonić do **%1$s**\?</string>
+    <string name="CallTo">Zadzwonić do **%1$s**?</string>
     <string name="DisableNumberRounding">Wyłącz zaokrąglanie liczb</string>
     <string name="Categories">Kategorie</string>
     <string name="OfficialChannel">Oficjalny kanał</string>

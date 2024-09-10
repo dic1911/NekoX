@@ -36,7 +36,7 @@
     <string name="ConfirmAVMessage">Confirmer l\'envoi d\'un message vidéo/vocal</string>
     <string name="AskBeforeCalling">Demander avant d\'appeler</string>
     <string name="ConfirmCall">Confirmer l\'appel</string>
-    <string name="CallTo">Appeler **%1$s** \?</string>
+    <string name="CallTo">Appeler **%1$s** ?</string>
     <string name="DisableNumberRounding">Désactiver l\'arrondi des nombres</string>
     <string name="Categories">Catégories</string>
     <string name="OfficialChannel">Canal officiel</string>

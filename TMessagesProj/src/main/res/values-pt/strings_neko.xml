@@ -29,7 +29,7 @@
     <string name="OfficialChannel">Canal oficial</string>
     <string name="Categories">Categorias</string>
     <string name="DisableNumberRounding">Desativar arredondamento de números</string>
-    <string name="CallTo">Ligar para **%1$s**\?</string>
+    <string name="CallTo">Ligar para **%1$s**?</string>
     <string name="ConfirmCall">Confirmar chamada</string>
     <string name="AskBeforeCalling">Perguntar antes de ligar</string>
     <string name="ConfirmAVMessage">Confirmar envio de mensagens de vídeo/voz</string>

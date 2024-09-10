@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Xác nhận gửi tin nhắn video/thoại</string>
     <string name="AskBeforeCalling">Hỏi trước khi gọi</string>
     <string name="ConfirmCall">Xác nhận cuộc gọi</string>
-    <string name="CallTo">Gọi tới **%1$s**\?</string>
+    <string name="CallTo">Gọi tới **%1$s**?</string>
     <string name="DisableNumberRounding">Tắt làm tròn số</string>
     <string name="Categories">Thể loại</string>
     <string name="OfficialChannel">Kênh chính thức</string>

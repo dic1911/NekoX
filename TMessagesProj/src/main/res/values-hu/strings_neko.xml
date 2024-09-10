@@ -84,7 +84,7 @@
     <string name="ConfirmAVMessage">Erősítse meg a videó/hangüzenet küldését</string>
     <string name="AskBeforeCalling">Megerősítés tárcsázás előtt</string>
     <string name="ConfirmCall">Hívás megerősítése</string>
-    <string name="CallTo">Hívja a **%1$s** telefonszámot\?</string>
+    <string name="CallTo">Hívja a **%1$s** telefonszámot?</string>
     <string name="DisableNumberRounding">Számkerekítés letiltása</string>
     <string name="Categories">Kategóriák</string>
     <string name="OfficialChannel">Hivatalos csatorna</string>

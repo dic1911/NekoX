@@ -85,7 +85,7 @@
     <string name="ConfirmAVMessage">Video-/Sprachnachricht senden bestätigen</string>
     <string name="AskBeforeCalling">Vor Anruf fragen</string>
     <string name="ConfirmCall">Anruf bestätigen</string>
-    <string name="CallTo">**%1$s** anrufen\?</string>
+    <string name="CallTo">**%1$s** anrufen?</string>
     <string name="DisableNumberRounding">Zahlenrundung deaktivieren</string>
     <string name="Categories">Kategorien</string>
     <string name="OfficialChannel">Offizieller Kanal</string>
