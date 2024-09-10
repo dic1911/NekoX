@@ -195,4 +195,7 @@
     <string name="DisableBirthdayReminder">Nonaktifkan pengingat ulang tahun kontak Anda</string>
     <string name="RemovePremiumAnnoyanceDesc">Dan memblokir pratinjau premium agar tidak ditampilkan</string>
     <string name="ShowEditTimestampInPopupMenu">Tampilkan stempel waktu edit di menu popup</string>
+    <string name="AlwaysUseSpoilerForMedia">Selalu tampilkan spoiler untuk media dalam obrolan tertentu</string>
+    <string name="PreferredTranslateTargetLang">Hanya tampilkan target bahasa terjemahan tertentu di pemilih</string>
+    <string name="AlwaysUseSpoilerForMediaDesc">Pisahkan ID obrolan dengan koma, misal: chat_id1, chat_id2…</string>
 </resources>
