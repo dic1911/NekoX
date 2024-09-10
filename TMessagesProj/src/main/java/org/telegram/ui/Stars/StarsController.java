@@ -1022,7 +1022,7 @@ public class StarsController {
             final ConnectionsManager connectionsManager = ConnectionsManager.getInstance(currentAccount);
 
             final long totalStars = amount;
-            if (starsController.balanceAvailable() && starsController.getBalance() < totalStars) {
+            if (starsController.balanceAvailable() && starsController.getBalance(false) < totalStars) {
                 if (NekoConfig.removePremiumAnnoyance.Bool()) {
                     BulletinFactory.of(chatActivity).createSimpleBulletin(R.raw.chats_infotip, getString(R.string.NoStarsForReaction)).show(true);
                     return;
@@ -1125,7 +1125,7 @@ public class StarsController {
         final long totalStars = amount;
         final Context context = getContext(chatActivity);
         if (context == null) return null;
-        if (checkBalance && s.balanceAvailable() && s.getBalance() <= 0) {
+        if (checkBalance && s.balanceAvailable() && s.getBalance(false) <= 0) {
             if (NekoConfig.removePremiumAnnoyance.Bool()) {
                 currentPendingReactions = new PendingPaidReactions(key, messageObject, chatActivity, ConnectionsManager.getInstance(currentAccount).getCurrentTime(), affect);;
                 currentPendingReactions.add(amount, affect);

@@ -2088,6 +2088,8 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
                 }
             }
             super.show();
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.starOptionsLoaded);
+            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.starBalanceUpdated);
         }
 
         @Override
@@ -2116,8 +2118,6 @@ public class StarsIntroActivity extends GradientHeaderActivity implements Notifi
             topPadding = .2f;
 
             this.whenPurchased = whenPurchased;
-            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.starOptionsLoaded);
-            NotificationCenter.getInstance(currentAccount).addObserver(this, NotificationCenter.starBalanceUpdated);
 
             fixNavigationBar();
             recyclerListView.setPadding(backgroundPaddingLeft, 0, backgroundPaddingLeft, 0);
