@@ -223,4 +223,17 @@
     <string name="ChatListFontSizeFollowChat">Use message font size in chat list</string>
     <string name="UseCustomProviderForAutoTranslate">Use custom translation provider for auto translate</string>
     <string name="DontShareNumberWhenAddContactByDefault">Uncheck share number when adding contacts by default</string>
+    <string name="UpgradeGroup">Upgrade to super group</string>
+    <string name="AccDescrShowKeyboard">Show keyboard</string>
+    <string name="ViewStats">Stats</string>
+    <string name="ConvertGroupAlert">This action is irreversible. It\'s impossible to convert supergroup back to normal group.</string>
+    <string name="UploadImage">Upload image</string>
+    <string name="DebugMenuDisablePauseMusic">Disable pause playback while recording</string>
+    <string name="DebugMenuEnablePauseMusic">Enable pause playback while recording</string>
+    <string name="NoFilesFound">Not found</string>
+    <string name="NoFilesInfo">The folder is empty</string>
+    <string name="NoFilesFoundInfo">No results matching **%1$s** in your current path</string>
+    <string name="SearchRecentFiles">Search recent files</string>
+    <string name="UnofficialApp">Unofficial app</string>
+    <string name="FileUploadLimit">File size must not exceed %1$s</string>
 </resources>
