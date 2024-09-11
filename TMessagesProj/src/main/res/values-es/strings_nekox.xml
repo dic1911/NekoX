@@ -236,7 +236,7 @@
     <string name="AddProxyWs">Añadir Relevo de WebSocket</string>
     <string name="UsePersiancalendar">Usar el calendario Persa</string>
     <string name="hideSponsoredMessage">Ocultar mensajes patrocinados</string>
-    <string name="DeleteDownloadedFileConfirm">¿Eliminar este archivo de la caché local\?</string>
+    <string name="DeleteDownloadedFileConfirm">¿Eliminar este archivo de la caché local?</string>
     <string name="customPublicProxyIP">Establecer la IP del proxy público</string>
     <string name="unreadBadgeOnBackButton">Indicador de no leído sobre el botón de retroceso</string>
     <string name="customPublicProxyIPNotice">Especificar la IP del proxy público del CDN (por ejemplo Cloudflare) puede acelerar el acceso en algunas áreas.</string>
