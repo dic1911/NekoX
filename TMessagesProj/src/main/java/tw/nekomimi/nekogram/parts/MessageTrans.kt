@@ -60,7 +60,7 @@ fun MessageObject.translateFinished(locale: Locale): Int {
 
         pool.answers.forEach {
 
-            val answer = db.query(it.text.text) ?: return 0
+            val answer = db.query(it.text.text) ?: return@forEach
 
             it.translatedText = if (hideOriginalText) answer else (answer + " | " + it.text.text)
 

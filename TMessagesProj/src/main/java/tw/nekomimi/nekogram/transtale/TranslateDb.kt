@@ -1,7 +1,7 @@
 package tw.nekomimi.nekogram.transtale
 
-import org.dizitart.no2.objects.ObjectRepository
-import org.dizitart.no2.objects.filters.ObjectFilters
+import org.dizitart.no2.filters.FluentFilter
+import org.dizitart.no2.repository.ObjectRepository
 import org.telegram.messenger.LocaleController
 import tw.nekomimi.nekogram.NekoConfig
 import tw.nekomimi.nekogram.database.mkDatabase
@@ -11,20 +11,22 @@ import kotlin.collections.HashMap
 
 class TranslateDb(val code: String) {
 
-    var conn: ObjectRepository<TransItem> = db.getRepository(code, TransItem::class.java)
+    var conn: ObjectRepository<TransItem> = db.getRepository(TransItem::class.java, code)
 
     companion object {
 
         val db = mkDatabase("translate_caches")
 
         val repo = HashMap<Locale, TranslateDb>()
-        val chat = db.getRepository("chat", ChatLanguage::class.java)
-        val ccTarget = db.getRepository("opencc", ChatCCTarget::class.java)
+        val chat = db.getRepository(ChatLanguage::class.java, "chat")
+        val ccTarget = db.getRepository(ChatCCTarget::class.java, "opencc")
 
         @JvmStatic fun getChatLanguage(chatId: Long, default: Locale): Locale {
 
-            return chat.find(ObjectFilters.eq("chatId", chatId)).firstOrDefault()?.language?.code2Locale
-                    ?: default
+            val cursor = chat.find(FluentFilter.where("chatId").eq(chatId))
+            cursor.forEach { return it.language.code2Locale }
+            return default
+//            return if (cursor.isEmpty) default else cursor.first().language.code2Locale
 
         }
 
@@ -38,8 +40,11 @@ class TranslateDb(val code: String) {
         @JvmStatic
         fun getChatCCTarget(chatId: Long, default: String?): String? {
 
-            return ccTarget.find(ObjectFilters.eq("chatId", chatId)).firstOrDefault()?.ccTarget
-                    ?: default
+            val cursor = ccTarget.find(FluentFilter.where("chatId").eq(chatId))
+            cursor.forEach { return it as String? }
+            return default
+//            return ccTarget.find(FluentFilter.where("chatId").eq(chatId)).firstOrDefault()?.ccTarget
+//                    ?: default
 
         }
 
@@ -80,7 +85,7 @@ class TranslateDb(val code: String) {
 
     }
 
-    fun contains(text: String) = synchronized(this) { conn.find(ObjectFilters.eq("text", text)).count() > 0 }
+    fun contains(text: String): Boolean = synchronized(this) { return conn.find(FluentFilter.where("text").eq(text)).count() > 0 }
 
     fun save(text: String, trans: String) = synchronized<Unit>(this) {
 
@@ -88,9 +93,11 @@ class TranslateDb(val code: String) {
 
     }
 
-    fun query(text: String) = synchronized(this) {
+    fun query(text: String): String? = synchronized(this) {
 
-        conn.find(ObjectFilters.eq("text", text)).firstOrDefault()?.trans
+        val cursor = conn.find(FluentFilter.where("text").eq(text))
+        cursor.forEach { return it.trans }
+        return null // conn.find(FluentFilter.where("text").eq(text)).firstOrDefault()?.trans
 
     }
 

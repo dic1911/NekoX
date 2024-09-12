@@ -228,8 +228,6 @@ import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
 import tw.nekomimi.nekogram.settings.NekoSettingsActivity;
-import tw.nekomimi.nekogram.proxy.SubInfo;
-import tw.nekomimi.nekogram.proxy.SubManager;
 import tw.nekomimi.nekogram.utils.AlertUtil;
 import tw.nekomimi.nekogram.utils.TelegramUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
@@ -979,21 +977,6 @@ public class LaunchActivity extends BasePermissionsActivity implements INavigati
         }
         MediaController.getInstance().setBaseActivity(this, true);
 
-//        UIUtil.runOnIoDispatcher(() -> {
-//            ExternalGcm.checkUpdate(this);
-//            if (NekoConfig.autoUpdateSubInfo.Bool())
-//                for (SubInfo subInfo : SubManager.getSubList().find()) {
-//                    if (subInfo == null || !subInfo.enable) continue;
-//                    try {
-//                        subInfo.proxies = subInfo.reloadProxies();
-//                        subInfo.lastFetch = System.currentTimeMillis();
-//                        SubManager.getSubList().update(subInfo, true);
-//                        SharedConfig.reloadProxyList();
-//                    } catch (IOException allTriesFailed) {
-//                        FileLog.e(allTriesFailed);
-//                    }
-//                }
-//        }, 4000);
         //FileLog.d("UI create time = " + (SystemClock.elapsedRealtime() - ApplicationLoader.startTime));
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

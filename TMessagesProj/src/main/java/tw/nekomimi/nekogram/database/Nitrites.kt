@@ -1,8 +1,12 @@
 package tw.nekomimi.nekogram.database
 
 import org.dizitart.no2.Nitrite
+import org.dizitart.no2.mvstore.MVStoreModule
 import org.telegram.messenger.ApplicationLoader
-import tw.nekomimi.nekogram.proxy.SubInfo
+import tw.nekomimi.nekogram.transtale.ChatCCTarget
+import tw.nekomimi.nekogram.transtale.ChatCCTargetConverter
+import tw.nekomimi.nekogram.transtale.ChatLanguageConverter
+import tw.nekomimi.nekogram.transtale.TransItemConverter
 import tw.nekomimi.nekogram.utils.FileUtil
 import java.io.File
 
@@ -16,15 +20,22 @@ fun mkDatabase(name: String, delete: Boolean = false): Nitrite {
     }
 
     fun create(): Nitrite {
-        val nitrite = Nitrite.builder()
-                .filePath(file)
+        val storeModule: MVStoreModule = MVStoreModule.withConfig()
+            .filePath(file)
+            .compress(true)
+            .build()
+
+//        val db = Nitrite.builder()
+//            .loadModule(storeModule)
+//            .openOrCreate()
+        val nitrite = Nitrite.builder().loadModule(storeModule)
+                .registerEntityConverter(ChatCCTargetConverter())
+                .registerEntityConverter(ChatLanguageConverter())
+                .registerEntityConverter(TransItemConverter())
                 .openOrCreate()!!
 
         val test = nitrite.openSharedPreference("shared_preferences")
         test.connection.close()
-
-        val subs = nitrite.getRepository("proxy_sub", SubInfo::class.java)
-        subs.close()
 
         return nitrite
     }

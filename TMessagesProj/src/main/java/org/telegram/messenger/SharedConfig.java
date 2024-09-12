@@ -29,7 +29,6 @@ import androidx.annotation.RequiresApi;
 import androidx.core.content.pm.ShortcutManagerCompat;
 
 import org.apache.commons.lang3.StringUtils;
-import org.dizitart.no2.objects.filters.ObjectFilters;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -63,8 +62,6 @@ import java.util.stream.Collectors;
 import cn.hutool.core.util.StrUtil;
 import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.proxy.ProxyManager;
-import tw.nekomimi.nekogram.proxy.SubInfo;
-import tw.nekomimi.nekogram.proxy.SubManager;
 import tw.nekomimi.nekogram.proxy.tcp2ws.WsLoader;
 import tw.nekomimi.nekogram.proxynext.ProxyConfig;
 import tw.nekomimi.nekogram.proxynext.SingProxyManager;
@@ -464,11 +461,7 @@ public class SharedConfig {
             StringBuilder builder = new StringBuilder();
             builder.append("[ ");
             if (subId != 0L) {
-                try {
-                    builder.append(SubManager.getSubList().find(ObjectFilters.eq("id", subId)).firstOrDefault().displayName());
-                } catch (Exception e) {
-                    builder.append("Unknown");
-                }
+                builder.append("Unknown");
             } else {
                 if (StrUtil.isBlank(secret))
                     builder.append("Socks5");

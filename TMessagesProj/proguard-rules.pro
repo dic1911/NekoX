@@ -52,9 +52,10 @@
 -keep class org.h2.** { *; }
 -keep class org.objenesis.** { *; }
 -keep class com.fasterxml.jackson.** { *; }
+-keepattributes *Annotation*
 
 -keepnames class * implements java.io.Serializable
--keep class * implements org.dizitart.no2.mapper.Mappable { *; }
+#-keep class * implements org.dizitart.no2.mapper.Mappable { *; }
 
 -keepclassmembers class * implements java.io.Serializable {
     static final long serialVersionUID;
@@ -71,6 +72,18 @@
 -keep class tw.nekomimi.nekogram.InternalUpdater$GithubApiContents { *; }
 -keep class tw.nekomimi.nekogram.InternalUpdater$NekoXReleaseNote { *; }
 -keep class tw.nekomimi.nekogram.InternalUpdater$NekoXAPK { *; }
+
+#-keep class cn.hutool.core.bean.PropDesc { *; }
+#-keep class java.beans.Transient { *; }
+#-keep class java.lang.management.** { *; }
+#-keep class sun.net.spi.nameservice.** { *; }
+
+-dontwarn java.beans.Transient
+-dontwarn java.lang.management.GarbageCollectorMXBean
+-dontwarn java.lang.management.ManagementFactory
+-dontwarn java.lang.management.OperatingSystemMXBean
+-dontwarn lombok.Generated
+-dontwarn sun.net.spi.nameservice.NameServiceDescriptor
 
 ## https://developers.google.com/ml-kit/known-issues#android_issues
 #-keep class com.google.mlkit.nl.languageid.internal.LanguageIdentificationJni { *; }
