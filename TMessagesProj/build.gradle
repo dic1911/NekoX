@@ -115,7 +115,6 @@ android {
                     enable true
                     universalApk false
                     reset()
-                    System.out.println("------------ enabled " + nativeTarget)
                     include nativeTarget
                 } else {
                     enable true
@@ -220,8 +219,8 @@ android {
         releaseNoGcm {
             debuggable false
             jniDebuggable false
-            minifyEnabled false
-            shrinkResources false
+            minifyEnabled true
+            shrinkResources true
             multiDexEnabled true
             proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             matchingFallbacks = ["release", "debug"]
