@@ -73,17 +73,6 @@ if (!gradle.startParameter.taskNames.isEmpty()) {
 def nativeTarget = System.getenv("NATIVE_TARGET")
 if (nativeTarget == null) nativeTarget = ""
 
-def libName = () -> {
-    String[] children = new File("TMessagesProj/src/main/libs/arm64-v8a").list()
-    for (String child : children) {
-        if (child.startsWith("libtmessages") && child.endsWith(".so")) {
-            return child
-        }
-    }
-    return null
-}()
-if (libName == null) libName = "libtmessages.49.so"
-
 android {
     compileSdkVersion 34
     buildToolsVersion "34.0.0"
@@ -92,10 +81,7 @@ android {
     defaultConfig.applicationId = APP_PACKAGE
 
     packagingOptions {
-        pickFirst 'lib/x86/' + libName
-        pickFirst 'lib/x86_64/' + libName
-        pickFirst 'lib/armeabi-v7a/' + libName
-        pickFirst 'lib/arm64-v8a/' + libName
+        pickFirst '**/libtmessages.*.so'
     }
 
     splits {
