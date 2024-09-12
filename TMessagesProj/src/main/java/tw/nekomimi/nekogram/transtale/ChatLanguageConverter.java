@@ -19,8 +19,8 @@ public class ChatLanguageConverter implements EntityConverter<ChatLanguage> {
 
     @Override
     public ChatLanguage fromDocument(Document document, NitriteMapper nitriteMapper) {
-        Long chatId = (Long) nitriteMapper.tryConvert(document.get("chatId", Document.class), Long.class);
-        String language = (String) nitriteMapper.tryConvert(document.get("language", Document.class), String.class);
+        Long chatId = (Long) nitriteMapper.tryConvert(document.get("chatId", Long.class), Long.class);
+        String language = (String) nitriteMapper.tryConvert(document.get("language", String.class), String.class);
 
         // ???
         if (chatId == null) chatId = 0L;

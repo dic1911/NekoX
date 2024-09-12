@@ -19,8 +19,8 @@ public class ChatCCTargetConverter implements EntityConverter<ChatCCTarget> {
 
     @Override
     public ChatCCTarget fromDocument(Document document, NitriteMapper nitriteMapper) {
-        Long chatId = (Long) nitriteMapper.tryConvert(document.get("chatId", Document.class), Long.class);
-        String ccTarget = (String) nitriteMapper.tryConvert(document.get("ccTarget", Document.class), String.class);
+        Long chatId = (Long) nitriteMapper.tryConvert(document.get("chatId", Long.class), Long.class);
+        String ccTarget = (String) nitriteMapper.tryConvert(document.get("ccTarget", String.class), String.class);
 
         // ???
         if (chatId == null) chatId = 0L;

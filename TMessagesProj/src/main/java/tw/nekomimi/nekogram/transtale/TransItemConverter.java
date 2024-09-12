@@ -19,8 +19,8 @@ public class TransItemConverter implements EntityConverter<TransItem> {
 
     @Override
     public TransItem fromDocument(Document document, NitriteMapper nitriteMapper) {
-        String text = (String) nitriteMapper.tryConvert(document.get("text", Document.class), String.class);
-        String trans = (String) nitriteMapper.tryConvert(document.get("trans", Document.class), String.class);
+        String text = (String) nitriteMapper.tryConvert(document.get("text", String.class), String.class);
+        String trans = (String) nitriteMapper.tryConvert(document.get("trans", String.class), String.class);
 
         // ???
         if (text == null) text = "";
