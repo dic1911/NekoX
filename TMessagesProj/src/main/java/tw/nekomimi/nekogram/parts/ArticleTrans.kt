@@ -1,8 +1,6 @@
 package tw.nekomimi.nekogram.parts
 
 import kotlinx.coroutines.*
-import org.telegram.messenger.LocaleController
-import org.telegram.messenger.R
 import org.telegram.tgnet.TLRPC
 import org.telegram.ui.ArticleViewer
 import tw.nekomimi.nekogram.transtale.TranslateDb
@@ -61,7 +59,7 @@ fun ArticleViewer.doTransLATE() {
     status.setOnCancelListener {
 
         pages[0].adapter.trans = false
-        transMenu.setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate)
+        // transMenu.setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate)
         cancel.set(true)
         transPool.close()
 
@@ -91,7 +89,6 @@ fun ArticleViewer.doTransLATE() {
                 else -> null
 
             }?.also { str ->
-
                 deferreds.add(async(transPool) {
 
                     if (TranslateDb.currentTarget().contains(str)) {
@@ -136,7 +133,7 @@ fun ArticleViewer.doTransLATE() {
                                 status.dismiss()
                                 updatePaintSize()
                                 pages[0].adapter.trans = false
-                                transMenu.setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate)
+                                // transMenu.setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate)
 
                                 AlertUtil.showTransFailedDialog(parentActivity, it is UnsupportedOperationException, it.message
                                         ?: it.javaClass.simpleName, null, Runnable {
@@ -156,14 +153,13 @@ fun ArticleViewer.doTransLATE() {
                 if (it == null) taskCount.decrementAndGet()
 
             }
-
         }
 
         deferreds.awaitAll()
         transPool.cancel()
 
         if (!cancel.get()) UIUtil.runOnUIThread {
-
+            pages[0].adapter.trans = true
             updatePaintSize()
             status.dismiss()
 
