@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:124118418489:android:3dc02bf5a16e92600d39e8",
         "android_client_info": {
-          "package_name": "nekox.messenger"
+          "package_name": "nekox.messenger.broken"
         }
       },
       "oauth_client": [
