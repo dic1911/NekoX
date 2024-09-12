@@ -292,6 +292,6 @@
     <string name="ShowSelfInsteadOfSavedMessages">Mostrar como uno mismo en lugar de "Mensajes guardados"</string>
     <string name="DisableCustomWallpaperUser">Deshabilitar fondo personalizado de usuario</string>
     <string name="DisableCustomWallpaperChannel">Deshabilitar fondo personalizado de canal</string>
-    <string name="FasterReconnectHack">Reconexión más rapida alternando proxy entre encendido/apagado</string>
+    <string name="FasterReconnectHack">Reconexión más rapida de proxy tocando encendido/apagado</string>
     <string name="FasterReconnectHackAbout">Este hack solo funciona con un buen entorno de red.</string>
 </resources>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="NekoSettings">喵設定</string>
+    <string name="NekoSettings">猫設定</string>
     <string name="IPv6">IPv6を介した接続</string>
     <string name="MessageMenu">メッセージメニュー</string>
     <string name="HidePhone">あなたの携帯電話番号を隠す</string>
@@ -109,4 +109,22 @@
     <string name="ProviderDeepLTranslate">DeepL翻訳</string>
     <string name="ProviderMicrosoftTranslator">Microsoft Translator</string>
     <string name="ProviderYouDao">YouDao 翻訳</string>
+    <string name="maxRecentStickerCount">最大数の最近使ったステッカー</string>
+    <string name="enablePublicProxy">NekoX 公開プロキシ</string>
+    <string name="showSpoilersDirectly">スポイラーメッセージを直接表示する</string>
+    <string name="SaveToDownloadCount_zero">%1$dファイルをダウンロードディレクトリー保存しています</string>
+    <string name="SaveToDownloadCount_two">%1$dファイルをダウンロードディレクトリー保存しています</string>
+    <string name="NekoGeneralNotification">通知</string>
+    <string name="reactions">反応メニュー</string>
+    <string name="doubleTapSendReactions">ダブルタップ時に反応を送信する(デフォルト)</string>
+    <string name="customGroupVoipAudioBitrate">グループ VoIP 音声ビットレート</string>
+    <string name="autoUpdateSubInfo">プロキシを自動的に更新する</string>
+    <string name="customDoH">カスタム DoH</string>
+    <string name="disableChoosingSticker">ステッカーを選ぶ代わりに入力中を送信</string>
+    <string name="hideSendAsChannel">チャネルとして送信ボタンを隠す</string>
+    <string name="SaveToDownloadCount_one">%1$dファイルをダウンロードディレクトリー保存しています</string>
+    <string name="SaveToDownloadCount_few">%1$dファイルをダウンロードディレクトリー保存しています</string>
+    <string name="disableNotificationBubbles">通知のバブルを無効化</string>
+    <string name="SaveToDownloadCount_many">%1$dファイルをダウンロードディレクトリー保存しています</string>
+    <string name="SaveToDownloadCount_other">%1$dファイルをダウンロードディレクトリー保存しています</string>
 </resources>
