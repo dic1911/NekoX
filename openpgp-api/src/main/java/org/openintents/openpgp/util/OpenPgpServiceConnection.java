@@ -22,22 +22,20 @@ import android.content.Intent;
 import android.content.ServiceConnection;
 import android.os.IBinder;
 
-//import org.openintents.openpgp.IOpenPgpService2;
+import org.openintents.openpgp.IOpenPgpService2;
 
 public class OpenPgpServiceConnection {
 
     // callback interface
     public interface OnBound {
-//        void onBound(IOpenPgpService2 service);
-        void onBound(Object service);
+        void onBound(IOpenPgpService2 service);
 
         void onError(Exception e);
     }
 
     private Context mApplicationContext;
 
-//    private IOpenPgpService2 mService;
-    private Object mService;
+    private IOpenPgpService2 mService;
     private String mProviderPackageName;
 
     private OnBound mOnBoundListener;
@@ -68,8 +66,7 @@ public class OpenPgpServiceConnection {
         this.mOnBoundListener = onBoundListener;
     }
 
-//    public IOpenPgpService2 getService() {
-    public Object getService() {
+    public IOpenPgpService2 getService() {
         return mService;
     }
 
@@ -79,10 +76,10 @@ public class OpenPgpServiceConnection {
 
     private ServiceConnection mServiceConnection = new ServiceConnection() {
         public void onServiceConnected(ComponentName name, IBinder service) {
-//            mService = IOpenPgpService2.Stub.asInterface(service);
-//            if (mOnBoundListener != null) {
-//                mOnBoundListener.onBound(mService);
-//            }
+            mService = IOpenPgpService2.Stub.asInterface(service);
+            if (mOnBoundListener != null) {
+                mOnBoundListener.onBound(mService);
+            }
         }
 
         public void onServiceDisconnected(ComponentName name) {

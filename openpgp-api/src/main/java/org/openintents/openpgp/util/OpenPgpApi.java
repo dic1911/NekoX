@@ -30,7 +30,7 @@ import android.os.Build;
 import android.os.ParcelFileDescriptor;
 import android.util.Log;
 
-//import org.openintents.openpgp.IOpenPgpService2;
+import org.openintents.openpgp.IOpenPgpService2;
 import org.openintents.openpgp.OpenPgpError;
 
 public class OpenPgpApi {
@@ -310,13 +310,11 @@ public class OpenPgpApi {
     public static final String EXTRA_CALL_UUID1 = "call_uuid1";
     public static final String EXTRA_CALL_UUID2 = "call_uuid2";
 
-//    IOpenPgpService2 mService;
-    Object mService;
+    IOpenPgpService2 mService;
     Context mContext;
     final AtomicInteger mPipeIdGen = new AtomicInteger();
 
-//    public OpenPgpApi(Context context, IOpenPgpService2 service) {
-    public OpenPgpApi(Context context, Object service) {
+    public OpenPgpApi(Context context, IOpenPgpService2 service) {
         this.mContext = context;
         this.mService = service;
     }
@@ -397,24 +395,24 @@ public class OpenPgpApi {
             // always send version from client
             data.putExtra(EXTRA_API_VERSION, OpenPgpApi.API_VERSION);
 
-            Intent result = null;
+            Intent result;
 
             Thread pumpThread = null;
             int outputPipeId = 0;
 
             if (os != null) {
                 outputPipeId = mPipeIdGen.incrementAndGet();
-//                output = mService.createOutputPipe(outputPipeId);
-//                pumpThread = ParcelFileDescriptorUtil.pipeTo(os, output);
+                output = mService.createOutputPipe(outputPipeId);
+                pumpThread = ParcelFileDescriptorUtil.pipeTo(os, output);
             }
 
             // blocks until result is ready
-//            result = mService.execute(data, input, outputPipeId);
+            result = mService.execute(data, input, outputPipeId);
 
             // set class loader to current context to allow unparcelling
             // of OpenPgpError and OpenPgpSignatureResult
             // http://stackoverflow.com/a/3806769
-//            result.setExtrasClassLoader(mContext.getClassLoader());
+            result.setExtrasClassLoader(mContext.getClassLoader());
 
             //wait for ALL data being pumped from remote side
             if (pumpThread != null) {
