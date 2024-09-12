@@ -2,7 +2,8 @@
 
 source "bin/init/env.sh"
 
-OUT=TMessagesProj/build/intermediates/stripped_native_libs/miniFoss/out/lib
+# OUT=TMessagesProj/build/intermediates/stripped_native_libs/miniFoss/out/lib # old path
+OUT=TMessagesProj/build/intermediates/stripped_native_libs/miniFoss/stripMiniFossDebugSymbols/out/lib
 DIR=TMessagesProj/src/main/libs
 
 export COMPILE_NATIVE=1
