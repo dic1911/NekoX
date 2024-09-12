@@ -128,6 +128,7 @@ public class WebActionBar extends FrameLayout {
     public static final int history_item = 8;
     public static final int forward_item = 9;
     public static final int instant_item = 10;
+    public static final int translate_item = 1001;
 
     public WebActionBar(Context context, Theme.ResourcesProvider resourcesProvider) {
         super(context);
@@ -210,6 +211,7 @@ public class WebActionBar extends FrameLayout {
                 o.add(R.drawable.msg_openin, getString(R.string.OpenInExternalApp), click.run(open_item));
                 o.add(R.drawable.msg_search, getString(R.string.Search), click.run(search_item));
                 o.add(R.drawable.msg_share, getString(R.string.ShareFile), click.run(share_item));
+                o.add(R.drawable.ic_translate, getString(R.string.Translate), click.run(translate_item));
                 o.add(R.drawable.msg_settings_old, getString(R.string.Settings), click.run(settings_item));
             } else if (menuType == ArticleViewer.PageLayout.TYPE_WEB) {
                 if (!isTonsite) {

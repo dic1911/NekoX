@@ -4550,6 +4550,8 @@ public class ArticleViewer implements NotificationCenter.NotificationCenterDeleg
                 if (loader != null && loader.getWebPage() != null) {
                     addPageToStack(loader.getWebPage(), null, 1);
                 }
+            } else if (id == WebActionBar.translate_item) {
+                ArticleTransKt.doTransLATE(this);
             }
         });
 
