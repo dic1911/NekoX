@@ -257,6 +257,7 @@ public class NekoConfig {
     public static ConfigItem dontAutoPlayNextMessage = addConfig("DontAutoPlayNextMessage", configTypeBool, false);
     public static ConfigItem chatListFontSizeFollowChat = addConfig("ChatListFontSizeFollowChat", configTypeBool, false);
     public static ConfigItem dontShareNumberWhenAddContactByDefault = addConfig("DontShareNumberWhenAddContactByDefault", configTypeBool, true);
+    public static ConfigItem autoSendMessageIfBlockedBySlowMode = addConfig("AutoSendMessageIfBlockedBySlowMode", configTypeBool, false);
 
     public static ConfigItem customGetQueryBlacklist = addConfig("BlacklistUrlQueryTitle", configTypeString, "");
     public static ArrayList<String> customGetQueryBlacklistData = new ArrayList<>();

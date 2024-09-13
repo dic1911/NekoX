@@ -236,4 +236,6 @@
     <string name="SearchRecentFiles">Search recent files</string>
     <string name="UnofficialApp">Unofficial app</string>
     <string name="FileUploadLimit">File size must not exceed %1$s</string>
+    <string name="AutoSendMessageIfBlockedBySlowMode">Auto send message if blocked by slow mode</string>
+    <string name="AutoSendMessageIfBlockedBySlowModeDesc">Only first text/sticker/GIF is enqueued, other media/files isn\'t supported</string>
 </resources>

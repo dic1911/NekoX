@@ -981,6 +981,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
     private AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
 
+    private Runnable sendNextMessageRunnable = null;
+
     private class RecordDot extends View {
 
         private float alpha;
@@ -3221,7 +3223,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (delegate.checkCanRemoveRestrictionsByBoosts()) {
                     return;
                 }
-                delegate.onUpdateSlowModeButton(slowModeButton, true, slowModeButton.getText());
+                if (!NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() ||
+                        sendNextMessageRunnable != null || messageEditText == null || messageEditText.length() <= 0) {
+                    delegate.onUpdateSlowModeButton(slowModeButton, true, slowModeButton.getText());
+                } else {
+                    sendNextMessageRunnable = new Thread(this::sendMessage);
+                }
             }
         });
         slowModeButton.setOnLongClickListener(v -> {
@@ -6076,6 +6083,17 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         }
         if (!isInScheduleMode()) {
             checkSendButton(true);
+        }
+
+        // TODO: 030 - trigger send message in queue
+        if (slowModeTimer <= 0) {
+            if (sendNextMessageRunnable != null) {
+                AndroidUtilities.runOnUIThread(() -> {
+                    sendNextMessageRunnable.run();
+                    sendNextMessageRunnable = null;
+                });
+                Log.d("030-slow", "ok");
+            }
         }
     }
 
@@ -11103,6 +11121,26 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 if (slowModeTimer > 0 && !isInScheduleMode()) {
                     if (delegate != null) {
                         delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
+                        if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
+                            sendNextMessageRunnable = new Thread(() -> {
+                                try {
+                                    while (getSlowModeTimer() != null) {
+                                        Thread.sleep(500);
+                                    }
+
+                                    AndroidUtilities.runOnUIThread(() -> {
+                                        SendMessagesHelper.getInstance(currentAccount)
+                                                .sendSticker(sticker, query, dialog_id, replyingMessageObject, getThreadMessage(),
+                                                        null, replyingQuote, sendAnimationData, notify, scheduleDate,
+                                                        parent instanceof TLRPC.TL_messages_stickerSet, parent,
+                                                        parentFragment != null ? parentFragment.quickReplyShortcut : null,
+                                                        parentFragment != null ? parentFragment.getQuickReplyId() : 0);
+                                    }, slowModeTimer * 1000L);
+                                } catch (InterruptedException e) {
+                                    Log.d("030-slow", "interrupted");
+                                }
+                            });
+                        }
                     }
                     return;
                 }
@@ -11146,6 +11184,38 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     if (slowModeTimer > 0 && !isInScheduleMode()) {
                         if (delegate != null) {
                             delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
+                            if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
+                                sendNextMessageRunnable = new Thread(() -> {
+                                    try {
+                                        while (getSlowModeTimer() != null) {
+                                            Thread.sleep(500);
+                                        }
+
+                                        TLRPC.Document document;
+                                        if (gif instanceof TLRPC.Document) {
+                                            document = (TLRPC.Document) gif;
+                                        } else if (gif instanceof TLRPC.BotInlineResult) {
+                                            TLRPC.BotInlineResult result = (TLRPC.BotInlineResult) gif;
+                                            document = result.document;
+                                        } else {
+                                            document = null;
+                                        }
+
+                                        if (document != null) {
+                                            AndroidUtilities.runOnUIThread(() -> {
+                                                TL_stories.StoryItem storyItem = delegate != null ? delegate.getReplyToStory() : null;
+                                                SendMessagesHelper.getInstance(currentAccount)
+                                                        .sendSticker(document, query, dialog_id, replyingMessageObject, getThreadMessage(),
+                                                                storyItem, replyingQuote, null, notify, scheduleDate, false, parent,
+                                                                parentFragment != null ? parentFragment.quickReplyShortcut : null,
+                                                                parentFragment != null ? parentFragment.getQuickReplyId() : 0);
+                                            }, slowModeTimer * 1000L);
+                                        }
+                                    } catch (InterruptedException e) {
+                                        Log.d("030-slow", "interrupted");
+                                    }
+                                });
+                            }
                         }
                         return;
                     }
