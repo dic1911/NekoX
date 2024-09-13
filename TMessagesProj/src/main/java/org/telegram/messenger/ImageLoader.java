@@ -2799,9 +2799,11 @@ public class ImageLoader {
         }
         WebInstantView.cancelLoadPhoto(imageReceiver);
         List<Runnable> runnables = imageReceiver.getLoadingOperations();
-        if (!runnables.isEmpty()) {
-            for (Runnable r : runnables) {
-                imageLoadQueue.cancelRunnable(r);
+        synchronized (runnables) {
+            if (!runnables.isEmpty()) {
+                for (Runnable r : runnables) {
+                    imageLoadQueue.cancelRunnable(r);
+                }
             }
         }
         imageReceiver.addLoadingImageRunnable(null);
