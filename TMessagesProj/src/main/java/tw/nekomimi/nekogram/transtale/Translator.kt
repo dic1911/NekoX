@@ -313,6 +313,7 @@ interface Translator {
                     Log.d("030-tx", "not forwarding, fix state")
                     localIsSelfOutgoing = true
                 } else {
+                    chatActivity.messagePreviewParamsForTranslate = chatActivity.messagePreviewParams
                     msgCount = chatActivity.messagePreviewParams.forwardMessages.messages.size
 
                     val target = ArrayList<MessageObject>()

@@ -751,6 +751,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     public MessageObject.GroupedMessages selectedObjectGroup;
     private boolean forbidForwardingWithDismiss;
     public MessagePreviewParams messagePreviewParams;
+    public MessagePreviewParams messagePreviewParamsForTranslate;
     private CharSequence formwardingNameText;
     private MessageObject forwardingMessage;
     private MessageObject.GroupedMessages forwardingMessageGroup;

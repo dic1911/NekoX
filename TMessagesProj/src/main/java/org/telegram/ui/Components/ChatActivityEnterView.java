@@ -12412,7 +12412,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         } else if (id == NotificationCenter.forwardingMessageTranslated) {
             if (sendPopupWindow != null) sendPopupWindow.dismiss();
 
-            for (MessageObject obj : parentFragment.messagePreviewParams.forwardMessages.messages) {
+            if (parentFragment.messagePreviewParamsForTranslate == null) {
+                BulletinFactory.of(parentFragment).createErrorBulletin(getString(R.string.ErrorOccurred)).show();
+                return;
+            }
+            for (MessageObject obj : parentFragment.messagePreviewParamsForTranslate.forwardMessages.messages) {
                 CharSequence text = obj.caption != null ? obj.caption : "";
                 if (text.length() == 0) text = obj.messageText;
                 if (!obj.isAnyKindOfSticker() && obj.getDocument() == null && text != null && text.length() > 0) {
