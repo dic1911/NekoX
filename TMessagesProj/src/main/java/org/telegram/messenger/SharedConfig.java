@@ -678,7 +678,7 @@ public class SharedConfig {
 
     public static void saveConfig() {
         // ensure cache path in NekoConfig and storageCacheDir matches
-        if (!storageCacheDir.equals(NekoConfig.cachePath.String())) {
+        if (storageCacheDir != null && !storageCacheDir.equals(NekoConfig.cachePath.String())) {
             Log.d("030-path", String.format("cache overridden from '%s' to '%s'", storageCacheDir, NekoConfig.cachePath.String()));
             storageCacheDir = NekoConfig.cachePath.String();
         }
