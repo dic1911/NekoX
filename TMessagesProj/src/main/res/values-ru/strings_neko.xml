@@ -188,4 +188,24 @@
     <string name="OverrideSettingHint">&lt;ключ&gt; &lt;значение&gt;</string>
     <string name="Blacklist">Чёрный список</string>
     <string name="PreferredTranslateTargetLangTitle">Предпочитаемые языки</string>
+    <string name="ShowSharedMediaOnOpeningProfile">Медиа вместо публикаций при открытии профиля</string>
+    <string name="DisableAddBirthdayReminder">Не предлагать ставить день рождения</string>
+    <string name="DisableBirthdayReminder">Не напоминать о днях рождения контактов</string>
+    <string name="AlwaysDisableSafeBrowsingInWebView">Не использовать Google Safe Browsing</string>
+    <string name="NoTextToTranslate">В этом сообщении нет текста для перевода :(</string>
+    <string name="RemovePremiumAnnoyance">Показывать меньше рекламы премиума</string>
+    <string name="RemovePremiumAnnoyanceDesc">Также отключает показ функций премиума</string>
+    <string name="NoStarsForReaction">Недостаточно звёзд, но вы все равно можете насладиться визуальным эффектом :)</string>
+    <string name="ShowEditTimestampInPopupMenu">Дата изменения сообщения в меню</string>
+    <string name="ShowForwardTimestampInPopupMenu">Дата отправки пересланного сообщения в меню</string>
+    <string name="AlwaysUseSpoilerForMedia">Ставить спойлер на все медиа в указанных чатах</string>
+    <string name="AlwaysUseSpoilerForMediaDesc">Разделяйте ID чатов запятой, например: chat_id1,chat_id2…</string>
+    <string name="PreferredTranslateTargetLang">Предлагать перевод только этих языков</string>
+    <string name="PreferredTranslateTargetLangExample">Например: en, ja, zh_tw</string>
+    <string name="CustomSearchEngine">Своя поисковая система</string>
+    <string name="CustomSearchEngineError">Неправильный URL поисковой системы!</string>
+    <string name="OverrideSettings">Переопределение глобальных настроек (НЕ ИСПОЛЬЗУЙТЕ, ЕСЛИ НЕ ЗНАЕТЕ, ЧТО ДЕЛАЕТЕ!!!)</string>
+    <string name="OverrideSettingBoolean">Переопределить булево значение</string>
+    <string name="OverrideSettingInteger">Переопределить целочисленное значение</string>
+    <string name="OverrideSettingLong">Переопределить \"long\" значение</string>
 </resources>
