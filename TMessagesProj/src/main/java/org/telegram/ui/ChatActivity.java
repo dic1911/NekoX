@@ -17673,6 +17673,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 scrollToPositionOnRecreate = -1;
             }
 
+            if (searchCountText != null && searchGoToBeginningButton != null && searchCountText.getX() < searchGoToBeginningButton.getX()) {
+                searchCountText.setText("", false);
+            }
+
             updateBulletinLayout();
 
             lastHeight = allHeight;
