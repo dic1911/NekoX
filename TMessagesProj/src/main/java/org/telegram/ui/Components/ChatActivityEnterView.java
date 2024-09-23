@@ -981,7 +981,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
     private AnimationNotificationsLocker notificationsLocker = new AnimationNotificationsLocker();
 
-    private Runnable sendNextMessageRunnable = null;
+    public Runnable sendNextMessageRunnable = null;
 
     private class RecordDot extends View {
 
@@ -3227,7 +3227,9 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         sendNextMessageRunnable != null || messageEditText == null || messageEditText.length() <= 0) {
                     delegate.onUpdateSlowModeButton(slowModeButton, true, slowModeButton.getText());
                 } else {
+                    parentFragment.shouldShowAutoSendHint = true;
                     sendNextMessageRunnable = new Thread(this::sendMessage);
+                    parentFragment.showSlowModeAutoSendHint(slowModeButton, true, true);
                 }
             }
         });
@@ -6091,6 +6093,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 AndroidUtilities.runOnUIThread(() -> {
                     sendNextMessageRunnable.run();
                     sendNextMessageRunnable = null;
+                    parentFragment.shouldShowAutoSendHint = false;
                 });
                 Log.d("030-slow", "ok");
             }
@@ -11122,6 +11125,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     if (delegate != null) {
                         delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
                         if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
+                            parentFragment.shouldShowAutoSendHint = true;
                             sendNextMessageRunnable = new Thread(() -> {
                                 try {
                                     while (getSlowModeTimer() != null) {
@@ -11140,6 +11144,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                                     Log.d("030-slow", "interrupted");
                                 }
                             });
+                            parentFragment.showSlowModeAutoSendHint(view == null ? slowModeButton : view, true, true);
                         }
                     }
                     return;
@@ -11185,6 +11190,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         if (delegate != null) {
                             delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
                             if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
+                                parentFragment.shouldShowAutoSendHint = true;
                                 sendNextMessageRunnable = new Thread(() -> {
                                     try {
                                         while (getSlowModeTimer() != null) {
@@ -11215,6 +11221,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                                         Log.d("030-slow", "interrupted");
                                     }
                                 });
+                                parentFragment.showSlowModeAutoSendHint(view == null ? slowModeButton : view, true, true);
                             }
                         }
                         return;

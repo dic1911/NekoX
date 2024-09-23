@@ -12851,10 +12851,34 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private void showSlowModeHint(View view, boolean show, CharSequence time) {
+        if (shouldShowAutoSendHint) {
+            showSlowModeAutoSendHint(view, show, false);
+            return;
+        }
         if (getParentActivity() == null || fragmentView == null || !show && (slowModeHint == null || slowModeHint.getVisibility() != View.VISIBLE)) {
             return;
         }
         slowModeHint.setText(AndroidUtilities.replaceTags(LocaleController.formatString("SlowModeHint", R.string.SlowModeHint, time)));
+        if (show) {
+            slowModeHint.showForView(view, true);
+        }
+    }
+
+    public boolean shouldShowAutoSendHint = false;
+    public AtomicBoolean firstAutoHintShown = new AtomicBoolean(false);
+    public void showSlowModeAutoSendHint(View view, boolean show, boolean first) {
+        if (getParentActivity() == null || fragmentView == null || !show && (slowModeHint == null || slowModeHint.getVisibility() != View.VISIBLE)) {
+            return;
+        }
+        if (first) firstAutoHintShown.set(false);
+        int stringId = first || !firstAutoHintShown.get() ? R.string.AutoSendAfterSlowModeHint : R.string.AutoSendAfterSlowModeIgnoredHint;
+        new Thread(()-> {
+            try {
+                Thread.sleep(slowModeHint.getShowingDuration());
+            } catch (InterruptedException ignored) {}
+            firstAutoHintShown.set(true);
+        }).start();
+        slowModeHint.setText(getString(stringId));
         if (show) {
             slowModeHint.showForView(view, true);
         }

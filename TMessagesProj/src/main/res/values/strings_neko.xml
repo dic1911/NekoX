@@ -238,4 +238,6 @@
     <string name="FileUploadLimit">File size must not exceed %1$s</string>
     <string name="AutoSendMessageIfBlockedBySlowMode">Auto send message if blocked by slow mode</string>
     <string name="AutoSendMessageIfBlockedBySlowModeDesc">Only first text/sticker/GIF is enqueued, other media/files isn\'t supported</string>
+    <string name="AutoSendAfterSlowModeHint">Scheduled to send after slow mode timer</string>
+    <string name="AutoSendAfterSlowModeIgnoredHint">A pending message exists, ignoring.</string>
 </resources>
