@@ -47,7 +47,8 @@ public class ConfigCellTextInput extends AbstractConfigCell {
             this.hint = hint;
         }
         if (customTitle == null) {
-            title = LocaleController.getString(bindConfig.getKey());
+            int strId = bind.getId();
+            title = (strId != 0) ? LocaleController.getString(strId) : LocaleController.getString(bind.getKey());
         } else {
             title = customTitle;
         }
@@ -95,7 +96,7 @@ public class ConfigCellTextInput extends AbstractConfigCell {
         editText.setText(bindConfig.String());
         linearLayout.addView(editText, LayoutHelper.createLinear(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, AndroidUtilities.dp(8), 0, AndroidUtilities.dp(10), 0));
 
-        builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (d, v) -> {
+        builder.setPositiveButton(LocaleController.getString(R.string.OK), (d, v) -> {
             String newV = editText.getText().toString();
             if (this.inputChecker != null) {
                 newV = this.inputChecker.apply(newV);

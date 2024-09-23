@@ -70,7 +70,7 @@ public class NekoAccountSettingsActivity extends BaseFragment {
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setTitle(LocaleController.getString("Account", R.string.Account));
+        actionBar.setTitle(LocaleController.getString(R.string.Account));
 
         if (AndroidUtilities.isTablet()) {
             actionBar.setOccupyStatusBar(false);
@@ -105,12 +105,12 @@ public class NekoAccountSettingsActivity extends BaseFragment {
                 tooltip.showWithAction(0, UndoView.ACTION_NEED_RESATRT, null, null);
             } else if (position == deleteAccountRow) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                builder.setMessage(LocaleController.getString("TosDeclineDeleteAccount", R.string.TosDeclineDeleteAccount));
-                builder.setTitle(LocaleController.getString("DeleteAccount", R.string.DeleteAccount));
-                builder.setPositiveButton(LocaleController.getString("Deactivate", R.string.Deactivate), (dialog, which) -> {
+                builder.setMessage(LocaleController.getString(R.string.TosDeclineDeleteAccount));
+                builder.setTitle(LocaleController.getString(R.string.DeleteAccount));
+                builder.setPositiveButton(LocaleController.getString(R.string.Deactivate), (dialog, which) -> {
                     AlertDialog.Builder builder12 = new AlertDialog.Builder(getParentActivity());
-                    builder12.setMessage(LocaleController.getString("TosDeclineDeleteAccount", R.string.TosDeclineDeleteAccount));
-                    builder12.setTitle(LocaleController.getString("DeleteAccount", R.string.DeleteAccount));
+                    builder12.setMessage(LocaleController.getString(R.string.TosDeclineDeleteAccount));
+                    builder12.setTitle(LocaleController.getString(R.string.DeleteAccount));
 
                     LinearLayout linearLayout = new LinearLayout(context);
                     linearLayout.setOrientation(LinearLayout.VERTICAL);
@@ -123,7 +123,7 @@ public class NekoAccountSettingsActivity extends BaseFragment {
 
                     builder12.setView(linearLayout);
 
-                    builder12.setPositiveButton(LocaleController.getString("Deactivate", R.string.Deactivate), (dialogInterface, i) -> {
+                    builder12.setPositiveButton(LocaleController.getString(R.string.Deactivate), (dialogInterface, i) -> {
 
                         if (!editText.getText().toString().equals("YES")) return;
 
@@ -164,19 +164,19 @@ public class NekoAccountSettingsActivity extends BaseFragment {
                             if (response instanceof TLRPC.TL_boolTrue) {
                                 getMessagesController().performLogout(0);
                             } else if (error == null || error.code != -1000) {
-                                String errorText = LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred);
+                                String errorText = LocaleController.getString(R.string.ErrorOccurred);
                                 if (error != null) {
                                     errorText += "\n" + error.text;
                                 }
                                 AlertDialog.Builder builder1 = new AlertDialog.Builder(getParentActivity());
-                                builder1.setTitle(LocaleController.getString("AppName", R.string.AppName));
+                                builder1.setTitle(LocaleController.getString(R.string.AppName));
                                 builder1.setMessage(errorText);
-                                builder1.setPositiveButton(LocaleController.getString("OK", R.string.OK), null);
+                                builder1.setPositiveButton(LocaleController.getString(R.string.OK), null);
                                 builder1.show();
                             }
                         }));
                     });
-                    builder12.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                    builder12.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                     AlertDialog dialog12 = builder12.create();
                     showDialog(dialog12);
                     TextView button = (TextView) dialog12.getButton(DialogInterface.BUTTON_POSITIVE);
@@ -184,7 +184,7 @@ public class NekoAccountSettingsActivity extends BaseFragment {
                         button.setTextColor(Theme.getColor(Theme.key_text_RedBold));
                     }
                 });
-                builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+                builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                 builder.show();
                 AlertDialog dialog = builder.create();
                 showDialog(dialog);
@@ -291,7 +291,7 @@ public class NekoAccountSettingsActivity extends BaseFragment {
                     TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
                     textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlackText));
                     if (position == deleteAccountRow) {
-                        textCell.setText(LocaleController.getString("DeleteAccount", R.string.DeleteAccount), false);
+                        textCell.setText(LocaleController.getString(R.string.DeleteAccount), false);
                         textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteRedText2));
                     }
                     break;
@@ -304,7 +304,7 @@ public class NekoAccountSettingsActivity extends BaseFragment {
                 case 4: {
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
                     if (position == accountRow) {
-                        headerCell.setText(LocaleController.getString("Account", R.string.Account));
+                        headerCell.setText(LocaleController.getString(R.string.Account));
                     }
                     break;
                 }

@@ -211,7 +211,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setTitle(LocaleController.getString("MessageDetails", R.string.MessageDetails));
+        actionBar.setTitle(LocaleController.getString(R.string.MessageDetails));
 
         if (AndroidUtilities.isTablet()) {
             actionBar.setOccupyStatusBar(false);
@@ -239,10 +239,10 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         listView.setOnItemClickListener((view, position, x, y) -> {
             if (position == exportRow) {
                 if (AndroidUtilities.addToClipboard(messageDetailsJson)) {
-                    copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
+                    copyTooltip.setInfoText(LocaleController.getString(R.string.TextCopied));
                     copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
                 } else {
-                    copyTooltip.setInfoText(LocaleController.getString("ErrorOccurred", R.string.ErrorOccurred));
+                    copyTooltip.setInfoText(LocaleController.getString(R.string.ErrorOccurred));
                     copyTooltip.showWithAction(0, UndoView.ACTION_GIGAGROUP_CANCEL, null, null);
                 }
             } else if (position == rawRow) {
@@ -275,7 +275,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                     } else {
                         intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(new File(filePath)));
                     }
-                    startActivityForResult(Intent.createChooser(intent, LocaleController.getString("ShareFile", R.string.ShareFile)), 500);
+                    startActivityForResult(Intent.createChooser(intent, LocaleController.getString(R.string.ShareFile)), 500);
                 });
             } else if (position == channelRow || position == groupRow) {
                 if (fromChat != null) {
@@ -293,7 +293,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                 }
             } else if (position == rawRow) {
                 if (AndroidUtilities.addToClipboard(messageDetailsPrettyJson)) {
-                    copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
+                    copyTooltip.setInfoText(LocaleController.getString(R.string.TextCopied));
                     copyTooltip.showWithAction(0, UndoView.ACTION_TEXT_COPIED, null, null);
                 }
             } else {
@@ -303,7 +303,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
         });
 
         copyTooltip = new UndoView(context);
-        copyTooltip.setInfoText(LocaleController.getString("TextCopied", R.string.TextCopied));
+        copyTooltip.setInfoText(LocaleController.getString(R.string.TextCopied));
         frameLayout.addView(copyTooltip, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.WRAP_CONTENT, Gravity.BOTTOM | Gravity.LEFT, 8, 0, 8, 8));
 
         return fragmentView;
@@ -539,7 +539,7 @@ public class MessageDetailsActivity extends BaseFragment implements Notification
                 case 3: {
                     TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
                     if (position == exportRow) {
-                        textCell.setText(LocaleController.getString("ExportAsJson", R.string.ExportAsJson), false);
+                        textCell.setText(LocaleController.getString(R.string.ExportAsJson), false);
                         textCell.setTextColor(Theme.getColor(Theme.key_windowBackgroundWhiteBlueText));
                     }
                     break;

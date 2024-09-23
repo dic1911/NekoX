@@ -72,7 +72,8 @@ public class ConfigCellSelectBox extends AbstractConfigCell {
             return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(context); //TODO Replace with pop-up menu
-        builder.setTitle(LocaleController.getString(bindConfig.getKey()));
+        int strId = bindConfig.getId();
+        builder.setTitle(strId != 0 ? LocaleController.getString(strId) : LocaleController.getString(bindConfig.getKey()));
         final LinearLayout linearLayout = new LinearLayout(context);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
         builder.setView(linearLayout);
@@ -97,7 +98,7 @@ public class ConfigCellSelectBox extends AbstractConfigCell {
                 cellGroup.runCallback(bindConfig.getKey(), which);
             });
         }
-        builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null);
+        builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
         if (ctxCustom == null) {
             cellGroup.thisFragment.showDialog(builder.create());
         } else {

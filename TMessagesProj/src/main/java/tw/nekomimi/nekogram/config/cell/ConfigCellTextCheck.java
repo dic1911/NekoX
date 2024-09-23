@@ -17,13 +17,15 @@ public class ConfigCellTextCheck extends AbstractConfigCell {
 
     public ConfigCellTextCheck(ConfigItem bind) {
         this.bindConfig = bind;
-        this.title = LocaleController.getString(bindConfig.getKey());
+        int strId = bindConfig.getId();
+        this.title = (strId != 0) ? LocaleController.getString(strId) : LocaleController.getString(bindConfig.getKey());
         this.subtitle = null;
     }
 
     public ConfigCellTextCheck(ConfigItem bind, String subtitle) {
         this.bindConfig = bind;
-        this.title = LocaleController.getString(bindConfig.getKey());
+        int strId = bindConfig.getId();
+        this.title = (strId != 0) ? LocaleController.getString(strId) : LocaleController.getString(bindConfig.getKey());
         this.subtitle = subtitle;
     }
 

@@ -723,9 +723,9 @@ public class DocumentSelectActivity extends BaseFragment {
                         itemCells[a].setTextAndIcon(LocaleController.getString("Translate", R.string.Translate), R.drawable.ic_translate);
                     } else if (num == 1) {
                         if (UserObject.isUserSelf(user)) {
-                            itemCells[a].setTextAndIcon(LocaleController.getString("SetReminder", R.string.SetReminder), R.drawable.baseline_date_range_24);
+                            itemCells[a].setTextAndIcon(LocaleController.getString(R.string.SetReminder), R.drawable.baseline_date_range_24);
                         } else {
-                            itemCells[a].setTextAndIcon(LocaleController.getString("ScheduleMessage", R.string.ScheduleMessage), R.drawable.baseline_date_range_24);
+                            itemCells[a].setTextAndIcon(LocaleController.getString(R.string.ScheduleMessage), R.drawable.baseline_date_range_24);
                         }
                     } else if (num == 2) {
                         itemCells[a].setTextAndIcon(LocaleController.getString("SendWithoutSound", R.string.SendWithoutSound), R.drawable.baseline_notifications_off_24);

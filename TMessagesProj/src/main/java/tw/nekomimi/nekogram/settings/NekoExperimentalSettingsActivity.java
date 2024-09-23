@@ -69,7 +69,7 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
 
     private final CellGroup cellGroup = new CellGroup(this);
 
-    private final AbstractConfigCell header1 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("Experiment")));
+    private final AbstractConfigCell header1 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString(R.string.Experiment)));
     private final AbstractConfigCell useSystemEmojiRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.useSystemEmoji));
 //    private final AbstractConfigCell useCustomEmojiRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.useCustomEmoji));
     private final AbstractConfigCell channelAliasRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.channelAlias));
@@ -80,26 +80,26 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
     private final AbstractConfigCell proxyAutoSwitchRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.proxyAutoSwitch));
     private final AbstractConfigCell disableFilteringRow = cellGroup.appendCell(new ConfigCellCustom(CellGroup.ITEM_TYPE_TEXT_CHECK, true));
     //    private final NekomuraTGCell ignoreContentRestrictionsRow = addNekomuraTGCell(nkmrCells.new NekomuraTGTextCheck(NekoConfig.ignoreContentRestrictions, LocaleController.getString("IgnoreContentRestrictionsNotice")));
-    private final AbstractConfigCell unlimitedFavedStickersRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.unlimitedFavedStickers, LocaleController.getString("UnlimitedFavoredStickersAbout")));
-    private final AbstractConfigCell unlimitedPinnedDialogsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.unlimitedPinnedDialogs, LocaleController.getString("UnlimitedPinnedDialogsAbout")));
-    private final AbstractConfigCell enableStickerPinRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.enableStickerPin, LocaleController.getString("EnableStickerPinAbout")));
+    private final AbstractConfigCell unlimitedFavedStickersRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.unlimitedFavedStickers, LocaleController.getString(R.string.UnlimitedFavoredStickersAbout)));
+    private final AbstractConfigCell unlimitedPinnedDialogsRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.unlimitedPinnedDialogs, LocaleController.getString(R.string.UnlimitedPinnedDialogsAbout)));
+    private final AbstractConfigCell enableStickerPinRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.enableStickerPin, LocaleController.getString(R.string.EnableStickerPinAbout)));
     private final AbstractConfigCell useMediaStreamInVoipRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.useMediaStreamInVoip));
     private final AbstractConfigCell customAudioBitrateRow = cellGroup.appendCell(new ConfigCellCustom(CellGroup.ITEM_TYPE_TEXT_SETTINGS_CELL, true));
     private final AbstractConfigCell increasedMaxPhotoResolutionRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.increasedMaxPhotoResolution));
-    private final AbstractConfigCell fasterReconnectHackRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.fasterReconnectHack, LocaleController.getString("FasterReconnectHackAbout")));
-    private final AbstractConfigCell autoArchiveAndMuteRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.autoArchiveAndMute, LocaleController.getString("AutoArchiveAndMuteAbout")));
-    private final AbstractConfigCell removePremiumAnnoyanceRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.removePremiumAnnoyance, LocaleController.getString("RemovePremiumAnnoyanceDesc")));
+    private final AbstractConfigCell fasterReconnectHackRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.fasterReconnectHack, LocaleController.getString(R.string.FasterReconnectHackAbout)));
+    private final AbstractConfigCell autoArchiveAndMuteRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.autoArchiveAndMute, LocaleController.getString(R.string.AutoArchiveAndMuteAbout)));
+    private final AbstractConfigCell removePremiumAnnoyanceRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.removePremiumAnnoyance, LocaleController.getString(R.string.RemovePremiumAnnoyanceDesc)));
     private final AbstractConfigCell autoTranslateRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.autoTranslate));
     private final AbstractConfigCell autoTranslateProviderRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.useCustomProviderForAutoTranslate));
     private final AbstractConfigCell chatListFontSizeFollowChatRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.chatListFontSizeFollowChat));
     private final AbstractConfigCell divider0 = cellGroup.appendCell(new ConfigCellDivider());
 
-    private final AbstractConfigCell header2 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString("OverrideSettings")));
-    private final AbstractConfigCell overrideSettingBooleanRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingBoolean, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
-    private final AbstractConfigCell overrideSettingIntegerRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingInteger, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
-    private final AbstractConfigCell overrideSettingStringRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingString, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
-    private final AbstractConfigCell overrideSettingLongRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingLong, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
-    private final AbstractConfigCell overrideSettingFloatRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingFloat, LocaleController.getString("OverrideSettingHint"), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell header2 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString(R.string.OverrideSettings)));
+    private final AbstractConfigCell overrideSettingBooleanRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingBoolean, LocaleController.getString(R.string.OverrideSettingHint), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingIntegerRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingInteger, LocaleController.getString(R.string.OverrideSettingHint), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingStringRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingString, LocaleController.getString(R.string.OverrideSettingHint), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingLongRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingLong, LocaleController.getString(R.string.OverrideSettingHint), null, NekoConfig::applyOverriddenValue));
+    private final AbstractConfigCell overrideSettingFloatRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.overrideSettingFloat, LocaleController.getString(R.string.OverrideSettingHint), null, NekoConfig::applyOverriddenValue));
     private final AbstractConfigCell divider1 = cellGroup.appendCell(new ConfigCellDivider());
 
     private UndoView tooltip;
@@ -117,7 +117,7 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setTitle(LocaleController.getString("Experiment", R.string.Experiment));
+        actionBar.setTitle(LocaleController.getString(R.string.Experiment));
 
         if (AndroidUtilities.isTablet()) {
             actionBar.setOccupyStatusBar(false);
@@ -180,7 +180,7 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
                 } else if (position == cellGroup.rows.indexOf(customAudioBitrateRow)) {
                     PopupBuilder builder = new PopupBuilder(view);
                     builder.setItems(new String[]{
-                            "32 (" + LocaleController.getString("Default", R.string.Default) + ")",
+                            "32 (" + LocaleController.getString(R.string.Default) + ")",
                             "64",
                             "128",
                             "192",
@@ -277,7 +277,7 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
                 ZipUtil.unzip(new FileInputStream(zipFile), dir);
                 zipFile.delete();
                 if (!new File(ApplicationLoader.applicationContext.getFilesDir(), "custom_emoji/emoji/0_0.png").exists()) {
-                    throw new Exception(LocaleController.getString("useCustomEmojiInvalid"));
+                    throw new Exception(LocaleController.getString(R.string.useCustomEmojiInvalid));
                 }
 
                 NekoConfig.useCustomEmoji.setConfigBool(true);
@@ -434,7 +434,7 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
                         TextCheckCell textCell = (TextCheckCell) holder.itemView;
                         textCell.setEnabled(true, null);
                         if (position == cellGroup.rows.indexOf(disableFilteringRow)) {
-                            textCell.setTextAndValueAndCheck(LocaleController.getString("SensitiveDisableFiltering", R.string.SensitiveDisableFiltering), LocaleController.getString("SensitiveAbout", R.string.SensitiveAbout), sensitiveEnabled, true, true);
+                            textCell.setTextAndValueAndCheck(LocaleController.getString(R.string.SensitiveDisableFiltering), LocaleController.getString(R.string.SensitiveAbout), sensitiveEnabled, true, true);
                             textCell.setEnabled(sensitiveCanChange, null);
                         }
                     } else if (holder.itemView instanceof TextSettingsCell) {
@@ -443,8 +443,8 @@ public class NekoExperimentalSettingsActivity extends BaseFragment {
                         if (position == cellGroup.rows.indexOf(customAudioBitrateRow)) {
                             String value = String.valueOf(NekoConfig.customAudioBitrate.Int()) + "kbps";
                             if (NekoConfig.customAudioBitrate.Int() == 32)
-                                value += " (" + LocaleController.getString("Default", R.string.Default) + ")";
-                            textCell.setTextAndValue(LocaleController.getString("customGroupVoipAudioBitrate", R.string.customGroupVoipAudioBitrate), value, false);
+                                value += " (" + LocaleController.getString(R.string.Default) + ")";
+                            textCell.setTextAndValue(LocaleController.getString(R.string.customGroupVoipAudioBitrate), value, false);
                         }
                     }
                 } else {

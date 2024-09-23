@@ -10,7 +10,7 @@ import org.telegram.ui.ActionBar.AlertDialog
 
 object UpdateUtil {
 
-    const val channelUsername = "NekogramX"
+    const val channelUsername = "nekox_broken"
 
     @JvmStatic
     fun postCheckFollowChannel(ctx: Context, currentAccount: Int) = UIUtil.runOnIoDispatcher {
@@ -55,17 +55,17 @@ object UpdateUtil {
 
             val builder = AlertDialog.Builder(ctx)
 
-            builder.setTitle(LocaleController.getString("FCTitle", R.string.FCTitle))
-            builder.setMessage(LocaleController.getString("FCInfo", R.string.FCInfo))
+            builder.setTitle(LocaleController.getString(R.string.FCTitle))
+            builder.setMessage(LocaleController.getString(R.string.FCInfo))
 
-            builder.setPositiveButton(LocaleController.getString("ChannelJoin", R.string.ChannelJoin)) { _, _ ->
+            builder.setPositiveButton(LocaleController.getString(R.string.ChannelJoin)) { _, _ ->
                 messagesCollector.addUserToChat(channel.id, userConfig.currentUser, 0, null, null, null)
                 Browser.openUrl(ctx, "https://t.me/$channelUsername")
             }
 
-            builder.setNegativeButton(LocaleController.getString("Cancel", R.string.Cancel), null)
+            builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null)
 
-            builder.setNeutralButton(LocaleController.getString("DoNotRemindAgain", R.string.DoNotRemindAgain)) { _, _ ->
+            builder.setNeutralButton(LocaleController.getString(R.string.DoNotRemindAgain)) { _, _ ->
                 MessagesController.getMainSettings(currentAccount).edit().putBoolean("update_channel_skip", true).apply()
             }
 

@@ -23,6 +23,7 @@ public class ConfigItem {
     public static final int configTypeFloat = 6;
 
     public final String key;
+    public final int id;
     public final int type;
     public final Object defaultValue;
 
@@ -32,10 +33,22 @@ public class ConfigItem {
         this.key = key;
         this.type = type;
         this.defaultValue = defaultValue;
+        id = 0;
+    }
+
+    public ConfigItem(int id, String key, int type, Object defaultValue) {
+        this.id = id;
+        this.key = key;
+        this.type = type;
+        this.defaultValue = defaultValue;
     }
 
     public String getKey() {
         return key;
+    }
+
+    public int getId() {
+        return id;
     }
 
     // 读配置

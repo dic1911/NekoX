@@ -149,12 +149,12 @@ public class NekoXConfig {
                 NekoConfig.openPGPApp.setConfigString("");
             }
         }
-        return LocaleController.getString("None", R.string.None);
+        return LocaleController.getString(R.string.None);
     }
 
     public static String formatLang(String name) {
         if (name == null || name.isEmpty()) {
-            return LocaleController.getString("Default", R.string.Default);
+            return LocaleController.getString(R.string.Default);
         } else {
             if (name.contains("-")) {
                 return new Locale(StrUtil.subBefore(name, "-", false), StrUtil.subAfter(name, "-", false)).getDisplayName(LocaleController.getInstance().currentLocale);

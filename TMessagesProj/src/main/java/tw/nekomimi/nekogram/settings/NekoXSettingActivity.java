@@ -65,7 +65,7 @@ public class NekoXSettingActivity extends BaseFragment {
     @Override
     public View createView(Context context) {
         actionBar.setBackButtonImage(R.drawable.ic_ab_back);
-        actionBar.setTitle(LocaleController.getString("NekoSettings", R.string.NekoSettings));
+        actionBar.setTitle(LocaleController.getString(R.string.NekoSettings));
 
         if (AndroidUtilities.isTablet()) {
             actionBar.setOccupyStatusBar(false);
@@ -267,7 +267,7 @@ public class NekoXSettingActivity extends BaseFragment {
                 case 4: {
                     HeaderCell headerCell = (HeaderCell) holder.itemView;
                     if (position == developerSettingsRow) {
-                        headerCell.setText(LocaleController.getString("DeveloperSettings", R.string.DeveloperSettings));
+                        headerCell.setText(LocaleController.getString(R.string.DeveloperSettings));
                     }
                     break;
                 }

@@ -270,7 +270,7 @@ public class UpdateAppAlertDialog extends BottomSheet {
         translationHintTextView.setTextSize(TypedValue.COMPLEX_UNIT_DIP, 14);
         translationHintTextView.setMovementMethod(new AndroidUtilities.LinkMovementMethodMy());
         translationHintTextView.setLinkTextColor(Theme.getColor(Theme.key_dialogTextLink));
-        translationHintTextView.setText(LocaleController.getString("NekoXUpdateTranslationHint", R.string.NekoXUpdateTranslationHint));
+        translationHintTextView.setText(LocaleController.getString(R.string.NekoXUpdateTranslationHint));
         translationHintTextView.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.TOP);
         linearLayout.addView(translationHintTextView, LayoutHelper.createLinear(LayoutHelper.WRAP_CONTENT, LayoutHelper.WRAP_CONTENT, Gravity.TOP | Gravity.CENTER_HORIZONTAL, 23, 0, 23, 5));
 
