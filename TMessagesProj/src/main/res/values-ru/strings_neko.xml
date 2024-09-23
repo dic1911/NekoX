@@ -184,4 +184,8 @@
     <string name="ForceAllowChooseBrowserDesc">Работает только для ссылок, не обрабатываемых другими приложениями</string>
     <string name="PatchAndCleanupLinks">Очищать ссылки в чатах</string>
     <string name="PatchAndCleanupLinksDesc">К примеру заменять все домены, относящиеся к Твиттеру на twitter.com и убирать часть слежки в ссылках</string>
+    <string name="OverrideSettingString">Перезаписать строковое значение</string>
+    <string name="OverrideSettingHint">&lt;ключ&gt; &lt;значение&gt;</string>
+    <string name="Blacklist">Чёрный список</string>
+    <string name="PreferredTranslateTargetLangTitle">Предпочитаемые языки</string>
 </resources>
