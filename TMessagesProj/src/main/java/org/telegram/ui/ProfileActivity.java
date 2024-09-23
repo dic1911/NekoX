@@ -2876,7 +2876,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         }
                         updateEmojiStatusDrawableColor(1f);
                         onlineTextView[1].setTextColor(0xB3FFFFFF);
-                        idTextView.setTextColor(Color.argb(179, 255, 255, 255));
+                        idTextView.setTextColor(0xB3FFFFFF);
                         actionBar.setItemsBackgroundColor(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR, false);
                         actionBar.setItemsColor(Color.WHITE, false);
                         overlaysView.setOverlaysVisible();
@@ -5188,7 +5188,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         avatarContainer2.addView(animatedStatusView);
 
         idTextView = new SimpleTextView(context);
-        idTextView.setTextColor(Theme.getColor(Theme.key_avatar_subtitleInProfileBlue));
+        idTextView.setTextColor(applyPeerColor(getThemedColor(Theme.key_avatar_subtitleInProfileBlue), true, false));
         idTextView.setTextSize(14);
         idTextView.setGravity(Gravity.LEFT);
         idTextView.setAlpha(1.0f);
@@ -8610,7 +8610,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     nameTextView[1].setTextColor(Color.WHITE);
                     onlineTextView[1].setTextColor(0xB3FFFFFF);
                     idTextView.setAlpha(0);
-                    idTextView.setTextColor(Color.argb(179, 255, 255, 255));
+                    idTextView.setTextColor(0xB3FFFFFF);
                     actionBar.setItemsBackgroundColor(Theme.ACTION_BAR_WHITE_SELECTOR_COLOR, false);
                     if (showStatusButton != null) {
                         showStatusButton.setBackgroundColor(0x23ffffff);
@@ -10174,6 +10174,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 statusColor = getThemedColor(Theme.key_avatar_subtitleInProfileBlue);
             }
             onlineTextView[1].setTextColor(ColorUtils.blendARGB(applyPeerColor(statusColor, true, isOnline[0]), 0xB3FFFFFF, currentExpandAnimatorValue));
+        }
+        if (idTextView != null) {
+            idTextView.setTextColor(applyPeerColor(getThemedColor(Theme.key_avatar_subtitleInProfileBlue), true, false));
         }
         if (showStatusButton != null) {
             showStatusButton.setBackgroundColor(ColorUtils.blendARGB(Theme.multAlpha(Theme.adaptHSV(actionBarBackgroundColor, +0.18f, -0.1f), 0.5f), 0x23ffffff, currentExpandAnimatorValue));
@@ -13121,7 +13124,9 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                 }
                 if (nameTextView[1] != null) {
                     nameTextView[1].setTextColor(getThemedColor(Theme.key_profile_title));
-                    idTextView.setTextColor(Theme.getColor(Theme.key_avatar_subtitleInProfileBlue));
+                }
+                if (idTextView != null) {
+                    idTextView.setTextColor(applyPeerColor(getThemedColor(Theme.key_avatar_subtitleInProfileBlue), true, false));
                 }
                 if (actionBar != null) {
                     actionBar.setItemsColor(peerColor != null ? Color.WHITE : getThemedColor(Theme.key_actionBarDefaultIcon), false);
