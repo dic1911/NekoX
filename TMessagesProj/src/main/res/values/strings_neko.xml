@@ -240,4 +240,5 @@
     <string name="AutoSendMessageIfBlockedBySlowModeDesc">Only first text/sticker/GIF is enqueued, other media/files isn\'t supported</string>
     <string name="AutoSendAfterSlowModeHint">Scheduled to send after slow mode timer</string>
     <string name="AutoSendAfterSlowModeIgnoredHint">A pending message exists, ignoring.</string>
+    <string name="ReplyAsQuoteByDefault">Reply as quote by default</string>
 </resources>

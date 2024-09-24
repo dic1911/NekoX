@@ -867,6 +867,7 @@ public class MessagePreviewView extends FrameLayout {
                             textSelectionHelper.clear();
                             switchToQuote(false, true);
                             updateSubtitle(true);
+                            ChatActivity.quoteCleared = true;
                         } else {
                             // switch to select
                             if (textSelectionHelper.selectionEnd - textSelectionHelper.selectionStart > MessagesController.getInstance(currentAccount).quoteLengthMax) {

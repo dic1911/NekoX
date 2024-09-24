@@ -968,6 +968,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     };
 
     public static boolean noForwardQuote;
+    public static Boolean quoteCleared = null;
     private TLRPC.ChatParticipant selectedParticipant;
     private Bitmap scrimBlurBitmap;
     private BitmapShader scrimBlurBitmapShader;
@@ -1888,6 +1889,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         @Override
         public void onMessageSend(CharSequence message, boolean notify, int scheduleDate) {
+            quoteCleared = null;
             if (chatListItemAnimator != null) {
                 chatActivityEnterViewAnimateFromTop = chatActivityEnterView.getBackgroundTop();
                 if (chatActivityEnterViewAnimateFromTop != 0) {
@@ -2525,6 +2527,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         needRemovePreviousSameChatActivity = arguments.getBoolean("need_remove_previous_same_chat_activity", true);
         noForwardQuote = arguments.getBoolean("forward_noquote", false);
         justCreatedChat = arguments.getBoolean("just_created_chat", false);
+        quoteCleared = null;
         if (quickReplyShortcut != null) {
             QuickRepliesController.QuickReply quickReply = QuickRepliesController.getInstance(currentAccount).findReply(quickReplyShortcut);
             if (quickReply != null) {
@@ -10510,6 +10513,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
             @Override
             protected void removeQuote() {
+                quoteCleared = true;
                 dismiss(true);
                 replyingQuote = null;
                 showFieldPanelForReply(replyingMessageObject);
@@ -14444,6 +14448,12 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
                 replyingMessageObject = messageObjectToReply;
                 replyingQuote = quote;
+
+                if (quoteCleared == null) quoteCleared = false;
+                if (quote == null && NekoConfig.replyAsQuoteByDefault.Bool() && !quoteCleared) {
+                    replyingQuote = ReplyQuote.from(replyingMessageObject);
+                }
+
                 if (replyingQuote != null && replyingQuote.getText() == null) {
                     replyingQuote = null;
                 }
@@ -14512,6 +14522,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     }
                 }
                 CharSequence nameText;
+                if (quote == null && !quoteCleared && NekoConfig.replyAsQuoteByDefault.Bool()) {
+                    quote = ReplyQuote.from(replyingMessageObject);
+                }
                 if (quote != null) {
                     replyIconImageView.setImageResource(R.drawable.filled_reply_quote);
                     nameText = AndroidUtilities.replaceCharSequence("%s", LocaleController.getString(R.string.ReplyToQuote), name == null ? "" : name);
