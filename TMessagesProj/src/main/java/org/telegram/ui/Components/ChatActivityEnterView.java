@@ -3228,7 +3228,32 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     delegate.onUpdateSlowModeButton(slowModeButton, true, slowModeButton.getText());
                 } else {
                     parentFragment.shouldShowAutoSendHint = true;
-                    sendNextMessageRunnable = new Thread(this::sendMessage);
+                    HashMap<Long, Boolean> hasPendingMessageMap = SendMessagesHelper.hasPendingSlowModeMessage.get(currentAccount);
+                    boolean hasPendingMessage = hasPendingMessageMap != null && hasPendingMessageMap.getOrDefault(dialog_id, false);
+                    if (!hasPendingMessage) {
+                        if (hasPendingMessageMap == null) {
+                            HashMap<Long, Boolean> m = new HashMap<>();
+                            m.put(dialog_id, true);
+                            SendMessagesHelper.hasPendingSlowModeMessage.put(currentAccount, m);
+                        } else {
+                            hasPendingMessageMap.put(dialog_id, true);
+                        }
+                        final int waitTime = (slowModeTimer - ConnectionsManager.getInstance(currentAccount).getCurrentTime()) * 1008;
+                        final String msgText = messageEditText.getText().toString();
+                        final long dialogId = dialog_id;
+                        final MessageObject replyTo = replyingMessageObject, replyTop = replyingTopMessage;
+                        messageEditText.clearComposingText();
+                        messageEditText.setText("");
+                        AndroidUtilities.runOnUIThread(() -> {
+                            SendMessagesHelper.SendMessageParams params = SendMessagesHelper.SendMessageParams.of(
+                                    msgText, dialogId, replyTo, replyTop, null,
+                                    true, null, null, null, true, 0,
+                                    new MessageObject.SendAnimationData(), false);
+                            SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
+                            if (SendMessagesHelper.hasPendingSlowModeMessage.containsKey(currentAccount))
+                                SendMessagesHelper.hasPendingSlowModeMessage.get(currentAccount).put(dialogId, false);
+                        }, waitTime);
+                    }
                     parentFragment.showSlowModeAutoSendHint(slowModeButton, true, true);
                 }
             }
@@ -11126,24 +11151,12 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
                         if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
                             parentFragment.shouldShowAutoSendHint = true;
-                            sendNextMessageRunnable = new Thread(() -> {
-                                try {
-                                    while (getSlowModeTimer() != null) {
-                                        Thread.sleep(500);
-                                    }
-
-                                    AndroidUtilities.runOnUIThread(() -> {
-                                        SendMessagesHelper.getInstance(currentAccount)
-                                                .sendSticker(sticker, query, dialog_id, replyingMessageObject, getThreadMessage(),
-                                                        null, replyingQuote, sendAnimationData, notify, scheduleDate,
-                                                        parent instanceof TLRPC.TL_messages_stickerSet, parent,
-                                                        parentFragment != null ? parentFragment.quickReplyShortcut : null,
-                                                        parentFragment != null ? parentFragment.getQuickReplyId() : 0);
-                                    }, slowModeTimer * 1000L);
-                                } catch (InterruptedException e) {
-                                    Log.d("030-slow", "interrupted");
-                                }
-                            });
+                            SendMessagesHelper.getInstance(currentAccount)
+                                .sendSticker(sticker, query, dialog_id, replyingMessageObject, getThreadMessage(),
+                                        null, replyingQuote, sendAnimationData, notify, scheduleDate,
+                                        parent instanceof TLRPC.TL_messages_stickerSet, parent,
+                                        parentFragment != null ? parentFragment.quickReplyShortcut : null,
+                                        parentFragment != null ? parentFragment.getQuickReplyId() : 0, slowModeTimer);
                             parentFragment.showSlowModeAutoSendHint(view == null ? slowModeButton : view, true, true);
                         }
                     }
@@ -11191,36 +11204,27 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             delegate.onUpdateSlowModeButton(view != null ? view : slowModeButton, true, slowModeButton.getText());
                             if (NekoConfig.autoSendMessageIfBlockedBySlowMode.Bool() && sendNextMessageRunnable == null) {
                                 parentFragment.shouldShowAutoSendHint = true;
-                                sendNextMessageRunnable = new Thread(() -> {
-                                    try {
-                                        while (getSlowModeTimer() != null) {
-                                            Thread.sleep(500);
-                                        }
 
-                                        TLRPC.Document document;
-                                        if (gif instanceof TLRPC.Document) {
-                                            document = (TLRPC.Document) gif;
-                                        } else if (gif instanceof TLRPC.BotInlineResult) {
-                                            TLRPC.BotInlineResult result = (TLRPC.BotInlineResult) gif;
-                                            document = result.document;
-                                        } else {
-                                            document = null;
-                                        }
+                                TLRPC.Document document;
+                                if (gif instanceof TLRPC.Document) {
+                                    document = (TLRPC.Document) gif;
+                                } else if (gif instanceof TLRPC.BotInlineResult) {
+                                    TLRPC.BotInlineResult result = (TLRPC.BotInlineResult) gif;
+                                    document = result.document;
+                                } else {
+                                    document = null;
+                                }
 
-                                        if (document != null) {
-                                            AndroidUtilities.runOnUIThread(() -> {
-                                                TL_stories.StoryItem storyItem = delegate != null ? delegate.getReplyToStory() : null;
-                                                SendMessagesHelper.getInstance(currentAccount)
-                                                        .sendSticker(document, query, dialog_id, replyingMessageObject, getThreadMessage(),
-                                                                storyItem, replyingQuote, null, notify, scheduleDate, false, parent,
-                                                                parentFragment != null ? parentFragment.quickReplyShortcut : null,
-                                                                parentFragment != null ? parentFragment.getQuickReplyId() : 0);
-                                            }, slowModeTimer * 1000L);
-                                        }
-                                    } catch (InterruptedException e) {
-                                        Log.d("030-slow", "interrupted");
-                                    }
-                                });
+                                if (document != null) {
+                                    AndroidUtilities.runOnUIThread(() -> {
+                                        TL_stories.StoryItem storyItem = delegate != null ? delegate.getReplyToStory() : null;
+                                        SendMessagesHelper.getInstance(currentAccount)
+                                                .sendSticker(document, query, dialog_id, replyingMessageObject, getThreadMessage(),
+                                                        storyItem, replyingQuote, null, notify, scheduleDate, false, parent,
+                                                        parentFragment != null ? parentFragment.quickReplyShortcut : null,
+                                                        parentFragment != null ? parentFragment.getQuickReplyId() : 0, slowModeTimer);
+                                    });
+                                }
                                 parentFragment.showSlowModeAutoSendHint(view == null ? slowModeButton : view, true, true);
                             }
                         }

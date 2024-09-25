@@ -34,6 +34,7 @@ import android.provider.OpenableColumns;
 import android.text.Spannable;
 import android.text.TextUtils;
 import android.util.Base64;
+import android.util.Log;
 import android.util.SparseArray;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -124,6 +125,8 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
 
     private HashMap<String, ImportingStickers> importingStickersFiles = new HashMap<>();
     private HashMap<String, ImportingStickers> importingStickersMap = new HashMap<>();
+
+    public static HashMap<Integer, HashMap<Long, Boolean>> hasPendingSlowModeMessage = new HashMap<>();
 
     public static boolean checkUpdateStickersOrder(CharSequence text) {
         if (text instanceof Spannable) {
@@ -1723,6 +1726,13 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
     }
 
     public void sendSticker(TLRPC.Document document, String query, long peer, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, MessageObject.SendAnimationData sendAnimationData, boolean notify, int scheduleDate, boolean updateStickersOrder, Object parentObject, String quick_reply_shortcut, int quick_reply_shortcut_id) {
+        sendSticker(document, query, peer, replyToMsg, replyToTopMsg, storyItem, quote, sendAnimationData, notify, scheduleDate, updateStickersOrder, parentObject, quick_reply_shortcut, quick_reply_shortcut_id, 0);
+    }
+
+    public void sendSticker(TLRPC.Document document, String query, long peer, MessageObject replyToMsg, MessageObject replyToTopMsg, TL_stories.StoryItem storyItem, ChatActivity.ReplyQuote quote, MessageObject.SendAnimationData sendAnimationData, boolean notify, int scheduleDate, boolean updateStickersOrder, Object parentObject, String quick_reply_shortcut, int quick_reply_shortcut_id, int clientScheduleDate) {
+        final HashMap<Long, Boolean> hasPendingMessageMap = hasPendingSlowModeMessage.get(currentAccount);
+        boolean hasPendingMessage = hasPendingMessageMap != null && hasPendingMessageMap.getOrDefault(peer, false);
+        if (clientScheduleDate != 0 && hasPendingMessage) return;
         if (document == null) {
             return;
         }
@@ -1840,7 +1850,23 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
                     sendMessageParams.replyQuote = quote;
                     sendMessageParams.quick_reply_shortcut = quick_reply_shortcut;
                     sendMessageParams.quick_reply_shortcut_id = quick_reply_shortcut_id;
-                    sendMessage(sendMessageParams);
+                    if (clientScheduleDate == 0) {
+                        sendMessage(sendMessageParams);
+                    } else {
+                        if (hasPendingMessageMap == null) {
+                            HashMap<Long, Boolean> m = new HashMap<>();
+                            m.put(peer, true);
+                            hasPendingSlowModeMessage.put(currentAccount, m);
+                        } else {
+                            hasPendingMessageMap.put(peer, true);
+                        }
+                        int waitTime = (clientScheduleDate - getConnectionsManager().getCurrentTime()) * 1008; // additional wait to reduce rejects
+                        AndroidUtilities.runOnUIThread(() -> {
+                            sendMessage(sendMessageParams);
+                            if (hasPendingSlowModeMessage.containsKey(currentAccount))
+                                hasPendingSlowModeMessage.get(currentAccount).put(peer, false);
+                        }, waitTime);
+                    }
                 });
             });
         } else {
@@ -1856,7 +1882,23 @@ public class SendMessagesHelper extends BaseController implements NotificationCe
             sendMessageParams.replyQuote = quote;
             sendMessageParams.quick_reply_shortcut = quick_reply_shortcut;
             sendMessageParams.quick_reply_shortcut_id = quick_reply_shortcut_id;
-            sendMessage(sendMessageParams);
+            if (clientScheduleDate == 0) {
+                sendMessage(sendMessageParams);
+            } else {
+                if (hasPendingMessageMap == null) {
+                    HashMap<Long, Boolean> m = new HashMap<>();
+                    m.put(peer, true);
+                    hasPendingSlowModeMessage.put(currentAccount, m);
+                } else {
+                    hasPendingMessageMap.put(peer, true);
+                }
+                int waitTime = (clientScheduleDate - getConnectionsManager().getCurrentTime()) * 1008; // additional wait to reduce rejects
+                AndroidUtilities.runOnUIThread(() -> {
+                    sendMessage(sendMessageParams);
+                    if (hasPendingSlowModeMessage.containsKey(currentAccount))
+                        hasPendingSlowModeMessage.get(currentAccount).put(peer, false);
+                }, waitTime);
+            }
         }
     }
 
