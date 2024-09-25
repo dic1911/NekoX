@@ -6074,6 +6074,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
         return slowModeTimer > 0 ? slowModeButton.getText() : null;
     }
 
+    private int updateSlowModeCount = 0;
     private void updateSlowModeText() {
         int serverTime = ConnectionsManager.getInstance(currentAccount).getCurrentTime();
         AndroidUtilities.cancelRunOnUIThread(updateSlowModeRunnable);
@@ -6100,6 +6101,15 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             currentTime = slowModeTimer - serverTime;
         }
         if (slowModeTimer != 0 && currentTime > 0) {
+            // 030: workaround for stuck timer - fetch data every ~10s when timer is active
+            if (updateSlowModeCount == 99) {
+                if (updateSlowModeRunnable != null) AndroidUtilities.cancelRunOnUIThread(updateSlowModeRunnable);
+                accountInstance.getMessagesController().loadFullChat(info.id, 0, true);
+                updateSlowModeCount = 0;
+                return;
+            }
+            ++updateSlowModeCount;
+
             slowModeButton.setText(AndroidUtilities.formatDurationNoHours(Math.max(1, currentTime), false));
             if (delegate != null) {
                 delegate.onUpdateSlowModeButton(slowModeButton, false, slowModeButton.getText());
@@ -6107,6 +6117,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             AndroidUtilities.runOnUIThread(updateSlowModeRunnable = this::updateSlowModeText, 100);
         } else {
             slowModeTimer = 0;
+            updateSlowModeCount = 0;
         }
         if (!isInScheduleMode()) {
             checkSendButton(true);
