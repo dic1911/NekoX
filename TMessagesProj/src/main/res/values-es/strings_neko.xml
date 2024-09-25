@@ -224,4 +224,21 @@
     <string name="ChatListFontSizeFollowChat">Usar el tamaño de la fuente del mensaje en la lista de chat</string>
     <string name="UseCustomProviderForAutoTranslate">Usar traductor personalizado para traducción automática</string>
     <string name="DontShareNumberWhenAddContactByDefault">No compartir número al agregar contactos por defecto</string>
+    <string name="AccDescrShowKeyboard">Mostrar teclado</string>
+    <string name="ConvertGroupAlert">Esta acción es irreversible. Es imposible convertir el supergrupo nuevamente en un grupo normal.</string>
+    <string name="DebugMenuEnablePauseMusic">Habilitar pausa de reproducción durante grabación</string>
+    <string name="NoFilesFound">No encontrado</string>
+    <string name="NoFilesInfo">Carpeta vacía</string>
+    <string name="NoFilesFoundInfo">No hay resultados que coincidan con **%1$s** en su ruta actual</string>
+    <string name="SearchRecentFiles">Buscar archivos recientes</string>
+    <string name="FileUploadLimit">El tamaño del archivo no debe superar %1$s</string>
+    <string name="AutoSendMessageIfBlockedBySlowMode">Envío automático de mensajes en caso de bloqueo lentitud</string>
+    <string name="UpgradeGroup">Mejorar a supergrupo</string>
+    <string name="ViewStats">Estadísticas</string>
+    <string name="UploadImage">Cargar imagen</string>
+    <string name="DebugMenuDisablePauseMusic">Deshabilitar pausa de reproducción durante grabación</string>
+    <string name="UnofficialApp">Aplicación no oficial</string>
+    <string name="AutoSendMessageIfBlockedBySlowModeDesc">Solo se almacena el primer texto/pegatina/GIF, no se admiten otros medios/archivos</string>
+    <string name="AutoSendAfterSlowModeIgnoredHint">Existe un mensaje pendiente, ignorando.</string>
+    <string name="AutoSendAfterSlowModeHint">Programado para enviar después del temporizador de modo lento</string>
 </resources>

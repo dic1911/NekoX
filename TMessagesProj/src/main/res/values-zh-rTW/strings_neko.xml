@@ -224,4 +224,10 @@
     <string name="UseCustomProviderForAutoTranslate">自動翻譯時使用自訂翻譯提供者</string>
     <string name="DontShareNumberWhenAddContactByDefault">新增聯絡人時自動取消勾選分享電話號碼</string>
     <string name="ProviderTelegramAPI">Telegram API</string>
+    <string name="AutoSendMessageIfBlockedBySlowModeDesc">只支援排程單一文字/貼圖/GIF, 不支援其他媒體或檔案</string>
+    <string name="AutoSendMessageIfBlockedBySlowMode">在限速解除後自動傳送訊息</string>
+    <string name="FileUploadLimit">檔案大小必須小於 %1$s</string>
+    <string name="AutoSendAfterSlowModeIgnoredHint">已存在待傳送的訊息.</string>
+    <string name="AutoSendAfterSlowModeHint">已安排在限速計時後發送</string>
+    <string name="SearchRecentFiles">搜尋最近的檔案</string>
 </resources>
