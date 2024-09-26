@@ -11,7 +11,7 @@ import android.content.pm.PackageManager.GET_SIGNING_CERTIFICATES
 import android.content.pm.Signature
 import android.os.Build
 import android.os.Process
-import cn.hutool.crypto.digest.DigestUtil
+import com.google.common.hash.Hashing
 import org.telegram.messenger.AndroidUtilities
 import org.telegram.messenger.FileLog
 
@@ -32,7 +32,7 @@ fun Context.getSignature(): Signature {
 }
 
 fun Context.getSha256Signature(): String {
-    return DigestUtil.sha256Hex(getSignature().toByteArray()).uppercase()
+    return Hashing.sha256().hashBytes(getSignature().toByteArray()).toString().uppercase()
 }
 
 fun Context.isVerified(): Boolean {
