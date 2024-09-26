@@ -90,7 +90,7 @@ public class Emoji {
         "\uD83D\uDE06", "\uD83D\uDC4C", "\uD83D\uDE10", "\uD83D\uDE15"
     };
 
-    private final static int MAX_RECENT_EMOJI_COUNT = 48;
+    public static int MAX_RECENT_EMOJI_COUNT = NekoConfig.maxRecentEmojiCount.Int();
 
     static {
         drawImgSize = AndroidUtilities.dp(20);

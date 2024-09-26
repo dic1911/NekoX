@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import org.telegram.messenger.AndroidUtilities;
+import org.telegram.messenger.Emoji;
 import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MediaController;
 import org.telegram.messenger.NotificationCenter;
@@ -118,6 +119,7 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
     private final AbstractConfigCell hideGroupStickerRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.hideGroupSticker));
     private final AbstractConfigCell disablePremiumStickerAnimationRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disablePremiumStickerAnimation));
     private final AbstractConfigCell maxRecentStickerCountRow = cellGroup.appendCell(new ConfigCellCustom(CellGroup.ITEM_TYPE_TEXT_SETTINGS_CELL, true));
+    private final AbstractConfigCell maxRecentEmojiCountRow = cellGroup.appendCell(new ConfigCellCustom(CellGroup.ITEM_TYPE_TEXT_SETTINGS_CELL, true));
     private final AbstractConfigCell dividerSticker = cellGroup.appendCell(new ConfigCellDivider());
 
     // Reaction
@@ -250,6 +252,20 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
                     PopupBuilder builder = new PopupBuilder(view);
                     builder.setItems(types, (i, str) -> {
                         NekoConfig.maxRecentStickerCount.setConfigInt(Integer.parseInt(str.toString()));
+                        listAdapter.notifyItemChanged(position);
+                        return Unit.INSTANCE;
+                    });
+                    builder.show();
+                } else if (position == cellGroup.rows.indexOf(maxRecentEmojiCountRow)) {
+                    final int[] counts = {24, 36, 48, 60, 72, 84, 96, 108, 120};
+                    List<String> types = Arrays.stream(counts)
+                            .mapToObj(String::valueOf)
+                            .collect(Collectors.toList());
+                    PopupBuilder builder = new PopupBuilder(view);
+                    builder.setItems(types, (i, str) -> {
+                        int n = Integer.parseInt(str.toString());
+                        NekoConfig.maxRecentEmojiCount.setConfigInt(n);
+                        Emoji.MAX_RECENT_EMOJI_COUNT = n;
                         listAdapter.notifyItemChanged(position);
                         return Unit.INSTANCE;
                     });
@@ -578,6 +594,8 @@ public class NekoChatSettingsActivity extends BaseFragment implements Notificati
                         TextSettingsCell textCell = (TextSettingsCell) holder.itemView;
                         if (position == cellGroup.rows.indexOf(maxRecentStickerCountRow)) {
                             textCell.setTextAndValue(LocaleController.getString(R.string.maxRecentStickerCount), String.valueOf(NekoConfig.maxRecentStickerCount.Int()), true);
+                        } else if (position == cellGroup.rows.indexOf(maxRecentEmojiCountRow)) {
+                            textCell.setTextAndValue(LocaleController.getString(R.string.maxRecentEmojiCount), String.valueOf(NekoConfig.maxRecentEmojiCount.Int()), true);
                         }
                     }
                 } else {
