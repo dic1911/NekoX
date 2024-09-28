@@ -130,7 +130,7 @@
     <string name="ProxyInfoSSR">Pengaturan Proxy ShadowsocksR</string>
     <string name="SSRProtocol">Protokol</string>
     <string name="SSRProtocolParams">Parameter Protokol</string>
-    <string name="SSRObfs">Obfs</string>
+    <string name="SSRObfs">tahap khusus dalam proses pengembangan</string>
     <string name="SSRObfsParam">Parameter Obfs</string>
     <string name="ProxyInfoTrojan">Pengaturan Proxy Trojan</string>
     <string name="TrojanSNI">SNI (Opsional)</string>
@@ -278,7 +278,7 @@
     <string name="Name">Nama</string>
     <string name="channelAlias">Alias saluran</string>
     <string name="channelAliasDetails">Wajibkan pengguna saluran label diaktifkan.</string>
-    <string name="labelChannelUserDetails">jika pengirim pesan adalah channel, Itu akan ditandai sebagai \"Channel\"</string>
+    <string name="labelChannelUserDetails">jika pengirim pesan adalah channel, Itu akan ditandai sebagai \"Channel\".</string>
     <string name="StickerSettings">Stiker</string>
     <string name="ConfirmSettings">Konfirmasi</string>
     <string name="nekoxPremiumGiftRemoved">Hadiah Premium dihapus di NekoX.</string>
