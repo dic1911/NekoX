@@ -241,4 +241,10 @@
     <string name="UpgradeGroup">升級為超級群組</string>
     <string name="DebugMenuDisablePauseMusic">停用錄製時暫停播放媒體</string>
     <string name="UploadImage">上傳圖片</string>
+    <string name="maxRecentEmojiCount">最近使用表情符號數量上限</string>
+    <string name="justOneEmoji">僅選取</string>
+    <string name="SearchBlacklist">從搜尋結果移除特定對話</string>
+    <string name="SearchBlacklistShort">從搜尋結果隱藏</string>
+    <string name="SearchBlacklistRevert">解除搜尋隱藏</string>
+    <string name="ReplyAsQuoteByDefault">預設以引用回覆訊息</string>
 </resources>
