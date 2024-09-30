@@ -93,8 +93,6 @@ public class BottomSheetTabs extends FrameLayout {
     }
 
     public void setTabSheetVisibility(boolean value) {
-        // Log.d("030-tabs", String.format("draw was %s, wanted = %s", drawTabs, value));
-        // if (drawTabs == value) return;
         ArrayList<WebTabData> myTabs = getTabs();
         if (myTabs == null || myTabs.isEmpty()) {
             return;
@@ -528,7 +526,7 @@ public class BottomSheetTabs extends FrameLayout {
             }
             invalidate();
         }, 320);
-        actionBarLayout.updateBottomTabsVisibility(true); // 030 mark
+        actionBarLayout.updateBottomTabsVisibility(true);
         invalidate();
         return tabs.isEmpty();
     }
@@ -577,7 +575,8 @@ public class BottomSheetTabs extends FrameLayout {
         final ArrayList<WebTabData> tabs = getTabs();
         final ArrayList<TabDrawable> tabDrawables = getTabDrawables();
 
-        if (actionBarLayout != null && actionBarLayout.bottomTabsProgress <= 0) {
+        final boolean forceDraw = (NekoConfig.hideWebViewTabOverlayInChat.Bool() || NekoConfig.hideWebViewTabOverlayWhenSharing.Bool()) && drawTabs;
+        if (actionBarLayout != null && actionBarLayout.bottomTabsProgress <= 0 && !forceDraw) {
             return;
         }
 
