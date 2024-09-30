@@ -230,4 +230,15 @@
     <string name="AutoSendAfterSlowModeIgnoredHint">已存在待傳送的訊息.</string>
     <string name="AutoSendAfterSlowModeHint">已安排在限速計時後發送</string>
     <string name="SearchRecentFiles">搜尋最近的檔案</string>
+    <string name="AccDescrShowKeyboard">顯示鍵盤</string>
+    <string name="ViewStats">統計資料</string>
+    <string name="ConvertGroupAlert">這個動作無法回溯. 被升級後的超級群組無法轉換回普通群組.</string>
+    <string name="DebugMenuEnablePauseMusic">啟用錄製時暫停播放媒體</string>
+    <string name="NoFilesFound">查無檔案</string>
+    <string name="NoFilesInfo">這個資料夾是空的</string>
+    <string name="NoFilesFoundInfo">目前目錄中沒有與 **%1$s** 相符的內容</string>
+    <string name="UnofficialApp">非官方程式</string>
+    <string name="UpgradeGroup">升級為超級群組</string>
+    <string name="DebugMenuDisablePauseMusic">停用錄製時暫停播放媒體</string>
+    <string name="UploadImage">上傳圖片</string>
 </resources>
