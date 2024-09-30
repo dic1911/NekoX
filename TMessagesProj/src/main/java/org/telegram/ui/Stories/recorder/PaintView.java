@@ -5110,11 +5110,15 @@ public class PaintView extends SizeNotifierFrameLayoutPhoto implements IPhotoPai
             }
 
             @Override
-            public void onClearEmojiRecent() {
+            public void onClearEmojiRecent(String code) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), resourcesProvider);
                 builder.setTitle(getString("ClearRecentEmojiTitle", R.string.ClearRecentEmojiTitle));
                 builder.setMessage(getString("ClearRecentEmojiText", R.string.ClearRecentEmojiText));
                 builder.setPositiveButton(getString("ClearButton", R.string.ClearButton), (dialogInterface, i) -> emojiView.clearRecentEmoji());
+                builder.setNeutralButton(getString(R.string.justOneEmoji), (dialogInterface, i) -> {
+                    Emoji.removeRecentEmoji(code);
+                    emojiView.refreshEmojiAdapter();
+                });
                 builder.setNegativeButton(getString("Cancel", R.string.Cancel), null);
                 builder.show();
             }

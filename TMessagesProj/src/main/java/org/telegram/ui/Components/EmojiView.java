@@ -419,7 +419,7 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
 
         }
 
-        default void onClearEmojiRecent() {
+        default void onClearEmojiRecent(String code) {
 
         }
 
@@ -1577,7 +1577,8 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
                     if (viewEmoji.isRecent) {
                         RecyclerListView.ViewHolder holder = emojiGridView.findContainingViewHolder(view);
                         if (holder != null && holder.getAdapterPosition() <= getRecentEmoji().size()) {
-                            delegate.onClearEmojiRecent();
+                            delegate.onClearEmojiRecent((String) viewEmoji.getTag());
+                            emojiAdapter.notifyDataSetChanged();
                         }
                         emojiGridView.clearTouchesFor(view);
                         return true;
@@ -5127,6 +5128,10 @@ public class EmojiView extends FrameLayout implements NotificationCenter.Notific
 
     public void clearRecentEmoji() {
         Emoji.clearRecentEmoji();
+        emojiAdapter.notifyDataSetChanged();
+    }
+
+    public void refreshEmojiAdapter() {
         emojiAdapter.notifyDataSetChanged();
     }
 

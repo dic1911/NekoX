@@ -242,4 +242,5 @@
     <string name="AutoSendAfterSlowModeIgnoredHint">A pending message exists, ignoring.</string>
     <string name="ReplyAsQuoteByDefault">Reply as quote by default</string>
     <string name="maxRecentEmojiCount">Max recent emojis</string>
+    <string name="justOneEmoji">Selected only</string>
 </resources>

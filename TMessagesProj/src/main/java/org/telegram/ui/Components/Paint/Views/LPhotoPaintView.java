@@ -3602,11 +3602,15 @@ public class LPhotoPaintView extends SizeNotifierFrameLayoutPhoto implements IPh
             }
 
             @Override
-            public void onClearEmojiRecent() {
+            public void onClearEmojiRecent(String code) {
                 AlertDialog.Builder builder = new AlertDialog.Builder(getContext(), resourcesProvider);
                 builder.setTitle(LocaleController.getString(R.string.ClearRecentEmojiTitle));
                 builder.setMessage(LocaleController.getString(R.string.ClearRecentEmojiText));
                 builder.setPositiveButton(LocaleController.getString(R.string.ClearButton), (dialogInterface, i) -> emojiView.clearRecentEmoji());
+                builder.setNeutralButton(LocaleController.getString(R.string.justOneEmoji), (dialogInterface, i) -> {
+                    Emoji.removeRecentEmoji(code);
+                    emojiView.refreshEmojiAdapter();
+                });
                 builder.setNegativeButton(LocaleController.getString(R.string.Cancel), null);
                 builder.show();
             }

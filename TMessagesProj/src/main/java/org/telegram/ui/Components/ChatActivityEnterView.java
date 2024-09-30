@@ -11302,7 +11302,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
 
             @Override
-            public void onClearEmojiRecent() {
+            public void onClearEmojiRecent(String code) {
                 if (parentFragment == null || parentActivity == null) {
                     return;
                 }
@@ -11310,6 +11310,10 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 builder.setTitle(getString(R.string.ClearRecentEmojiTitle));
                 builder.setMessage(getString(R.string.ClearRecentEmojiText));
                 builder.setPositiveButton(getString(R.string.ClearForAll), (dialogInterface, i) -> emojiView.clearRecentEmoji());
+                builder.setNeutralButton(getString(R.string.justOneEmoji), (dialogInterface, i) -> {
+                    Emoji.removeRecentEmoji(code);
+                    emojiView.refreshEmojiAdapter();
+                });
                 builder.setNegativeButton(getString(R.string.Cancel), null);
                 parentFragment.showDialog(builder.create());
             }
