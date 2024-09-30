@@ -6,8 +6,8 @@
     <string name="HidePhone">Sembunyikan Nomor telepon saya</string>
     <string name="Hide">Sembunyikan</string>
     <string name="DeleteAllFromSelf">Hapus pesan saya</string>
-    <string name="DeleteAllFromSelfAlert">Peringatan!Tindakan ini **menghapus semua pesan kamu** dalam obrolan ini untuk yg Berpartisipasi</string>
-    <string name="BotLogin">Masuk Bot</string>
+    <string name="DeleteAllFromSelfAlert">Peringatan!Tindakan ini **menghapus semua pesan kamu** dalam obrolan ini untuk yg Berpartisipasi.</string>
+    <string name="BotLogin">login Bot</string>
     <string name="InvalidAccessToken">Akses token tidak valid</string>
     <string name="IgnoreBlocked">Sembunyikan pesan pengguna yg diblokir</string>
     <string name="Connection">Koneksi</string>
@@ -137,7 +137,7 @@
     <string name="disableChoosingSticker">Kirim mengetik daripada memilih stiker</string>
     <string name="disableRemoteEmojiInteractions">Matikan interaksi emoji dari jarak jauh</string>
     <string name="showBottomActionsWhenSelecting">Perlihatkan aksi bawah ketika memilih</string>
-    <string name="channelLabel">channel</string>
+    <string name="channelLabel">saluran</string>
     <string name="showSpoilersDirectly">Tampilkan teks spoiler secara langsung</string>
     <string name="SaveToDownloadCount_one">Menyimpan %1$d berkas ke download</string>
     <string name="SaveToDownloadCount_few">Menyimpan %1$d berkas ke download</string>
@@ -208,7 +208,7 @@
     <string name="BlacklistUrlQueryTitle">Daftar hitam kueri GET yang ditentukan/kueri</string>
     <string name="Blacklist">Daftar Hitam</string>
     <string name="BlacklistedQuery">Kueri terpilih yang masuk daftar hitam</string>
-    <string name="BlacklistedQueryAllAdded">All queries pada tautan ini sudah masuk daftar hitam.</string>
+    <string name="BlacklistedQueryAllAdded">Semua queri pada tautan saat ini sudah masuk daftar hitam.</string>
     <string name="TranslateBeforeSend">Terjemahkan sebelum dikirim</string>
     <string name="SearchByMessageType">Cari berdasarkan jenis pesan</string>
     <string name="HideOriginalTextAfterTranslate">Sembunyikan teks asli setelah diterjemahkan</string>
@@ -224,4 +224,21 @@
     <string name="UseCustomProviderForAutoTranslate">Gunakan penyedia terjemahan khusus untuk terjemahan otomatis</string>
     <string name="ShowForwardTimestampInPopupMenu">Tampilkan tulisan teruskan di menu popup</string>
     <string name="PreferredTranslateTargetLangExample">Ex. en, ja, zh_tw</string>
+    <string name="ConvertGroupAlert">Tindakan ini tidak dapat diubah. Tidak mungkin mengubah supergrup kembali ke grup normal.</string>
+    <string name="UploadImage">Unggah gambar</string>
+    <string name="DebugMenuDisablePauseMusic">Nonaktifkan jeda pemutaran saat merekam</string>
+    <string name="DebugMenuEnablePauseMusic">Aktifkan jeda pemutaran saat merekam</string>
+    <string name="NoFilesFound">Tidak tersedia</string>
+    <string name="NoFilesInfo">Foldernya kosong</string>
+    <string name="NoFilesFoundInfo">Tidak ada hasil yang cocok dengan **%1$s** di jalur Anda saat ini</string>
+    <string name="SearchRecentFiles">Cari file terbaru</string>
+    <string name="UnofficialApp">Aplikasi tidak resmi</string>
+    <string name="FileUploadLimit">Ukuran berkas tidak boleh melebihi %1$s</string>
+    <string name="AutoSendMessageIfBlockedBySlowMode">Kirim pesan otomatis jika diblokir oleh mode lambat</string>
+    <string name="UpgradeGroup">Tingkatkan ke grup super</string>
+    <string name="AccDescrShowKeyboard">Tampilkan papan ketik</string>
+    <string name="ViewStats">Statistik</string>
+    <string name="AutoSendMessageIfBlockedBySlowModeDesc">Hanya teks/stiker/GIF pertama yang dimasukkan, media/file lain tidak didukung</string>
+    <string name="AutoSendAfterSlowModeHint">Dijadwalkan untuk dikirim setelah pengatur waktu mode lambat</string>
+    <string name="AutoSendAfterSlowModeIgnoredHint">Ada pesan tertunda, diabaikan.</string>
 </resources>
