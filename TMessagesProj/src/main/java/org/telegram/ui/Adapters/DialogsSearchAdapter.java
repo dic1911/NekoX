@@ -534,6 +534,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                 }
                 for (int a = 0; a < res.messages.size(); a++) {
                     TLRPC.Message message = res.messages.get(a);
+                    if (NekoConfig.searchBlacklistData.contains(MessageObject.getDialogId(message))) continue;
                     MessageObject messageObject = new MessageObject(currentAccount, message, usersMap, chatsMap, false, true);
                     messageObjects.add(messageObject);
                     messageObject.setQuery(query);
@@ -552,7 +553,7 @@ public class DialogsSearchAdapter extends RecyclerListView.SelectionAdapter {
                             searchResultMessages.clear();
                         }
                         nextSearchRate = res.next_rate;
-                        for (int a = 0; a < res.messages.size(); a++) {
+                        for (int a = 0; a < messageObjects.size(); a++) {
                             TLRPC.Message message = res.messages.get(a);
                             long did = MessageObject.getDialogId(message);
                             int maxId = MessagesController.getInstance(currentAccount).deletedHistory.get(did);

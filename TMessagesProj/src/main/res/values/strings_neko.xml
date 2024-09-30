@@ -243,4 +243,7 @@
     <string name="ReplyAsQuoteByDefault">Reply as quote by default</string>
     <string name="maxRecentEmojiCount">Max recent emojis</string>
     <string name="justOneEmoji">Selected only</string>
+    <string name="SearchBlacklist">Blacklist specified chats from search results</string>
+    <string name="SearchBlacklistShort">Blacklist from search</string>
+    <string name="SearchBlacklistRevert">Remove from blacklist</string>
 </resources>

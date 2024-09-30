@@ -10,7 +10,6 @@ package org.telegram.ui;
 
 import static androidx.core.view.ViewCompat.TYPE_TOUCH;
 import static org.telegram.messenger.AndroidUtilities.dp;
-import static org.telegram.messenger.ContactsController.PRIVACY_RULES_TYPE_ADDED_BY_PHONE;
 import static org.telegram.messenger.LocaleController.formatPluralString;
 import static org.telegram.messenger.LocaleController.formatString;
 import static org.telegram.messenger.LocaleController.getString;
@@ -70,7 +69,6 @@ import android.text.TextUtils;
 import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.ForegroundColorSpan;
-import android.util.Log;
 import android.util.Property;
 import android.util.SparseArray;
 import android.util.SparseIntArray;
@@ -247,8 +245,6 @@ import org.telegram.ui.Components.Premium.PremiumFeatureBottomSheet;
 import org.telegram.ui.Components.Premium.PremiumGradient;
 import org.telegram.ui.Components.Premium.PremiumPreviewBottomSheet;
 import org.telegram.ui.Components.Premium.ProfilePremiumCell;
-import org.telegram.ui.Components.Premium.boosts.BoostRepository;
-import org.telegram.ui.Components.Premium.boosts.PremiumPreviewGiftToUsersBottomSheet;
 import org.telegram.ui.Components.Premium.boosts.UserSelectorBottomSheet;
 import org.telegram.ui.Components.ProfileGalleryView;
 import org.telegram.ui.Components.RLottieDrawable;
@@ -261,9 +257,7 @@ import org.telegram.ui.Components.ShareAlert;
 import org.telegram.ui.Components.SharedMediaLayout;
 import org.telegram.ui.Components.SizeNotifierFrameLayout;
 import org.telegram.ui.Components.StickerEmptyView;
-import org.telegram.ui.Components.StorageDiagramView;
 import org.telegram.ui.Components.TimerDrawable;
-import org.telegram.ui.Components.TranslateAlert2;
 import org.telegram.ui.Components.TypefaceSpan;
 import org.telegram.ui.Components.UndoView;
 import org.telegram.ui.Components.VectorAvatarThumbDrawable;
@@ -272,7 +266,6 @@ import org.telegram.ui.Stars.BotStarsActivity;
 import org.telegram.ui.Stars.BotStarsController;
 import org.telegram.ui.Stars.StarsController;
 import org.telegram.ui.Stars.StarsIntroActivity;
-import org.telegram.ui.Storage.CacheModel;
 import org.telegram.ui.Stories.ProfileStoriesView;
 import org.telegram.ui.Stories.StoriesController;
 import org.telegram.ui.Stories.StoriesListPlaceProvider;
@@ -319,11 +312,9 @@ import tw.nekomimi.nekogram.settings.NekoSettingsActivity;
 import tw.nekomimi.nekogram.settings.NekoXSettingActivity;
 import tw.nekomimi.nekogram.ui.BottomBuilder;
 import tw.nekomimi.nekogram.utils.AlertUtil;
-import tw.nekomimi.nekogram.utils.EnvUtil;
 import tw.nekomimi.nekogram.utils.FileUtil;
 import tw.nekomimi.nekogram.utils.LangsKt;
 import tw.nekomimi.nekogram.utils.ProxyUtil;
-import tw.nekomimi.nekogram.utils.ShareUtil;
 import tw.nekomimi.nekogram.utils.UIUtil;
 
 public class ProfileActivity extends BaseFragment implements NotificationCenter.NotificationCenterDelegate, DialogsActivity.DialogsActivityDelegate, SharedMediaLayout.SharedMediaPreloaderDelegate, ImageUpdater.ImageUpdaterDelegate, SharedMediaLayout.Delegate {
@@ -424,6 +415,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private ActionBarMenuSubItem editColorItem;
     private ActionBarMenuSubItem linkItem;
     private ActionBarMenuSubItem setUsernameItem;
+    private ActionBarMenuSubItem blockFromSearchItem;
     private ImageView ttlIconView;
 //    private ActionBarMenuItem qrItem;
     private ActionBarMenuSubItem autoDeleteItem;
@@ -566,6 +558,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
     private final static int bot_privacy = 44;
 
     private final static int clear_cache = 1001;
+    private final static int block_from_search = 1002;
 
     private Rect rect = new Rect();
 
@@ -2750,6 +2743,16 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                     args.putLong("dialog_id", userId != 0 ? dialogId : -chatId);
                     CacheControlActivity fragment = new CacheControlActivity(args);
                     presentFragment(fragment);
+                } else if (id == block_from_search) {
+                    long did = getDialogId();
+                    if (NekoConfig.searchBlacklistData.contains(did)) {
+                        NekoConfig.searchBlacklistData.remove(did);
+                        blockFromSearchItem.setText(getString(R.string.SearchBlacklistShort));
+                    } else {
+                        NekoConfig.searchBlacklistData.add(did);
+                        blockFromSearchItem.setText(getString(R.string.SearchBlacklistRevert));
+                    }
+                    NekoConfig.saveSearchBlacklist();
                 }
             }
         });
@@ -10491,6 +10494,10 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             otherItem.addSubItem(logout, R.drawable.msg_leave, LocaleController.getString(R.string.LogOut));
         } else {
             otherItem.addSubItem(clear_cache, R.drawable.msg_delete, LocaleController.getString(R.string.ClearCache));
+
+            int blockFromSearchTxt = (NekoConfig.searchBlacklistData.contains(getDialogId()) ?
+                    R.string.SearchBlacklistRevert : R.string.SearchBlacklistShort);
+            blockFromSearchItem = otherItem.addSubItem(block_from_search, R.drawable.msg_block, LocaleController.getString(blockFromSearchTxt));
         }
         if (!isPulledDown) {
             otherItem.hideSubItem(gallery_menu_save);

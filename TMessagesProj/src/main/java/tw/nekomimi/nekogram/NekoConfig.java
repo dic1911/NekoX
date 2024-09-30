@@ -10,7 +10,6 @@ import android.content.SharedPreferences;
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.ApplicationLoader;
 import org.telegram.messenger.BuildVars;
-import org.telegram.messenger.LocaleController;
 import org.telegram.messenger.MessagesController;
 import org.telegram.messenger.R;
 
@@ -263,6 +262,9 @@ public class NekoConfig {
 
     public static ConfigItem customGetQueryBlacklist = addConfig(R.string.BlacklistUrlQueryTitle, "BlacklistUrlQueryTitle", configTypeString, "");
     public static ArrayList<String> customGetQueryBlacklistData = new ArrayList<>();
+
+    public static ConfigItem searchBlacklist = addConfig(R.string.SearchBlacklist, "searchBlackList", configTypeString, "");
+    public static ArrayList<Long> searchBlacklistData = new ArrayList<>();
 
     static {
         loadConfig(false);
@@ -662,11 +664,27 @@ public class NekoConfig {
         customGetQueryBlacklist.setConfigString(str.substring(1, str.length() - 1));
     }
 
+    public static void applySearchBlacklist() {
+        String[] queries = searchBlacklist.String().split(",");
+        searchBlacklistData.clear();
+        if (queries.length <= 1) return;
+        for (String q : queries) {
+            if (q.isBlank()) continue;
+            searchBlacklistData.add(Long.valueOf(q.trim()));
+        }
+    }
+
+    public static void saveSearchBlacklist() {
+        String str = Arrays.toString(searchBlacklistData.toArray()).replace(" ", "");
+        searchBlacklist.setConfigString(str.substring(1, str.length() - 1));
+    }
+
     public static void init() {
         initStrings();
         updateUseSpoilerMediaChatList();
         updatePreferredTranslateTargetLangList();
         applyCustomGetQueryBlacklist();
+        applySearchBlacklist();
     }
 
 }

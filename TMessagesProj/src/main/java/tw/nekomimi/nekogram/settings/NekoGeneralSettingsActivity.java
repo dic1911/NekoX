@@ -213,6 +213,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell disableBirthdayReminderRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.disableBirthdayReminder));
     private final AbstractConfigCell dontShareNumberWhenAddContactByDefaultRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.dontShareNumberWhenAddContactByDefault));
     private final AbstractConfigCell customSearchEngineRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.customSearchEngine, null, null, SearchEngine::refreshSearchEngines));
+    private final AbstractConfigCell searchBlacklistRow = cellGroup.appendCell(new ConfigCellTextInput(null, NekoConfig.searchBlacklist, null, null, NekoConfig::applySearchBlacklist));
     private final AbstractConfigCell divider7 = cellGroup.appendCell(new ConfigCellDivider());
 
     private final AbstractConfigCell header8 = cellGroup.appendCell(new ConfigCellHeader(LocaleController.getString(R.string.ChannelBots)));

@@ -15,6 +15,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import tw.nekomimi.nekogram.NekoConfig;
+
 public class HashtagSearchController {
     private static volatile HashtagSearchController[] Instance = new HashtagSearchController[UserConfig.MAX_ACCOUNT_COUNT];
     private static final Object[] lockObjects = new Object[UserConfig.MAX_ACCOUNT_COUNT];
@@ -192,6 +194,7 @@ public class HashtagSearchController {
                     search.lastOffsetRate = messages.next_rate;
 
                     for (MessageObject msg : messageObjects) {
+                        if (NekoConfig.searchBlacklistData.contains(msg.getDialogId())) continue;
                         MessageCompositeID compositeId = new MessageCompositeID(msg.messageOwner);
                         Integer id = search.generatedIds.get(compositeId);
                         if (id == null) {
