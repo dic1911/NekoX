@@ -17,8 +17,9 @@ public class ConfigCellTextDetail extends AbstractConfigCell {
     public final RecyclerListView.OnItemClickListener onItemClickListener;
 
     public ConfigCellTextDetail(ConfigItem bind, RecyclerListView.OnItemClickListener onItemClickListener, String hint) {
+        int strId = bind.getId();
         this.bindConfig = bind;
-        this.title = LocaleController.getString(bindConfig.getKey());
+        this.title = (strId != 0) ? LocaleController.getString(strId) : LocaleController.getString(bind.getKey());
         this.hint = hint == null ? "" : hint;
         this.onItemClickListener = onItemClickListener;
     }

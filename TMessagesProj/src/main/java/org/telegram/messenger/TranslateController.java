@@ -522,7 +522,9 @@ public class TranslateController extends BaseController {
             final MessageObject finalMessageObject = messageObject;
             if (finalMessageObject.messageOwner.translatedText == null || !language.equals(finalMessageObject.messageOwner.translatedToLanguage)) {
                 NotificationCenter.getInstance(currentAccount).postNotificationName(NotificationCenter.messageTranslating, finalMessageObject);
-                if (NekoConfig.useCustomProviderForAutoTranslate.Bool() && NekoConfig.translationProvider.Int() != Translator.providerTelegram) {
+                if (NekoConfig.useCustomProviderForAutoTranslate.Bool()
+                        && NekoConfig.translationProvider.Int() != Translator.providerTelegram
+                        && NekoConfig.translationProvider.Int() != Translator.providerLingva) {
                     Translator.translate(TranslatorKt.getCode2Locale(language), finalMessageObject.messageOwner.message, new Translator.Companion.TranslateCallBack() {
                         @Override
                         public void onSuccess(@NonNull String translation) {
