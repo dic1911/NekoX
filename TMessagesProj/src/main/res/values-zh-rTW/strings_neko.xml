@@ -247,4 +247,8 @@
     <string name="SearchBlacklistShort">從搜尋結果隱藏</string>
     <string name="SearchBlacklistRevert">解除搜尋隱藏</string>
     <string name="ReplyAsQuoteByDefault">預設以引用回覆訊息</string>
+    <string name="ProviderLingva">Lingva 翻譯</string>
+    <string name="CustomLingvaInstance">Lingva 實例</string>
+    <string name="LingvaInstanceNotConfigured">尚未指定 Lingva 實例, 無法翻譯.</string>
+    <string name="LingvaInstanceNote">在網路上尋找公用實例或自己架設實例, 注意 Lingva 無法配合自動翻譯功能使用.</string>
 </resources>
