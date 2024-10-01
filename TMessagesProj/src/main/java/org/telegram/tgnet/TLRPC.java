@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import cn.hutool.core.util.ArrayUtil;
+import tw.nekomimi.nekogram.NekoConfig;
 import tw.nekomimi.nekogram.NekoXConfig;
 
 @SuppressWarnings("unchecked")
@@ -68873,6 +68874,19 @@ public class TLRPC {
                     } else {
                         result.from_id = result.peer_id;
                     }
+                }
+
+                boolean spoilerOverride = false;
+                if (NekoConfig.ignoreBlocked.Bool()) {
+                    for (int n : MessagesController.instanceNums) {
+                        spoilerOverride = MessagesController.getInstance(n).blockePeers.indexOfKey(result.from_id.user_id) >= 0;
+                        if (spoilerOverride) break;
+                    }
+                }
+                if (spoilerOverride) {
+                    TLRPC.TL_messageEntitySpoiler s = new TLRPC.TL_messageEntitySpoiler();
+                    s.length = result.message.length();
+                    result.entities.add(s);
                 }
             }
             return result;

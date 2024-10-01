@@ -1425,6 +1425,7 @@ public class MessagesController extends BaseController implements NotificationCe
 
     private static final Object lockObject = new Object();
     private static SparseArray<MessagesController> Instance = new SparseArray<>();
+    public static HashSet<Integer> instanceNums = new HashSet<>();
     public static MessagesController getInstance(int num) {
         MessagesController localInstance = Instance.get(num);
         if (localInstance == null) {
@@ -1433,6 +1434,7 @@ public class MessagesController extends BaseController implements NotificationCe
                 if (localInstance == null) {
                     Instance.put(num, localInstance = new MessagesController(num));
                 }
+                instanceNums.add(num);
             }
         }
         return localInstance;
@@ -16374,6 +16376,16 @@ public class MessagesController extends BaseController implements NotificationCe
                     message.reply_to = updates.reply_to;
                     message.ttl_period = updates.ttl_period;
                     message.media = new TLRPC.TL_messageMediaEmpty();
+
+                    if (!message.out && NekoConfig.ignoreBlocked.Bool()) {
+                        if (blockePeers.indexOfKey(message.from_id.user_id) >= 0) {
+                            if (message.message != null && !message.message.isBlank()) {
+                                TLRPC.TL_messageEntitySpoiler s = new TLRPC.TL_messageEntitySpoiler();
+                                s.length = message.message.length();
+                                message.entities.add(s);
+                            }
+                        }
+                    }
 
                     ConcurrentHashMap<Long, Integer> read_max = message.out ? dialogs_read_outbox_max : dialogs_read_inbox_max;
                     Integer value = read_max.get(message.dialog_id);

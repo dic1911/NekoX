@@ -62,7 +62,6 @@ import android.text.style.CharacterStyle;
 import android.text.style.ClickableSpan;
 import android.text.style.LeadingMarginSpan;
 import android.text.style.URLSpan;
-import android.util.Log;
 import android.util.Pair;
 import android.util.Property;
 import android.util.SparseArray;
@@ -145,6 +144,7 @@ import org.telegram.ui.Components.CheckBoxBase;
 import org.telegram.ui.Components.ClipRoundedDrawable;
 import org.telegram.ui.Components.ColoredImageSpan;
 import org.telegram.ui.Components.CubicBezierInterpolator;
+import org.telegram.ui.Components.Easings;
 import org.telegram.ui.Components.EmptyStubSpan;
 import org.telegram.ui.Components.FloatSeekBarAccessibilityDelegate;
 import org.telegram.ui.Components.Forum.MessageTopicButton;
@@ -359,7 +359,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
     }
 
     public boolean hasSpoilers() {
-        if (NekoConfig.showSpoilersDirectly.Bool()) return false;
+        if (NekoConfig.showSpoilersDirectly.Bool()) return spoilerOverride;
+        if (spoilerOverride) return true;
         if (captionLayout != null && captionLayout.textLayoutBlocks != null) {
             for (MessageObject.TextLayoutBlock bl : captionLayout.textLayoutBlocks) {
                 if (!bl.spoilers.isEmpty()) {
@@ -1520,6 +1521,8 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
     public boolean makeVisibleAfterChange;
 
+    public boolean spoilerOverride;
+
     private Runnable diceFinishCallback = new Runnable() {
         @Override
         public void run() {
@@ -1590,9 +1593,10 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
 
     // NekoX
     private boolean needHideMessage() {
-        return currentMessageObject.messageOwner.hide ||
-                MessagesController.getInstance(currentAccount).blockePeers.indexOfKey(currentMessageObject.getFromChatId()) >= 0 &&
-                        NekoConfig.ignoreBlocked.Bool() && !(getParent() != null && getParent().getClass().getName().contains("ChannelAdminLogActivity"));
+        return currentMessageObject.messageOwner.hide;
+//                || MessagesController.getInstance(currentAccount).blockePeers.indexOfKey(currentMessageObject.getFromChatId()) >= 0
+//                && NekoConfig.ignoreBlocked.Bool()
+//                && !(getParent() != null && getParent().getClass().getName().contains("ChannelAdminLogActivity"));
     }
 
     public ChatMessageCell(Context context, int currentAccount) {
@@ -5578,6 +5582,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
         if (!messageChanged && effectId != messageObject.getEffectId()) {
             messageChanged = true;
         }
+        spoilerOverride =
+                NekoConfig.ignoreBlocked.Bool() &&
+                MessagesController.getInstance(currentAccount).blockePeers.indexOfKey(messageObject.getSenderId()) >= 0;
         if (messageChanged || dataChanged || groupChanged || pollChanged || widthChanged && messageObject.isPoll() || isPhotoDataChanged(messageObject) || pinnedBottom != bottomNear || pinnedTop != topNear || transChanged) {
             updatedContent = true;
             if (stickerSetIcons != null) {
@@ -9856,7 +9863,6 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
             drawCommentButton = false;
             drawForwardedName = false;
             drawInstantView = false;
-            drawBackground = false;
             drawCommentNumber = false;
             drawImageButton = false;
             drawJoinChannelView = false;
