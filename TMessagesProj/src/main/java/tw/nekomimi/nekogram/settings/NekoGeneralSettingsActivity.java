@@ -102,6 +102,9 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell googleCloudTranslateKeyRow = cellGroup.appendCell(new ConfigCellTextDetail(NekoConfig.googleCloudTranslateKey, (view, position) -> {
         customDialog_BottomInputString(position, NekoConfig.googleCloudTranslateKey, LocaleController.getString(R.string.GoogleCloudTransKeyNotice), "Key");
     }, LocaleController.getString(R.string.UsernameEmpty)));
+    private final AbstractConfigCell customLingvaApiEndpointRow = cellGroup.appendCell(new ConfigCellTextDetail(NekoConfig.customLingvaInstance, (view, position) -> {
+        customDialog_BottomInputString(position, NekoConfig.customLingvaInstance, LocaleController.getString(R.string.LingvaInstanceNote), "https://lingva.example.com");
+    }, LocaleController.getString(R.string.None)));
     private final AbstractConfigCell preferredTranslateTargetLangRow = cellGroup.appendCell(
             new ConfigCellTextInput(LocaleController.getString(R.string.PreferredTranslateTargetLang),
                     NekoConfig.preferredTranslateTargetLang, LocaleController.getString(R.string.PreferredTranslateTargetLangExample),
@@ -347,7 +350,8 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
                             LocaleController.getString(R.string.ProviderMicrosoftTranslator),
                             LocaleController.getString(R.string.ProviderYouDao),
                             LocaleController.getString(R.string.ProviderDeepLTranslate),
-                            LocaleController.getString(R.string.ProviderTelegramAPI)
+                            LocaleController.getString(R.string.ProviderTelegramAPI),
+                            LocaleController.getString(R.string.ProviderLingva)
                     }, (i, __) -> {
                         boolean needReset = NekoConfig.translationProvider.Int() - 1 != i && (NekoConfig.translationProvider.Int() == 1 || i == 0);
                         NekoConfig.translationProvider.setConfigInt(i + 1);
@@ -747,6 +751,9 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
                                     break;
                                 case Translator.providerTelegram:
                                     value = LocaleController.getString(R.string.ProviderTelegramAPI);
+                                    break;
+                                case Translator.providerLingva:
+                                    value = LocaleController.getString(R.string.ProviderLingva);
                                     break;
                                 default:
                                     value = "Unknown";

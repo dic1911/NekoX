@@ -41,7 +41,8 @@ public class ConfigCellSelectBox extends AbstractConfigCell {
             this.selectList = null;
         }
         if (customTitle == null) {
-            title = LocaleController.getString(bindConfig.getKey());
+            int strId = bind.getId();
+            title = (strId != 0) ? LocaleController.getString(strId) : LocaleController.getString(bind.getKey());
         } else {
             title = customTitle;
         }

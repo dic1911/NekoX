@@ -246,4 +246,8 @@
     <string name="SearchBlacklist">Blacklist specified chats from search results</string>
     <string name="SearchBlacklistShort">Blacklist from search</string>
     <string name="SearchBlacklistRevert">Remove from blacklist</string>
+    <string name="ProviderLingva">Lingva Translate</string>
+    <string name="CustomLingvaInstance">Custom Lingva instance</string>
+    <string name="LingvaInstanceNotConfigured">Lingva instance not configured, translation not available.</string>
+    <string name="LingvaInstanceNote">Search online for public instance or host one yourself, note that Lingva translator won\'t work with auto translate.</string>
 </resources>
