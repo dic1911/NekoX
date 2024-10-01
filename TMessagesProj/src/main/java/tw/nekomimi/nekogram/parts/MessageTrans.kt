@@ -93,7 +93,7 @@ fun ChatActivity.translateMessages(target: Locale = NekoConfig.translateToLang.S
         ?: selectedObjectGroup?.messages
         ?: emptyList()) {
 
-    Log.d("nx-trans", Thread.currentThread().stackTrace.contentToString())
+    // Log.d("nx-trans", Thread.currentThread().stackTrace.contentToString())
 
     // TODO: Fix file group
 
