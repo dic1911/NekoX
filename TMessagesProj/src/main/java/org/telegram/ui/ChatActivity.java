@@ -41349,6 +41349,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             // When longClick it will reply to the `replyMessage` of selectedMessage
             // When not LongClick but in a threadchat: reply to the Thread
             MessageObject replyTo = isLongClick ? selectedObject.replyMessageObject : getReplyMessage();
+            boolean hasReplyTo = selectedObject.messageOwner.reply_to != null;
             if (selectedObject.type == 0 || selectedObject.isAnimatedEmoji() || getMessageCaption(selectedObject, selectedObjectGroup) != null) {
                 CharSequence caption = getMessageCaption(selectedObject, selectedObjectGroup);
                 if (caption == null) {
@@ -41361,7 +41362,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     params.peer = dialog_id;
                     params.replyToMsg = replyTo;
                     params.replyToTopMsg = getThreadMessage();
-                    if (selectedObject.messageOwner.reply_to.quote) {
+                    if (hasReplyTo && selectedObject.messageOwner.reply_to.quote) {
                         TLRPC.MessageReplyHeader replyHeader = selectedObject.messageOwner.reply_to;
                         params.replyQuote = ReplyQuote.from(replyTo, replyHeader.quote_text, replyHeader.quote_offset);
                     }
@@ -41381,7 +41382,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 document.access_hash = doc.access_hash;
                 document.file_reference = (doc.file_reference != null ? doc.file_reference : new byte[0]);
                 params.document = document;
-                if (selectedObject.messageOwner.reply_to.quote) {
+                if (hasReplyTo && selectedObject.messageOwner.reply_to.quote) {
                     TLRPC.MessageReplyHeader replyHeader = selectedObject.messageOwner.reply_to;
                     params.replyQuote = ReplyQuote.from(replyTo, replyHeader.quote_text, replyHeader.quote_offset);
                 }
