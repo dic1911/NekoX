@@ -41361,6 +41361,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                     params.peer = dialog_id;
                     params.replyToMsg = replyTo;
                     params.replyToTopMsg = getThreadMessage();
+                    if (selectedObject.messageOwner.reply_to.quote) {
+                        TLRPC.MessageReplyHeader replyHeader = selectedObject.messageOwner.reply_to;
+                        params.replyQuote = ReplyQuote.from(replyTo, replyHeader.quote_text, replyHeader.quote_offset);
+                    }
                     SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
 //                     .sendMessage(caption.toString(), dialog_id, replyTo, getThreadMessage(), null, false, selectedObject.messageOwner.entities, null, null, true, 0, null, false);
                 }
@@ -41377,6 +41381,10 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 document.access_hash = doc.access_hash;
                 document.file_reference = (doc.file_reference != null ? doc.file_reference : new byte[0]);
                 params.document = document;
+                if (selectedObject.messageOwner.reply_to.quote) {
+                    TLRPC.MessageReplyHeader replyHeader = selectedObject.messageOwner.reply_to;
+                    params.replyQuote = ReplyQuote.from(replyTo, replyHeader.quote_text, replyHeader.quote_offset);
+                }
                 SendMessagesHelper.getInstance(currentAccount).sendMessage(params);
 //                        .sendSticker(selectedObject.getDocument(), null, dialog_id, replyTo, getThreadMessage(), null, null, true, 0, false);
             }
