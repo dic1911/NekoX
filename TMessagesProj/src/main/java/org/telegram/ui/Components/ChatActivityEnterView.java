@@ -2762,21 +2762,27 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                         if (!hasRecordVideo || calledRecordRunnable) {
                             startedDraggingX = -1;
                             if (hasRecordVideo && isInVideoMode()) {
-                                delegate.needStartRecordVideo(1, true, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId);
+                                delegate.needStartRecordVideo(NekoConfig.confirmAVMessage.Bool() ? 3 : 1, true, 0, voiceOnce ? 0x7FFFFFFF : 0, effectId);
                                 sendButton.setEffect(effectId = 0);
                             } else {
-                                if (recordingAudioVideo && isInScheduleMode()) {
-                                    AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false), () -> MediaController.getInstance().stopRecording(0, false, 0, false), resourcesProvider);
+                                if (NekoConfig.confirmAVMessage.Bool()) {
+                                    MediaController.getInstance().stopRecording(2, true, 0, voiceOnce);
+                                } else {
+                                    if (recordingAudioVideo && isInScheduleMode()) {
+                                        AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false), () -> MediaController.getInstance().stopRecording(0, false, 0, false), resourcesProvider);
+                                    }
+                                    MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : (NekoConfig.confirmAVMessage.Bool() ? 2 : 1), true, 0, voiceOnce);
+                                    delegate.needStartRecordAudio(0);
                                 }
-                                MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce);
-                                delegate.needStartRecordAudio(0);
                             }
-                            recordingAudioVideo = false;
-                            messageTransitionIsRunning = false;
-                            AndroidUtilities.runOnUIThread(moveToSendStateRunnable = () -> {
-                                moveToSendStateRunnable = null;
-                                updateRecordInterface(RECORD_STATE_SENDING, true);
-                            }, 200);
+                            if (!NekoConfig.confirmAVMessage.Bool()) {
+                                recordingAudioVideo = false;
+                                messageTransitionIsRunning = false;
+                                AndroidUtilities.runOnUIThread(moveToSendStateRunnable = () -> {
+                                    moveToSendStateRunnable = null;
+                                    updateRecordInterface(RECORD_STATE_SENDING, true);
+                                }, 200);
+                            }
                         }
                         getParent().requestDisallowInterceptTouchEvent(true);
                         return true;
@@ -2859,11 +2865,15 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             } else if (!sendVoiceEnabled) {
                                 delegate.needShowMediaBanHint();
                             } else {
-                                if (recordingAudioVideo && isInScheduleMode()) {
+                                if (recordingAudioVideo && isInScheduleMode() && !NekoConfig.confirmAVMessage.Bool()) {
                                     AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, false), () -> MediaController.getInstance().stopRecording(0, false, 0, false), resourcesProvider);
                                 }
                                 delegate.needStartRecordAudio(0);
-                                MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce);
+                                if (!NekoConfig.confirmAVMessage.Bool()) {
+                                    MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce);
+                                } else {
+                                    MediaController.getInstance().stopRecording(2, true, 0, voiceOnce);
+                                }
                             }
                             if (!NekoConfig.confirmAVMessage.Bool()) {
                                 recordingAudioVideo = false;
@@ -2874,7 +2884,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                                 }, shouldDrawBackground ? 500 : 0);
                             }
                         }
-                    }return true;
+                    }
+                    return true;
                 } else if (motionEvent.getAction() == MotionEvent.ACTION_MOVE && recordingAudioVideo) {
                     float x = motionEvent.getX();
                     float y = motionEvent.getY();
@@ -2941,7 +2952,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             if (recordingAudioVideo && isInScheduleMode()) {
                                 AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, voiceOnce), () -> MediaController.getInstance().stopRecording(0, false, 0, voiceOnce), null);
                             }
-                            MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : 1, true, 0, voiceOnce);
+                            MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : (NekoConfig.confirmAVMessage.Bool() ? 2 : 1), true, 0, voiceOnce);
                             delegate.needStartRecordAudio(0);
                         }
                         recordingAudioVideo = false;
@@ -9016,7 +9027,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     messageEditText.setAlpha(0f);
 
                     if (audioVideoSendButton != null) {
-                        audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, !NekoConfig.useChatAttachMediaMenu.Bool() || animated);
+                        if (!NekoConfig.useChatAttachMediaMenu.Bool())
+                            audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, !NekoConfig.useChatAttachMediaMenu.Bool() || animated);
                         audioVideoSendButton.setAlpha(1f);
                         audioVideoSendButton.setScaleX(1f);
                         audioVideoSendButton.setScaleY(1f);
@@ -9101,7 +9113,8 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                                 ObjectAnimator.ofFloat(audioVideoSendButton, View.SCALE_X, 1),
                                 ObjectAnimator.ofFloat(audioVideoSendButton, View.SCALE_Y, 1)
                         );
-                        audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, true);
+                        if (!NekoConfig.useChatAttachMediaMenu.Bool())
+                            audioVideoSendButton.setState(isInVideoMode() ? ChatActivityEnterViewAnimatedIconView.State.VIDEO : ChatActivityEnterViewAnimatedIconView.State.VOICE, true);
                     }
                     if (botCommandsMenuButton != null) {
                         iconsAnimator.playTogether(
