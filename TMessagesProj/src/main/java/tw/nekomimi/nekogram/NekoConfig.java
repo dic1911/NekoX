@@ -672,8 +672,11 @@ public class NekoConfig {
         if (queries.length <= 1) return;
         for (String q : queries) {
             if (q.isBlank()) continue;
-            searchBlacklistData.add(Long.valueOf(q.trim()));
+            try {
+                searchBlacklistData.add(Long.valueOf(q.trim()));
+            } catch (Exception ignored) {}
         }
+        searchBlacklist.setConfigString(Arrays.toString(searchBlacklistData.toArray())); // cleanup leftovers
     }
 
     public static void saveSearchBlacklist() {
@@ -683,10 +686,14 @@ public class NekoConfig {
 
     public static void init() {
         initStrings();
-        updateUseSpoilerMediaChatList();
-        updatePreferredTranslateTargetLangList();
-        applyCustomGetQueryBlacklist();
-        applySearchBlacklist();
+        try {
+            updateUseSpoilerMediaChatList();
+            updatePreferredTranslateTargetLangList();
+            applyCustomGetQueryBlacklist();
+            applySearchBlacklist();
+        } catch (Exception ex) {
+            Log.e("030-neko", "failed to load part of neko config", ex);
+        }
     }
 
 }
