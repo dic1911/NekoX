@@ -2940,6 +2940,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
             }
         };
         if (NekoConfig.useChatAttachMediaMenu.Bool()) {
+            final boolean needConfirm = NekoConfig.confirmAVMessage.Bool();
             audioVideoButtonContainer.setOnClickListener(v -> {
                 createRecordAudioPanel();
                 createRecordCircle();
@@ -2947,16 +2948,16 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     if (!hasRecordVideo || calledRecordRunnable) {
                         startedDraggingX = -1;
                         if (hasRecordVideo && isInVideoMode) {
-                            delegate.needStartRecordVideo(1, true, 0, voiceOnce ? 0x7FFFFFFF : 0, messageSendPreview != null ? messageSendPreview.getSelectedEffect() : 0);
+                            delegate.needStartRecordVideo(needConfirm ? 3 : 1, true, 0, voiceOnce ? 0x7FFFFFFF : 0, messageSendPreview != null ? messageSendPreview.getSelectedEffect() : 0);
                         } else {
                             if (recordingAudioVideo && isInScheduleMode()) {
                                 AlertsCreator.createScheduleDatePickerDialog(parentActivity, parentFragment.getDialogId(), (notify, scheduleDate) -> MediaController.getInstance().stopRecording(1, notify, scheduleDate, voiceOnce), () -> MediaController.getInstance().stopRecording(0, false, 0, voiceOnce), null);
                             }
-                            MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : (NekoConfig.confirmAVMessage.Bool() ? 2 : 1), true, 0, voiceOnce);
+                            MediaController.getInstance().stopRecording(isInScheduleMode() ? 3 : (needConfirm ? 2 : 1), true, 0, voiceOnce);
                             delegate.needStartRecordAudio(0);
                         }
-                        recordingAudioVideo = false;
-                        updateRecordInterface(RECORD_STATE_SENDING, true);
+                        recordingAudioVideo = !needConfirm;
+                        updateRecordInterface(needConfirm ? RECORD_STATE_PREPARING : RECORD_STATE_SENDING, true);
                     }
                     return;
                 }
@@ -8614,6 +8615,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
 
     private int lastRecordState;
     protected void updateRecordInterface(int recordState, boolean animated) {
+        boolean confirmAVMessage = NekoConfig.confirmAVMessage.Bool();
         if (moveToSendStateRunnable != null) {
             AndroidUtilities.cancelRunOnUIThread(moveToSendStateRunnable);
             moveToSendStateRunnable = null;
@@ -8966,7 +8968,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     controlsView.invalidate();
                 }
 
-                if (recordDeleteImageView != null) {
+                if (recordDeleteImageView != null && (isInVideoMode() || !confirmAVMessage)) {
                     recordDeleteImageView.setAlpha(0f);
                     recordDeleteImageView.setScaleX(0f);
                     recordDeleteImageView.setScaleY(0f);
@@ -9102,7 +9104,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                             ObjectAnimator.ofFloat(emojiButton, EMOJI_BUTTON_ALPHA, 0),
                             ObjectAnimator.ofFloat(messageEditText, View.ALPHA, 0)
                     );
-                    if (recordDeleteImageView != null) {
+                    if (recordDeleteImageView != null && !confirmAVMessage) {
                         recordDeleteImageView.setAlpha(0f);
                         recordDeleteImageView.setScaleX(0f);
                         recordDeleteImageView.setScaleY(0f);
@@ -12371,9 +12373,11 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                     recordedAudioPanel.setAlpha(1.0f);
                     recordedAudioPanel.setVisibility(VISIBLE);
                     recordDeleteImageView.setVisibility(VISIBLE);
-                    recordDeleteImageView.setAlpha(0f);
-                    recordDeleteImageView.setScaleY(0f);
-                    recordDeleteImageView.setScaleX(0f);
+                    if (lastRecordState != RECORD_STATE_PREPARING || !NekoConfig.confirmAVMessage.Bool()) {
+                        recordDeleteImageView.setAlpha(0f);
+                        recordDeleteImageView.setScaleY(0f);
+                        recordDeleteImageView.setScaleX(0f);
+                    }
                     double duration = 0;
                     for (int a = 0; a < audioToSend.attributes.size(); a++) {
                         TLRPC.DocumentAttribute attribute = audioToSend.attributes.get(a);
