@@ -674,7 +674,7 @@ public class NekoConfig {
                 searchBlacklistData.add(Long.valueOf(q.trim()));
             } catch (Exception ignored) {}
         }
-        searchBlacklist.setConfigString(Arrays.toString(searchBlacklistData.toArray())); // cleanup leftovers
+        saveSearchBlacklist();
     }
 
     public static void saveSearchBlacklist() {
