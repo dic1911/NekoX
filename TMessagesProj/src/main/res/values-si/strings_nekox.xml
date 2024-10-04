@@ -2,7 +2,6 @@
 <resources>
     <string name="UpdateDownloaded">යාවත්කාලීනයක් දැන් බාගත කර ඇත.</string>
     <string name="Ignore">නොසලකන්න</string>
-    <string name="MinApi23Required">කණගාටුයි, ඔබට ඇන්ඩ්‍රොයිඩ් 6 (යෙ.ක්‍ර. මු. 23) වත් අවශ්‍ය වේ.</string>
     <string name="MinApi21Required">කණගාටුයි, ඔබට ඇන්ඩ්‍රොයිඩ් 5 (යෙ.ක්‍ර. මු. 21) වත් අවශ්‍ය වේ.</string>
     <string name="CustomApi">අභිරුචි යෙ.ක්‍ර. අ.මු.</string>
     <string name="FilterNameBots">ස්වයං ක්‍රමලේඛ</string>
@@ -13,9 +12,7 @@
     <string name="AutoDownload">ස්වයං බාගතවීම</string>
     <string name="ArchiveFiles">ගොනු සංරක්ෂණය කරන්න</string>
     <string name="NekoXFaq">නෙකෝඑක්ස් නිති අසන පැන</string>
-    <string name="LoginSettings">පිවිසීමේ සැකසුම්</string>
     <string name="DeveloperSettings">සංවර්ධක සැකසුම්</string>
-    <string name="SSRProtocol">කෙටුම්පත</string>
     <string name="FilterNameUnreadDescription">නොකියවූ පණිවිඩ පමණි</string>
     <string name="FilterNameChannelsDescription">නාලිකා වලින් ලැබෙන පණිවිඩ පමණි</string>
     <string name="FilterNameChannels">නාලිකා</string>
