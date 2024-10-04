@@ -90,7 +90,7 @@
     <string name="Categories">Kategorie</string>
     <string name="OfficialChannel">Oficjalny kanał</string>
     <string name="About">Informacje o Nekogram X</string>
-    <string name="IgnoreBlockedAbout">Nie będziesz już widział wiadomości od zablokowanych użytkowników w grupach.</string>
+    <string name="IgnoreBlockedAbout">TO NAPRAWDĘ NIE JEST UKRYTE! Wiadomości są nadal dostępne do przeglądania, ale wiadomości zostaną przekonwertowane na Spoiler.</string>
     <string name="GooglePlay">Sklep Play</string>
     <string name="SourceCode">Kod źródłowy na GitHubie</string>
     <string name="ResetStickerSize">Zresetuj rozmiar naklejki</string>

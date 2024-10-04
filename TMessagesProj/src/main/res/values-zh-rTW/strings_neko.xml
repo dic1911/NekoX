@@ -90,7 +90,7 @@
     <string name="Categories">類別</string>
     <string name="OfficialChannel">官方頻道</string>
     <string name="About">關於</string>
-    <string name="IgnoreBlockedAbout">您將不會再看到被封鎖的使用者在群組中的訊息。</string>
+    <string name="IgnoreBlockedAbout">不是真正的隱藏！訊息仍然可以查看，但將被轉換為劇透。</string>
     <string name="GooglePlay">Google Play 商店</string>
     <string name="SourceCode">GitHub 上的原始碼</string>
     <string name="ResetStickerSize">重置貼圖大小</string>

@@ -61,7 +61,7 @@
     <string name="TabTitleType">Visa i flikar</string>
     <string name="ConfirmCall">Bekräfta samtal</string>
     <string name="OfficialChannel">Officiell kanal</string>
-    <string name="IgnoreBlockedAbout">Du kommer inte längre att se meddelanden från blockerade användare i grupper.</string>
+    <string name="IgnoreBlockedAbout">DET ÄR INTE RIKTIGT GÖM! Meddelanden är fortfarande tillgängliga att se, men meddelanden kommer att konverteras till Spoiler.</string>
     <string name="ResetStickerSize">Återställ storlek på klistermärke</string>
     <string name="RestartAppToTakeEffect">Starta om appen för att det ska träda i kraft.</string>
     <string name="DisableAppBarShadow">Inaktivera titelfältets skugga</string>

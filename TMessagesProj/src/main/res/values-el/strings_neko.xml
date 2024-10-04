@@ -54,7 +54,7 @@
     <string name="TakeGIFasVideo">Λήψη GIF ως βίντεο</string>
     <string name="pressTitleToOpenAllChats">Πατήστε τον τίτλο για να ανοίξετε την καρτέλα \"Όλες\"</string>
     <string name="TabTitleTypeIcon">Emoticons</string>
-    <string name="IgnoreBlockedAbout">Δεν θα βλέπετε πλέον μηνύματα από αποκλεισμένους χρήστες σε ομάδες.</string>
+    <string name="IgnoreBlockedAbout">ΔΕΝ ΚΡΥΒΕΤΑΙ ΠΡΑΓΜΑΤΙΚΑ! Τα μηνύματα εξακολουθούν να είναι διαθέσιμα για προβολή, αλλά τα μηνύματα θα μετατραπούν σε Spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="Translate">Μετάφραση</string>
     <string name="AvatarAsBackground">Εικόνα προφίλ ως φόντο</string>

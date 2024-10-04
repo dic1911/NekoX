@@ -117,7 +117,7 @@
     <string name="AutoPauseVideo">Sett video på pause automatisk</string>
     <string name="AutoPauseVideoAbout">Ved låseskjerm/bytte til bakgrunn.</string>
     <string name="IncreaseVoiceMessageQuality">Øk talemeldingskvalitet</string>
-    <string name="IgnoreBlockedAbout">Du vil ikke lenger kunne lese meldinger fra blokkerte brukere i grupper.</string>
+    <string name="IgnoreBlockedAbout">DET ER IKKE EGENTLIG GJUL! Meldinger er fortsatt tilgjengelige for visning, men meldinger vil bli konvertert til Spoiler.</string>
     <string name="DisableAppBarShadow">Skru av tittellinje-skygge</string>
     <string name="DisableProximityEvents">Skru av nærhets-hendelser</string>
     <string name="customSavePathHint">La stå tomt for å lagre direkte</string>

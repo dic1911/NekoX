@@ -90,7 +90,7 @@
     <string name="Categories">Kategorien</string>
     <string name="OfficialChannel">Offizieller Kanal</string>
     <string name="About">Über</string>
-    <string name="IgnoreBlockedAbout">Nachrichten von blockierten Benutzern werden in Gruppen nicht mehr angezeigt.</string>
+    <string name="IgnoreBlockedAbout">ES IST NICHT WIRKLICH VERSTECKT! Nachrichten können weiterhin angezeigt werden, werden jedoch in Spoiler umgewandelt.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Quellcode auf GitHub</string>
     <string name="ResetStickerSize">Stickergröße zurücksetzen</string>

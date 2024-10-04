@@ -93,7 +93,7 @@
     <string name="Categories">Categories</string>
     <string name="OfficialChannel">Official channel</string>
     <string name="About">About</string>
-    <string name="IgnoreBlockedAbout">You\'ll no longer see messages from blocked users in groups.</string>
+    <string name="IgnoreBlockedAbout">IT IS NOT REALLY HIDE! Messages are still available to view, but messages will be converted to Spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Source code on GitHub</string>
     <string name="ResetStickerSize">Reset sticker size</string>

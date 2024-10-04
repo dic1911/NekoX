@@ -89,7 +89,7 @@
     <string name="Categories">Kategóriák</string>
     <string name="OfficialChannel">Hivatalos csatorna</string>
     <string name="About">Rólunk</string>
-    <string name="IgnoreBlockedAbout">A továbbiakban nem fognak megjelenni a csoportokban a letiltott felhasználóktól érkező üzenetek.</string>
+    <string name="IgnoreBlockedAbout">EZ IGAZÁN NEM REJTÉS! Az üzenetek továbbra is megtekinthetők, de az üzenetek spoilerré lesznek konvertálva.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Forráskód a GitHubon</string>
     <string name="ResetStickerSize">A matrica méretének visszaállítása</string>

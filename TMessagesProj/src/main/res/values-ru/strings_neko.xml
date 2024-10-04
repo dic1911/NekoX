@@ -90,7 +90,7 @@
     <string name="Categories">Настройки</string>
     <string name="OfficialChannel">Официальный канал</string>
     <string name="About">О проекте</string>
-    <string name="IgnoreBlockedAbout">Вы больше не будете видеть сообщения от заблокированных пользователей в группах.</string>
+    <string name="IgnoreBlockedAbout">ЭТО НЕ НА САМОМ ДЕЛЕ СКРЫТО! Сообщения по-прежнему доступны для просмотра, но сообщения будут преобразованы в спойлер.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Исходный код на GitHub</string>
     <string name="ResetStickerSize">Размер стикеров по умолчанию</string>

@@ -90,7 +90,7 @@
     <string name="Categories">Կատեգորիաներ</string>
     <string name="OfficialChannel">Պաշտոնական ալիք</string>
     <string name="About">Մասին</string>
-    <string name="IgnoreBlockedAbout">Դուք այլևս չեք տեսնի խմբերի արգելափակված օգտվողների հաղորդագրությունները:</string>
+    <string name="IgnoreBlockedAbout">ԻՍԿԱԿԱՆ ՉԻ ԹԱՔՑՎՈՒՄ: Հաղորդագրությունները դեռ հասանելի են դիտելու համար, սակայն հաղորդագրությունները կվերածվեն Spoiler-ի:</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Աղբյուրի կոդը GitHub- ում</string>
     <string name="ResetStickerSize">Վերակայել կպչուկի չափը</string>

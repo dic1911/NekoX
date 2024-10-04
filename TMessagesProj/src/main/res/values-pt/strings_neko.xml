@@ -24,7 +24,6 @@
     <string name="RestartAppToTakeEffect">Reinicie a app para surtir efeito.</string>
     <string name="ResetStickerSize">Redefinir tamanho do sticker</string>
     <string name="SourceCode">Código fonte no GitHub</string>
-    <string name="IgnoreBlockedAbout">Não verá mais mensagens de utilizadores bloqueados em grupos.</string>
     <string name="About">Sobre</string>
     <string name="OfficialChannel">Canal oficial</string>
     <string name="Categories">Categorias</string>
@@ -114,6 +113,7 @@
     <string name="DontSendGreetingSticker">Não enviar sticker de saudação</string>
     <string name="pressTitleToOpenAllChats">Toque e segure no título para abrir a guia \"Todos os Chats\"</string>
     <string name="AutoPauseVideoAbout">Quando bloquear o ecrã/alternar para segundo plano.</string>
+    <string name="IgnoreBlockedAbout">NÃO É REALMENTE ESCONDER! As mensagens continuam disponíveis para visualização, mas serão convertidas em Spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="TabTitleTypeIcon">Emoticons</string>
     <string name="ProviderLingocloud">Lingocloud</string>

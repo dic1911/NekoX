@@ -90,7 +90,7 @@
     <string name="Categories">קטגוריות</string>
     <string name="OfficialChannel">ערוץ רשמי</string>
     <string name="About">על אודות</string>
-    <string name="IgnoreBlockedAbout">לא תראה עוד הודעות ממשתמשים חסומים בקבוצות.</string>
+    <string name="IgnoreBlockedAbout">זה לא ממש הסתר! ההודעות עדיין זמינות לצפייה, אך ההודעות יומרו לספוילר.</string>
     <string name="GooglePlay">גוגל פליי</string>
     <string name="SourceCode">קוד המקור ב־GitHub</string>
     <string name="ResetStickerSize">איפוס גודל מדבקה</string>

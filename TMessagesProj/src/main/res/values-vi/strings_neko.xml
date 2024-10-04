@@ -90,7 +90,7 @@
     <string name="Categories">Thể loại</string>
     <string name="OfficialChannel">Kênh chính thức</string>
     <string name="About">Thông tin</string>
-    <string name="IgnoreBlockedAbout">Bạn sẽ không còn thấy tin nhắn từ những người dùng bị chặn trong các nhóm.</string>
+    <string name="IgnoreBlockedAbout">THỰC SỰ KHÔNG PHẢI LÀ ẨN! Tin nhắn vẫn có thể xem được, nhưng tin nhắn sẽ được chuyển thành Spoiler.</string>
     <string name="GooglePlay">CH Play</string>
     <string name="SourceCode">Mã nguồn trên GitHub</string>
     <string name="ResetStickerSize">Đặt lại kích thước nhãn dán</string>

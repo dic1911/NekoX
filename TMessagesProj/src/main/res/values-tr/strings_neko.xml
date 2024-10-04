@@ -90,7 +90,7 @@
     <string name="Categories">Kategoriler</string>
     <string name="OfficialChannel">Resmi kanal</string>
     <string name="About">Hakkında</string>
-    <string name="IgnoreBlockedAbout">Artık gruplarda, engellediğiniz kullanıcılardan gelen mesajları görmeyeceksiniz.</string>
+    <string name="IgnoreBlockedAbout">GERÇEKTEN GİZLENMİYOR! Mesajlar hala görüntülenebilir, ancak mesajlar Spoiler\'a dönüştürülecek.</string>
     <string name="GooglePlay">Google Play Market</string>
     <string name="SourceCode">Kaynak kodu GitHub\'da görüntüleyin</string>
     <string name="ResetStickerSize">Çıkartma boyutunu sıfırla</string>

@@ -90,7 +90,7 @@
     <string name="Categories">Categorias</string>
     <string name="OfficialChannel">Canal oficial</string>
     <string name="About">Sobre</string>
-    <string name="IgnoreBlockedAbout">Você não verá mais mensagens de usuários bloqueados em grupos.</string>
+    <string name="IgnoreBlockedAbout">NÃO ESTÁ REALMENTE ESCONDIDO! As mensagens ainda estão disponíveis para visualização, mas serão convertidas em Spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Código fonte no GitHub</string>
     <string name="ResetStickerSize">Redefinir tamanho do sticker</string>

@@ -90,7 +90,7 @@
     <string name="Categories">Kategori</string>
     <string name="OfficialChannel">Kanal resmi</string>
     <string name="About">Tentang</string>
-    <string name="IgnoreBlockedAbout">Anda tidak akan lagi melihat pesan dari pengguna yang diblokir dalam grup.</string>
+    <string name="IgnoreBlockedAbout">BUKANLAH BENAR-BENAR DISEMBUNYIKAN! Pesan masih dapat dilihat, tetapi pesan akan diubah menjadi Spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Kode sumber pada github.com</string>
     <string name="ResetStickerSize">Atur ulang ukuran stiker</string>

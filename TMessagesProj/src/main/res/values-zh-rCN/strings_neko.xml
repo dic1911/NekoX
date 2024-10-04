@@ -94,7 +94,7 @@
     <string name="Categories">类别</string>
     <string name="OfficialChannel">官方频道</string>
     <string name="About">关于</string>
-    <string name="IgnoreBlockedAbout">您将不会再看到被屏蔽的用户在群组中的消息。</string>
+    <string name="IgnoreBlockedAbout">并不是真正的隐藏！仍然可以查看消息，但将被转换为黑幕。</string>
     <string name="GooglePlay">谷歌商店</string>
     <string name="SourceCode">GitHub 上的源代码</string>
     <string name="ResetStickerSize">重置贴纸大小</string>

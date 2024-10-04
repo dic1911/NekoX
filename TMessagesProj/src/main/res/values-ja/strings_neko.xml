@@ -90,7 +90,7 @@
     <string name="Categories">カテゴリ</string>
     <string name="OfficialChannel">公式チャンネル</string>
     <string name="About">約</string>
-    <string name="IgnoreBlockedAbout">ブロックされたユーザーからのメッセージがグループに表示されなくなります。</string>
+    <string name="IgnoreBlockedAbout">本当に隠されているわけではありません。メッセージは引き続き表示できますが、Spoiler に変換されます。</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">GitHub のソース コード</string>
     <string name="ResetStickerSize">ステッカーのサイズをリセット</string>

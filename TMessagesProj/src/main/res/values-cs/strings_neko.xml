@@ -41,7 +41,7 @@
     <string name="ResetStickerSize">Obnovit velikost nálepky</string>
     <string name="SourceCode">Zdrojový kód na GitHub</string>
     <string name="GooglePlay">Google Play</string>
-    <string name="IgnoreBlockedAbout">Už nebudete vidět zprávy od blokovaných uživatelů ve skupinách.</string>
+    <string name="IgnoreBlockedAbout">TO OPRAVDU NENÍ SKRYTÉ! Zprávy je stále možné zobrazit, ale zprávy budou převedeny na Spoiler.</string>
     <string name="OfficialChannel">Oficiální kanál</string>
     <string name="Categories">Kategorie</string>
     <string name="DisableNumberRounding">Zakázat zaokrouhlování čísel</string>

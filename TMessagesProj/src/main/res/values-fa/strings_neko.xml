@@ -90,7 +90,7 @@
     <string name="Categories">دسته‌بندی‌ها</string>
     <string name="OfficialChannel">درگاه سازمانی</string>
     <string name="About">درباره</string>
-    <string name="IgnoreBlockedAbout">پیام‌های کاربرهای بسته شده در گروه‌ها نمایش داده نمی‌شوند.</string>
+    <string name="IgnoreBlockedAbout">این واقعاً پنهان نیست! پیام‌ها همچنان برای مشاهده در دسترس هستند، اما پیام‌ها به اسپویلر تبدیل می‌شوند.</string>
     <string name="GooglePlay">گوگل پلی</string>
     <string name="SourceCode">کد منبع در گیت‌هاب</string>
     <string name="ResetStickerSize">آراستن دوباره اندازه چسبانک</string>
