@@ -79,7 +79,6 @@ import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
 import android.text.style.URLSpan;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.util.Pair;
 import android.util.Property;
 import android.util.SparseArray;
@@ -179,7 +178,6 @@ import org.telegram.messenger.SendMessagesHelper;
 import org.telegram.messenger.SharedConfig;
 import org.telegram.messenger.SvgHelper;
 import org.telegram.messenger.Timer;
-import org.telegram.messenger.TranslateController;
 import org.telegram.messenger.UserConfig;
 import org.telegram.messenger.UserObject;
 import org.telegram.messenger.Utilities;
@@ -234,7 +232,6 @@ import org.telegram.ui.Cells.MentionCell;
 import org.telegram.ui.Cells.ProfileChannelCell;
 import org.telegram.ui.Cells.ShareDialogCell;
 import org.telegram.ui.Cells.StickerCell;
-import org.telegram.ui.Cells.TextCell;
 import org.telegram.ui.Cells.TextSelectionHelper;
 import org.telegram.ui.Components.*;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
@@ -1548,7 +1545,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private final static int text_quote = 58;
     // NekoX
     private final static int text_mention = 157;
-    private final static int text_transalte = 158;
+    private final static int text_translate = 158;
 
     private final static int view_as_topics = 59;
 
@@ -3822,7 +3819,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         chatActivityEnterView.getEditField().setSelectionOverride(editTextStart, editTextEnd);
                         chatActivityEnterView.getEditField().makeSelectedMention();
                     }
-                } else if (id == text_transalte) {
+                } else if (id == text_translate) {
                     if (chatActivityEnterView != null) {
                         chatActivityEnterView.getEditField().setSelectionOverride(editTextStart, editTextEnd);
                         chatActivityEnterView.getEditField().makeSelectedTranslate();
@@ -10363,6 +10360,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         item.addSubItem(text_link, LocaleController.getString(R.string.CreateLink));
         item.addSubItem(text_mention, LocaleController.getString(R.string.CreateMention)); // NekoX
         item.addSubItem(text_regular, LocaleController.getString(R.string.Regular));
+        item.addSubItem(text_translate, LocaleController.getString(R.string.TranslateMessage));
 
         filledEditTextItemMenu = true;
     }
@@ -25873,6 +25871,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         menu.add(R.id.menu_groupbolditalic, R.id.menu_link, order++, LocaleController.getString(R.string.CreateLink));
         menu.add(R.id.menu_groupbolditalic, R.id.menu_mention, order++, LocaleController.getString(R.string.CreateMention));
         menu.add(R.id.menu_groupbolditalic, R.id.menu_regular, order++, LocaleController.getString(R.string.Regular));
+        menu.add(R.id.menu_groupbolditalic, R.id.menu_translate, order++, LocaleController.getString(R.string.TranslateMessage));
     }
 
     private void updateScheduledInterface(boolean animated) {
