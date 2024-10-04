@@ -34306,14 +34306,16 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     }
 
     private void processExternalUrl(int type, String url, CharacterStyle span, ChatMessageCell cell, boolean forceAlert, boolean forceNoIV) {
-        try {
-            String host = AndroidUtilities.getHostAuthority(url);
-            if ((currentEncryptedChat == null || getMessagesController().secretWebpagePreview == 1) && getMessagesController().authDomains.contains(host)) {
-                getSendMessagesHelper().requestUrlAuth(url, this, type == 0 || type == 2);
-                return;
+        if (!NekoConfig.disableAutoWebLogin.Bool()) {
+            try {
+                String host = AndroidUtilities.getHostAuthority(url);
+                if ((currentEncryptedChat == null || getMessagesController().secretWebpagePreview == 1) && getMessagesController().authDomains.contains(host)) {
+                    getSendMessagesHelper().requestUrlAuth(url, this, type == 0 || type == 2);
+                    return;
+                }
+            } catch (Exception e) {
+                FileLog.e(e);
             }
-        } catch (Exception e) {
-            FileLog.e(e);
         }
         if (forceAlert || AndroidUtilities.shouldShowUrlInAlert(url)) {
             if (type == 0 || type == 2) {
