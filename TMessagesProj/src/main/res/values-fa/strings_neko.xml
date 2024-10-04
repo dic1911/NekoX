@@ -126,7 +126,6 @@
     <string name="hideGroupSticker">استیکر گروه را پنهان کن</string>
     <string name="disableRemoteEmojiInteractions">غیرفعال‌سازی کنترل از راه دور تعاملات ایموجی</string>
     <string name="showSpoilersDirectly">نمایش پیام‌های‌ پنهان بدون لمس کردن</string>
-    <string name="disableDoubleTabReactions">غیرفعال کردن واکنش درصورت دو ضرب زدن</string>
     <string name="SaveToDownloadCount_zero">رو به انباردن %1$d پرونده در دریافت‌ها</string>
     <string name="SaveToDownloadCount_two">رو به انباردن %1$d پرونده در دریافت‌ها</string>
     <string name="SaveToDownloadCount_few">رو به انباردن %1$d پرونده در دریافت‌ها</string>

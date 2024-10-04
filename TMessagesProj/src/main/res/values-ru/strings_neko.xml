@@ -126,7 +126,6 @@
     <string name="autoUpdateSubInfo">Автоматическое обновление прокси-серверов</string>
     <string name="hideSendAsChannel">Скрыть «Отправить как канал»</string>
     <string name="showSpoilersDirectly">Раскрывать спойлеры сразу</string>
-    <string name="disableDoubleTabReactions">Отключение реакции на двойное нажатие</string>
     <string name="SaveToDownloadCount_zero">Сохранение %1$d файлов для загрузки</string>
     <string name="SaveToDownloadCount_one">Сохранение файла %1$d для загрузки</string>
     <string name="SaveToDownloadCount_two">Сохранение %1$d файлов для загрузки</string>

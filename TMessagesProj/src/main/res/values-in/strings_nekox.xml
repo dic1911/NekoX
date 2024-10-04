@@ -215,9 +215,6 @@
     <string name="TextReplace">Menggantikan</string>
     <string name="ReplaceRegex">Gunakan regex</string>
     <string name="DisableTrending">Nonaktifkan Trending</string>
-    <string name="HideDeviceInfo">Sembunyikan model perangkat</string>
-    <string name="HideDeviceInfoOff">Model perangkat akan diunggah untuk kedua kalinya aplikasi dimulai setelah masuk.</string>
-    <string name="HideDeviceInfoOn">Anda dapat mengubahnya di pengaturan nanti.</string>
     <string name="nekoXPaymentRemovedToast">Fungsi pembayaran telah dihapus.</string>
     <string name="ImportSettingsAlert">Yakin ingin menimpa pengaturan\? Mengimpor pengaturan dari sumber yang tidak dikenal dapat menyebabkan pin ditimpa dan menyebabkan aplikasi terkunci.</string>
     <string name="ImportSettings">Pengaturan impor</string>

@@ -215,9 +215,6 @@
     <string name="TextReplace">交換</string>
     <string name="ReplaceRegex">正規表現を使用する</string>
     <string name="DisableTrending">トレンドを無効にする</string>
-    <string name="HideDeviceInfo">デバイスモデルを非表示</string>
-    <string name="HideDeviceInfoOff">ログイン後、アプリが2回目に起動したときに、デバイスモデルがアップロードされます。</string>
-    <string name="HideDeviceInfoOn">これは後で設定で変更できます。</string>
     <string name="ArchiveFiles">アーカイブファイル</string>
     <string name="AddProxyWs">WebSocketリレーの追加</string>
     <string name="ProxyInfoWS">WebSocketリレーの設定</string>

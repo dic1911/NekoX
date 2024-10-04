@@ -424,7 +424,6 @@
     <string name="ShowTranslateButton">Vertaalknop tonen</string>
     <string name="ShowTranslateChatButton">Volledige chats vertalen</string>
     <string name="DoNotTranslate">Niet vertalen</string>
-    <string name="Languages_zero">%1$d talen</string>
     <string name="Languages_one">%1$d taal</string>
     <string name="Languages_other">%1$d talen</string>
     <string name="ChooseLanguages">Talen kiezen</string>

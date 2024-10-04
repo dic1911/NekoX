@@ -215,9 +215,6 @@
     <string name="TextReplace">החלף</string>
     <string name="ReplaceRegex">השתמש ב- regex</string>
     <string name="DisableTrending">השבת מגמות</string>
-    <string name="HideDeviceInfo">הסתר את דגם המכשיר</string>
-    <string name="HideDeviceInfoOff">דגם המכשיר יעלה בפעם השנייה שהאפליקציה מתחילה לאחר הכניסה.</string>
-    <string name="HideDeviceInfoOn">תוכל לשנות זאת בהגדרות מאוחר יותר.</string>
     <string name="UsePersiancalendarInfo">להציג תאריך עם לוח שנה היג׳רי לפי השמש</string>
     <string name="UsePersiancalendar">להשתמש בלוח השנה הפרסי</string>
     <string name="AppLinkFDroid">F-Droid</string>

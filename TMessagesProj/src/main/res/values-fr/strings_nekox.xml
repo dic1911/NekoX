@@ -196,7 +196,6 @@
     <string name="TextReplace">Remplacer</string>
     <string name="ReplaceRegex">Utiliser regex</string>
     <string name="DisableTrending">Désactiver les tendances</string>
-    <string name="HideDeviceInfo">Cacher le modèle de l\'appareil</string>
     <string name="AppLinkFDroid">F-Droid</string>
     <string name="SetPinnedSuffix">(Épinglé)</string>
     <string name="UnpinSticker">Désépingler</string>

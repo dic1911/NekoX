@@ -214,9 +214,6 @@
     <string name="TextReplace">يحل محل</string>
     <string name="ReplaceRegex">استخدم regex</string>
     <string name="DisableTrending">تعطيل الاتجاه</string>
-    <string name="HideDeviceInfo">إخفاء طراز الجهاز</string>
-    <string name="HideDeviceInfoOff">سيتم تحميل طراز الجهاز في المرة الثانية التي يبدأ فيها التطبيق بعد تسجيل الدخول.</string>
-    <string name="HideDeviceInfoOn">يمكنك تغيير هذا في الإعدادات لاحقًا.</string>
     <string name="SetPinnedSuffix">(مثبت)</string>
     <string name="UnpinSticker">ألغِ التثبيت</string>
     <string name="PinSticker">تثبيت</string>

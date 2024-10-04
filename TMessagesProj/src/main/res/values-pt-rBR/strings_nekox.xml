@@ -214,9 +214,6 @@
     <string name="TextOrigin">Origem</string>
     <string name="TextReplace">Substituir</string>
     <string name="ReplaceRegex">Usar regex</string>
-    <string name="HideDeviceInfoOn">Você pode mudar isso nas configurações depois.</string>
-    <string name="HideDeviceInfoOff">O modelo do dispositivo será enviado na segunda vez que o app for iniciado após o login.</string>
-    <string name="HideDeviceInfo">Ocultar modelo do dispositivo</string>
     <string name="DisableTrending">Desativar tendências</string>
     <string name="ImportSettingsAlert">Tem certeza de que deseja substituir as configurações\? Importar configurações de fontes desconhecidas pode fazer com que o PIN seja sobrescrito e isso faça com que o aplicativo seja bloqueado.</string>
     <string name="AutoCheckUpdateRc">Candidato a Lançamento</string>

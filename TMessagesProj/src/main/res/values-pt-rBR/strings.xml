@@ -283,7 +283,6 @@
     <string name="PhoneNumberSearch">Número de telefone</string>
     <string name="NoContactsYet">Você ainda não tem contatos no Telegram</string>
     <string name="NoContactsYetLine1">Convide amigos para testar o Telegram</string>
-    <string name="NoContactsYetLine2">Encontre pessoas próximas</string>
     <string name="NoContactsYetLine3">Busque pessoas por nome de usuário</string>
     <string name="NewContactAlertTitle">Novo contato</string>
     <string name="NewContactAlertMessage">O número de telefone **%1$s** não está nos seus contatos. Deseja adicionar?</string>

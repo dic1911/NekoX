@@ -215,9 +215,6 @@
     <string name="TextReplace">Заміна</string>
     <string name="ReplaceRegex">Рег. вираз</string>
     <string name="DisableTrending">Вимкнути тренди</string>
-    <string name="HideDeviceInfo">Сховати модель пристрою</string>
-    <string name="HideDeviceInfoOff">Модель пристрою буде завантажена вдруге, коли програма запуститься після входу в систему.</string>
-    <string name="HideDeviceInfoOn">Ви можете змінити це в налаштуваннях пізніше.</string>
     <string name="nekoXPaymentRemovedToast">Функцію оплати вилучено.</string>
     <string name="ImportSettingsAlert">Перезаписати налаштування\? Імпорт налаштувань із невідомих джерел може спричинити перезапис пін-коду й блокування застосунку.</string>
     <string name="EnableStickerPinTip">Розробка функції триває. Синхронізація з хмарою може не працювати.</string>

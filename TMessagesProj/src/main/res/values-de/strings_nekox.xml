@@ -197,9 +197,6 @@
     <string name="TabletMode">Tablet-Modus</string>
     <string name="TrojanSNI">SNI (Optional)</string>
     <string name="IgnoreContentRestrictionsNotice">Wiedergabebeschränkungen für Nachrichten ignorieren.</string>
-    <string name="HideDeviceInfoOn">Sie können dies später in den Einstellungen ändern.</string>
-    <string name="HideDeviceInfoOff">Das Gerätemodell wird beim zweiten Start der App nach dem Anmelden hochgeladen.</string>
-    <string name="HideDeviceInfo">Gerätemodell ausblenden</string>
     <string name="DisableTrending">Trend deaktivieren</string>
     <string name="ReplaceRegex">Regex verwenden</string>
     <string name="TextReplace">Ersetzen</string>

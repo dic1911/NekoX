@@ -296,7 +296,6 @@
     <string name="PhoneNumberSearch">전화번호</string>
     <string name="NoContactsYet">아직 텔레그램에 연락처가 없습니다</string>
     <string name="NoContactsYetLine1">친구를 텔레그램으로 초대해보세요</string>
-    <string name="NoContactsYetLine2">주위에 대화할 사람들을 찾아보세요</string>
     <string name="NoContactsYetLine3">아이디를 통해 사람들을 찾아보세요</string>
     <string name="NewContactAlertTitle">새로운 연락처</string>
     <string name="NewContactAlertMessage">연락처에 **%1$s** 전화번호가 없습니다. 추가하시겠습니까?</string>
@@ -425,7 +424,6 @@
     <string name="ShowTranslateButton">번역 버튼 보기</string>
     <string name="ShowTranslateChatButton">대화 전체 번역</string>
     <string name="DoNotTranslate">번역하지 않음</string>
-    <string name="Languages_zero">언어 %1$d개</string>
     <string name="Languages_other">언어 %1$d개</string>
     <string name="ChooseLanguages">언어 선택</string>
     <string name="TranslateMessagesInfo1">텍스트 메시지를 한번 탭 할 경우 \'번역\' 버튼이 나타나게 됩니다.</string>
