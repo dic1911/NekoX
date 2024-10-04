@@ -221,7 +221,7 @@
     <string name="HideOriginalTextAfterTranslate">翻譯後隱藏原始文字</string>
     <string name="DontAutoPlayNextMessage">不要自動播放下一個音訊訊息</string>
     <string name="TranslateBeforeSend">傳送前翻譯</string>
-    <string name="UseCustomProviderForAutoTranslate">自動翻譯時使用自訂翻譯提供者</string>
+    <string name="UseCustomProviderForAutoTranslate">自動翻譯時使用自訂翻譯服務</string>
     <string name="DontShareNumberWhenAddContactByDefault">新增聯絡人時自動取消勾選分享電話號碼</string>
     <string name="ProviderTelegramAPI">Telegram API</string>
     <string name="AutoSendMessageIfBlockedBySlowModeDesc">只支援排程單一文字/貼圖/GIF, 不支援其他媒體或檔案</string>
@@ -251,4 +251,5 @@
     <string name="CustomLingvaInstance">Lingva 實例</string>
     <string name="LingvaInstanceNotConfigured">尚未指定 Lingva 實例, 無法翻譯.</string>
     <string name="LingvaInstanceNote">在網路上尋找公用實例或自己架設實例, 注意 Lingva 無法配合自動翻譯功能使用.</string>
+    <string name="DisableAutoWebLogin">停用自動登入 Telegram 帳號</string>
 </resources>
