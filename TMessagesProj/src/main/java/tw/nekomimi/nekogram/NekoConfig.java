@@ -117,11 +117,9 @@ public class NekoConfig {
     public static ConfigItem filterUnmutedAndUnread = addConfig("filter_unmuted_and_unread", configTypeBool, true);
 
     public static ConfigItem disableSystemAccount = addConfig(R.string.DisableSystemAccount, "DisableSystemAccount", configTypeBool, false);
-//    public static ConfigItem disableProxyWhenVpnEnabled = addConfig("DisableProxyWhenVpnEnabled", configTypeBool, false);
     public static ConfigItem skipOpenLinkConfirm = addConfig(R.string.SkipOpenLinkConfirm, "SkipOpenLinkConfirm", configTypeBool, false);
 
     public static ConfigItem ignoreMutedCount = addConfig(R.string.IgnoreMutedCount, "IgnoreMutedCount", configTypeBool, true);
-//    public static ConfigItem useDefaultTheme = addConfig("UseDefaultTheme", configTypeBool, false);
     public static ConfigItem showIdAndDc = addConfig(R.string.ShowIdAndDc, "ShowIdAndDc", configTypeBool, false);
 
     public static ConfigItem cachePath = addConfig(R.string.StoragePath, "cache_path", configTypeString, "");

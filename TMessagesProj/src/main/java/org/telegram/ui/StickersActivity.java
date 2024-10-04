@@ -1709,8 +1709,11 @@ public class StickersActivity extends BaseFragment implements NotificationCenter
                         } else {
                             options.add(R.drawable.msg_link, LocaleController.getString(R.string.StickersCopy), () -> processSelectionOption(3, stickerSet));
                             options.add(R.drawable.msg_reorder, LocaleController.getString(R.string.StickersReorder), () -> processSelectionOption(4, stickerSet));
-                            if (NekoConfig.enableStickerPin.Bool())
-                                options.add(R.drawable.msg_pin, LocaleController.getString(R.string.PinSticker), () -> processSelectionOption(MENU_TOGGLE_PIN, stickerSet));
+                            if (NekoConfig.enableStickerPin.Bool()) {
+                                boolean pinned = PinnedStickerHelper.getInstance(UserConfig.selectedAccount).isPinned(stickerSetCell.getStickersSet().set.id);
+                                String pinText = pinned ? LocaleController.getString(R.string.UnpinSticker) : LocaleController.getString(R.string.PinSticker);
+                                options.add(R.drawable.msg_pin, pinText, () -> processSelectionOption(MENU_TOGGLE_PIN, stickerSet));
+                            }
                             options.add(R.drawable.msg_share, LocaleController.getString(R.string.StickersShare), () -> processSelectionOption(2, stickerSet));
                             options.add(R.drawable.msg_delete, LocaleController.getString(R.string.StickersRemove), true, () -> processSelectionOption(MENU_DELETE, stickerSet));
                         }

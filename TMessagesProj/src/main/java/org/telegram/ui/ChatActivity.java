@@ -41047,8 +41047,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 final boolean isDownloading = TelegramUtil.messageObjectIsDownloading(getMessageType(so));
 
                 AlertDialog.Builder builder = new AlertDialog.Builder(getParentActivity());
-                builder.setTitle(LocaleController.getString("DeleteDownloadedFile"));
-                builder.setMessage(LocaleController.getString("DeleteDownloadedFileConfirm"));
+                builder.setTitle(LocaleController.getString(R.string.DeleteDownloadedFile));
+                builder.setMessage(LocaleController.getString(R.string.DeleteDownloadedFileConfirm));
                 builder.setPositiveButton(LocaleController.getString("OK", R.string.OK), (dialogInterface, i) -> {
                     if (Build.VERSION.SDK_INT >= 23 && (Build.VERSION.SDK_INT <= 28 || BuildVars.NO_SCOPED_STORAGE) && getParentActivity().checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED) {
                         getParentActivity().requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 4);
@@ -41104,7 +41104,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                                 file.deleteOnExit();
                             }
                         } else {
-                            Toast.makeText(getParentActivity(), LocaleController.getString("DeleteDownloadedFileExternal"), Toast.LENGTH_LONG).show();
+                            Toast.makeText(getParentActivity(), LocaleController.getString(R.string.DeleteDownloadedFileExternal), Toast.LENGTH_LONG).show();
                             return;
                         }
                     }
@@ -41114,7 +41114,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         messageCell.updateButtonState(false, true, false);
                     }
 
-                    Toast.makeText(getParentActivity(), LocaleController.getString("DeleteDownloadedFileSucceed"), Toast.LENGTH_LONG).show();
+                    Toast.makeText(getParentActivity(), LocaleController.getString(R.string.DeleteDownloadedFileSucceed), Toast.LENGTH_LONG).show();
                 });
                 builder.setNegativeButton(LocaleController.getString("Cancel"), (dialog, which) -> {
                 });

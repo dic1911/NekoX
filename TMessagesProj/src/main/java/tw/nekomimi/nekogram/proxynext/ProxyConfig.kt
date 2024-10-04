@@ -21,7 +21,7 @@ object ProxyConfig {
         } catch (ex: Exception) {
             FileLog.e(ex);
             Toast.makeText(ApplicationLoader.applicationContext,
-                    LocaleController.getString("UnsupportedProxy", R.string.UnsupportedProxy),
+                    LocaleController.getString(R.string.UnsupportedProxy),
                     Toast.LENGTH_LONG).show()
             return null
         }
@@ -38,7 +38,7 @@ object ProxyConfig {
         } catch (ex: Exception) {
             FileLog.e(ex);
             Toast.makeText(ApplicationLoader.applicationContext,
-                    LocaleController.getString("UnsupportedProxy", R.string.UnsupportedProxy),
+                    LocaleController.getString(R.string.UnsupportedProxy),
                     Toast.LENGTH_LONG).show()
             return null
         }

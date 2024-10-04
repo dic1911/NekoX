@@ -38,7 +38,7 @@ import org.telegram.messenger.R
 
     val lookup = mutableMapOf<String, Plugin>().apply {
         for (plugin in this@PluginList) {
-            fun check(old: Plugin?) = check(old == null || old === plugin) { LocaleController.formatString("SSPluginConflictingName",R.string.SSPluginConflictingName,plugin.id) }
+            fun check(old: Plugin?) = check(old == null || old === plugin) { LocaleController.formatString(R.string.SSPluginConflictingName, plugin.id) }
             check(put(plugin.id, plugin))
         }
     }
@@ -51,5 +51,5 @@ import org.telegram.messenger.R
         } else if (it.id.isNotBlank()) {
             it.id
         } else it.packageName
-    }.map { it.takeIf { it.isNotBlank() } ?: LocaleController.getString("Disable", R.string.Disable) }.toTypedArray()
+    }.map { it.takeIf { it.isNotBlank() } ?: LocaleController.getString(R.string.Disable) }.toTypedArray()
 }

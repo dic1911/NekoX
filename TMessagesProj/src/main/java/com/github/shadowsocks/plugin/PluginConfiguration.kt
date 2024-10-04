@@ -56,7 +56,7 @@ class PluginConfiguration(val pluginsOptions: MutableMap<String, PluginOptions>,
         } else PluginOptions(line)
     })
 
-    val selectedName get() = selected.takeIf { it.isNotBlank() } ?: LocaleController.getString("Disable", R.string.Disable)
+    val selectedName get() = selected.takeIf { it.isNotBlank() } ?: LocaleController.getString(R.string.Disable)
 
     @JvmOverloads
     fun getOptions(
