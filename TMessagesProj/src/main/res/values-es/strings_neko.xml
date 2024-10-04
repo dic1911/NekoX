@@ -68,7 +68,7 @@
     <string name="BotToken">Token</string>
     <string name="UnlimitedPinnedDialogs">Chats anclados ilimitados</string>
     <string name="UnlimitedPinnedDialogsAbout">Ancla tantos chats como quieras, pero desactiva su sincronización.</string>
-    <string name="OpenArchiveOnPull">Abrir un archivo al deslizar hacia abajo</string>
+    <string name="OpenArchiveOnPull">Abrir archivados al deslizar hacia abajo</string>
     <string name="HideKeyboardOnChatScroll">Ocultar teclado al desplazar el chat</string>
     <string name="UserRestrictionsSendStickers2">Enviar Stickers</string>
     <string name="UserRestrictionsSendGifs">Enviar GIFs</string>
@@ -241,4 +241,14 @@
     <string name="AutoSendMessageIfBlockedBySlowModeDesc">Solo se almacena el primer texto/pegatina/GIF, no se admiten otros medios/archivos</string>
     <string name="AutoSendAfterSlowModeIgnoredHint">Existe un mensaje pendiente, ignorando.</string>
     <string name="AutoSendAfterSlowModeHint">Programado para enviar después del temporizador de modo lento</string>
+    <string name="justOneEmoji">Solo seleccionados</string>
+    <string name="SearchBlacklist">Lista negra de chats específicos en los resultados de búsqueda</string>
+    <string name="SearchBlacklistShort">Lista negra de la búsqueda</string>
+    <string name="SearchBlacklistRevert">Eliminar de la lista negra</string>
+    <string name="ReplyAsQuoteByDefault">Citar mensaje por defecto</string>
+    <string name="maxRecentEmojiCount">Número máximo de emojis usados recientemente</string>
+    <string name="ProviderLingva">Traductor Lingva</string>
+    <string name="CustomLingvaInstance">Instancia Lingva personalizada</string>
+    <string name="LingvaInstanceNotConfigured">Instancia Lingva sin configurar, traducción no disponible.</string>
+    <string name="LingvaInstanceNote">Busca en línea una instancia pública o aloja una por ti mismo; ten en cuenta que el traductor Lingva no funcionará con la traducción automática.</string>
 </resources>

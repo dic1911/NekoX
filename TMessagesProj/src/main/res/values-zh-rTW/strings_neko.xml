@@ -230,4 +230,25 @@
     <string name="AutoSendAfterSlowModeIgnoredHint">已存在待傳送的訊息.</string>
     <string name="AutoSendAfterSlowModeHint">已安排在限速計時後發送</string>
     <string name="SearchRecentFiles">搜尋最近的檔案</string>
+    <string name="AccDescrShowKeyboard">顯示鍵盤</string>
+    <string name="ViewStats">統計資料</string>
+    <string name="ConvertGroupAlert">這個動作無法回溯. 被升級後的超級群組無法轉換回普通群組.</string>
+    <string name="DebugMenuEnablePauseMusic">啟用錄製時暫停播放媒體</string>
+    <string name="NoFilesFound">查無檔案</string>
+    <string name="NoFilesInfo">這個資料夾是空的</string>
+    <string name="NoFilesFoundInfo">目前目錄中沒有與 **%1$s** 相符的內容</string>
+    <string name="UnofficialApp">非官方程式</string>
+    <string name="UpgradeGroup">升級為超級群組</string>
+    <string name="DebugMenuDisablePauseMusic">停用錄製時暫停播放媒體</string>
+    <string name="UploadImage">上傳圖片</string>
+    <string name="maxRecentEmojiCount">最近使用表情符號數量上限</string>
+    <string name="justOneEmoji">僅選取</string>
+    <string name="SearchBlacklist">從搜尋結果移除特定對話</string>
+    <string name="SearchBlacklistShort">從搜尋結果隱藏</string>
+    <string name="SearchBlacklistRevert">解除搜尋隱藏</string>
+    <string name="ReplyAsQuoteByDefault">預設以引用回覆訊息</string>
+    <string name="ProviderLingva">Lingva 翻譯</string>
+    <string name="CustomLingvaInstance">Lingva 實例</string>
+    <string name="LingvaInstanceNotConfigured">尚未指定 Lingva 實例, 無法翻譯.</string>
+    <string name="LingvaInstanceNote">在網路上尋找公用實例或自己架設實例, 注意 Lingva 無法配合自動翻譯功能使用.</string>
 </resources>

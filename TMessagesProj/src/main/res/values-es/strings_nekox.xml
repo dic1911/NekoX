@@ -9,7 +9,7 @@
     <string name="UseChatAttachEnterMenu">Usar el menú de entrada</string>
     <string name="UseChatAttachEnterMenuNotice">Cambia el botón de grabaciónen un menú de entrada y agrega un interruptor para la vista previa del enlace.</string>
     <string name="DisableLinkPreviewByDefault">Deshabilitar la vista previa de enlaces por defecto</string>
-    <string name="DisableLinkPreviewByDefaultNotice">Desactive la solicitud de vista previa de enlaces de forma predeterminada para evitar que el servidor sepa que el enlace se comparte a través de Telegram.</string>
+    <string name="DisableLinkPreviewByDefaultNotice">Desactiva la solicitud de vista previa de enlaces de forma predeterminada para evitar que el servidor sepa que el enlace se comparte a través de Telegram.</string>
     <string name="CustomApi">API personalizada</string>
     <string name="UseCustomApiNotice">Inicie sesión con la Api personalizada, si no puede registrarse o iniciar sesión, esto puede ayudar.
 \n
@@ -292,6 +292,6 @@
     <string name="ShowSelfInsteadOfSavedMessages">Mostrar como uno mismo en lugar de "Mensajes guardados"</string>
     <string name="DisableCustomWallpaperUser">Deshabilitar fondo personalizado de usuario</string>
     <string name="DisableCustomWallpaperChannel">Deshabilitar fondo personalizado de canal</string>
-    <string name="FasterReconnectHack">Reconexión más rapida de proxy tocando encendido/apagado</string>
+    <string name="FasterReconnectHack">Reconexión más rapida de proxy al encender/apagar</string>
     <string name="FasterReconnectHackAbout">Este hack solo funciona con un buen entorno de red.</string>
 </resources>
