@@ -251,4 +251,5 @@
     <string name="CustomLingvaInstance">Instancia Lingva personalizada</string>
     <string name="LingvaInstanceNotConfigured">Instancia Lingva sin configurar, traducción no disponible.</string>
     <string name="LingvaInstanceNote">Busca en línea una instancia pública o aloja una por ti mismo; ten en cuenta que el traductor Lingva no funcionará con la traducción automática.</string>
+    <string name="DisableAutoWebLogin">Deshabilitar el inicio de sesión automático en Telegram</string>
 </resources>
