@@ -51,7 +51,7 @@ object UrlUtil {
             return out.build()
         }
 
-        val out = Uri.Builder().scheme(src.scheme).authority(src.host).appendEncodedPath(src.path?.replaceFirst("/", ""))
+        val out = Uri.Builder().scheme(src.scheme).authority(src.host).appendEncodedPath(src.path?.replaceFirst("/", "")).encodedFragment(src.encodedFragment)
         val queries = src.queryParameterNames
         for (q in queries) {
             var block = false
