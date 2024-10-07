@@ -11328,6 +11328,7 @@ public class ChatActivityEnterView extends BlurredFrameLayout implements Notific
                 builder.setNeutralButton(getString(R.string.justOneEmoji), (dialogInterface, i) -> {
                     Emoji.removeRecentEmoji(code);
                     emojiView.refreshEmojiAdapter();
+                    Emoji.saveRecentEmoji();
                 });
                 builder.setNegativeButton(getString(R.string.Cancel), null);
                 parentFragment.showDialog(builder.create());
