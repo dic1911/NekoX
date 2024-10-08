@@ -989,6 +989,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private ActionBarMenuSubItem[] scrimPopupWindowItems;
     private ActionBarMenuSubItem menuDeleteItem;
     private ActionBarMenuSubItem menuNekoTranslateItem;
+    private ActionBarMenuSubItem menuDownloadItem;
     private Runnable updateDeleteItemRunnable = new Runnable() {
         @Override
         public void run() {
@@ -9723,7 +9724,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             if (currentEncryptedChat == null || !noforward) {
                 actionModeOtherItem.addSubItem(nkbtn_forward_noquote, R.drawable.baseline_fast_forward_24, LocaleController.getString(R.string.NoQuoteForward));
                 actionModeOtherItem.addSubItem(star, R.drawable.baseline_star_24, LocaleController.getString(R.string.AddToFavorites));
-                actionModeOtherItem.addSubItem(save_to, R.drawable.msg_download, LocaleController.getString(R.string.SaveToMusic));
+                menuDownloadItem = actionModeOtherItem.addSubItem(save_to, R.drawable.msg_download, LocaleController.getString(R.string.SaveToDownloads));
             }
 
             menuNekoTranslateItem = actionModeOtherItem.addSubItem(nkbtn_translate, R.drawable.ic_translate, LocaleController.getString(R.string.Translate));
@@ -18473,6 +18474,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
                 if (NekoConfig.showBottomActionsWhenSelecting.Bool())
                     createBottomMessagesActionButtons();
+
+                menuDownloadItem.setText((canSaveMusicCount > 0 && selectedCount == canSaveMusicCount) ?
+                        LocaleController.getString(R.string.SaveToMusic) : LocaleController.getString(R.string.SaveToDownloads));
 
                 if (prevCantForwardCount == 0 && cantForwardMessagesCount != 0 || prevCantForwardCount != 0 && cantForwardMessagesCount == 0) {
                     forwardButtonAnimation = new AnimatorSet();
