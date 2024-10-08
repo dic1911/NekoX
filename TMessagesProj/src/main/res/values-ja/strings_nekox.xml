@@ -109,7 +109,7 @@
     <string name="NoQrFound">QRコードが見つかりません</string>
     <string name="DeveloperSettings">開発者設定</string>
     <string name="NekoXFaq">NekoX FAQ</string>
-    <string name="TransSite">プラットフォームを翻訳</string>
+    <string name="TransSite">翻訳プラットフォーム</string>
     <string name="OpenKayChain">OpenPGP クライアント</string>
     <string name="OpenPGPApp">OpenPGPプロバイダー</string>
     <string name="OpenPGPKey">OpenPGP キー</string>

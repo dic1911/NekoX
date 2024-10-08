@@ -89,10 +89,10 @@
     <string name="DisableNumberRounding">番号の丸めを無効にする</string>
     <string name="Categories">カテゴリ</string>
     <string name="OfficialChannel">公式チャンネル</string>
-    <string name="About">約</string>
+    <string name="About">このアプリについて</string>
     <string name="IgnoreBlockedAbout">本当に隠されているわけではありません。メッセージは引き続き表示できますが、Spoiler に変換されます。</string>
     <string name="GooglePlay">Google Play ストア</string>
-    <string name="SourceCode">GitHub のソース コード</string>
+    <string name="SourceCode">GitHub リポジトリ</string>
     <string name="ResetStickerSize">ステッカーのサイズをリセット</string>
     <string name="RestartAppToTakeEffect">有効にするにはアプリを再起動してください。</string>
     <string name="DisableAppBarShadow">タイトルバーの影を無効にする</string>
