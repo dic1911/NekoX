@@ -90,7 +90,7 @@
     <string name="Categories">Categorías</string>
     <string name="OfficialChannel">Canal Oficial</string>
     <string name="About">Acerca de</string>
-    <string name="IgnoreBlockedAbout">¡NO ES REALMENTE OCULTO! Los mensajes aún están disponibles para su visualización, pero se convertirán en mensajes con spoiler.</string>
+    <string name="IgnoreBlockedAbout">¡NO ESTÁN REALMENTE OCULTOS! Los mensajes aún están disponibles para su visualización, pero se convertirán en mensajes con spoiler.</string>
     <string name="GooglePlay">Google Play</string>
     <string name="SourceCode">Código fuente en GitHub</string>
     <string name="ResetStickerSize">Restablecer el tamaño del sticker</string>
@@ -163,7 +163,7 @@
     <string name="PhotoCopied">Foto copiada</string>
     <string name="CopyPhotoAsSticker">Copiar foto como sticker</string>
     <string name="IncreasedMaxPhotoResolution">Aumento de la resolución máxima de foto (2560px)</string>
-    <string name="AutoArchiveAndMute">Archivar y silenciar mensajes desconocidos automáticamente</string>
+    <string name="AutoArchiveAndMute">Auto archivar y silenciar MP desconocido</string>
     <string name="AutoArchiveAndMuteAbout">Efecto secundario: Esto utiliza una base de datos local para verificar, y no es 100% precisa, en otras palabras, podría tener FALSOS POSITIVOS</string>
     <string name="CloseWebViewWithoutConfirmation">Cerrar siempre la mini app sin confirmación</string>
     <string name="OpenWebViewTabWithoutBot">Volver a abrir la pestaña de mini app sin bot</string>
@@ -175,8 +175,8 @@
     <string name="UseBotWebviewForGames">Usar bot webview para juegos y tal vez otras mini apps</string>
     <string name="AppendOriginalTimestamp">Adjuntar marca de tiempo original para los mensajes reenviados</string>
     <string name="AlwaysShowDownloads">Mostrar siempre el botón de descargas</string>
-    <string name="OpenAvatarInsteadOfExpand">Abrir el avatar en lugar de expandir al tocar</string>
-    <string name="OpenAvatarInsteadOfExpandDesc">O haga un clic largo en el avatar antes de expandir para abrir</string>
+    <string name="OpenAvatarInsteadOfExpand">Abrir foto de perfil en lugar de expandir al tocar</string>
+    <string name="OpenAvatarInsteadOfExpandDesc">O haga un clic largo la foto antes de expandir para abrir</string>
     <string name="CustomTitleText">Texto del título personalizado</string>
     <string name="Links">Links</string>
     <string name="ForceAllowChooseBrowser">Forzar permitir elegir navegador al abrir enlaces</string>
@@ -232,13 +232,13 @@
     <string name="NoFilesFoundInfo">No hay resultados que coincidan con **%1$s** en su ruta actual</string>
     <string name="SearchRecentFiles">Buscar archivos recientes</string>
     <string name="FileUploadLimit">El tamaño del archivo no debe superar %1$s</string>
-    <string name="AutoSendMessageIfBlockedBySlowMode">Envío automático de mensajes en caso de bloqueo lentitud</string>
+    <string name="AutoSendMessageIfBlockedBySlowMode">Auto enviar mensaje después del bloqueo de modo lento</string>
     <string name="UpgradeGroup">Mejorar a supergrupo</string>
     <string name="ViewStats">Estadísticas</string>
     <string name="UploadImage">Cargar imagen</string>
     <string name="DebugMenuDisablePauseMusic">Deshabilitar pausa de reproducción durante grabación</string>
     <string name="UnofficialApp">Aplicación no oficial</string>
-    <string name="AutoSendMessageIfBlockedBySlowModeDesc">Solo se almacena el primer texto/pegatina/GIF, no se admiten otros medios/archivos</string>
+    <string name="AutoSendMessageIfBlockedBySlowModeDesc">Solo se pone en cola el primer texto/sticker/GIF, no se admiten otros medios/archivos</string>
     <string name="AutoSendAfterSlowModeIgnoredHint">Existe un mensaje pendiente, ignorando.</string>
     <string name="AutoSendAfterSlowModeHint">Programado para enviar después del temporizador de modo lento</string>
     <string name="justOneEmoji">Solo seleccionados</string>
@@ -248,7 +248,7 @@
     <string name="ReplyAsQuoteByDefault">Citar mensaje por defecto</string>
     <string name="maxRecentEmojiCount">Número máximo de emojis usados recientemente</string>
     <string name="ProviderLingva">Traductor Lingva</string>
-    <string name="CustomLingvaInstance">Instancia Lingva personalizada</string>
+    <string name="CustomLingvaInstance">Instancia personalizada de Lingva</string>
     <string name="LingvaInstanceNotConfigured">Instancia Lingva sin configurar, traducción no disponible.</string>
     <string name="LingvaInstanceNote">Busca en línea una instancia pública o aloja una por ti mismo; ten en cuenta que el traductor Lingva no funcionará con la traducción automática.</string>
     <string name="DisableAutoWebLogin">Deshabilitar el inicio de sesión automático en Telegram</string>
