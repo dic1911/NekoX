@@ -16,7 +16,7 @@
     <string name="FirstLast">名前 姓氏</string>
     <string name="LastFirst">姓氏 名前</string>
     <string name="TypefaceUseDefault">システムの既定のフォントを使用</string>
-    <string name="NoQuoteForward">見積もりなしで転送</string>
+    <string name="NoQuoteForward">引用なしで転送</string>
     <string name="Repeat">繰り返す</string>
     <string name="AddToSavedMessages">保存用メッセージに追加</string>
     <string name="CreateMention">アットユーザー</string>
@@ -25,11 +25,11 @@
     <string name="TransparentStatusBar">完全に透明なステータスバーを使う</string>
     <string name="EnableResidentNotification">常駐通知を表示する</string>
     <string name="DisableResidentNotification">常駐通知を無効にする</string>
-    <string name="NekogramRunning">NekogramX ランニング</string>
+    <string name="NekogramRunning">NekogramX は実行中</string>
     <string name="EventType">サイドバーアイコンの設定</string>
     <string name="ChristmasHat">クリスマスの帽子を毎日表示</string>
     <string name="ActionBarDecoration">タイトルバーの装飾</string>
-    <string name="DependsOnDate">日付に依存</string>
+    <string name="DependsOnDate">日付けによる</string>
     <string name="Christmas">クリスマス</string>
     <string name="Valentine">バレンタイン</string>
     <string name="Snowflakes">雪の結晶</string>
@@ -38,7 +38,7 @@
     <string name="TestBackend">異世界</string>
     <string name="TestBackendOn">このアカウントは、テストバックエンドに接続します。</string>
     <string name="TestBackendOff">このアカウントは、本番バックエンドに接続します。</string>
-    <string name="HideProxySponsorChannel">Proxy sponsor channelを非表示</string>
+    <string name="HideProxySponsorChannel">Proxy スポンサーチャンネルを非表示</string>
     <string name="ViewHistory">履歴を見る</string>
     <string name="Nya">にゃ!</string>
     <string name="SaveCacheToExternalFilesDir">ストレージの分離</string>
@@ -68,12 +68,12 @@
     <string name="BotToken">トークン</string>
     <string name="UnlimitedPinnedDialogs">無制限のチャット固定</string>
     <string name="UnlimitedPinnedDialogsAbout">チャットを無制限に固定することができます。固定は同期されなくなります。</string>
-    <string name="OpenArchiveOnPull">保管したチャットをプルダウンで開く</string>
+    <string name="OpenArchiveOnPull">保管したチャットを引き下げるで開く</string>
     <string name="HideKeyboardOnChatScroll">チャットスクロールでキーボードを非表示にする</string>
     <string name="UserRestrictionsSendStickers2">ステッカーの送信</string>
     <string name="UserRestrictionsSendGifs">GIFの送信</string>
-    <string name="ShowTabsOnForward">タブを前方に表示</string>
-    <string name="CheckAllAdministrated">管理されたものを追加</string>
+    <string name="ShowTabsOnForward">転送の時にタブを表示する</string>
+    <string name="CheckAllAdministrated">管理されたチャットを追加</string>
     <string name="RearVideoMessages">ビデオメッセージでリアカメラを使用する</string>
     <string name="HideAllTab">「すべてのチャット」タブを非表示にする</string>
     <string name="HideAllTabAbout">ホームページで「戻る」を押して開く</string>
@@ -106,7 +106,7 @@
     <string name="AvatarAsBackground">背景としてのプロフィール写真</string>
     <string name="BlurAvatarBackground">プロフィール写真をぼかす</string>
     <string name="DarkenAvatarBackground">プロフィール写真を暗くする</string>
-    <string name="ProviderDeepLTranslate">DeepL翻訳</string>
+    <string name="ProviderDeepLTranslate">DeepL 翻訳</string>
     <string name="ProviderMicrosoftTranslator">Microsoft Translator</string>
     <string name="ProviderYouDao">YouDao 翻訳</string>
     <string name="maxRecentStickerCount">最大数の最近使ったステッカー</string>
@@ -121,7 +121,7 @@
     <string name="autoUpdateSubInfo">プロキシを自動的に更新する</string>
     <string name="customDoH">カスタム DoH</string>
     <string name="disableChoosingSticker">ステッカーを選ぶ代わりに入力中を送信</string>
-    <string name="hideSendAsChannel">チャネルとして送信ボタンを隠す</string>
+    <string name="hideSendAsChannel">チャンネルとして送信ボタンを隠す</string>
     <string name="SaveToDownloadCount_one">%1$dファイルをダウンロードディレクトリー保存しています</string>
     <string name="SaveToDownloadCount_few">%1$dファイルをダウンロードディレクトリー保存しています</string>
     <string name="disableNotificationBubbles">通知のバブルを無効化</string>
