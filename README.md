@@ -203,3 +203,8 @@ You can [open an issue to](https://github.com/NekoX-Dev/NekoX/issues/new?&templa
 </ul>
 
 [<img src=".github/jetbrains-variant-3.png" width="200"/>](https://jb.gg/OpenSource)
+
+
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=dic1911/NekoX&type=Date)](https://star-history.com/#dic1911/NekoX&Date)
