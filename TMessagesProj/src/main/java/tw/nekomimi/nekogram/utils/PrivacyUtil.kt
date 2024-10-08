@@ -31,11 +31,11 @@ object PrivacyUtil {
 
         }
 
-        if (!MessagesController.getMainSettings(account).getBoolean("privacy_warning_skip_p2p", false)) {
-
-            postCheckAllowP2p(ctx, account)
-
-        }
+//        if (!MessagesController.getMainSettings(account).getBoolean("privacy_warning_skip_p2p", false)) {
+//
+//            postCheckAllowP2p(ctx, account)
+//
+//        }
 
         if (!MessagesController.getMainSettings(account).getBoolean("privacy_warning_skip_2fa", false)) {
 
