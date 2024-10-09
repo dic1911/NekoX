@@ -51,9 +51,12 @@ object UrlUtil {
             return out.build()
         }
 
-        val appendPort = (src.scheme == "http" && src.port != 80) || (src.scheme == "https" && src.port != 443)
-        val out = Uri.Builder().scheme(src.scheme).encodedAuthority(if (appendPort) "${src.host}:${src.port}" else src.host)
-            .appendEncodedPath(src.path?.replaceFirst("/", "")).encodedFragment(src.encodedFragment)
+        val appendPort = (src.port in 1..65535) && ((src.scheme == "http" && src.port != 80) || (src.scheme == "https" && src.port != 443))
+        val out = Uri.Builder().scheme(src.scheme)
+        if (appendPort) out.encodedAuthority("${src.host}:${src.port}")
+        else out.authority(src.host)
+        out.appendEncodedPath(src.path?.replaceFirst("/", "")).encodedFragment(src.encodedFragment)
+
         val queries = src.queryParameterNames
         for (q in queries) {
             var block = false
