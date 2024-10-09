@@ -3762,8 +3762,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 } else if (id == search) {
                     openSearchWithText(isSupportedTags() ? "" : null);
                 } else if (id == translate) {
-                    getMessagesController().getTranslateController().setHideTranslateDialog(getDialogId(), false, true);
-                    if (!getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId(), true)) {
+                    getMessagesController().getTranslateController().setHideTranslateDialog(getDialogId(), false, !isReplyChatComment());
+                    if (!getMessagesController().getTranslateController().toggleTranslatingDialog(getDialogId(), true) || isReplyChatComment()) {
                         updateTopPanel(true);
                     }
                 } else if (id == call || id == video_call) {
@@ -4021,6 +4021,9 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
 
         if (isThreadChat() && threadMessageId != 0 && !isTopic) {
             viewInChatItem = menu.addItem(nkbtn_view_in_chat, R.drawable.baseline_forum_24, themeDelegate);
+            if (NekoConfig.autoTranslate.Bool()) {
+                menu.addItem(translate, R.drawable.msg_translate, themeDelegate);
+            }
         }
 
         if (chatMode == MODE_QUICK_REPLIES && !QuickRepliesController.isSpecial(quickReplyShortcut)) {
@@ -29180,7 +29183,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         } else if (isThreadChat() && chatMode != MODE_SCHEDULED && currentChat != null) {
                             options.add(nkbtn_view_in_chat);
                             icons.add(R.drawable.baseline_forum_24);
-                            items.add(LocaleController.getString("ViewInChat", R.string.ViewInChat));
+                            items.add(LocaleController.getString(R.string.ViewInChat));
                         }
                         if (!selectedObject.isSponsored() && chatMode != MODE_SCHEDULED && ChatObject.isChannel(currentChat) && selectedObject.getDialogId() != mergeDialogId) {
                             items.add(LocaleController.getString(R.string.CopyLink));
@@ -29188,7 +29191,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                             icons.add(R.drawable.baseline_link_24);
                         }
                         if (!selectedObject.isSponsored() && chatMode != MODE_SCHEDULED && currentUser != null && selectedObject.getDialogId() != mergeDialogId) {
-                            items.add(LocaleController.getString("CopyLink", R.string.CopyLink));
+                            items.add(LocaleController.getString(R.string.CopyLink));
                             options.add(nkbtn_copy_link_in_pm);
                             icons.add(R.drawable.baseline_link_24);
                         }
@@ -29584,7 +29587,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                         } else if (isThreadChat() && !isTopic && chatMode != MODE_SCHEDULED && currentChat != null) {
                             options.add(nkbtn_view_in_chat);
                             icons.add(R.drawable.baseline_forum_24);
-                            items.add(LocaleController.getString("ViewInChat", R.string.ViewInChat));
+                            items.add(LocaleController.getString(R.string.ViewInChat));
                         }
                         if (selectedObject != null && selectedObject.messageOwner != null && selectedObject.messageOwner.action == null && currentChat != null && currentChat.forum && !isTopic && selectedObject.messageOwner != null && selectedObject.messageOwner.reply_to != null && selectedObject.messageOwner.reply_to.forum_topic) {
                             items.add(LocaleController.getString(R.string.ViewInTopic));

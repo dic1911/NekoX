@@ -120,9 +120,9 @@ public class TranslateController extends BaseController {
         return (
             isFeatureAvailable() &&
             !DialogObject.isEncryptedDialog(dialogId) &&
-            getUserConfig().getClientUserId() != dialogId &&
+            getUserConfig().getClientUserId() != dialogId // &&
             /* DialogObject.isChatDialog(dialogId) &&*/
-            translatableDialogs.contains(dialogId)
+            /*translatableDialogs.contains(dialogId)*/
         );
     }
 

@@ -5893,12 +5893,12 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                         commentProgress = new InfiniteProgress(AndroidUtilities.dp(7));
                     }
                     if (isRepliesChat) {
-                        comment = getString("ViewInChat", R.string.ViewInChat);
+                        comment = getString(R.string.ViewInChat);
                     } else {
                         if (LocaleController.isRTL) {
-                            comment = commentCount == 0 ? getString("LeaveAComment", R.string.LeaveAComment) : LocaleController.formatPluralString("CommentsCount", commentCount);
+                            comment = commentCount == 0 ? getString(R.string.LeaveAComment) : LocaleController.formatPluralString("CommentsCount", commentCount);
                         } else {
-                            comment = commentCount == 0 ? getString("LeaveAComment", R.string.LeaveAComment) : LocaleController.getPluralString("CommentsNoNumber", commentCount);
+                            comment = commentCount == 0 ? getString(R.string.LeaveAComment) : LocaleController.getPluralString("CommentsNoNumber", commentCount);
                         }
                         ArrayList<TLRPC.Peer> recentRepliers = getRecentRepliers();
                         if (commentCount != 0 && recentRepliers != null && !recentRepliers.isEmpty()) {
@@ -23625,9 +23625,9 @@ public class ChatMessageCell extends BaseCell implements SeekBar.SeekBarDelegate
                     String comment = null;
                     if (currentMessageObject != null && !currentMessageObject.shouldDrawWithoutBackground() && !currentMessageObject.isAnimatedEmoji()) {
                         if (isRepliesChat) {
-                            comment = getString("ViewInChat", R.string.ViewInChat);
+                            comment = getString(R.string.ViewInChat);
                         } else {
-                            comment = commentCount == 0 ? getString("LeaveAComment", R.string.LeaveAComment) : LocaleController.formatPluralString("CommentsCount", commentCount);
+                            comment = commentCount == 0 ? getString(R.string.LeaveAComment) : LocaleController.formatPluralString("CommentsCount", commentCount);
                         }
                     } else if (!isRepliesChat && commentCount > 0) {
                         comment = LocaleController.formatShortNumber(commentCount, null);
