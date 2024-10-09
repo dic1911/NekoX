@@ -3387,7 +3387,6 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 actionBar.setSupportsHolidayImage(true);
             }
         }
-        Log.d("030-tabs", String.format("createView - hide: %s, type: %d", forceHideTabs, initialDialogsType));
         if (!forceHideTabs && (!onlySelect || initialDialogsType == DIALOGS_TYPE_FORWARD || (folderId == 0 && NekoConfig.showTabsOnForward.Bool()))) {
             actionBar.setAddToContainer(false);
             actionBar.setCastShadows(false);
@@ -5429,6 +5428,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                 }
                 updateDrawerSwipeEnabled();
                 updateFilterTabs(false, true);
+                if (!hasFragment()) updateProxyButton(false, true);
             }
 
             @Override
@@ -10109,7 +10109,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         if (proxyDrawable == null || doneItem != null && doneItem.getVisibility() == View.VISIBLE) {
             return;
         }
-        boolean showDownloads = downloadsItemVisible = NekoConfig.alwaysShowDownloads.Bool();
+        boolean showDownloads = downloadsItemVisible = NekoConfig.alwaysShowDownloads.Bool() && !slidingTopicListOpened();
         for (int i = 0; i < getDownloadController().downloadingFiles.size() && !showDownloads; i++) {
             if (getFileLoader().isLoadingFile(getDownloadController().downloadingFiles.get(i).getFileName())) {
                 showDownloads = true;
@@ -10202,7 +10202,7 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
                     if (passcodeItem != null && passcodeItemVisible) {
                         passcodeItem.setVisibility(View.INVISIBLE);
                     }
-                    if (downloadsItem != null && downloadsItemVisible && !NekoConfig.alwaysShowDownloads.Bool()) {
+                    if (downloadsItem != null && downloadsItemVisible) {
                         downloadsItem.setVisibility(View.INVISIBLE);
                     }
                 } else {
@@ -13132,5 +13132,9 @@ public class DialogsActivity extends BaseFragment implements NotificationCenter.
         });
         searchViewPager.setFilteredSearchViewDelegate((showMediaFilters, users, dates, archive) -> DialogsActivity.this.updateFiltersView(showMediaFilters, users, dates, archive, true));
         searchViewPager.setVisibility(View.GONE);
+    }
+
+    private boolean slidingTopicListOpened() {
+        return rightSlidingDialogContainer != null && rightSlidingDialogContainer.hasFragment() && rightSlidingDialogContainer.isOpenned;
     }
 }
