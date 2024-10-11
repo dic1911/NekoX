@@ -397,6 +397,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
     private ActionBarMenuItem.Item translateItem;
     private ActionBarMenuItem searchIconItem;
     private ActionBarMenuItem viewInChatItem;
+    private ActionBarMenuItem translateChatItem;
     private ActionBarMenu.LazyItem audioCallIconItem;
     private boolean searchItemVisible;
     private RadialProgressView progressBar;
@@ -4022,7 +4023,7 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
         if (isThreadChat() && threadMessageId != 0 && !isTopic) {
             viewInChatItem = menu.addItem(nkbtn_view_in_chat, R.drawable.baseline_forum_24, themeDelegate);
             if (NekoConfig.autoTranslate.Bool()) {
-                menu.addItem(translate, R.drawable.msg_translate, themeDelegate);
+                translateChatItem = menu.addItem(translate, R.drawable.msg_translate, themeDelegate);
             }
         }
 
@@ -33139,6 +33140,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             searchItemVisible = true;
             if (viewInChatItem != null)
                 viewInChatItem.setVisibility(View.GONE);
+            if (translateChatItem != null)
+                translateChatItem.setVisibility(View.GONE);
             updateSearchButtons(0, 0, -1);
             updateBottomOverlay();
         }
@@ -36181,6 +36184,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
             // NekoX: hide viewInChat Item when searching
             if (viewInChatItem != null)
                 viewInChatItem.setVisibility(View.VISIBLE);
+            if (translateChatItem != null)
+                translateChatItem.setVisibility(View.VISIBLE);
             searchItemVisible = false;
             getMediaDataController().clearFoundMessageObjects();
             HashtagSearchController.getInstance(currentAccount).clearSearchResults();
