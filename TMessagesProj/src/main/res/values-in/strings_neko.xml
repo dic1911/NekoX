@@ -241,4 +241,15 @@
     <string name="AutoSendMessageIfBlockedBySlowModeDesc">Hanya teks/stiker/GIF pertama yang dimasukkan, media/file lain tidak didukung</string>
     <string name="AutoSendAfterSlowModeHint">Dijadwalkan untuk dikirim setelah pengatur waktu mode lambat</string>
     <string name="AutoSendAfterSlowModeIgnoredHint">Ada pesan tertunda, diabaikan.</string>
+    <string name="ReplyAsQuoteByDefault">Balas sebagai kutipan secara default</string>
+    <string name="maxRecentEmojiCount">Emoji terbaru maksimal</string>
+    <string name="justOneEmoji">Hanya terpilih</string>
+    <string name="SearchBlacklist">Masukkan obrolan tertentu ke daftar hitam dari hasil pencarian</string>
+    <string name="SearchBlacklistShort">Daftar hitam dari pencarian</string>
+    <string name="SearchBlacklistRevert">Hapus dari daftar hitam</string>
+    <string name="ProviderLingva">Terjemahan Lingva</string>
+    <string name="CustomLingvaInstance">Contoh Lingva Khusus</string>
+    <string name="LingvaInstanceNotConfigured">Contoh Lingva tidak diatur, terjemahan tidak tersedia.</string>
+    <string name="DisableAutoWebLogin">Matikan masuk otomatis dengan akun Telegram</string>
+    <string name="LingvaInstanceNote">Cari online untuk contoh publik atau host sendiri, perhatikan bahwa penerjemah Lingva tidak akan bekerja dengan terjemahan otomatis.</string>
 </resources>
