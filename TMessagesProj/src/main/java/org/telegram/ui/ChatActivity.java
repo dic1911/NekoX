@@ -17713,10 +17713,13 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 scrollToPositionOnRecreate = -1;
             }
 
-            if (searchCountText != null && searchGoToBeginningButton != null
-                    && searchGoToBeginningButton.getVisibility() == View.VISIBLE
-                    && searchCountText.getX() < searchGoToBeginningButton.getX()) {
-                searchCountText.setX(searchGoToBeginningButton.getX() + searchGoToBeginningButton.getWidth());
+            if (searchCountText != null && searchGoToBeginningButton != null && searchExpandList != null &&
+                    (NekoConfig.forceHideShowAsList.Bool() || (searchGoToBeginningButton.getVisibility() == View.VISIBLE
+                    && searchCountText.getX() < searchGoToBeginningButton.getX()))) {
+                int textWidth = searchCountText.getWidth();
+                float newX = searchGoToBeginningButton.getX() + searchGoToBeginningButton.getWidth();
+                newX += (searchContainer.getWidth() - newX - textWidth) / 2;
+                searchCountText.setX(newX);
                 searchExpandList.setText("", false);
             }
 

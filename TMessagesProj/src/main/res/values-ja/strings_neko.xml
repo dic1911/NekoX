@@ -231,4 +231,5 @@
     <string name="ReplyAsQuoteByDefault">デフォルトで引用としてリプライ</string>
     <string name="LingvaInstanceNote">公共のインスタンスをオンラインで検索するか、自分でホストするか、Lingva 翻訳者が自動翻訳で動作しないことに注意してください.</string>
     <string name="SearchBlacklist">検索結果から指定のチャットを非表示にする</string>
+    <string name="ForceHideShowAsList">検索時に ”一覧で表示” の文字を隠す</string>
 </resources>

@@ -252,4 +252,5 @@
     <string name="LingvaInstanceNotConfigured">尚未指定 Lingva 實例, 無法翻譯.</string>
     <string name="LingvaInstanceNote">在網路上尋找公用實例或自己架設實例, 注意 Lingva 無法配合自動翻譯功能使用.</string>
     <string name="DisableAutoWebLogin">停用自動登入 Telegram 帳號</string>
+    <string name="ForceHideShowAsList">搜尋時隱藏 \"顯示為列表\" 按鈕文字</string>
 </resources>
