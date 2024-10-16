@@ -68878,17 +68878,21 @@ public class TLRPC {
                     }
                 }
 
-                boolean spoilerOverride = false;
-                if (NekoConfig.ignoreBlocked.Bool()) {
-                    for (int n : MessagesController.instanceNums) {
-                        spoilerOverride = MessagesController.getInstance(n).blockePeers.indexOfKey(result.from_id.user_id) >= 0;
-                        if (spoilerOverride) break;
+                try {
+                    boolean spoilerOverride = false;
+                    if (NekoConfig.ignoreBlocked.Bool()) {
+                        for (int n : MessagesController.instanceNums) {
+                            spoilerOverride = MessagesController.getInstance(n).blockePeers.indexOfKey(result.from_id.user_id) >= 0;
+                            if (spoilerOverride) break;
+                        }
                     }
-                }
-                if (spoilerOverride) {
-                    TLRPC.TL_messageEntitySpoiler s = new TLRPC.TL_messageEntitySpoiler();
-                    s.length = result.message.length();
-                    result.entities.add(s);
+                    if (spoilerOverride) {
+                        TLRPC.TL_messageEntitySpoiler s = new TLRPC.TL_messageEntitySpoiler();
+                        s.length = result.message.length();
+                        result.entities.add(s);
+                    }
+                } catch (Throwable e) {
+                    FileLog.e(e);
                 }
             }
             return result;
