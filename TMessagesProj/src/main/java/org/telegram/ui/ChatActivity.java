@@ -18482,7 +18482,8 @@ public class ChatActivity extends BaseFragment implements NotificationCenter.Not
                 if (NekoConfig.showBottomActionsWhenSelecting.Bool())
                     createBottomMessagesActionButtons();
 
-                menuDownloadItem.setText((canSaveMusicCount > 0 && selectedCount == canSaveMusicCount) ?
+                if (menuDownloadItem != null)
+                    menuDownloadItem.setText((canSaveMusicCount > 0 && selectedCount == canSaveMusicCount) ?
                         LocaleController.getString(R.string.SaveToMusic) : LocaleController.getString(R.string.SaveToDownloads));
 
                 if (prevCantForwardCount == 0 && cantForwardMessagesCount != 0 || prevCantForwardCount != 0 && cantForwardMessagesCount == 0) {
