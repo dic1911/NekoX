@@ -208,7 +208,7 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro", '../TMessagesProj/proguard-rules-beta.pro'
             matchingFallbacks = ["release", "debug"]
             signingConfig keystorePwd == null ? signingConfigs.debug : signingConfigs.release
         }
@@ -219,7 +219,7 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro", '../TMessagesProj/proguard-rules-beta.pro'
             matchingFallbacks = ["release", "debug"]
             signingConfig keystorePwd == null ? signingConfigs.debug : signingConfigs.release
         }
@@ -230,7 +230,7 @@ android {
             minifyEnabled true
             shrinkResources true
             multiDexEnabled true
-            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro", '../TMessagesProj/proguard-rules-beta.pro'
             matchingFallbacks = ["release", "debug"]
         }
 

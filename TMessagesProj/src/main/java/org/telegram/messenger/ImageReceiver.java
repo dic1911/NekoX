@@ -2052,12 +2052,10 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         manualAlphaAnimator = value;
     }
 
-    @Keep
     public float getCurrentAlpha() {
         return currentAlpha;
     }
 
-    @Keep
     public void setCurrentAlpha(float value) {
         currentAlpha = value;
     }
@@ -2605,6 +2603,10 @@ public class ImageReceiver implements NotificationCenter.NotificationCenterDeleg
         if (drawable != null) {
             drawable.setAutoRepeat(value);
         }
+    }
+
+    public int getAutoRepeat() {
+        return autoRepeat;
     }
 
     public void setAutoRepeatCount(int count) {

@@ -23,7 +23,6 @@ import android.graphics.Rect;
 import android.graphics.RectF;
 import android.os.Build;
 import android.text.TextUtils;
-import android.util.Log;
 import android.util.TypedValue;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -34,6 +33,15 @@ import android.widget.FrameLayout;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
+
+//import com.google.mlkit.common.MlKitException;
+//import com.google.mlkit.vision.common.InputImage;
+//import com.google.mlkit.vision.label.ImageLabeling;
+//import com.google.mlkit.vision.label.defaults.ImageLabelerOptions;
+//import com.google.mlkit.vision.segmentation.subject.Subject;
+//import com.google.mlkit.vision.segmentation.subject.SubjectSegmentation;
+//import com.google.mlkit.vision.segmentation.subject.SubjectSegmenter;
+//import com.google.mlkit.vision.segmentation.subject.SubjectSegmenterOptions;
 
 import org.telegram.messenger.AndroidUtilities;
 import org.telegram.messenger.Emoji;
@@ -61,7 +69,6 @@ import org.telegram.ui.Components.CubicBezierInterpolator;
 import org.telegram.ui.Components.LayoutHelper;
 import org.telegram.ui.Components.Paint.ObjectDetectionEmojis;
 import org.telegram.ui.Components.ThanosEffect;
-import org.telegram.ui.Stories.DarkThemeResourceProvider;
 import org.telegram.ui.Stories.recorder.DownloadButton;
 import org.telegram.ui.Stories.recorder.StoryEntry;
 
@@ -1187,7 +1194,7 @@ public class StickerMakerView extends FrameLayout implements NotificationCenter.
                 stickerUploader.finalPath = message.attachPath = StoryEntry.makeCacheFile(UserConfig.selectedAccount, "webm").getAbsolutePath();
                 stickerUploader.messageObject = new MessageObject(UserConfig.selectedAccount, message, (MessageObject) null, false, false);
                 stickerUploader.messageObject.videoEditedInfo = videoEditedInfo;
-                MediaController.getInstance().scheduleVideoConvert(stickerUploader.messageObject, false, false);
+                MediaController.getInstance().scheduleVideoConvert(stickerUploader.messageObject, false, false, false);
             } else {
                 FileLoader.getInstance(currentAccount).uploadFile(path, false, true, ConnectionsManager.FileTypeFile);
             }

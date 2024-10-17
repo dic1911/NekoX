@@ -1,6 +1,7 @@
 package org.telegram.ui.Components.Premium.boosts;
 
 import android.os.Build;
+import android.text.TextUtils;
 import android.util.Pair;
 
 import org.json.JSONObject;
@@ -97,12 +98,7 @@ public class BoostRepository {
         return peers;
     }
 
-    public static void payGiftCode(List<TLObject> users, TLRPC.TL_premiumGiftCodeOption option, TLRPC.Chat chat, BaseFragment baseFragment, Utilities.Callback<Void> onSuccess, Utilities.Callback<TLRPC.TL_error> onError) {
-        if (!isGoogleBillingAvailable()) {
-            payGiftCodeByInvoice(users, option, chat, baseFragment, onSuccess, onError);
-        } else {
-            payGiftCodeByGoogle(users, option, chat, baseFragment, onSuccess, onError);
-        }
+    public static void payGiftCode(List<TLObject> users, TLRPC.TL_premiumGiftCodeOption option, TLRPC.Chat chat, TLRPC.TL_textWithEntities message, BaseFragment baseFragment, Utilities.Callback<Void> onSuccess, Utilities.Callback<TLRPC.TL_error> onError) {
     }
 
     public static boolean isGoogleBillingAvailable() {
@@ -302,8 +298,9 @@ public class BoostRepository {
         });
     }
 
-    public static void loadGiftOptions(TLRPC.Chat chat, Utilities.Callback<List<TLRPC.TL_premiumGiftCodeOption>> onDone) {
+    public static int loadGiftOptions(int currentAccount, TLRPC.Chat chat, Utilities.Callback<List<TLRPC.TL_premiumGiftCodeOption>> onDone) {
         // 030: remove premium shit
+        return -1;
     }
 
     public static int searchContacts(int reqId, String query, Utilities.Callback<List<TLRPC.User>> onDone) {
