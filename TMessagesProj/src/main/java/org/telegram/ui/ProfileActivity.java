@@ -226,6 +226,7 @@ import org.telegram.ui.Components.DotDividerSpan;
 import org.telegram.ui.Components.EditTextBoldCursor;
 import org.telegram.ui.Components.EmojiPacksAlert;
 import org.telegram.ui.Components.EmptyStubSpan;
+import org.telegram.ui.Components.FiltersListBottomSheet;
 import org.telegram.ui.Components.FloatingDebug.FloatingDebugController;
 import org.telegram.ui.Components.Forum.ForumUtilities;
 import org.telegram.ui.Components.FragmentContextView;
@@ -561,6 +562,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
 
     private final static int clear_cache = 1001;
     private final static int block_from_search = 1002;
+    private final static int add_to_folder = 1003;
 
     private Rect rect = new Rect();
 
@@ -2759,6 +2761,8 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
                         blockFromSearchItem.setText(getString(R.string.SearchBlacklistRevert));
                     }
                     NekoConfig.saveSearchBlacklist();
+                } else if (id == add_to_folder) {
+                    showAddCurrentChatToFolderSheet();
                 }
             }
         });
@@ -10524,6 +10528,7 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
         if (selfUser && !myProfile) {
             otherItem.addSubItem(logout, R.drawable.msg_leave, LocaleController.getString(R.string.LogOut));
         } else {
+            otherItem.addSubItem(add_to_folder, R.drawable.msg_folders, LocaleController.getString(R.string.FilterAddTo));
             otherItem.addSubItem(clear_cache, R.drawable.msg_delete, LocaleController.getString(R.string.ClearCache));
 
             int blockFromSearchTxt = (NekoConfig.searchBlacklistData.contains(getDialogId()) ?
@@ -14318,6 +14323,68 @@ public class ProfileActivity extends BaseFragment implements NotificationCenter.
             }
         }
         return true;
+    }
+
+    private void showAddCurrentChatToFolderSheet() {
+        ArrayList<Long> selectedDialogs = new ArrayList<>(1);
+        selectedDialogs.add(getDialogId());
+        FiltersListBottomSheet sheet = new FiltersListBottomSheet(ProfileActivity.this, selectedDialogs);
+        sheet.setDelegate((filter, checked) -> {
+            ArrayList<Long> alwaysShow = FiltersListBottomSheet.getDialogsCount(ProfileActivity.this, filter, selectedDialogs, true, false);
+            if (!checked) {
+                int currentCount;
+                if (filter != null) {
+                    currentCount = filter.alwaysShow.size();
+                } else {
+                    currentCount = 0;
+                }
+                int totalCount = currentCount + alwaysShow.size();
+                if ((totalCount > getMessagesController().dialogFiltersChatsLimitDefault && !getUserConfig().isPremium()) || totalCount > getMessagesController().dialogFiltersChatsLimitPremium) {
+                    showDialog(new LimitReachedBottomSheet(ProfileActivity.this, fragmentView.getContext(), LimitReachedBottomSheet.TYPE_CHATS_IN_FOLDER, currentAccount, null));
+                    return;
+                }
+            }
+            if (filter != null) {
+                if (checked) {
+                    for (int a = 0; a < selectedDialogs.size(); a++) {
+                        filter.neverShow.add(selectedDialogs.get(a));
+                        filter.alwaysShow.remove(selectedDialogs.get(a));
+                    }
+                    FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, ProfileActivity.this, null);
+                    long did;
+                    if (selectedDialogs.size() == 1) {
+                        did = selectedDialogs.get(0);
+                    } else {
+                        did = 0;
+                    }
+                    final UndoView undoView = getUndoView();
+                    if (undoView != null) {
+                        undoView.showWithAction(did, UndoView.ACTION_REMOVED_FROM_FOLDER, selectedDialogs.size(), filter, null, null);
+                    }
+                } else {
+                    if (!alwaysShow.isEmpty()) {
+                        for (int a = 0; a < alwaysShow.size(); a++) {
+                            filter.neverShow.remove(alwaysShow.get(a));
+                        }
+                        filter.alwaysShow.addAll(alwaysShow);
+                        FilterCreateActivity.saveFilterToServer(filter, filter.flags, filter.name, filter.color, filter.alwaysShow, filter.neverShow, filter.pinnedDialogs, false, false, true, true, false, ProfileActivity.this, null);
+                    }
+                    long did;
+                    if (alwaysShow.size() == 1) {
+                        did = alwaysShow.get(0);
+                    } else {
+                        did = 0;
+                    }
+                    final UndoView undoView = getUndoView();
+                    if (undoView != null) {
+                        undoView.showWithAction(did, UndoView.ACTION_ADDED_TO_FOLDER, alwaysShow.size(), filter, null, null);
+                    }
+                }
+            } else {
+                presentFragment(new FilterCreateActivity(null, alwaysShow));
+            }
+        });
+        showDialog(sheet);
     }
 
 }
