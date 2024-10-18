@@ -210,4 +210,10 @@
     <string name="doubleTapSendReaction">发送默认回应</string>
     <string name="doubleTapDisable">禁用</string>
     <string name="disableReactionsWhenSelecting">选择消息时隐藏回应菜单</string>
+    <string name="ShowSelfInsteadOfSavedMessages">显示自己而不是收藏夹</string>
+    <string name="DisableCustomWallpaperUser">停用使用者自订背景</string>
+    <string name="DisableCustomWallpaperChannel">停用频道自订背景</string>
+    <string name="FasterReconnectHack">自动开关代理以更快速的重新连线</string>
+    <string name="UnsupportedProxy">不支持的代理</string>
+    <string name="FasterReconnectHackAbout">只在良好的网路环境下工作.</string>
 </resources>
