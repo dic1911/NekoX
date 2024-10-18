@@ -199,4 +199,21 @@
     <string name="AutoCheckUpdatePreview">Aperçu (instable)</string>
     <string name="AppUpdateNekoX">Mettre à jour Nekogram X</string>
     <string name="setChannelAliasName">Définir un alias</string>
+    <string name="labelChannelUser">Étiquette utilisateur de la chaîne</string>
+    <string name="labelChannelUserDetails">Si l\'expéditeur du message est \"Chaîne\", il sera étiqueté \"Chaîne\".</string>
+    <string name="StickerSettings">Autocollant</string>
+    <string name="ReactionSettings">Réaction</string>
+    <string name="doubleTapAndReactions">Double tap</string>
+    <string name="doubleTapShowReactionsMenu">Afficher le menu des réactions</string>
+    <string name="doubleTapSendReaction">Envoyer une réaction</string>
+    <string name="doubleTapDisable">Désactiver</string>
+    <string name="disableReactionsWhenSelecting">Masquer les réactions lors de la sélection</string>
+    <string name="UnsupportedProxy">Proxy non supporté</string>
+    <string name="ShowSelfInsteadOfSavedMessages">Afficher comme soi-même au lieu des Messages Enregistrés</string>
+    <string name="FasterReconnectHack">Reconnexion plus rapide en activant/désactivant le proxy</string>
+    <string name="DisableCustomWallpaperUser">Désactiver le fond d\'écran personnalisé de l\'utilisateur</string>
+    <string name="DisableCustomWallpaperChannel">Désactiver le fond d\'écran personnalisé de la chaîne</string>
+    <string name="FasterReconnectHackAbout">Ce hack ne fonctionne qu\'avec un bon environnement réseau.</string>
+    <string name="ConfirmSettings">Confirmation</string>
+    <string name="InteractionSettings">Interaction</string>
 </resources>
