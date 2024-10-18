@@ -207,7 +207,7 @@
     <string name="doubleTapAndReactions">雙擊</string>
     <string name="doubleTapDisable">停用</string>
     <string name="disableReactionsWhenSelecting">選擇訊息時隱藏反應選單</string>
-    <string name="ShowSelfInsteadOfSavedMessages">顯示自己而不是儲存的消息</string>
+    <string name="ShowSelfInsteadOfSavedMessages">顯示自己而不是我的收藏</string>
     <string name="DisableCustomWallpaperChannel">停用頻道自訂背景</string>
     <string name="FasterReconnectHack">自動開關代理以更快速的重新連線</string>
     <string name="FasterReconnectHackAbout">只在良好的網路環境下有作用.</string>
