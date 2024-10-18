@@ -204,4 +204,9 @@
     <string name="StickerSettings">Sticker</string>
     <string name="ConfirmSettings">Bestätigung</string>
     <string name="InteractionSettings">Interaktion</string>
+    <string name="ReactionSettings">Reaktion</string>
+    <string name="doubleTapAndReactions">Doppel anklicken</string>
+    <string name="doubleTapShowReactionsMenu">Zeige Reaktionenmenü</string>
+    <string name="doubleTapSendReaction">Sende Reaktion</string>
+    <string name="doubleTapDisable">Deaktiviere</string>
 </resources>
