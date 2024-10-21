@@ -140,4 +140,5 @@
     <string name="SaveToDownloadCount_zero">Enregistrement de %1$d fichiers dans les téléchargements</string>
     <string name="SaveToDownloadCount_one">Enregistrement de %1$d fichier dans les téléchargements</string>
     <string name="reactions">Réactions dans le menu</string>
+    <string name="ForceHideShowAsList">Masquer le texte \"Afficher comme Liste\" lors de la recherche</string>
 </resources>
