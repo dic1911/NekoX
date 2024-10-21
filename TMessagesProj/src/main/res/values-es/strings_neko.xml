@@ -34,7 +34,7 @@
     <string name="Valentine">Día de San Valentín</string>
     <string name="Snowflakes">Copos de nieve</string>
     <string name="Fireworks">Fuegos artificiales</string>
-    <string name="DeleteDownloadedFile">Borrar el archivo descargado</string>
+    <string name="DeleteDownloadedFile">Eliminar descarga</string>
     <string name="TestBackend">Backend de prueba</string>
     <string name="TestBackendOn">Esta cuenta se conectará con el backend de prueba.</string>
     <string name="TestBackendOff">Esta cuenta se conectará con el backend de producción.</string>
@@ -176,7 +176,7 @@
     <string name="AppendOriginalTimestamp">Adjuntar marca de tiempo original para los mensajes reenviados</string>
     <string name="AlwaysShowDownloads">Mostrar siempre el botón de descargas</string>
     <string name="OpenAvatarInsteadOfExpand">Abrir foto de perfil en lugar de expandir al tocar</string>
-    <string name="OpenAvatarInsteadOfExpandDesc">O haga un clic largo la foto antes de expandir para abrir</string>
+    <string name="OpenAvatarInsteadOfExpandDesc">O haga un clic largo en la foto antes de expandir para abrir</string>
     <string name="CustomTitleText">Texto del título personalizado</string>
     <string name="Links">Links</string>
     <string name="ForceAllowChooseBrowser">Forzar permitir elegir navegador al abrir enlaces</string>
@@ -252,4 +252,5 @@
     <string name="LingvaInstanceNotConfigured">Instancia Lingva sin configurar, traducción no disponible.</string>
     <string name="LingvaInstanceNote">Busca en línea una instancia pública o aloja una por ti mismo; ten en cuenta que el traductor Lingva no funcionará con la traducción automática.</string>
     <string name="DisableAutoWebLogin">Deshabilitar el inicio de sesión automático en Telegram</string>
+    <string name="ForceHideShowAsList">Ocultar \"Mostrar como lista\" al buscar</string>
 </resources>

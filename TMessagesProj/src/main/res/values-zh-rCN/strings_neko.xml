@@ -252,4 +252,5 @@
     <string name="ConfirmToSendCommandToggle">以点击传送指令前需经过确认</string>
     <string name="CopyPhoto">复制图片</string>
     <string name="IgnoreAllReactions">忽略表情符号回应</string>
+    <string name="ForceHideShowAsList">搜寻时隐藏\"以列表显示\"按纽文字</string>
 </resources>
