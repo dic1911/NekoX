@@ -3052,6 +3052,7 @@ public class ActionBarLayout extends FrameLayout implements INavigationLayout, F
     }
 
     private boolean shouldHideTabs() {
+        if (LaunchActivity.instance == null) return false;
         return (NekoConfig.hideWebViewTabOverlayInChat.Bool() || NekoConfig.hideWebViewTabOverlayWhenSharing.Bool())
             && !LaunchActivity.instance.getBottomSheetTabsOverlay().tabsView.drawTabs;
     }

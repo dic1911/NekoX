@@ -502,6 +502,13 @@ public class DialogsAdapter extends RecyclerListView.SelectionAdapter implements
         if (itemInternals.size() < 50 || !ALLOW_UPDATE_IN_BACKGROUND) {
             DiffUtil.DiffResult result = DiffUtil.calculateDiff(callback);
             isCalculatingDiff = false;
+
+            // try avoid "Cannot call this method while RecyclerView is computing a layout or scrolling" error
+            if (recyclerListView.isComputingLayout()) {
+                recyclerListView.post(() -> updateList(saveScrollPosition));
+                return;
+            }
+
             if (saveScrollPosition != null) {
                 saveScrollPosition.run();
             }

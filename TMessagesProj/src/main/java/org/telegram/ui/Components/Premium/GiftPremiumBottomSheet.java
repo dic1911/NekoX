@@ -441,16 +441,22 @@ public class GiftPremiumBottomSheet extends BottomSheetWithRecyclerListView impl
 
     public final static class GiftTier {
         public final TLRPC.TL_premiumGiftOption giftOption;
+        public final TLRPC.TL_premiumGiftCodeOption giftCodeOption;
         private int discount;
         private long pricePerMonth;
 
         private long pricePerMonthRegular;
-        private Object googlePlayProductDetails = null;
+        public Object googlePlayProductDetails = null;
 
         public int yOffset;
 
         public GiftTier(TLRPC.TL_premiumGiftOption giftOption) {
             this.giftOption = giftOption;
+            this.giftCodeOption = null;
+        }
+        public GiftTier(TLRPC.TL_premiumGiftCodeOption giftCodeOption) {
+            this.giftOption = null;
+            this.giftCodeOption = giftCodeOption;
         }
 
         public Object getGooglePlayProductDetails() {
@@ -465,8 +471,16 @@ public class GiftPremiumBottomSheet extends BottomSheetWithRecyclerListView impl
             this.pricePerMonthRegular = pricePerMonthRegular;
         }
 
+        public String getStoreProduct() {
+            if (giftOption != null) return giftOption.store_product;
+            if (giftCodeOption != null) return giftCodeOption.store_product;
+            return null;
+        }
+
         public int getMonths() {
-            return giftOption.months;
+            if (giftOption != null) return giftOption.months;
+            if (giftCodeOption != null) return giftCodeOption.months;
+            return 1;
         }
 
         public int getDiscount() {
@@ -490,14 +504,14 @@ public class GiftPremiumBottomSheet extends BottomSheetWithRecyclerListView impl
             if (pricePerMonth == 0) {
                 long price = getPrice();
                 if (price != 0) {
-                    pricePerMonth = price / giftOption.months;
+                    pricePerMonth = price / getMonths();
                 }
             }
             return pricePerMonth;
         }
 
         public String getFormattedPricePerMonth() {
-            if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
+            if (BuildVars.useInvoiceBilling() || giftOption != null && giftOption.store_product == null || giftCodeOption != null && giftCodeOption.store_product == null) {
                 return BillingController.getInstance().formatCurrency(getPricePerMonth(), getCurrency());
             }
 
@@ -505,7 +519,7 @@ public class GiftPremiumBottomSheet extends BottomSheetWithRecyclerListView impl
         }
 
         public String getFormattedPrice() {
-            if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
+            if (BuildVars.useInvoiceBilling() || giftOption != null && giftOption.store_product == null || giftCodeOption != null && giftCodeOption.store_product == null) {
                 return BillingController.getInstance().formatCurrency(getPrice(), getCurrency());
             }
 
@@ -513,15 +527,27 @@ public class GiftPremiumBottomSheet extends BottomSheetWithRecyclerListView impl
         }
 
         public long getPrice() {
-            if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
-                return giftOption.amount;
+            if (giftOption != null) {
+                if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
+                    return giftOption.amount;
+                }
+            } else if (giftCodeOption != null) {
+                if (BuildVars.useInvoiceBilling() || giftCodeOption.store_product == null) {
+                    return giftCodeOption.amount;
+                }
             }
             return 0;
         }
 
         public String getCurrency() {
-            if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
-                return giftOption.currency;
+            if (giftOption != null) {
+                if (BuildVars.useInvoiceBilling() || giftOption.store_product == null) {
+                    return giftOption.currency;
+                }
+            } else if (giftCodeOption != null) {
+                if (BuildVars.useInvoiceBilling() || giftCodeOption.store_product == null) {
+                    return giftCodeOption.currency;
+                }
             }
             return "";
         }
