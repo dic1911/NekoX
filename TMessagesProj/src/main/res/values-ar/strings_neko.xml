@@ -145,4 +145,5 @@
     <string name="forceBlurInChat">فرض تمكين شفافية المحادثة</string>
     <string name="ChatBlurAlphaValue">نسبة شفافية المحادثة</string>
     <string name="disablePremiumStickerAnimation">تعطيل الرسوم المتحركة لملصقات البريميوم</string>
+    <string name="ForceHideShowAsList">إخفاء نص \"إظهار كقائمة\" عند البحث</string>
 </resources>
