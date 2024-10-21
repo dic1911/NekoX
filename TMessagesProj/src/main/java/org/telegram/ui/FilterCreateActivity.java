@@ -34,6 +34,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.accessibility.AccessibilityNodeInfo;
 import android.view.inputmethod.EditorInfo;
+import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -96,6 +97,10 @@ import org.telegram.ui.Components.UndoView;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import cn.hutool.core.util.StrUtil;
+import kotlin.Unit;
+import tw.nekomimi.nekogram.ui.BottomBuilder;
+
 public class FilterCreateActivity extends BaseFragment {
 
     private RecyclerListView listView;
@@ -122,6 +127,29 @@ public class FilterCreateActivity extends BaseFragment {
     private LongSparseIntArray newPinned;
     private CreateLinkCell createLinkCell;
     private HeaderCellColorPreview folderTagsHeader;
+    private String oldEmoticon;
+
+    private View.OnClickListener editFilterIcon = v -> {
+        if (oldEmoticon == null) oldEmoticon = filter.emoticon;
+        BottomBuilder builder = new BottomBuilder(getParentActivity());
+        builder.addTitle(LocaleController.getString(R.string.TabTitleTypeIcon));
+        EditText input = builder.addEditText(LocaleController.getString(R.string.Emoji));
+        if (StrUtil.isNotBlank(filter.emoticon)) {
+            oldEmoticon = filter.emoticon;
+            input.setText(filter.emoticon);
+        }
+        builder.addCancelButton();
+        builder.addOkButton((it) -> {
+            String emoticon = input.getText().toString();
+            if (StrUtil.isBlank(emoticon)) return Unit.INSTANCE;
+            filter.emoticon = emoticon;
+            checkDoneButton(true);
+            return Unit.INSTANCE;
+        });
+        builder.show();
+        input.requestFocus();
+        AndroidUtilities.showKeyboard(input);
+    };
 
     private boolean canCreateLink() {
         return (
@@ -143,7 +171,7 @@ public class FilterCreateActivity extends BaseFragment {
 
         private RLottieImageView imageView;
 
-        public HintInnerCell(Context context) {
+        public HintInnerCell(Context context, FilterCreateActivity activity) {
             super(context);
 
             imageView = new RLottieImageView(context);
@@ -156,6 +184,7 @@ public class FilterCreateActivity extends BaseFragment {
                     imageView.setProgress(0.0f);
                     imageView.playAnimation();
                 }
+                activity.editFilterIcon.onClick(this);
             });
         }
 
@@ -253,7 +282,9 @@ public class FilterCreateActivity extends BaseFragment {
 
         items.clear();
 
-        items.add(new ItemInner(VIEW_TYPE_HINT, false));
+        ItemInner icon = new ItemInner(VIEW_TYPE_HINT, false);
+        items.add(icon);
+        icon.onClickListener = editFilterIcon;
         nameRow = items.size();
         items.add(ItemInner.asEdit());
         items.add(ItemInner.asShadow(null));
@@ -409,7 +440,7 @@ public class FilterCreateActivity extends BaseFragment {
         listView.setLayoutManager(new LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false));
         listView.setVerticalScrollBarEnabled(false);
         frameLayout.addView(listView, LayoutHelper.createFrame(LayoutHelper.MATCH_PARENT, LayoutHelper.MATCH_PARENT));
-        listView.setAdapter(adapter = new ListAdapter(context));
+        listView.setAdapter(adapter = new ListAdapter(context, this));
         listView.setOnItemClickListener((view, position) -> {
             if (getParentActivity() == null) {
                 return;
@@ -967,6 +998,7 @@ public class FilterCreateActivity extends BaseFragment {
         req.filter.exclude_archived = (newFilterFlags & MessagesController.DIALOG_FILTER_FLAG_EXCLUDE_ARCHIVED) != 0;
         req.filter.id = filter.id;
         req.filter.title = newFilterName;
+        // req.filter.emoticon = filter.emoticon; // ignored by server
         if (newFilterColor < 0) {
             req.filter.flags &=~ 134217728;
             req.filter.color = 0;
@@ -1073,6 +1105,9 @@ public class FilterCreateActivity extends BaseFragment {
             hasUserChanged = true;
         }
         if (filter.color != newFilterColor) {
+            hasUserChanged = true;
+        }
+        if (oldEmoticon != null && !oldEmoticon.equals(filter.emoticon)) {
             hasUserChanged = true;
         }
         if (!hasUserChanged) {
@@ -1272,9 +1307,11 @@ public class FilterCreateActivity extends BaseFragment {
     private class ListAdapter extends AdapterWithDiffUtils {
 
         private Context mContext;
+        private FilterCreateActivity mActivity;
 
-        public ListAdapter(Context context) {
+        public ListAdapter(Context context, FilterCreateActivity activity) {
             mContext = context;
+            mActivity = activity;
         }
 
         @Override
@@ -1359,7 +1396,7 @@ public class FilterCreateActivity extends BaseFragment {
                     view.setBackgroundColor(Theme.getColor(Theme.key_windowBackgroundWhite));
                     break;
                 case VIEW_TYPE_HINT:
-                    view = new HintInnerCell(mContext);
+                    view = new HintInnerCell(mContext, mActivity);
                     break;
                 case VIEW_TYPE_LINK:
                     view = new LinkCell(mContext, FilterCreateActivity.this, currentAccount, filter.id) {
