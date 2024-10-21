@@ -138,6 +138,7 @@ public class NekoGeneralSettingsActivity extends BaseFragment {
     private final AbstractConfigCell showTabsOnForwardRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.showTabsOnForward));
     private final AbstractConfigCell openArchiveOnPullRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.openArchiveOnPull));
     private final AbstractConfigCell ignoreMutedCountRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.ignoreMutedCount));
+    private final AbstractConfigCell ignoreFilterEmoticonUpdateRow = cellGroup.appendCell(new ConfigCellTextCheck(NekoConfig.ignoreFilterEmoticonUpdate));
     private final AbstractConfigCell tabsTitleTypeRow = cellGroup.appendCell(new ConfigCellSelectBox(null, NekoConfig.tabsTitleType,
             new String[]{
                     LocaleController.getString(R.string.TabTitleTypeText),

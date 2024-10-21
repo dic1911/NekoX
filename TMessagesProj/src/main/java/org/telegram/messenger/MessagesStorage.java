@@ -3012,10 +3012,16 @@ public class MessagesStorage extends BaseController {
             state.bindInteger(3, filter.unreadCount);
             state.bindInteger(4, filter.flags);
             state.bindString(5, filter.id == 0 ? "ALL_CHATS" : filter.name);
-            if (filter.emoticon != null) {
-                state.bindString(6, filter.emoticon);
+            String emoticon = dialogFilters.get(dialogFilters.indexOf(filter)).emoticon;
+            if (NekoConfig.ignoreFilterEmoticonUpdate.Bool()) {
+                if (emoticon != null) state.bindString(6, emoticon);
+                else state.bindNull(6);
             } else {
-                state.bindNull(6);
+                if (filter.emoticon != null) {
+                    state.bindString(6, filter.emoticon);
+                } else {
+                    state.bindNull(6);
+                }
             }
             state.bindInteger(7, filter.color);
             state.step();
@@ -3157,7 +3163,7 @@ public class MessagesStorage extends BaseController {
                             changed = true;
                             filter.name = newFilter.title;
                         }
-                        if (!TextUtils.equals(filter.emoticon, newFilter.emoticon)) {
+                        if (!NekoConfig.ignoreFilterEmoticonUpdate.Bool() && !TextUtils.equals(filter.emoticon, newFilter.emoticon)) {
                             changed = true;
                             filter.emoticon = newFilter.emoticon;
                         }
