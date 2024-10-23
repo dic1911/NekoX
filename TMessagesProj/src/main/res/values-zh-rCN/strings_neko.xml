@@ -253,4 +253,5 @@
     <string name="CopyPhoto">复制图片</string>
     <string name="IgnoreAllReactions">忽略表情符号回应</string>
     <string name="ForceHideShowAsList">搜寻时隐藏\"以列表显示\"按纽文字</string>
+    <string name="IgnoreFilterEmoticonUpdate">忽略来自服务器的资料夹图示资讯</string>
 </resources>
