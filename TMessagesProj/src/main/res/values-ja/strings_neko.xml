@@ -241,4 +241,5 @@
     <string name="ForceAllowChooseBrowserDesc">デフォルトアプリが指定されていないリンクにのみ有効</string>
     <string name="SearchBlacklistShort">検索から排除</string>
     <string name="SearchBlacklistRevert">検査から排除しない</string>
+    <string name="IgnoreFilterEmoticonUpdate">サーバーからのフォルダアイコンデータを無視する</string>
 </resources>
