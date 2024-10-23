@@ -66,7 +66,7 @@
     <string name="UndoTranslate">Deshacer la traducción</string>
     <string name="DisablePhotoViewerSideAction">No cambiar de imagen con toques</string>
     <string name="BotToken">Token</string>
-    <string name="UnlimitedPinnedDialogs">Chats anclados ilimitados</string>
+    <string name="UnlimitedPinnedDialogs">Chats fijados ilimitados</string>
     <string name="UnlimitedPinnedDialogsAbout">Ancla tantos chats como quieras, pero desactiva su sincronización.</string>
     <string name="OpenArchiveOnPull">Abrir archivados al deslizar hacia abajo</string>
     <string name="HideKeyboardOnChatScroll">Ocultar teclado al desplazar el chat</string>
@@ -253,4 +253,5 @@
     <string name="LingvaInstanceNote">Busca en línea una instancia pública o aloja una por ti mismo; ten en cuenta que el traductor Lingva no funcionará con la traducción automática.</string>
     <string name="DisableAutoWebLogin">Deshabilitar el inicio de sesión automático en Telegram</string>
     <string name="ForceHideShowAsList">Ocultar \"Mostrar como lista\" al buscar</string>
+    <string name="IgnoreFilterEmoticonUpdate">No sincronizar iconos con el servidor</string>
 </resources>
