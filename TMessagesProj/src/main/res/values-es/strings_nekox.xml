@@ -122,8 +122,8 @@
     <string name="DisableVibration">Desactivar vibración</string>
     <string name="IgnoreContentRestrictions">Ignorar las restricciones de contenido</string>
     <string name="SendCommentAfterForward">Enviar comentario después de reenviar</string>
-    <string name="UnpinMessageX">Desanclar mensaje</string>
-    <string name="UnpinMessagesAll">Desanclar todos los mensajes</string>
+    <string name="UnpinMessageX">Desfijar mensaje</string>
+    <string name="UnpinMessagesAll">Desfijar todos los mensajes</string>
     <string name="DismissForYourself">Descartar para ti mismo</string>
     <string name="ImportLogin">Iniciar sesión con QR</string>
     <string name="QRLoginNotice">Este código / enlace QR permite que alguien inicie sesión en su cuenta de Telegram. ¿Es esta tu propia operación\?</string>
@@ -183,10 +183,9 @@
     <string name="ImportSettingsAlert">¿Está seguro de sobrescribir las configuraciones\? Importar configuraciones de fuentes desconocidas puede ocasionar que el pin sea sobre sobreescrito y causar bloqueo de la aplicación.</string>
     <string name="VersionUpdateConfirm">ACTUALIZAR</string>
     <string name="VersionUpdateIgnore">Ignorar</string>
-    <string name="EnableStickerPin">Habilitar anclado de stickers</string>
+    <string name="EnableStickerPin">Fijar stickers</string>
     <string name="VersionUpdateNoUpdate">No actualizar.</string>
-    <string name="EnableStickerPinAbout">Anclar stickers y sincronizarlos con la nube aún cuando se agreguen nuevos stickers.
-\nRelacionado con Desactivar Favoritos y Recientes.</string>
+    <string name="EnableStickerPinAbout">Fijar stickers y sincronizarlos con la nube aún cuando se agreguen nuevos stickers.\nRelacionado con Desactivar Favoritos y Recientes.</string>
     <string name="EnableStickerPinTip">Esta función todavía está en desarrollo. La sincronización con la nube puede no funcionar.</string>
     <string name="AutoCheckUpdateOFF">Desactivado</string>
     <string name="AutoCheckUpdatePreview">Vista Previa (Inestable)</string>
