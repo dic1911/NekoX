@@ -10144,7 +10144,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 videoPlayerControlFrameLayout.setAlpha(visible ? 1f : 0f);
             }
             if (allowShare && pageBlocksAdapter == null) {
-                if (visible) {
+                if (visible || !isCurrentVideo) {
                     menuItem.showSubItem(gallery_menu_share);
                 } else {
                     menuItem.hideSubItem(gallery_menu_share);
@@ -16036,6 +16036,14 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
         seekToProgressPending2 = 0;
         skipFirstBufferingProgress = false;
         playerInjected = false;
+
+        // 030: why gib null value...
+        ArrayList<MessageObject> currentMessages = messages;
+        if (messages == null || messages.isEmpty()) {
+            currentMessages = new ArrayList<>();
+            currentMessages.add(messageObject);
+        }
+
         if (object != null) {
             disableShowCheck = true;
             animationInProgress = 1;
@@ -16058,7 +16066,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
                 currentAnimation = object.imageReceiver.getAnimation();
             }
 
-            onPhotoShow(messageObject, fileLocation, imageLocation, videoLocation, messages, documents, photos, index, object);
+            onPhotoShow(messageObject, fileLocation, imageLocation, videoLocation, currentMessages, documents, photos, index, object);
             if (sendPhotoType == SELECT_TYPE_AVATAR) {
                 photoCropView.setVisibility(View.VISIBLE);
                 photoCropView.setAlpha(0.0f);
@@ -16340,7 +16348,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
             //backgroundDrawable.setAlpha(255);
             containerView.setAlpha(1.0f);
-            onPhotoShow(messageObject, fileLocation, imageLocation, videoLocation, messages, documents, photos, index, object);
+            onPhotoShow(messageObject, fileLocation, imageLocation, videoLocation, currentMessages, documents, photos, index, object);
             initCropView();
             setCropBitmap();
             if (parentChatActivity != null) {
