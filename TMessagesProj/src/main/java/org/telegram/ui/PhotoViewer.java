@@ -16039,7 +16039,7 @@ public class PhotoViewer implements NotificationCenter.NotificationCenterDelegat
 
         // 030: why gib null value...
         ArrayList<MessageObject> currentMessages = messages;
-        if (messages == null || messages.isEmpty()) {
+        if (messageObject != null && (messages == null || messages.isEmpty())) {
             currentMessages = new ArrayList<>();
             currentMessages.add(messageObject);
         }
