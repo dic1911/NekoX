@@ -111,7 +111,7 @@
     <string name="ProviderYouDao">YouDao 翻訳</string>
     <string name="maxRecentStickerCount">最大数の最近使ったステッカー</string>
     <string name="enablePublicProxy">NekoX 公開プロキシ</string>
-    <string name="showSpoilersDirectly">スポイラーメッセージを直接表示する</string>
+    <string name="showSpoilersDirectly">ネタバレメッセージを直接表示する</string>
     <string name="SaveToDownloadCount_zero">%1$dファイルをダウンロードディレクトリー保存しています</string>
     <string name="SaveToDownloadCount_two">%1$dファイルをダウンロードディレクトリー保存しています</string>
     <string name="NekoGeneralNotification">通知</string>
@@ -232,4 +232,13 @@
     <string name="LingvaInstanceNote">公共のインスタンスをオンラインで検索するか、自分でホストするか、Lingva 翻訳者が自動翻訳で動作しないことに注意してください.</string>
     <string name="SearchBlacklist">検索結果から指定のチャットを非表示にする</string>
     <string name="ForceHideShowAsList">検索時に ”一覧で表示” の文字を隠す</string>
+    <string name="pressTitleToOpenAllChats">タイトル長押しで『すべて』を開く</string>
+    <string name="UseMediaStreamInVoip">通話中にメディアストリームを使用する</string>
+    <string name="doubleTapShowReactions">ダブルタップで反応メニューを開く</string>
+    <string name="mapDriftingFixForGoogleMaps">中国でのGoogle マップ位置情報のずれを修正する</string>
+    <string name="DisableSendReadStories">こっそりストーリーを見る</string>
+    <string name="ForceAllowChooseBrowser">リンクを開く時に強制的にブラウザーを選択させる</string>
+    <string name="ForceAllowChooseBrowserDesc">デフォルトアプリが指定されていないリンクにのみ有効</string>
+    <string name="SearchBlacklistShort">検索から排除</string>
+    <string name="SearchBlacklistRevert">検査から排除しない</string>
 </resources>
