@@ -153,6 +153,7 @@
     <string name="ConfirmToSendCommand">您確定要送出指令嗎?</string>
     <string name="PhotoCopied">圖片已複製</string>
     <string name="AutoArchiveAndMute">自動將未知私訊歸檔並停用通知</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnly">僅針對無共同群組的私訊自動歸檔及停用通知</string>
     <string name="CloseWebViewWithoutConfirmation">關閉網頁小程式時不需確認</string>
     <string name="OpenWebViewTabWithoutBot">開啟網頁小程式分頁時不重新開啟機器人對話</string>
     <string name="DisableWebViewGeolocation">停用網頁定位權限</string>
@@ -188,6 +189,7 @@
     <string name="CopyPhoto">複製圖片</string>
     <string name="CopyPhotoAsSticker">作為貼圖複製</string>
     <string name="AutoArchiveAndMuteAbout">副作用: 本功能使用本地資料庫檢查是否為未知私訊, 無法達到完全準確, 本地資料庫不完整時可能有誤判情況</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnlyAbout">需要從伺服器查詢資料，可能導致動作前的延遲</string>
     <string name="AppendOriginalTimestamp">在轉發的訊息上顯示原訊息發送時間</string>
     <string name="CustomTitleText">自訂標題文字</string>
     <string name="PatchAndCleanupLinks">清理對話中的連結</string>

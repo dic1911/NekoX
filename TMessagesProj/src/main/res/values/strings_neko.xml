@@ -164,6 +164,8 @@
     <string name="IncreasedMaxPhotoResolution">Increased max photo resolution width (2560px)</string>
     <string name="AutoArchiveAndMute">Automatically archive and mute previously unknown PM</string>
     <string name="AutoArchiveAndMuteAbout">Side effect: This uses local database to check, and it\'s not 100% accurate, in other words, might have FALSE POSITIVE</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnly">Only archive and mute users without common groups</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnlyAbout">Requires querying remote server, may result in latency before action.</string>
     <string name="CloseWebViewWithoutConfirmation">Always close web app without confirmation</string>
     <string name="OpenWebViewTabWithoutBot">Re-open web app tab without bot</string>
     <string name="ShowBotWebViewSettings">Show bot webview settings</string>

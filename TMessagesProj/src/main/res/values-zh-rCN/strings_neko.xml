@@ -173,6 +173,8 @@
     <string name="CloseWebViewWithoutConfirmation">关闭小程序时不需确认</string>
     <string name="AutoArchiveAndMuteAbout">副作用: 本功能使用本地数据库检查是否為未知私讯, 无法达到完全准确, 本地数据库不完整时可能有误判情况</string>
     <string name="AutoArchiveAndMute">自动将未知私讯归档并停用通知</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnly">仅针对无共同群组的私信自动归档及停用通知</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnlyAbout">需要从服务器查询资料，可能导致动作前的延迟</string>
     <string name="IncreasedMaxPhotoResolution">增加上传图片最大宽度 (2560px)</string>
     <string name="CopyPhotoAsSticker">作為贴纸复制</string>
     <string name="OpenAvatarInsteadOfExpand">点击时开啟完整头像显示界面而不是在原页面放大</string>

@@ -162,6 +162,8 @@
     <string name="IncreasedMaxPhotoResolution">最大画像解像度幅増加する(2560px)</string>
     <string name="AutoArchiveAndMute">未知のDMを自動的にアーカイブしミュート</string>
     <string name="AutoArchiveAndMuteAbout">副作用: ローカルデータベースを使用して確認するため、100％正確ではありません、誤検出が発生する可能性があります</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnly">共通のグループがないのDMだけを自動アーカイブしミュート</string>
+    <string name="AutoArchiveAndMuteNoCommonGroupOnlyAbout">サーバーからデータを照会する，作動が遅くなる場合もあります</string>
     <string name="CloseWebViewWithoutConfirmation">常に確認なしでWebアプリを閉じる</string>
     <string name="OpenWebViewTabWithoutBot">ボットなしでWebアプリタブを再オープン</string>
     <string name="DisableWebViewGeolocation">Webビューのジオロケーションを無効化</string>

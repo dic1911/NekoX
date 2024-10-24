@@ -35,6 +35,7 @@ import org.telegram.SQLite.SQLiteDatabase;
 import org.telegram.SQLite.SQLiteException;
 import org.telegram.SQLite.SQLitePreparedStatement;
 import org.telegram.messenger.support.LongSparseIntArray;
+import org.telegram.tgnet.ConnectionsManager;
 import org.telegram.tgnet.NativeByteBuffer;
 import org.telegram.tgnet.RequestDelegate;
 import org.telegram.tgnet.TLObject;
@@ -91,6 +92,8 @@ public class MessagesStorage extends BaseController {
     private int lastSavedPts = 0;
     private int lastSavedDate = 0;
     private int lastSavedQts = 0;
+
+    private int classGuid;
 
     private ArrayList<MessagesController.DialogFilter> dialogFilters = new ArrayList<>();
     private SparseArray<MessagesController.DialogFilter> dialogFiltersMap = new SparseArray<>();
@@ -216,6 +219,7 @@ public class MessagesStorage extends BaseController {
         storageQueue = new DispatchQueue("storageQueue_" + instance);
         storageQueue.setPriority(8);
         storageQueue.postRunnable(() -> openDatabase(1));
+        classGuid = ConnectionsManager.generateClassGuid();
     }
 
     public SQLiteDatabase getDatabase() {
@@ -16146,11 +16150,25 @@ public class MessagesStorage extends BaseController {
 
         if (autoArchiveAndMute) {
             for (long did : toArchiveAndMute) {
-                ArrayList<Long> list = new ArrayList<>();
-                list.add(did);
-                AndroidUtilities.runOnUIThread(() -> {
-                    getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
-                    getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
+                getStorageQueue().postRunnable(() -> {
+                    TLRPC.User currentUser = getUserSync(did);
+                    if (currentUser.bot) return; // bots can't send first msg
+                    final ArrayList<Long> list = new ArrayList<>(1);
+                    list.add(did);
+                    if (NekoConfig.autoArchiveAndMuteNoCommonGroupOnly.Bool()) {
+                        getMessagesController().loadFullUser(currentUser, classGuid, true, userFull -> {
+                            if (userFull != null && userFull.common_chats_count > 0) return;
+                            AndroidUtilities.runOnUIThread(() -> {
+                                getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
+                                getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
+                            });
+                        });
+                    } else {
+                        AndroidUtilities.runOnUIThread(() -> {
+                            getMessagesController().addDialogToFolder(list, 1, -1, null, 0);
+                            getNotificationsController().setDialogNotificationsSettings(did, 0, NotificationsController.SETTING_MUTE_FOREVER);
+                        });
+                    }
                 });
             }
         }
